@@ -1604,6 +1604,7 @@ function save_keyset() as short
     print #f,"key_activatesensors ="&key_ac
     print #f,"key_run ="&key_ru
     print #f,"key_togglemanjets ="&key_togglemanjets
+    print #f,"key_autoexplore ="&key_autoexplore
     close f
     return 0
 end function
@@ -1651,6 +1652,7 @@ function load_keyset() as short
             text=texts(i)
             if left(text,1)<>"#" and len(text)>0 then
                 lctext=lcase(text)
+                if instr(lctext,"key_autoexplore")>0 then key_autoexplore=load_key(text)
                 if instr(lctext,"key_nw")>0 then key_nw=load_key(text)
                 if instr(lctext,"key_north")>0 then key_north=load_key(text)
                 if instr(lctext,"key_ne")>0 then key_ne=load_key(text)
@@ -1711,6 +1713,7 @@ function load_keyset() as short
                 if instr(lctext,"key_activatesensors")>0 then key_ac=load_key(text)
                 if instr(lctext,"key_run")>0 then key_ru=load_key(text)
                 if instr(lctext,"key_togglemanjets")>0 then key_togglemanjets=load_key(text)
+                if instr(lctext,"key_autoexplore")>0 then key_autoexplore=load_key(text)
                 if instr(lctext,"key_yes")>0 then key_yes=load_key(text)
                 if instr(lctext,"key_extendedkey")>0 then key_extended=load_key(text)
 
