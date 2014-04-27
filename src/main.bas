@@ -2049,7 +2049,7 @@ Function explore_space() As Short
             For a=0 To laststar
                 If player.c.x=map(a).c.x And player.c.y=map(a).c.y Then
                     planetcom=a+1
-                    dPrint add_a_or_an(spectralname(map(a).spec),1)&"." & system_text(a) & ". Press "&key_sc &" to scan, "&key_la &" to land, " &key_tala &" to land at a specific spot, "&key_optequip &" to change armor priorities."
+                    rlprint add_a_or_an(spectralname(map(a).spec),1)&"." & system_text(a) & ". Press "&key_sc &" to scan, "&key_la &" to land, " &key_tala &" to land at a specific spot, "&key_optequip &" to change armor priorities."
                     If a=piratebase(0) Then rlprint "Lots of traffic in this system"
                     map(a).discovered=2
                     display_system(a)
@@ -4262,6 +4262,7 @@ Function launch_probe() As Short
             probe(lastprobe).m=i
             probe(lastprobe).s=d
             probe(lastprobe).p=item(i).v4
+            DbgPrint(probe(lastprobe).x &":"&probe(lastprobe).y)
             rlprint "Probe launched."
             item(i).w.s=0
         Else

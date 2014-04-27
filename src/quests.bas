@@ -685,7 +685,7 @@ function make_questitem(i as short,wanthas as short) as short
             if planets(j).weat>1 then planets(j).weat=0.5
             if planets(j).water<30 then planets(j).water=35
             if planets(j).rot<0.5 or planets(j).rot>1.5 then planets(j).rot=rnd_range(5,15)/10
-            
+
         endif
     endif
     
@@ -950,7 +950,6 @@ function update_questguy_dialog(i as short,node() as _dialognode,iteration as sh
                         node(30+o).param(0)=j
                         node(30+o).option(1).no=1
                     else
-                        
                         node(30+o).statement="I already paid that back in full!"
                         node(30+o).option(1).no=1
                     endif
@@ -1493,7 +1492,6 @@ function node_menu(no as short,node() as _dialognode,e as _monster, fl as short,
                         map(questguy(qgindex).flag(3)).discovered=1
                         map(questguy(qgindex).flag(3)).desig=spectralshrt(map(questguy(qgindex).flag(3)).spec)&player.discovered(map(questguy(qgindex).flag(3)).spec)&"-"&int(disnbase(map(questguy(qgindex).flag(3)).c))&cords(map(questguy(qgindex).flag(3)).c) 
                     endif
-                    
                 else
                     return 0 'Not enough moneys
                 endif
@@ -1737,7 +1735,6 @@ function dialog_effekt(effekt as string,p() as short,e as _monster, fl as short)
                     else
                          a=showteam(0,1,talent_desig(questguy(p(0)).flag(10)))
                     endif
-                    
                     if a>0 and can_learn_skill(a,questguy(p(0)).flag(10)) then
                         rlprint "You train long and hard. "& gain_talent(a,questguy(p(0)).flag(10))
                         questguy(p(0)).flag(10)=0
@@ -1877,7 +1874,6 @@ function dialog_effekt(effekt as string,p() as short,e as _monster, fl as short)
     if effekt="SELLWANT" Then
         questguy(p(0)).talkedto=2
         i=has_questguy_want(p(0),t)
-        
         if i>0 then
             select case t
             case qt_stationimp

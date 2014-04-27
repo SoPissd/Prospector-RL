@@ -1231,7 +1231,10 @@ function com_fire(byref target as _ship,byref attacker as _ship,byref w as short
 
 
     osx=calcosx(player.c.x,1)
-    ROF=attacker.weapons(w).ROF
+    dim weapon as _weap
+    weapon= attacker.weapons(w)
+    ROF= weapon.ROF
+    
     for a=1 to 25
         if attacker.weapons(a).made=91 then dambonus+=1
         if attacker.weapons(a).made=92 then dambonus+=2
@@ -1247,11 +1250,11 @@ function com_fire(byref target as _ship,byref attacker as _ship,byref w as short
     #endif
     #ifdef _FBSOUND
     if distance(target.c,attacker.c)<(attacker.sensors+2)*attacker.senac then
-        if attacker.weapons(a).ammomax>0 and attacker.weapons(a).ROF>0 and (configflag(con_sound)=0 or configflag(con_sound)=2) then fbs_Play_Wave(sound(7)) 'Laser
-        if attacker.weapons(a).ammomax>0 and attacker.weapons(a).ROF=0 and (configflag(con_sound)=0 or configflag(con_sound)=2) then fbs_Play_Wave(sound(8)) 'Missile battery
-        if attacker.weapons(a).ammomax=0 and (configflag(con_sound)=0 or configflag(con_sound)=2) then fbs_Play_Wave(sound(9)) 'Missile
+        if weapon.ammomax>0 and ROF>0 Then fbs_Play_Wave(sound(7)) 'Laser        	
+        if weapon.ammomax>0 and ROF=0 then fbs_Play_Wave(sound(8)) 'Missile battery
+        if weapon.ammomax=0 then fbs_Play_Wave(sound(9)) 'Missile
     endif
-    #endif
+    #EndIf
     do
         firefree=0
         if attacker.weapons(w).ammo=0 then

@@ -617,7 +617,7 @@ Function ep_display(osx As Short=555) As Short
     Dim As _cords p,p1,p2
     slot=player.map
     If osx=555 Then osx=calcosx(awayteam.c.x,planets(slot).depth)
-    
+
     If disease(awayteam.disease).bli>0 Then
         x=awayteam.c.x
         y=awayteam.c.y
@@ -2225,7 +2225,7 @@ Function ep_monstermove(spawnmask() As _cords, lsp As Short, mapmask() As Byte,n
                     EndIf
                     
                     
-                    
+
                     
                 EndIf
                 'Move
@@ -2510,6 +2510,7 @@ Function ep_radio(ByRef nextlanding As _cords,ByRef ship_landing As Short, shipf
                     endif
                 endif
             Next
+            DbgPrint(b &" Rover found.")
             if c>1 then
                 b=menu(bg_awayteamtxt,mtext,"",2,2)
                 if b>0 then b=roverlist(b)
@@ -2863,7 +2864,7 @@ Function ep_grenade(shipfire() As _shipfire, ByRef sf As Single) As Short
     EndIf
     launcher=findbest(17,-1)
     If c>0 Then
-        
+
         If item(c).ty=7 Then
             p=grenade(awayteam.c,slot)
             If p.x>=0 Then
@@ -3545,7 +3546,7 @@ Function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _
                 item(a).v5+=10
                 item(a).v2+=10
                 minprice+=item(a).v5
-                
+
             Next
             minprice=10+CInt(minprice*(5/(5+disnbase(player.c))))
             If askyn("The miners are willing to sell some ore for "&credits(minprice)&" Cr. Do you want to buy it? (y/n)") Then

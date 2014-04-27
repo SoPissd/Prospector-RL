@@ -895,7 +895,7 @@ function add_member(a as short,skill as short) as short
                     if player.cursed=1 then
                         cat-=1
                         player.cursed=0
-                        Dprint "Your ship is in decent condition"
+                        rlprint "Your ship is in decent condition"
                     else
                         cat+=1
                         player.cursed=1
