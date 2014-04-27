@@ -217,65 +217,93 @@ function load_palette() as short
 end function
 
 
+
+#Ifdef _FMODSOUND
+	#Define _sound
+#EndIf
+#Ifdef _FBSOUND
+	#Define _sound
+#EndIf
+
 function load_sounds() as short
-    #ifdef _FMODSOUND
-    print
-    print "Loading sounds:";
-    fsound_init(48000,11,0)
-    print FSOUND_geterror();
-    IF _Volume = 0 THEN FSOUND_SetSFXMasterVolume(0)
-    IF _Volume = 1 THEN FSOUND_SetSFXMasterVolume(63)
-    IF _Volume = 2 THEN FSOUND_SetSFXMasterVolume(128)
-    IF _Volume = 3 THEN FSOUND_SetSFXMasterVolume(190)
-    IF _Volume = 4 THEN FSOUND_SetSFXMasterVolume(255)
-    sound(1)= FSOUND_Sample_Load(FSOUND_FREE, "data/alarm_1.wav", 0, 0, 0)
-    sound(2)= FSOUND_Sample_Load(FSOUND_FREE, "data/alarm_2.wav", 0, 0, 0)
-    sound(3)= FSOUND_Sample_Load(FSOUND_FREE, "data/weap_1.wav", 0, 0, 0)
-    sound(4)= FSOUND_Sample_Load(FSOUND_FREE, "data/weap_2.wav", 0, 0, 0)
-    sound(5)= FSOUND_Sample_Load(FSOUND_FREE, "data/wormhole.wav", 0, 0, 0)
-    sound(7)= FSOUND_Sample_Load(FSOUND_FREE, "data/weap_4.wav", 0, 0, 0)
-    sound(8)= FSOUND_Sample_Load(FSOUND_FREE, "data/weap_3.wav", 0, 0, 0)
-    sound(9)= FSOUND_Sample_Load(FSOUND_FREE, "data/weap_5.wav", 0, 0, 0)
-    sound(10)= FSOUND_Sample_Load(FSOUND_FREE, "data/start.wav", 0, 0, 0)
-    sound(11)= FSOUND_Sample_Load(FSOUND_FREE, "data/land.wav", 0, 0, 0)
-    sound(12)= FSOUND_Sample_Load(FSOUND_FREE, "data/pain.wav", 0, 0, 0)
+#Ifdef _sound
+   Dim i As Short
+   Dim nSounds As Short
+   nSounds=12
+   Dim sounds(nSounds) as string
+   sounds(1)="alarm_1"
+   sounds(2)="alarm_2"
+   sounds(3)="weap_1"
+   sounds(4)="weap_1"
+   sounds(5)="wormhole"
+   sounds(6)=""
+   sounds(7)="weap_4"
+   sounds(8)="weap_3"
+   sounds(9)="weap_5"
+   sounds(10)="start"
+   sounds(11)="land"
+   sounds(12)="pain"
+
+   Print
+   print "Loading sounds:";
+   
+	#ifdef _FMODSOUND
+	   fsound_init(48000,11,0)
+		print FSOUND_geterror();
+	   Dim iLvl As Short
+		iLvl=0
+		If _Volume = 1 THEN iLvl=63
+		If _Volume = 2 THEN iLvl=128
+		If _Volume = 3 THEN iLvl=190
+		If _Volume = 4 THEN iLvl=255
+	   FSOUND_SetSFXMasterVolume(iLvl)
+	   For i= 1 To nSounds
+			sound(i)= FSOUND_Sample_Load(FSOUND_FREE, "data/" &sounds(i) &".wav", 0, 0, 0)
+			print ".";
+	   Next
     #endif
     #ifdef _FBSOUND
-    dim ok as FBSBOOLEAN
-    print
-    print "Loading sounds:";
-    'fbs_Init(48000,2,11,2048,0)
-    ok=fbs_Init()
-    if ok=true then
-        fbs_Set_MasterVolume(_Volume/2.0)
-        print ".";
-        fbs_Load_WAVFile("data/alarm_1.wav",@sound(1))
-        print ".";
-        fbs_Load_WAVFile("data/alarm_2.wav",@sound(2))
-        print ".";
-        fbs_Load_WAVFile("data/weap_1.wav",@sound(3))
-        print ".";
-        fbs_Load_WAVFile("data/weap_2.wav",@sound(4))
-        print ".";
-        fbs_Load_WAVFile("data/wormhole.wav",@sound(5))
-        print ".";
-        fbs_Load_WAVFile("data/weap_4.wav",@sound(7))
-        print ".";
-        fbs_Load_WAVFile("data/weap_3.wav",@sound(8))
-        print ".";
-        fbs_Load_WAVFile("data/weap_5.wav",@sound(9))
-        print ".";
-        fbs_Load_WAVFile("data/start.wav",@sound(10))
-        print ".";
-        fbs_Load_WAVFile("data/land.wav",@sound(11))
-        print ".";
-        fbs_Load_WAVFile("data/pain.wav",@sound(12))
-    else
-        print "Error initializing FBsound"
-    endif
-    #endif
-    return 0
+		dim ok as FBSBOOLEAN
+		'fbs_Init(48000,2,11,2048,0)
+		ok=fbs_Init()
+		if ok=true then
+			fbs_Set_MasterVolume(_Volume/2.0)
+		   For i= 1 To nSounds
+		   	fbs_Load_WAVFile("data/" &sounds(i) &".wav",@sound(1))
+				print ".";
+		   Next
+		else
+			print "Error initializing FBsound!"
+			sleep 1500
+		endif
+	#EndIf
+#Else
+#EndIf	
+	return 0
 end function
+
+Function play_sound(iSound As Short,iRepeats As Short=1,iDelay As Short=0) as short
+	#IfNDef _sound
+		return 0
+	#else
+	If (configflag(con_sound)<>0 and configflag(con_sound)<>2) then 
+		return 0
+	EndIf
+	Dim as short i
+	for i=1 to iRepeats
+		#IfDef _FMODSOUND
+			FSOUND_PlaySound(FSOUND_FREE, Sound(iSound))
+		#EndIf
+		#IfDef _FBSOUND
+			fbs_Play_Wave(Sound(iSound))
+		#EndIf
+		if iDelay>0 then
+			sleep (iDelay)
+		endif
+	next
+	return 1
+	#EndIf
+End Function
 
 
 function load_map(m as short,slot as short)as short

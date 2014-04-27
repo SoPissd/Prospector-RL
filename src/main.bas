@@ -5,14 +5,15 @@
 #Macro draw_string(ds_x,ds_y,ds_text,ds_font,ds_col)
 Draw String(ds_x,ds_y),ds_text,,ds_font,custom,@ds_col
 #EndMacro
+
 #IfDef _FMODSOUND
 #IncLib "fmod.dll"
 #Include Once "fmod.bi"
 #EndIf
-
 #IfDef _FBSOUND
 #Include "fbsound.bi"
 #EndIf
+
 #Include Once "fbgfx.bi"
 #Include Once "zlib.bi"
 #Include Once "file.bi"
@@ -694,12 +695,7 @@ Function landing(mapslot As Short,lx As Short=0,ly As Short=0,Test As Short=0) A
             nextmap.m=savefrom(0).map
         EndIf
         
-        #IfDef _FMODSOUND
-        If (configflag(con_sound)=0 Or configflag(con_sound)=2) And mapslot>0 Then FSOUND_PlaySound(FSOUND_FREE, Sound(11))
-        #EndIf
-        #IfDef _FBSOUND
-        If (configflag(con_sound)=0 Or configflag(con_sound)=2) And mapslot>0 Then fbs_Play_Wave(Sound(11))
-        #EndIf
+        If mapslot>0 Then play_sound(11)
         
         If player.dead=0 And awayteam.hp>0 Then
             
@@ -4038,12 +4034,7 @@ Function wormhole_travel() As Short
         EndIf
             map(b).planets(2)=1
             rlprint "you travel through the wormhole.",10
-            #IfDef _FMODSOUND
-            If configflag(con_sound)=0 Or configflag(con_sound)=2 Then FSOUND_PlaySound(FSOUND_FREE, Sound(5))
-            #EndIf
-            #IfDef _FBSOUND
-            If configflag(con_sound)=0 Or configflag(con_sound)=2 Then fbs_Play_Wave(Sound(5))
-            #EndIf
+			play_sound(5)
             If rnd_range(1,100)<distance(map(b).c,player.c)+maximum(Abs(spacemap(player.c.x,player.c.y)),5) Then
                 add_ano(map(b).c,player.c)
             EndIf

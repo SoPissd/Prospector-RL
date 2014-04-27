@@ -795,110 +795,39 @@ function alerts() as short
     if awayteam.jpfuel=awayteam.jpfuelmax and awayteam.movetype=2 then wj=0
     if int(awayteam.oxygen<awayteam.oxymax*.5) and wg=0 and awayteam.helmet=1 then
         rlprint ("Reporting oxygen tanks half empty",14)
-        wg=1
-        for a=1 to wg
-            if configflag(con_sound)=0 or configflag(con_sound)=2 then
-                #ifdef _FMODSOUND
-                FSOUND_PlaySound(FSOUND_FREE, sound(1))
-                #endif
-                #ifdef _FBSOUND
-                fbs_Play_Wave(sound(1))
-                #endif
-            endif
-        next
+		play_sound(1,1,350)
         walking=0
         if configflag(con_sound)=2 then no_key=keyin(" "&key__enter &key__esc)
     endif
     if int(awayteam.oxygen<awayteam.oxymax*.25) and wg=1 and awayteam.helmet=1 then
         rlprint ("Oxygen low.",14)
-        wg=2
-        for a=1 to wg
-            if configflag(con_sound=0) or configflag(con_sound)=2 then
-                #ifdef _FMODSOUND
-                FSOUND_PlaySound(FSOUND_FREE, sound(1))
-                sleep 350
-                #endif
-                #ifdef _FBSOUND
-                fbs_Play_Wave(sound(1))
-                sleep 350
-                #endif
-            endif
-        next
+		play_sound(1,2,350)
         walking=0
         if configflag(con_sound)=2 then no_key=keyin(" "&key__enter &key__esc)
     endif
     if int(awayteam.oxygen<awayteam.oxymax*.125) and wg=2 and awayteam.helmet=1 then
         rlprint ("Switching to oxygen reserve!",12)
-        wg=3
-        for a=1 to wg
-            if configflag(con_sound)=0 or configflag(con_sound)=2 then
-                #ifdef _FMODSOUND
-                FSOUND_PlaySound(FSOUND_FREE, sound(1))
-                sleep 350
-                #endif
-                #ifdef _FBSOUND
-                fbs_Play_Wave(sound(1))
-                sleep 350
-                #endif
-            endif
-        next
+		play_sound(1,3,350)
         walking=0
         if configflag(con_sound)=2 then no_key=keyin(" "&key__enter &key__esc)
     endif
     if awayteam.jpfuel<awayteam.jpfuelmax then
         if awayteam.jpfuel/awayteam.jpfuelmax<.5 and wj=0 then
-            wj=1
-            for a=1 to wj
-                if configflag(con_sound)=0 or configflag(con_sound)=2 then
-                    #ifdef _FMODSOUND
-                    FSOUND_PlaySound(FSOUND_FREE, sound(1))
-                    sleep 350
-                    #endif
-                    #ifdef _FBSOUND
-                    fbs_Play_Wave(sound(1))
-                    sleep 350
-                    #endif
-                    if configflag(con_sound)=2 then no_key=keyin(" "&key__enter &key__esc)
-                endif
-            next
-            walking=0
             rlprint ("Jetpack fuel low",14)
+			play_sound(1,1,350)
+            walking=0
         endif
         if awayteam.jpfuel/awayteam.jpfuelmax<.3 and wj=1 then
-            wj=2
-            for a=1 to wj
-                if configflag(con_sound)=0 or configflag(con_sound)=2 then
-                    #ifdef _FMODSOUND
-                    FSOUND_PlaySound(FSOUND_FREE, sound(1))
-                    sleep 350
-                    #endif
-                    #ifdef _FBSOUND
-                    fbs_Play_Wave(sound(1))
-                    sleep 350
-                    #endif
-                    if configflag(con_sound)=2 then no_key=keyin(" "&key__enter &key__esc)
-                endif
-            next
-            walking=0
             rlprint ("Jetpack fuel very low",14)
+			play_sound(1,2,350) 
+			if configflag(con_sound)=2 then no_key=keyin(" "&key__enter &key__esc)
+            walking=0
         endif
 
         if awayteam.jpfuel<5 and wj=2 then
-            wj=3
-        for a=1 to wj
-                if configflag(con_sound)=0 or configflag(con_sound)=2 then
-                    #ifdef _FMODSOUND
-                    FSOUND_PlaySound(FSOUND_FREE, sound(1))
-                    sleep 350
-                    #endif
-                    #ifdef _FBSOUND
-                    fbs_Play_Wave(sound(1))
-                    sleep 350
-                    #endif
-                    if configflag(con_sound)=2 then no_key=keyin(" "&key__enter &key__esc)
-                endif
-            next
             rlprint ("Switching to jetpack fuel reserve",12)
+			play_sound(1,3,350)
+			if configflag(con_sound)=2 then no_key=keyin(" "&key__enter &key__esc)
             walking=0
         endif
     else

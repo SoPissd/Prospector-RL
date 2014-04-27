@@ -2073,6 +2073,7 @@ Declare Function delete_custom(pir As Short) As Short
 Declare Function load_key(ByVal t As String,ByRef n As String="") As String
 Declare Function check_filestructure() As Short
 Declare Function load_sounds() As Short
+Declare Function play_sound(iSound As Short,iRepeats As Short=1,iDelay As Short=0) as short
 Declare Function load_fonts() As Short
 Declare Function save_config(oldtiles As Short) As Short
 Declare Function load_config() As Short

@@ -453,18 +453,10 @@ function dam_awayteam(dam as short, ap as short=0,disease as short=0) as string
     next
     if suitdamage>0 then text=text &suitdamage &" damage to spacesuits."
     awayteam.leak+=suitdamage
-    #ifdef _FMODSOUND
     if configflag(con_damscream)=0 then
-        FSOUND_PlaySound(FSOUND_FREE, sound(12))
+		play_sound(12)
         sleep 100
     endif
-    #endif
-    #ifdef _FBSOUND
-    if configflag(con_damscream)=0 then
-        fbs_Play_Wave(sound(12))
-        sleep 100
-    endif
-    #endif
     sleep 25
 
     if reequip=1 then 

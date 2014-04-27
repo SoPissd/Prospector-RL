@@ -1231,7 +1231,7 @@ Function ep_launch(ByRef nextmap As _cords) As Short
                 Else
                     rlprint "You successfully break free of the living planet."
                     nextmap.m=-1
-                    'if _sound=0 or _sound=2 then FSOUND_PlaySound(FSOUND_FREE, sound(10))
+					play_sound(10)
                 EndIf
             EndIf
             If slot=specialplanet(2) Then
@@ -1240,22 +1240,12 @@ Function ep_launch(ByRef nextmap As _cords) As Short
                 Else
                     rlprint "You start without incident"
                     nextmap.m=-1
-                    #IfDef _FMODSOUND
-                    If configflag(con_sound)=0 Or configflag(con_sound)=2 Then FSOUND_PlaySound(FSOUND_FREE, Sound(10))
-                    #EndIf
-                    #IfDef _FBSOUND
-                    If configflag(con_sound)=0 Or configflag(con_sound)=2 Then fbs_Play_Wave(Sound(10))
-                    #EndIf
+					play_sound(10)
                 EndIf
             EndIf
         Else
             nextmap.m=-1
-            #IfDef _FMODSOUND
-            If configflag(con_sound)=0 Or configflag(con_sound)=2 Then FSOUND_PlaySound(FSOUND_FREE, Sound(10))
-            #EndIf
-            #IfDef _FBSOUND
-            If configflag(con_sound)=0 Or configflag(con_sound)=2 Then fbs_Play_Wave(Sound(10))
-            #EndIf
+			play_sound(10)
         EndIf
     EndIf
     Return 0
@@ -2459,13 +2449,8 @@ Function ep_shipfire(shipfire() As _shipfire) As Short
                 EndIf
                 
                 rlprint txt
-                #IfDef _FMODSOUND
-                If (configflag(con_sound)=0 Or configflag(con_sound)=2) And planets(slot).atmos>1 Then FSOUND_PlaySound(FSOUND_FREE, Sound(4))
-                #EndIf
-                #IfDef _FBSOUND
                 'sleep 100+distance(awayteam.c,shipfire(sf2).where)*6
-                If (configflag(con_sound)=0 Or configflag(con_sound)=2) And planets(slot).atmos>1 Then fbs_Play_Wave(Sound(4))
-                #EndIf
+				if (planets(slot).atmos>1) Then play_sound(4)
             EndIf
             If shipfire(sf2).what>10 Then
                 player.weapons(shipfire(sf2).what)=make_weapon(0)

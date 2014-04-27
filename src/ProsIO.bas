@@ -977,14 +977,7 @@ function display_ship(show as byte=0) as short
         if wg=0 then
             wg=1
             rlprint "Fuel low",14
-            if configflag(con_sound)=0 or configflag(con_sound)=2 then
-                #ifdef _FMODSOUND
-                FSOUND_PlaySound(FSOUND_FREE, sound(2))
-                #endif
-                #ifdef _FBSOUND
-                fbs_Play_Wave(sound(2))
-                #endif
-            endif
+			play_sound(2)
             if configflag(con_sound)=2 then no_key=keyin(" "&key__enter &key__esc)
         endif
         set__color( 14,0)
@@ -995,16 +988,8 @@ function display_ship(show as byte=0) as short
         if wg=1 then
             wg=2
             rlprint "Fuel very low",12
-            if configflag(con_sound)=0 or configflag(con_sound)=2 then
-                #ifdef _FMODSOUND
-                FSOUND_PlaySound(FSOUND_FREE, sound(2))
-                #endif
-                #ifdef _FBSOUND
-                fbs_Play_Wave(sound(2))
-                #endif
-            endif
+			play_sound(2)
             if configflag(con_sound)=2 then no_key=keyin(" "&key__enter &key__esc)
-
         endif
         set__color( 12,0)
     endif
