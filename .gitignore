@@ -5,15 +5,28 @@ graphics/
 savegames/
 summary/
 
+lib/
+test/
+
 *~
 *.bak
+*.orig
+Thumbs.db
 
+*.o
+*.asm
 *.exe
 *.dll
+
 *.log
+/*.csv
+
+register
+shipregistry.txt
 
 highscore
-register
+highscore.dat
+
 F1.bmp
 p.pal
 B5Shipnames.txt
@@ -21,6 +34,13 @@ B5Shipnames.txt
 config.txt
 keybindings.txt
 
-
 *.fbp
-prospector.bas
+*.lnk
+
+*.7z
+*.zip
+*.rar
+
+src/prospector.bas
+src/prospector_fbsound.bas
+src/prospector_nosound.bas
