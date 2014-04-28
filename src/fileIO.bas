@@ -140,6 +140,14 @@ function delete_custom(pir as short) as short
 end function
 
 
+function assertpath(folder as string) as short
+    if chdir(folder)=-1 then
+        print "Creating folder " +folder
+        return mkdir(folder) '-1 on failure
+    else
+        return chdir("..")
+    endif
+end function
 
 function check_filestructure() as short
     if chdir("data")=-1 then
@@ -151,22 +159,14 @@ function check_filestructure() as short
         chdir("..")
     endif
 
-    if chdir("savegames")=-1 then
-        mkdir("savegames")
-    else
-        chdir("..")
-    endif
-
-    if chdir("bones")=-1 then
-        mkdir("bones")
-    else
-        chdir("..")
-    endif
-
-    if chdir("summary")=-1 then
-        mkdir("summary")
-    else
-        chdir("..")
+    if (assertpath("bones")=-1) _
+    or (assertpath("savegames")=-1) _
+    or (assertpath("summary")=-1) _
+    then
+        set__color(c_yel,0)
+        print "Can not create folder. Try reinstalling the game."
+        sleep
+        end
     endif
 
     if not fileexists("savegames/empty.sav") then
