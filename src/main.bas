@@ -54,7 +54,7 @@ On Error Goto errormessage
 
 #Include "debug2.bas" 'Secondary debug switch
 
-Screenres 640,320,32
+'Screenres 640,320,32
 Cls
 ' Load
 Print

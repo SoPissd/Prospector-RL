@@ -400,6 +400,7 @@ function load_fonts() as short
     _screenx=_mwx*_fw1+25*_fw2
     screenres _screenx,_screeny,16,2,GFX_WINDOWED
     if debug=1 and _debug=1 then print #f,"Made screen"
+    
     Print "Loading Fonts"
     'gfx.font.loadttf("graphics/Nouveau_IBM.ttf", FONT1, 32, 448, _fh1)
     'gfx.font.loadttf("graphics/Nouveau_IBM.ttf", FONT2, 32, 448, _fh2)
@@ -448,7 +449,7 @@ function load_fonts() as short
     if _screeny<>_lines*_fh1 then _screeny=_lines*_fh1
     _textlines=fix((22*_fh1)/_fh2)+fix((_screeny-_fh1*22)/_fh2)-1
     _screenx=_mwx*_fw1+25*_fw2
-    screenres _screenx,_screeny,16,2,GFX_ALWAYS_ON_TOP
+'    screenres _screenx,_screeny,16,2,(GFX_ALWAYS_ON_TOP OR GFX_WINDOWED)
     screenres _screenx,_screeny,16,2,GFX_WINDOWED
     sidebar=(_mwx+1)*_fw1+_fw2
 
