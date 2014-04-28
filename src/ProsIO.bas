@@ -901,9 +901,9 @@ function display_ship(show as byte=0) as short
     dim as string p,g,s,d,carg
     dim as byte fw1,fh1
     fw1=11
-    #ifdef _windows
-    Fw1=_fw1
-    #endif
+'    #ifdef _windows
+'    Fw1=_fw1
+'    #endif
     Fh1=22
     
     
