@@ -1622,7 +1622,7 @@ function load_keyset() as short
         do
             b+=1
             line input #f,texts(b)
-            if instr(text,"#")=0 and len(text)>0 then
+            if (len(text)>0) and ((instr(text,"#")=0) or (instr(text,"#")>instr(text,"="))) then
                 a+=1
                 keys(a)=right(text,1)
             endif
