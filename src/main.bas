@@ -51,6 +51,8 @@ Draw String(ds_x,ds_y),ds_text,,ds_font,custom,@ds_col
 
 On Error Goto errormessage
 
+#Include "debug2.bas" 'Secondary debug switch
+
 Screenres 640,320,32
 Cls
 ' Load
