@@ -2104,7 +2104,7 @@ function load_config() as short
         configflag(con_startrandom)=1
         configflag(con_autosave)=0
         configflag(con_savescumming)=0
-        configflag(con_restart)=0
+        configflag(con_restart)=1
         gt_mwx=40
         _tix=24
         _tiy=24
