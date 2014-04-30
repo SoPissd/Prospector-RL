@@ -3951,7 +3951,7 @@ If (n <> 0) And (m <> 0) Then
    Wend
 
    dis = d[n*m-1]
-   deallocate d
+   deallocate (d)
     if n>m then 
         dis=dis/n
     else
