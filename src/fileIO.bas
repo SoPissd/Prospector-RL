@@ -435,7 +435,7 @@ function load_fonts() as short
         Next
         _fh1=16
         _fh2=16
-        bsave "data/F1.bmp",Font1
+'        bsave "data/F1.bmp",Font1
         font2=font1
     endif
 
