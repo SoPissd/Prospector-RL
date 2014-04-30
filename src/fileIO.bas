@@ -217,13 +217,8 @@ function load_palette() as short
 end function
 
 
+' sound support
 
-#Ifdef _FMODSOUND
-	#Define _sound
-#EndIf
-#Ifdef _FBSOUND
-	#Define _sound
-#EndIf
 
 function load_sounds() as short
 #Ifdef _sound
@@ -304,6 +299,9 @@ Function play_sound(iSound As Short,iRepeats As Short=1,iDelay As Short=0) as sh
 	return 1
 	#EndIf
 End Function
+
+
+' /sound support
 
 
 function load_map(m as short,slot as short)as short
@@ -1720,6 +1718,7 @@ function load_keyset() as short
 
             endif
         next
+		Print
     else
         set__color( 14,0)
         print "File keybindings.txt not found. Using default keys"
@@ -2040,7 +2039,7 @@ function load_config() as short
                     if lhs=configname(i) then
                         if val(rhs)=0 or rhs="on" then configflag(i)=0
                         if val(rhs)=1 or rhs="off" then configflag(i)=1
-                        print i;":";lhs;":";rhs ;":";configflag(i)
+                        'print i;":";lhs;":";rhs ;":";configflag(i)
                     endif
                 next
 
@@ -2120,6 +2119,9 @@ function load_config() as short
 		endif
     endif
 
+	print
+	print
+	
     if configflag(con_tiles)=0 then
         _mwx=gt_mwx
     else

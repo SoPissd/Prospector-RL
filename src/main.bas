@@ -1,17 +1,29 @@
+'main.bas
 
-'Master debug switch: Do not touch!
-#Include "debug.bas"
+Cls
+On Error Goto errormessage
+Randomize Timer,5
 
-#Macro draw_string(ds_x,ds_y,ds_text,ds_font,ds_col)
-Draw String(ds_x,ds_y),ds_text,,ds_font,custom,@ds_col
-#EndMacro
+#Include Once "debug.bas"
+#Include Once "version.bas"
 
-#IfDef _FMODSOUND
-#IncLib "fmod.dll"
-#Include Once "fmod.bi"
-#EndIf
+Print
+Print "Prospector "&__VERSION__
+Print "Built "+__DATE__+" "+__TIME__
+Print "FB."+__FB_VERSION__
+Print
+
+' sound support
+
 #IfDef _FBSOUND
-#Include "fbsound.bi"
+	#Define _sound
+	#Include "fbsound.bi"
+#Else
+	#IfDef _FMODSOUND
+		#Define _sound
+		#IncLib "fmod.dll"
+		#Include Once "fmod.bi"
+	#EndIf
 #EndIf
 
 #Include Once "fbgfx.bi"
@@ -50,22 +62,18 @@ Draw String(ds_x,ds_y),ds_text,,ds_font,custom,@ds_col
 #Include Once "compcolon.bas"
 #Include Once "poker.bas"
 
-On Error Goto errormessage
+'#Include Once "string.bi"
 
-#Include "debug2.bas" 'Secondary debug switch
+'#Include Once "debug2.bas" 'Secondary debug switch
 
-'Screenres 640,320,32
-Cls
-' Load
-Print
-Print "Prospector "&__VERSION__
-Print
-check_filestructure
-load_config
-load_fonts
-If configflag(con_tiles)=0 Or configflag(con_sysmaptiles)=0 Then load_tiles
-load_keyset
-load_sounds
+' start
+
+check_filestructure()
+load_config()
+load_fonts()
+If configflag(con_tiles)=0 Or configflag(con_sysmaptiles)=0 Then load_tiles()
+load_keyset()
+load_sounds()
 load_palette()
 
 If Not fileexists("register") Then
@@ -4858,6 +4866,8 @@ Function clear_gamestate() As Short
 
     Return 0
 End Function
+
+' error handling
 
 Dim As Byte attempts
 

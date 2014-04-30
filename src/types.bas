@@ -5,9 +5,6 @@
 'Using FB
 'Using cards
 
-Randomize Timer
-
-#Include "version.bas"
 Const c_red=12
 Const c_gre=10
 Const c_yel=14
