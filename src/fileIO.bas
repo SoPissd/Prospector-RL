@@ -1988,14 +1988,16 @@ function configuration() as short
     loop until c=con_end or c=-1
     if gamerunning=1 then crew(1).story(3)=configflag(con_captainsprite)
     screenshot(2)
-    save_config(oldtiles)
-    return 0
+    return save_config(oldtiles)
 end function
 
 function save_config(oldtiles as short) as short
     dim as short f,i
     f=freefile
-    open "config.txt" for output as #f
+    i=open("config.txt", for output, as #f)
+    if i<>0 then
+    	return i    
+    EndIf
     print #f,"# 0 is on, 1 is off"
     for i=con_tiles to con_end-1
         print #f,configname(i)&":"&configflag(i)
@@ -2113,8 +2115,9 @@ function load_config() as short
         _Fohi2=16
         _lines=26
         _volume=1
-        save_config(configflag(con_tiles))
-        load_config
+		if save_config(configflag(con_tiles))=0 then 
+			load_config()
+		endif
     endif
 
     if configflag(con_tiles)=0 then
