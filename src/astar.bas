@@ -1,32 +1,32 @@
-#ifndef _cords
-type _cords
-    x as short
-    y as short
-end type
+'astar.bas
 
-declare Function rnd_range (first As short, last As short) As short
-declare function distance(first as _cords, last as _cords,rollover as byte=0) as single
-
-function distance(first as _cords, last as _cords,rollover as byte=0) as single
-    dim as single dis,dx,dy,dx2
-    dx=first.x-last.x
-    dy=first.y-last.y
-    if rollover<>0 then
-        if first.x<last.x then
-            dx2=60-last.x+first.x
-        else
-            dx2=60-first.x+last.x
-        endif
-        if abs(dx)>abs(dx2) then dx=dx2
-    endif
-    dis=sqr(dx*dx+dy*dy)
-    return dis
-end function
-
-Function rnd_range (first As short, last As short) As short
-        return cint(Rnd * (last - first) + first)
-End Function
-#endif
+'type _cords
+'    x as short
+'    y as short
+'end type
+'
+'declare Function rnd_range (first As short, last As short) As short
+'declare function distance(first as _cords, last as _cords,rollover as byte=0) as single
+'
+'function distance(first as _cords, last as _cords,rollover as byte=0) as single
+'    dim as single dis,dx,dy,dx2
+'    dx=first.x-last.x
+'    dy=first.y-last.y
+'    if rollover<>0 then
+'        if first.x<last.x then
+'            dx2=60-last.x+first.x
+'        else
+'            dx2=60-first.x+last.x
+'        endif
+'        if abs(dx)>abs(dx2) then dx=dx2
+'    endif
+'    dis=sqr(dx*dx+dy*dy)
+'    return dis
+'end function
+'
+'Function rnd_range (first As short, last As short) As short
+'        return cint(Rnd * (last - first) + first)
+'End Function
 
 type _node
     opclo as byte
