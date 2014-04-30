@@ -2167,7 +2167,7 @@ Function ep_monstermove(spawnmask() As _cords, lsp As Short, mapmask() As Byte,n
                     'Can't see it
                     If (enemy(i).aggr=0 Or enemy(i).aggr=2) And enemy(i).diet>0 and rnd_range(1,20)+enemy(i).cmmod<enemy(i).intel And enemy(i).faction>8 Then
                         enemy(i).aggr=1
-                        If vismask(enemy(i).c.x,enemy(i).c.y)>0 Or _debug>0 Then rlprint "The "&enemy(i).sdesc &" seems to calm down."
+                        If _debug>0 or vismask(enemy(i).c.x,enemy(i).c.y)>0 Then rlprint "The "&enemy(i).sdesc &" seems to calm down."
                     EndIf
                     
                     if enemy(i).pickup>=0 then enemy(i).target=rnd_point
