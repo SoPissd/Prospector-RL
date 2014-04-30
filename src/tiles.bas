@@ -1,3 +1,6 @@
+'tiles.bas
+
+'dim as uinteger a
 for a=1 to 512
     tiles(a).movecost=1
 next
@@ -2516,3 +2519,8 @@ tiles(411).col=7
 tiles(411).desc="habitat"
 tiles(411).gives=411
 tiles(411).turnsinto=411
+
+'f=freefile
+'open "data/tiles.dat" for binary as #f
+'get #f,,tiles()
+'close #f
