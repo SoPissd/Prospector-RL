@@ -1884,7 +1884,7 @@ Declare Function income_expenses_html() As String
 Declare Function play_poker(st As Short) As Short
 Declare Function card_shuffle(card() As Integer) As Short
 
-Declare Function font_load_bmp(ByRef _filename As String) As UByte Ptr
+'Declare Function font_load_bmp(ByRef _filename As String) As UByte Ptr
 
 Declare Function player_eval(p() As _pokerplayer,i As Short,rules As _pokerrules) As Short
 Declare Function change_captain_appearance(x As Short,y As Short) As Short
