@@ -1798,7 +1798,7 @@ function first_uc(t as string) as string
 end function
 
 function exploration_text_html() as string
-    return text_to_html(exploration_text)
+    return text_to_html(exploration_text())
 end function
 
 function items_table() as string

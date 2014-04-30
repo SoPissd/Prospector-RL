@@ -263,7 +263,7 @@ function post_mortemII(text as string) as short
         select case page
         case 0 'Achievments
             textbox("|"&income,2,4,half,11,1,,,offset)
-            textbox("|"&exploration_text ,2+half*_fw2/_fw1,4,half,11,1,,,offset)
+            textbox("|"&exploration_text() ,2+half*_fw2/_fw1,4,half,11,1,,,offset)
         case 1 'Uniques and artifacts
             textbox("|"&list_artifacts(artflag()),2,4,half,11,1,,,offset)
             textbox("|"&uniques(unflags()),2+half*_fw2/_fw1,4,half,11,1,,,offset)

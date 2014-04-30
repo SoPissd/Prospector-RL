@@ -71,7 +71,7 @@ load_palette()
 If Not fileexists("register") Then
     Cls
     If askyn("This is the first time you start prospector. Do you want to see the keybindings before you start?(Y/N)") Then
-       keybindings
+       keybindings()
     EndIf
     Cls
     f=Freefile
