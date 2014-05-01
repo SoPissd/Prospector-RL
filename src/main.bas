@@ -50,7 +50,7 @@ Draw String(ds_x,ds_y),ds_text,,ds_font,custom,@ds_col
 #Include Once "texts.bas"
 
 #ifdef __FB_DEBUG__				'files above here trigger an error when below.
-	#include "fbmld.bi"			'lets me trigger errors
+	#include "fbmld.bi"			'memory-leak-detector; position of include lets me trigger errors
 #endif								'files below this line compile fine after it
 
 #Include Once "cargotrade.bas"
@@ -244,9 +244,7 @@ Do
         gamerunning=0
     EndIf
 Loop Until configflag(con_restart)=1
-#IfDef _FMODSOUND
-fSOUND_close
-#EndIf
+set_volume(-1)
 End
 
 Function start_new_game() As Short
@@ -4629,12 +4627,7 @@ Function hitmonster(defender As _monster,attacker As _monster,mapmask() As Byte,
     Dim slbc As Short
     Dim As Short slot,xpgained,tacbonus,targetnumber
     slot=player.map
-    #IfDef _FMODSOUND
-    If configflag(con_sound)=0 Or configflag(con_sound)=2 Then FSOUND_PlaySound(FSOUND_FREE, Sound(3))
-    #EndIf
-    #IfDef _FBSOUND
-    If configflag(con_sound)=0 Or configflag(con_sound)=2 Then fbs_Play_Wave(Sound(3))
-    #EndIf
+    play_sound(3)
     If defender.movetype=mt_fly Then
         mname="flying "
         targetnumber=15

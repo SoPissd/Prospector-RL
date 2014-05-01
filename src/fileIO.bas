@@ -222,51 +222,48 @@ end function
 
 function load_sounds() as short
 #Ifdef _sound
-   Dim i As Short
-   Dim nSounds As Short
-   nSounds=12
-   Dim sounds(nSounds) as string
-   sounds(1)="alarm_1"
-   sounds(2)="alarm_2"
-   sounds(3)="weap_1"
-   sounds(4)="weap_1"
-   sounds(5)="wormhole"
-   sounds(6)=""
-   sounds(7)="weap_4"
-   sounds(8)="weap_3"
-   sounds(9)="weap_5"
-   sounds(10)="start"
-   sounds(11)="land"
-   sounds(12)="pain"
+    Dim i As Short
+    Dim nSounds As Short
+    nSounds=12
+    Dim sounds(nSounds) as string
+    sounds(1)="alarm_1"
+    sounds(2)="alarm_2"
+    sounds(3)="weap_1"
+    sounds(4)="weap_1"
+    sounds(5)="wormhole"
+    sounds(6)=""
+    sounds(7)="weap_4"
+    sounds(8)="weap_3"
+    sounds(9)="weap_5"
+    sounds(10)="start"
+    sounds(11)="land"
+	sounds(12)="pain"
 
-   Print
-   print "Loading sounds:";
+	print "Loading sounds:";
    
 	#ifdef _FMODSOUND
-	   fsound_init(48000,11,0)
-		print FSOUND_geterror();
-	   Dim iLvl As Short
-		iLvl=0
-		If _Volume = 1 THEN iLvl=63
-		If _Volume = 2 THEN iLvl=128
-		If _Volume = 3 THEN iLvl=190
-		If _Volume = 4 THEN iLvl=255
-	   FSOUND_SetSFXMasterVolume(iLvl)
-	   For i= 1 To nSounds
-			sound(i)= FSOUND_Sample_Load(FSOUND_FREE, "data/" &sounds(i) &".wav", 0, 0, 0)
-			print ".";
-	   Next
+	   if fsound_init(48000,11,0)=0 then
+			set_volume(_Volume)
+		   For i= 1 To nSounds
+				sound(i)= FSOUND_Sample_Load(FSOUND_FREE, "data/" &sounds(i) &".wav", 0, 0, 0)
+				print ".";
+		   Next
+	   else	   	
+			print "Error " &FSOUND_geterror() &" initializing FMODsound!"
+			sleep 1500
+	   EndIf
     #endif
     #ifdef _FBSOUND
 		dim ok as FBSBOOLEAN
 		'fbs_Init(48000,2,11,2048,0)
 		ok=fbs_Init()
 		if ok=true then
-			fbs_Set_MasterVolume(_Volume/2.0)
-		   For i= 1 To nSounds
-		   	fbs_Load_WAVFile("data/" &sounds(i) &".wav",@sound(1))
+			set_volume(_Volume)
+			For i= 1 To nSounds
+			   	fbs_Load_WAVFile("data/" &sounds(i) &".wav",@sound(1))
 				print ".";
-		   Next
+			Next
+			Print
 		else
 			print "Error initializing FBsound!"
 			sleep 1500
@@ -277,6 +274,24 @@ function load_sounds() as short
 	return 0
 end function
 
+function set_volume(volume as Integer) as short
+	#ifdef _FMODSOUND
+	   Dim iLvl As Short
+		iLvl=0
+		If volume = 1 then iLvl=63
+		If volume = 2 then iLvl=128
+		If volume = 3 then iLvl=190
+		If volume = 4 then iLvl=255
+	   FSOUND_SetSFXMasterVolume(iLvl)
+		If volume = -1 then fSOUND_close
+	#endif
+	#ifdef _FBSOUND
+		If volume= -1 then volume= 0
+		fbs_Set_MasterVolume(volume/2.0)
+	#endif   	
+	return 0
+End Function
+   
 Function play_sound(iSound As Short,iRepeats As Short=1,iDelay As Short=0) as short
 	#IfNDef _sound
 		return 0
@@ -1937,16 +1952,7 @@ function configuration() as short
         case con_volume
             rlprint "Select volume (0-4)"
             _volume=getnumber(0,4,_volume)
-            #ifdef _FMODSOUND
-            IF _volume = 0 THEN FSOUND_SetSFXMasterVolume(0)
-            IF _volume = 1 THEN FSOUND_SetSFXMasterVolume(63)
-            IF _volume = 2 THEN FSOUND_SetSFXMasterVolume(128)
-            IF _volume = 3 THEN FSOUND_SetSFXMasterVolume(190)
-            IF _volume = 4 THEN FSOUND_SetSFXMasterVolume(255)
-            #endif
-            #ifdef _FBSOUND
-            fbs_Set_MasterVolume(_volume/2.0)
-            #endif
+            set_volume(_volume)
         case con_res
             d=menu(bg_randompic,"Resolution/Tiles/Text/Lines/Classic look: "& onoff(configflag(con_customfonts))&" (overrides if on)/Exit")
             if d=1 then
@@ -2128,9 +2134,7 @@ function load_config() as short
         _mwx=60
     endif
 
-    #ifdef _FBSOUND
-    fbs_Set_MasterVolume(_volume/2.0)
-    #endif
+	set_volume(_volume)
     if sm_x>200 then sm_x=200
     if sm_y>200 then sm_y=200
     redim spacemap(sm_x,sm_y)

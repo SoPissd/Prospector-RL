@@ -1241,20 +1241,11 @@ function com_fire(byref target as _ship,byref attacker as _ship,byref w as short
         if attacker.weapons(a).made=93 then tohitbonus+=1
         if attacker.weapons(a).made=94 then tohitbonus+=2
     next
-    #ifdef _FMODSOUND
     if distance(target.c,attacker.c)<(attacker.sensors+2)*attacker.senac then
-        if attacker.weapons(a).ammomax>0 and ROF>0 and (configflag(con_sound)=0 or configflag(con_sound)=2) then FSOUND_PlaySound(FSOUND_FREE, sound(7)) 'Laser
-        if attacker.weapons(a).ammomax>0 and ROF=0 and (configflag(con_sound)=0 or configflag(con_sound)=2) then FSOUND_PlaySound(FSOUND_FREE, sound(8)) 'Missile battery
-        if attacker.weapons(a).ammomax=0 and (configflag(con_sound)=0 or configflag(con_sound)=2) then FSOUND_PlaySound(FSOUND_FREE, sound(9)) 'Missile
+        if weapon.ammomax>0 and ROF>0 Then	play_sound(7) 	'Laser        	
+        if weapon.ammomax>0 and ROF=0 then	play_sound(8)	'Missile battery
+        if weapon.ammomax=0 then 			play_sound(9)	'Missile
     endif
-    #endif
-    #ifdef _FBSOUND
-    if distance(target.c,attacker.c)<(attacker.sensors+2)*attacker.senac then
-        if weapon.ammomax>0 and ROF>0 Then fbs_Play_Wave(sound(7)) 'Laser        	
-        if weapon.ammomax>0 and ROF=0 then fbs_Play_Wave(sound(8)) 'Missile battery
-        if weapon.ammomax=0 then fbs_Play_Wave(sound(9)) 'Missile
-    endif
-    #EndIf
     do
         firefree=0
         if attacker.weapons(w).ammo=0 then
