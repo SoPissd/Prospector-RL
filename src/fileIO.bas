@@ -2167,6 +2167,9 @@ function getfilename() as string
     dim f as integer
     dim i as integer
     dim as short j,ll,ca
+    
+    dim as integer crashfile, crashnr
+    
     text="Savegames:"
     a=dir$("savegames/*.sav")
     while a<>""
@@ -2174,7 +2177,10 @@ function getfilename() as string
             c+=1
             n(c)=a
 
-
+			crashfile= instr(n(c),"crash")
+			if crashfile>0 then
+				crashnr=val(mid(n(c),crashfile+len("crash"),1))
+			EndIf
 
             f=freefile
             open "savegames/"&n(c) for binary as #f
@@ -2184,6 +2190,13 @@ function getfilename() as string
             get #f,,unflags()
             get #f,,artflags()
             close #f
+            
+            text=text &"/" & b &d &"("&datestring &")"
+
+	        if crashfile>0 then
+				text=text & " !" & crashnr
+			EndIf
+				            
             ll=0
             for j=0 to lastspecial
                 if unflags(j)=1 then ll+=1
@@ -2202,6 +2215,11 @@ function getfilename() as string
             else
                 help=help &"|"& trim(list_artifacts(artflags()))
             endif
+            
+	        if crashfile>0 then
+				help=help & "|This is a crash-file.|"
+			EndIf
+            
         endif
         a=dir()
     wend
