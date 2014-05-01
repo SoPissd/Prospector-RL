@@ -2048,6 +2048,15 @@ Declare Function planetflags_toship(m As Short) As _ship
 Declare Function can_learn_skill(ci As Short,si As Short) As Short
 Declare Function form_alliance(who As Short) As Short
 Declare Function ask_alliance(who As Short) As Short
+'
+Declare Function log_error(text as string) As Short					' writes to error log
+Declare Function error_message() As String							' builds error message
+Declare Function error_handler(text as string) As Short				' system error handler
+'
+#if __FB_DEBUG__
+Declare Function log_warning(aFile as string, aFunct as string, iLine as short, text as string) as Short ' use LogWarning(text)
+#endif
+#Define LogWarning(Text) Assert(log_warning(__FILE__,__FUNCTION__,__LINE__,Text))						' disappears from release
 
 Declare Function colonize_planet(st As Short) As Short
 Declare Function get_com_colon_candidate(st As Short) As Short

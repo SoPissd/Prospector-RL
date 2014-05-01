@@ -4871,11 +4871,6 @@ End Function
 
 ' error handling
 
-Dim As Byte attempts
-
-
-' error handling
-
 Dim as Short ErrorNr
 Dim as Short ErrorLn
 Dim as String ErrText

@@ -2358,7 +2358,7 @@ function savegame(crash as short=0) as short
     names=player.desig
     desig="("&cl &", "&credits(player.money) &" Cr, T:" &display_time(player.turn,2) &")"
     datestring=date_string
-    cls
+    'cls
     back=99
     f=freefile
     fname="savegames/"&player.desig
@@ -2615,8 +2615,8 @@ function savegame(crash as short=0) as short
     endif
     'Done with compressed file stuff
 
-    set__color( 14,0)
-    cls
+    'set__color( 14,0)
+    'cls
     return back
 end function
 
