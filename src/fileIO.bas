@@ -2923,7 +2923,8 @@ function load_game(filename as string) as short
         player.desig=filename
     endif
     cls
-    if debug=1 and _debug=1 then
+    
+    if _debugBuild or (debug=1 and _debug=1) then
         f=freefile
         open "portals.csv" for output as #f
         for a=0 to lastportal
@@ -2934,7 +2935,7 @@ function load_game(filename as string) as short
 
     endif
 
-    if debug=2 and _debug=1 then
+    if _debugBuild or (debug=2 and _debug=1) then
         f=freefile
         open "items.csv" for output as #f
         for a=0 to lastitem
@@ -2943,7 +2944,7 @@ function load_game(filename as string) as short
         close #f
     endif
 
-    if debug=10 and _debug=1 then
+    if _debugBuild or (debug=10 and _debug=1) then
         f=freefile
         open "factions.csv" for output as #f
         for a=0 to 5
@@ -2957,7 +2958,7 @@ function load_game(filename as string) as short
 
     endif
     
-    if _debug=1110 then
+    if _debugBuild or (_debug=1110) then
         f=freefile
         open "Fleetdump.csv" for output as #f
         print #f,_NoPB

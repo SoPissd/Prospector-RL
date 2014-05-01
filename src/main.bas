@@ -103,7 +103,7 @@ If Not fileexists("register") Then
     set__color(11,0)
 EndIf
 
-If _debug=601 Then
+If _debugBuild or (_debug=601) Then
     f=Freefile
     Open "weapdump.csv" For Output As #f
     For a=0 To 100
@@ -120,7 +120,7 @@ EndIf
 
 Do
     setglobals
-    if _debug=2704 then
+    if _debugBuild or (_debug=2704) then
         f=Freefile
         Open "tiles.csv" For Output As #f
         For a=1 To 400
@@ -256,7 +256,7 @@ Function start_new_game() As Short
     'debug=127
     
     make_spacemap()
-    If debug=1 And _debug=1 Then
+    If _debugBuild or (debug=1 And _debug=1) Then
         f=Freefile
         Open "planettemp.csv" For Output As #f
         For a=0 To laststar
