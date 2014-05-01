@@ -2352,6 +2352,28 @@ function getbonesfile() as string
     return s
 end function
 
+function savegame_crashfilename(fname as String, ext as String) as String
+	' use an unnumbered crash file
+	' if one already exists, find a non-existing crash-file numbered from 1 to 9
+	' wrap-around delete the next one so that there are at max 8 + the original, or 9 crash files per game 
+	if not fileexists(fname+ext) then return fname+ext
+	dim as short i,j
+	j=0
+	for i= 1 to 9 
+		if not fileexists(fname & i & ext) then 
+			j=i
+			exit for
+		EndIf		
+	Next
+	if (j=0) then j=1
+	if (j=9) then
+		kill(fname & 1 & ext)
+	else 
+		kill(fname & j+1 & ext)
+	EndIf
+    return fname & j & ext		
+End Function
+
 function savegame(crash as short=0) as short
     dim back as short
     dim a as short
@@ -2383,7 +2405,7 @@ function savegame(crash as short=0) as short
     if crash=0 then 
         fname=fname &".sav"
     else
-        fname=fname &"-crash.sav"
+        fname=savegame_crashfilename(fname &"-crash",".sav")
     endif
     print "Saving "&fname;
     open fname for binary as #f
