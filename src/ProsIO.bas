@@ -973,17 +973,6 @@ function display_ship(show as byte=0) as short
     if player.fuel<(player.fuelmax+player.fuelpod)*0.2 then set__color(c_red,0)
     draw string(sidebar+11*_fw2,(wl+4)*_fh2) ,space(10-len(round_str(player.fuel,1)))&round_str(player.fuel,1) ,,Font2,custom,@_col
 
-    if player.fuel<(player.fuelmax+player.fuelpod)*0.5 then
-        if wg=0 then
-            wg=1
-            rlprint "Fuel low",14
-			play_sound(2)
-            if configflag(con_sound)=2 then no_key=keyin(" "&key__enter &key__esc)
-        endif
-        set__color( 14,0)
-
-    endif
-
     if player.fuel<(player.fuelmax+player.fuelpod)*0.2 then
         if wg=1 then
             wg=2
@@ -992,6 +981,16 @@ function display_ship(show as byte=0) as short
             if configflag(con_sound)=2 then no_key=keyin(" "&key__enter &key__esc)
         endif
         set__color( 12,0)
+	else        
+	    if player.fuel<(player.fuelmax+player.fuelpod)*0.5 then
+        	if wg=0 then
+	            wg=1
+	            rlprint "Fuel low",14
+				play_sound(2)
+	            if configflag(con_sound)=2 then no_key=keyin(" "&key__enter &key__esc)
+	        endif
+	        set__color( 14,0)
+	    endif
     endif
 
     if player.turn mod 20=0 then low_morale_message
