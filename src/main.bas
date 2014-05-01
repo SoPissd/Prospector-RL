@@ -3822,8 +3822,8 @@ Function grenade(from As _cords,map As Short) As _cords
             ep_display(osx)
             display_awayteam(,osx)
             Key=Cursor(target,map,osx,,5+item(launcher).v1-planets(map).grav)
-            If Key=key_te Or Ucase(Key)=" " Or Multikey(SC_ENTER) Then ex=-1
-            If Key=key_quit Or Multikey(SC_ESCAPE) Then ex=1
+            If Key=key_te Or Ucase(Key)=" " Or Multikey(FB.SC_ENTER) Then ex=-1
+            If Key=key_quit Or Multikey(FB.SC_ESCAPE) Then ex=1
         Loop Until ex<>0
     Else
         rlprint "Choose direction"
@@ -3922,8 +3922,8 @@ Function teleport(from As _cords,map As Short) As _cords
         Key=planet_cursor(target,map,osx,1)
         display_awayteam(,osx)
         Key=Cursor(target,map,osx,,10)
-        If Key=key_te Or Ucase(Key)=" " Or Multikey(SC_ENTER) Then ex=1
-        If Key=key_quit Or Multikey(SC_ESCAPE) Then ex=-1
+        If Key=key_te Or Ucase(Key)=" " Or Multikey(FB.SC_ENTER) Then ex=1
+        If Key=key_quit Or Multikey(FB.SC_ESCAPE) Then ex=-1
     Loop Until ex<>0
     If ex=1 Then
             from.x=target.x

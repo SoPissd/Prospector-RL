@@ -2,8 +2,8 @@
 ' debugging flags 0=off 1 =on
 '
 
-Using FB
-Using cards
+'Using FB
+'Using cards
 
 Randomize Timer
 
@@ -1690,7 +1690,7 @@ Dim Shared currapwp As Short
 Dim Shared apdiff As Short
 
 Dim Shared talent_desig(29) As String
-Dim Shared evkey As Event
+Dim Shared evkey As FB.Event
 'dim shared video as SDL_Surface ptr
 Dim Shared reward(11) As Single
 Dim Shared ano_money As Short

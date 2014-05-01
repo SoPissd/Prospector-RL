@@ -3071,8 +3071,8 @@ Function ep_fire(mapmask() As Byte,Key As String,ByRef autofire_target As _cords
             ep_display(osx)
             no_key=Cursor(p,slot,osx)
             If distance(p,awayteam.c)>range Then p=p1
-            If no_key=key_te Or Ucase(no_key)=" " Or Multikey(SC_ENTER) Then a=1
-            If no_key=key_quit Or Multikey(SC_ESCAPE) Then a=-1
+            If no_key=key_te Or Ucase(no_key)=" " Or Multikey(FB.SC_ENTER) Then a=1
+            If no_key=key_quit Or Multikey(FB.SC_ESCAPE) Then a=-1
         Loop Until a<>0
         autofire_target=p
 

@@ -398,7 +398,7 @@ function load_fonts() as short
     if _screeny<>_lines*_fh1 then _screeny=_lines*_fh1
     _textlines=fix((22*_fh1)/_fh2)+fix((_screeny-_fh1*22)/_fh2)-1
     _screenx=_mwx*_fw1+25*_fw2
-    screenres _screenx,_screeny,16,2,GFX_WINDOWED
+    screenres _screenx,_screeny,16,2,FB.GFX_WINDOWED
     if debug=1 and _debug=1 then print #f,"Made screen"
     
     Print "Loading Fonts"
@@ -417,7 +417,7 @@ function load_fonts() as short
     else
         _screenx=1024
         _screeny=768
-        screenres _screenx,_screeny,16,2,GFX_WINDOWED
+        screenres _screenx,_screeny,16,2,FB.GFX_WINDOWED
         width _screenx/8,_screeny/16
         'font1=load_font("FH1.bmp",16)
         'font2=load_font("FH1.bmp",16)
@@ -450,7 +450,7 @@ function load_fonts() as short
     _textlines=fix((22*_fh1)/_fh2)+fix((_screeny-_fh1*22)/_fh2)-1
     _screenx=_mwx*_fw1+25*_fw2
 '    screenres _screenx,_screeny,16,2,(GFX_ALWAYS_ON_TOP OR GFX_WINDOWED)
-    screenres _screenx,_screeny,16,2,GFX_WINDOWED
+    screenres _screenx,_screeny,16,2,FB.GFX_WINDOWED
     sidebar=(_mwx+1)*_fw1+_fw2
 
     if debug=1 and _debug=1 then

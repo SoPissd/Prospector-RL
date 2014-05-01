@@ -26,43 +26,43 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
 '                    endif
 '                endif
                 Select Case evkey.type
-                    case EVENT_KEY_REPEAT
+               	case FB.EVENT_KEY_REPEAT
                         while screenevent(@evkey)
                         wend
                         key=lastkey
-                    Case (EVENT_KEY_PRESS)
+                	Case (FB.EVENT_KEY_PRESS)
                         if debug =1 then
                             locate 1,1
-                            print evkey.scancode &":"& evkey.ascii &":"&EVENT_KEY_PRESS &":"&EVENT_KEY_REPEAT
+                            print evkey.scancode &":"& evkey.ascii &":"&FB.EVENT_KEY_PRESS &":"&FB.EVENT_KEY_REPEAT
                         endif
                         select case evkey.scancode
-                        case sc_down
+									case FB.sc_down
                             key = key_south
-                        case sc_up
+                        	case FB.sc_up
                             key = key_north
-                        case sc_left
+                        	case FB.sc_left
                             key = key_west
-                        case sc_right
+                        	case FB.sc_right
                             key = key_east
-                        case sc_home
+                        	case FB.sc_home
                             key = key_nw
-                        case sc_pageup
+                        	case FB.sc_pageup
                             key = key_ne
-                        case sc_end
+                        	case FB.sc_end
                             key = key_sw
-                        case sc_pagedown
+                        	case FB.sc_pagedown
                             key = key_se
-                        case sc_escape
+                        	case FB.sc_escape
                             key=key__esc
-                        case sc_enter
+                        	case FB.sc_enter
                             key=key__enter
-                        case sc_pageup
+                       		case FB.sc_pageup
                             key=key_pageup
-                        case sc_pagedown
+                        	case FB.sc_pagedown
                             key=key_pagedown
-                        'case sc_control
-                        '    control="\C"
-                        case else
+                        	'case sc_control
+                        	' control="\C"
+                        	case else
                             if evkey.ascii<=26 then
                                 key="\C"&chr(evkey.ascii+96)
                             else
@@ -341,7 +341,7 @@ function gettext(x as short, y as short, ml as short, text as string,pixel as sh
                 if lasttimer>200 then lasttimer=0
             loop until screenevent(@evkey)
             
-            if evkey.type=EVENT_KEY_press then
+            if evkey.type=FB.EVENT_KEY_press then
                 if evkey.ascii=asc(key__esc) then key=key__esc
                 if evkey.ascii=8 then key=chr(8)
                 if evkey.ascii=32 then key=chr(32)
@@ -514,7 +514,7 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
     
     dim as any ptr logo
     if bg=bg_title then
-        logo=bmp_load("graphics/prospector.bmp")
+        logo=cards.bmp_load("graphics/prospector.bmp")
     endif
     text=te
     help=he
