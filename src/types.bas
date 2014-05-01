@@ -2069,6 +2069,7 @@ Declare Function count_lines(file As String) As Short
 Declare Function delete_custom(pir As Short) As Short
 Declare Function load_key(ByVal t As String,ByRef n As String="") As String
 Declare Function assertpath(folder as string) as short
+Declare Function file_size(filename as string) as integer
 Declare Function check_filestructure() As Short
 '
 Declare Function load_sounds() As Short

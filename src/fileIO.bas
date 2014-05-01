@@ -149,31 +149,43 @@ function assertpath(folder as string) as short
     endif
 end function
 
+function file_size(filename as string) as integer
+	Dim as Integer f, size
+	f = FreeFile
+	if Open(filename, For Binary, As #f)=0 then
+		size= LOF(f)
+		Close #f
+		return size
+	EndIf
+	return -1
+end function
+
 function check_filestructure() as short
-    if chdir("data")=-1 then
-        set__color(c_yel,0)
-        print "Can't find folder 'data'. Try reinstalling the game."
-        sleep
-        end
-    else
-        chdir("..")
-    endif
+	if chdir("data")=-1 then
+		set__color(c_yel,0)
+		print "Can't find folder 'data'. Try reinstalling the game."
+		sleep
+		end
+	else
+		chdir("..")
+	endif
 
-    if (assertpath("bones")=-1) _
-    or (assertpath("savegames")=-1) _
-    or (assertpath("summary")=-1) _
-    then
-        set__color(c_yel,0)
-        print "Can not create folder. Try reinstalling the game."
-        sleep
-        end
-    endif
+	if (assertpath("bones")=-1) _
+	or (assertpath("savegames")=-1) _
+	or (assertpath("summary")=-1) _
+	then
+		set__color(c_yel,0)
+		print "Can not create folder. Try reinstalling the game."
+		sleep
+		end
+	endif
 
-    if not fileexists("savegames/empty.sav") then
-        player.desig="empty"
-        savegame()
-    endif
-    return 0
+	if fileexists("savegames/empty.sav") _ 
+	and (file_size("savegames/empty.sav")>0) then return 0
+	' not there or was empty for some reason yet to be eradicated
+	player.desig="empty"
+	savegame()
+	return 0
 end function
 
 function load_palette() as short
@@ -210,9 +222,6 @@ function load_palette() as short
         if debug=2 and _debug=1 then print i;":";
     loop until eof(f)
     close #f
-
-
-
     return 0
 end function
 
@@ -315,9 +324,7 @@ Function play_sound(iSound As Short,iRepeats As Short=1,iDelay As Short=0) as sh
 	#EndIf
 End Function
 
-
 ' /sound support
-
 
 function load_map(m as short,slot as short)as short
     dim as short f,b,x,y
@@ -462,7 +469,7 @@ function load_fonts() as short
     if _screeny<>_lines*_fh1 then _screeny=_lines*_fh1
     _textlines=fix((22*_fh1)/_fh2)+fix((_screeny-_fh1*22)/_fh2)-1
     _screenx=_mwx*_fw1+25*_fw2
-'    screenres _screenx,_screeny,16,2,(GFX_ALWAYS_ON_TOP OR GFX_WINDOWED)
+    screenres _screenx,_screeny,16,2,(GFX_ALWAYS_ON_TOP OR GFX_WINDOWED)
     screenres _screenx,_screeny,16,2,FB.GFX_WINDOWED
     sidebar=(_mwx+1)*_fw1+_fw2
 
@@ -1727,7 +1734,6 @@ function load_keyset() as short
                 if instr(lctext,"key_activatesensors")>0 then key_ac=load_key(text)
                 if instr(lctext,"key_run")>0 then key_ru=load_key(text)
                 if instr(lctext,"key_togglemanjets")>0 then key_togglemanjets=load_key(text)
-                if instr(lctext,"key_autoexplore")>0 then key_autoexplore=load_key(text)
                 if instr(lctext,"key_yes")>0 then key_yes=load_key(text)
                 if instr(lctext,"key_extendedkey")>0 then key_extended=load_key(text)
 
