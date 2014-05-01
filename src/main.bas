@@ -26,45 +26,54 @@ Print
 	#EndIf
 #EndIf
 
-#Include Once "fbgfx.bi"
-#Include Once "zlib.bi"
-#Include Once "file.bi"
-#Include "cardobj.bi"
-#Include "string.bi"
-#Include Once "types.bas"
+'
 
-#Include Once "tiles.bas"
-'f=freefile
-'open "data/tiles.dat" for binary as #f
-'get #f,,tiles()
-'close #f
-#Include Once "credits.bas"
-#Include Once "retirement.bas"
+#Include Once "fbgfx.bi"
+#Include Once "cardobj.bi"
+#Include Once "types.bas"		'needs cardobj.bi, fbgfx.bi
+#Include Once "tiles.bas"		'needs types.bas		
+#Include Once "astar.bas"		'needs types.bas
 #Include Once "math.bas"
-#Include Once "astar.bas"
+#Include Once "credits.bas"	'needs math.bas
+#Include Once "retirement.bas"'needs types.bas
+#Include Once "quests.bas"		'needs types.bas
+#Include Once "file.bi"			'needs fbgfx.bi
+
+#Macro draw_string(ds_x,ds_y,ds_text,ds_font,ds_col)
+Draw String(ds_x,ds_y),ds_text,,ds_font,custom,@ds_col
+#EndMacro
+
+#Include Once "highscore.bas"	'needs file.bi, draw_string
+#Include Once "zlib.bi"
+#Include Once "fileIO.bas"		'needs file.bi, zlib.bi
+
+#Include Once "texts.bas"
+
+#ifdef __FB_DEBUG__				'files above here trigger an error when below.
+	#include "fbmld.bi"			'lets me trigger errors
+#endif								'files below this line compile fine after it
+
+#Include Once "cargotrade.bas"
+#Include Once "crew.bas"
+
+#ifdef __FB_DEBUG__				'files above here trigger an error when below.
+	#ifdef __FB_WIN32__
+		#include once "windows.bi" 'mandatory for debugbreak
+	#endif
+#endif								'files below this line compile fine after it
+
+#Include Once "spacecom.bas"
+#Include Once "exploreplanet.bas"
 #Include Once "logbook2.bas"
 #Include Once "pirates.bas"
 #Include Once "planet.bas"
 #Include Once "items.bas"
 #Include Once "ProsIO.bas"
-#Include Once "highscore.bas"
-#Include Once "cargotrade.bas"
-'#include once "colonies.bas"
-#Include Once "quests.bas"
-#Include Once "spacecom.bas"
-#Include Once "fileIO.bas"
-#Include Once "exploreplanet.bas"
-#Include Once "texts.bas"
-#Include Once "crew.bas"
 #Include Once "space.bas"
 #Include Once "kbinput.bas"
 #Include Once "globals.bas"
 #Include Once "compcolon.bas"
 #Include Once "poker.bas"
-
-'#Include Once "string.bi"
-
-'#Include Once "debug2.bas" 'Secondary debug switch
 
 ' start
 
