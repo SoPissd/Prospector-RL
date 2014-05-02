@@ -77,6 +77,7 @@ Draw String(ds_x,ds_y),ds_text,,ds_font,custom,@ds_col
 
 ' start
 
+chdir exepath
 check_filestructure()
 load_config()
 load_fonts()
