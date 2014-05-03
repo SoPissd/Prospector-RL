@@ -548,14 +548,11 @@ end function
 Dim Shared alliance(7) As Byte
 
 Function _ship.diop() As Byte
-    If this.di=1 Then Return 9
-    If this.di=2 Then Return 8
-    If this.di=3 Then Return 7
-    If this.di=4 Then Return 6
-    If this.di=6 Then Return 4
-    If this.di=7 Then Return 3
-    If this.di=8 Then Return 2
-    If this.di=9 Then Return 1
+    If this.di>=1 and this.di<=9 then 
+		return 10-this.di
+	else
+	    return 0
+    EndIf
 End Function
 
 Type _monster
