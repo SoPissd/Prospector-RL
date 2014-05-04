@@ -35,36 +35,36 @@ DbgScreeninfo
 
 #Include Once "fbgfx.bi"
 #Include Once "cardobj.bi"
-#Include Once "types.bas"		'needs cardobj.bi, fbgfx.bi
-#Include Once "tiles.bas"		'needs types.bas		
-#Include Once "astar.bas"		'needs types.bas
+#Include Once "types.bas"			'needs cardobj.bi, fbgfx.bi
+#Include Once "tiles.bas"			'needs types.bas		
+#Include Once "astar.bas"			'needs types.bas
 #Include Once "math.bas"
-#Include Once "credits.bas"	'needs math.bas
-#Include Once "retirement.bas"'needs types.bas
-#Include Once "quests.bas"		'needs types.bas
-#Include Once "file.bi"			'needs fbgfx.bi
+#Include Once "credits.bas"			'needs math.bas
+#Include Once "debug2.bas"			'last include. null stubs or code for running with -g
+#Include Once "retirement.bas"		'needs types.bas
+#Include Once "quests.bas"			'needs types.bas
+#Include Once "file.bi"				'needs fbgfx.bi
 
 #Macro draw_string(ds_x,ds_y,ds_text,ds_font,ds_col)
 Draw String(ds_x,ds_y),ds_text,,ds_font,custom,@ds_col
 #EndMacro
 
-#Include Once "highscore.bas"	'needs file.bi, draw_string
+#Include Once "highscore.bas"		'needs file.bi, draw_string
 #Include Once "zlib.bi"
-#Include Once "fileIO.bas"		'needs file.bi, zlib.bi
+#Include Once "fileIO.bas"			'needs file.bi, zlib.bi
 
 #Include Once "texts.bas"
 
-#ifdef __FB_DEBUG__				'files above here trigger an error when below.
-	#include "fbmld.bi"			'memory-leak-detector; position of include lets me trigger errors
+#ifdef _DbgOptLoadMLD				'files above here trigger an error when below.
+	#include "fbmld.bi"				'memory-leak-detector; position of include lets me trigger errors
 #endif								'files below this line compile fine after it
 
 #Include Once "cargotrade.bas"
 #Include Once "crew.bas"
 
-#ifdef __FB_DEBUG__				'files above here trigger an error when below.
-	#ifdef __FB_WIN32__
-		#include once "windows.bi" 'mandatory for debugbreak
-	#endif
+#ifdef _DbgOptLoadWin				'files above here trigger an error when below.
+	#include once "windows.bi" 		'windows header, mandatory for debugbreak & console
+	'#include once "winbase.bi"		'windows header, mandatory for debugbreak
 #endif								'files below this line compile fine after it
 
 #Include Once "spacecom.bas"
