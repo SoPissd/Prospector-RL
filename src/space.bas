@@ -846,14 +846,8 @@ function add_caves() as short
                 
             endif
     next
-    if debug=1 and _debug=1 then
-        a=freefile
-        open "portals.csv" for output as #a
-        for b=0 to lastportal
-            print #a,portal(b).from.x;";";portal(b).from.y;";";portal(b).from.m;";";portal(b).dest.x;";";portal(b).dest.y;";";portal(b).dest.m
-        next
-        close #a
-    endif
+	DbgPortalsCSV
+
     return 0
 end function
 

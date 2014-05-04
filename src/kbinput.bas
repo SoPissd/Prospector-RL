@@ -95,14 +95,10 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
         endif
         if blocked=0 or blocked>=97 then
                         
-            if _debug>0 and key="\Ci" then
-                rlprint "Itemdump"
-                f=freefile
-                open "itemdump.txt" for output as #f
-                for i=0 to lastitem
-                    print #f,i &";"&item(i).desig &";"&item(i).w.s &"m:"& item(i).w.m &"C:"&cords(item(i).w)
-                next
-                close #f
+#if __FB_DEBUG__
+            if debug>0 and key="\Ci" then
+            	DbgItemDump
+
             endif
             
             if _debug=-1 and key="�" then
@@ -113,14 +109,8 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
                 next
             endif
             
-            if _debug>0 and key="�" then
-                rlprint "Fleetdump"
-                f=freefile
-                open "fleets.csv" for output as #f
-                for i=0 to lastfleet
-                    print #f,i &";"& fleet(i).ty  &";"& fleet(i).count  &";"& cords(fleet(i).c)
-                next
-                close #f
+            if debug>0 and key="�" then
+            	DbgFleetsDump
             endif
                 
             

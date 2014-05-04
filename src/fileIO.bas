@@ -2964,59 +2964,11 @@ function load_game(filename as string) as short
     endif
     cls
     
-    if _debugBuild or (debug=1 and _debug=1) then
-        f=freefile
-        open "portals.csv" for output as #f
-        for a=0 to lastportal
-            print #f,portal(a).from.x &";"&portal(a).from.y &";"&portal(a).from.m &";"& portal(a).dest.x &";"&portal(a).dest.y &";"&portal(a).dest.m &";"&portal(a).oneway
-        next
-        print #f,player.map
-        close #f
-
-    endif
-
-    if _debugBuild or (debug=2 and _debug=1) then
-        f=freefile
-        open "items.csv" for output as #f
-        for a=0 to lastitem
-            if item(a).w.s<0 then print #f,item(a).desig &";"&item(a).w.s &";"& item(a).ty &";"&item(a).uid
-        next
-        close #f
-    endif
-
-    if _debugBuild or (debug=10 and _debug=1) then
-        f=freefile
-        open "factions.csv" for output as #f
-        for a=0 to 5
-            text=""
-            for b=0 to 5
-                text=text &faction(a).war(b) &";"
-            next
-            print #f,text
-        next
-        close #f
-
-    endif
-    
-    if _debugBuild or (_debug=1110) then
-        f=freefile
-        open "Fleetdump.csv" for output as #f
-        print #f,_NoPB
-        for a=0 to _NoPB
-            print #f,piratebase(a)
-        next
-        for a=0 to lastfleet
-            print #f,"Fleet "&fleet(a).ty &":"&cords(fleet(a).c)
-            for b=0 to 15
-                if fleet(a).mem(b).hull>0 then print #f,fleet(a).mem(b).hull
-            next
-        next
-        close #f
-        rlprint "Randombase:"&random_pirate_system
-    endif
-
+    DbgPortalsCSV
+    DbgItems2CSV
+	DbgFactionsCSV
+	DbgFleetsCSV
     return 0
-
 end function
 
 'Used by savepng

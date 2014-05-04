@@ -12,17 +12,22 @@ Print "Prospector "&__VERSION__
 Print "Built "+__DATE__+" "+__TIME__
 Print "FB."+__FB_VERSION__
 Print
+DbgScreeninfo
 
 ' sound support
 
 #IfDef _FBSOUND
+	#print (Sound support through fbsound)
 	#Define _sound
-	#Include "fbsound.bi"
+	#Include Once "fbsound.bi"
 #Else
 	#IfDef _FMODSOUND
+		#print (Sound support through fmodsound)
 		#Define _sound
 		#IncLib "fmod.dll"
 		#Include Once "fmod.bi"
+	#Else
+		#print (No sound support)
 	#EndIf
 #EndIf
 
@@ -75,6 +80,7 @@ Draw String(ds_x,ds_y),ds_text,,ds_font,custom,@ds_col
 #Include Once "compcolon.bas"
 #Include Once "poker.bas"
 
+
 ' start
 
 chdir exepath
@@ -85,6 +91,9 @@ If configflag(con_tiles)=0 Or configflag(con_sysmaptiles)=0 Then load_tiles()
 load_keyset()
 load_sounds()
 load_palette()
+
+DbgScreeninfo
+'sleep
 
 If Not fileexists("register") Then
     Cls
@@ -104,31 +113,11 @@ If Not fileexists("register") Then
     set__color(11,0)
 EndIf
 
-If _debugBuild or (_debug=601) Then
-    f=Freefile
-    Open "weapdump.csv" For Output As #f
-    For a=0 To 100
-        player.turn=a*1000
-        Print #f,display_time(player.turn)&","&make_item(96).desig
-        For b=0 To 10
-            'player.weapons(0)=make_weapon(6)
-            'print #f,player.weapons(0).desig
-        Next
-    Next
-    Close #f
-EndIf
-    
+DbgWeapdumpCSV   
 
 Do
     setglobals
-    if _debugBuild or (_debug=2704) then
-        f=Freefile
-        Open "tiles.csv" For Output As #f
-        For a=1 To 400
-            If tiles(a).gives>0 Then Print #f,a &";"&tiles(a).desc &";"& tiles(a).gives
-        Next
-        Close #f
-    End If
+    DbgTilesCSV   
 
     Do
         
@@ -152,24 +141,17 @@ Do
         If a=4 Then manual
         If a=5 Then configuration
         If a=6 Then keybindings
-'           if key="8" then
-'            dim i as _items
-'            f=freefile
-'            open "items.csv" for output as #f
-'            for a=0 to 302
-'                i=make_item(a)
-'                if i.ldesc<>"" or i.desig<>"" then
-'                    print #f,a &";"& i.desig
-'                endif
-'            next
-'            close #f
-'        endif
-'            'dodialog(1,dummy,0)
-'            for b=1 to 1000
-'                make_spacemap
-'                clear_gamestate
-'            next
-'        endif
+
+'		if key="8" then
+'			DbgItemsCSV()
+'		endif
+'		dodialog(1,dummy,0)
+'		for b=1 to 1000
+'           make_spacemap
+'           clear_gamestate
+'		next
+
+#if __FB_DEBUG__
         If _debug>0 Then
                 If Key="t" Then
                     Screenset 1,1
@@ -180,20 +162,8 @@ Do
                     Sleep
                 EndIf
                 If Key="8" Then
-                    f=Freefile
-                    Open "monster.csv" For Output As #f
-                    Print #f,"name;hp;speed;atcost;biodata"
-                    For a=1 To 400
-                        enemy(0)=makemonster(a,1)
-                        If enemy(0).sdesc<>"" Then Print #f,enemy(0).sdesc &";"& Int(enemy(0).hp)  &";"& enemy(0).speed  &";"& enemy(0).atcost &";"&get_biodata(enemy(0))
-                    Next
-                    Close #f
-                    f=Freefile
-                    Open "tiles.csv" For Output As #f
-                    For a=1 To 400
-                        If tiles(a).gives>0 Then Print #f,a &";"&tiles(a).desc &";"& tiles(a).gives
-                    Next
-                    Close #f
+                	DbgMonsterCSV
+                	DbgTilesCSV
                 End If
                 If Key="9" Then
                     Cls
@@ -205,22 +175,9 @@ Do
                 EndIf
         EndIf
         If a=8 Then
-            f=Freefile
-            basis(0).company=1
-            Open "prices.csv" For Output As #f
-            For b=1 To 200
-                change_prices(0,1)
-                Key=""
-                For a=1 To 9
-                    Key &=basis(0).inv(a).p &";"
-                Next
-                For a=1 To 9
-                    Key &=basis(0).inv(a).v &";"
-                Next
-                Print #f,Key
-            Next
-            Close #f
+			DbgPricesCSV
         EndIf
+#endif
     Loop Until Key="1" Or Key="2" Or a=7
     set__color(11,0)
     Cls
@@ -246,7 +203,11 @@ Do
     EndIf
 Loop Until configflag(con_restart)=1
 set_volume(-1)
-End
+DbgLogExplorePlanetEnd
+DbgEnd
+END 0
+
+'
 
 Function start_new_game() As Short
     Dim As String text
@@ -257,23 +218,8 @@ Function start_new_game() As Short
     'debug=127
     
     make_spacemap()
-    If _debugBuild or (debug=1 And _debug=1) Then
-        f=Freefile
-        Open "planettemp.csv" For Output As #f
-        For a=0 To laststar
-            text=map(a).spec &";"
-            For b=1 To 9
-                text=text &";"
-                If map(a).planets(b)>0 And map(a).planets(b)<1024 Then
-                    makeplanetmap(map(a).planets(b),b,map(a).spec)
-                    text=text &planets(map(a).planets(b)).temp
-                EndIf
-            Next
-            Print #f,text
-            Print ".";
-        Next
-        Close #f
-    EndIf
+    DbgPlanetTempCSV
+
     text="/"&makehullbox(1,"data/ships.csv") &"|Comes with 3 Probes MKI/"&makehullbox(2,"data/ships.csv")&"|Comes with 2 combat drones and fully armored|You get one more choice at a talent if you take this ship/"&makehullbox(3,"data/ships.csv") &"|Comes with paid for cargo to collect on delivery/"&makehullbox(4,"data/ships.csv") &"|Comes with 5 veteran security team members/"&makehullbox(6,"data/ships.csv")&"|You will start as a pirate if you choose this option"
     If configflag(con_startrandom)=1 Then
         b=Menu(bg_randompic,"Choose ship/Scout/Long Range Fighter/Light Transport/Troop Transport/Pirate Cruiser/Random",text)
@@ -2630,10 +2576,7 @@ Function explore_planet(from As _cords, orbit As Short) As _cords
             EndIf
             If rnd_range(1,100)<planets(slot).atmos And planets(slot).atmos>1 And planets(slot).depth=0 Then cloudmap(x,y)=1
             If planetmap(x,y,slot)=0 Then
-                f=Freefile
-                Open "error.log" For Append As #f
-                Print #f,"Tile at "&x &":"&y &":"&slot &"=0"
-                Close #f
+            	log_error("Tile at "&x &":"&y &":"&slot &"=0")
                 planetmap(x,y,slot)=-4
             EndIf
         Next
@@ -3233,7 +3176,6 @@ EndIf
             ep_display_clouds(cloudmap())
             display_awayteam()
             rlprint ("")
-
             ep_gives(awayteam,nextmap,shipfire(),spawnmask(),lsp,Key,localtemp(awayteam.c.x,awayteam.c.y))
             equip_awayteam(slot)
             If awayteam.movetype=2 Or awayteam.movetype=3 Then allowed=allowed &key_ju
@@ -4890,7 +4832,7 @@ Function log_error(text as string) As Short
 		if LOF(f)>32*1024 then
 			Close #f	' its getting stupidly large
 			f=Freefile	' get a new handle and rewrite it
-			if Open("error.log", For Output, As #f)<>0 then
+			if Open(logfile & "error.log", For Output, As #f)<>0 then
 				return -1
 			EndIf
 	 	EndIf
@@ -4948,6 +4890,8 @@ function lastword(text as string, delim as string, capacity as short=29) As Stri
 End Function
 
 #if __FB_DEBUG__
+' use LogWarning(text) defined in types.bas to output warnings to the error log.
+' this code is in this awkward place here only because i dont want to think about placing the helper functions into better places.
 Function log_warning(aFile as string, aFunct as string, iLine as short, text as string) as Short
 	aFile= ucase(stripFileExtension(lastword(aFile,"\")))
 	return not log_error( "Warning! "+aFile+":"+aFunct +" line " & iLine & ": "+text)
@@ -4960,7 +4904,9 @@ ERRORMESSAGE:
 	ErrorLn= Erl
 	ErrText= ucase(stripFileExtension(lastword(*ERMN(),"\")))
 	ErrText= ErrText &":" &*ERFN() &" reporting Error #" &ErrorNr &" at line " &ErrorLn &"!"  
-
+	set_volume(-1)
+	DbgLogExplorePlanetEnd
+	DbgEnd
 	Error_Handler(ErrText)
 WAITANDEXIT:
 	Print
