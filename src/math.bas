@@ -8,7 +8,7 @@ end function
 
 function sort_by_distance(c as _cords,p() as _cords,l() as short,last as short) as short
     dim as short sort,i
-    dim as byte debug=1
+
     do
         sort=0
         for i=1 to last-1
@@ -19,12 +19,12 @@ function sort_by_distance(c as _cords,p() as _cords,l() as short,last as short) 
             endif
         next
     loop until sort=0
-    if debug=1 and _debug=1 then
-        for i=1 to last
-            rlprint i &":"&int(distance(c,p(i)))
-        next
-    endif
     
+#if __FB_DEBUG__
+    for i=1 to last
+        DbgPrint(i &":"&int(distance(c,p(i))))
+    next
+#endif    
     return 0
 end function
 
@@ -119,7 +119,7 @@ function fixstarmap() as short
     dim p(2048) as short
     dim sp(lastspecial) as short
     dim as string l
-    dim as short a,b,c,fixed,fsp,pis,newfix,cc,spfix, debug,f
+    dim as short a,b,c,fixed,fsp,pis,newfix,cc,spfix,f
         
     do
         cc+=1
@@ -492,13 +492,15 @@ function make_vismask(c as _cords, sight as short,m as short,ad as short=0) as s
         next
     next
     vismask(c.x,c.y)=1
-    if _debug=2508 then
-        for x=0 to 60
-            for y=0 to 20
-                if vismask(x,y)>0 then pset(x,y)
-            next
-        next
-    endif
+#if __FB_DEBUG__
+'   if _debug=2508 then
+'       for x=0 to 60
+'           for y=0 to 20
+'               if vismask(x,y)>0 then pset(x,y)
+'           next
+'       next
+'   endif
+#endif
 '            if (y>=0 and x>=0 and y<=my and x<=mx) or m>0 then
 '                p.x=x
 '                p.y=y
@@ -625,7 +627,6 @@ function pathblock(byval c as _cords,byval b as _cords,mapslot as short,blocktyp
     Dim As Integer d, dinc1, dinc2
     Dim As Integer x, xinc1, xinc2
     Dim As Integer y, yinc1, yinc2
-    dim debug as short
     
     if abs(c.x-b.x)>30 then
         if c.x>b.x then
@@ -855,7 +856,8 @@ end function
 
 function rnd_point(m as short=-1,w as short=-1,t as short=-1,vege as short=-1)as _cords
     dim p(1281) as _cords
-    dim as short last,x,y,a,debug
+    dim as short last,x,y,a
+    
     if m>0 and w>=0 then
         for x=0 to 60
             for y=0 to 20
@@ -869,7 +871,7 @@ function rnd_point(m as short=-1,w as short=-1,t as short=-1,vege as short=-1)as
         if a>0 then return p(rnd_range(0,a-1))
     endif
     if m>0 and t>0 and w=-1 then
-        if debug=1 and _debug=1 then rlprint "Looking for tile "&t
+        DbgPrint("Looking for tile "&t)
         for x=0 to 60
             for y=0 to 20
                 if abs(planetmap(x,y,m))=t then
@@ -879,10 +881,12 @@ function rnd_point(m as short=-1,w as short=-1,t as short=-1,vege as short=-1)as
                 endif
             next
         next
-        if a=0 and debug=1 and _debug=1 then rlprint "No tiles found"
+        if a=0 then 
+			DbgPrint("No tiles found")
+        EndIf
         if a>0 then 
             a=rnd_range(1,a)
-            if debug=1 and _debug=1 then rlprint "Point returned was "&p(a).x &":"&p(a).y
+            DbgPrint("Point returned was "&p(a).x &":"&p(a).y)
             return p(a)
         else
             p(0).x=-1

@@ -322,7 +322,6 @@ end function
 function dam_awayteam(dam as short, ap as short=0,disease as short=0) as string
     dim text as string
     dim as short ex,b,t,last,last2,armeff,reequip,roll,cc,tacbonus,suitdamage
-    dim as short local_debug=0
     dim target(128) as short
     dim stored(128) as short
     dim injured(16) as short
@@ -349,6 +348,10 @@ function dam_awayteam(dam as short, ap as short=0,disease as short=0) as string
     'ap=3 All on one, no carrying over
     'ap=4 Ignores Armor, Robots immune
     'ap=5 No Spacesuits
+    
+#if __FB_DEBUG__
+#endif
+    dim as short local_debug=0
     if local_debug=1 then text=text & "in:"&dam
 
     if abs(player.tactic)=2 then dam=dam-player.tactic
@@ -390,7 +393,7 @@ function dam_awayteam(dam as short, ap as short=0,disease as short=0) as string
                     tacbonus=player.tactic
                 endif
                 roll=rnd_range(1,25)
-                if local_debug=1 and _debug=1 then text=text &":" &roll &":"&awayteam.secarmo(target(t))+crew(target(t)).augment(5)+player.tactic+add_talent(3,10,1)+add_talent(t,20,1)
+                if local_debug=1 then text=text &":" &roll &":"&awayteam.secarmo(target(t))+crew(target(t)).augment(5)+player.tactic+add_talent(3,10,1)+add_talent(t,20,1)
                 if roll>2+awayteam.secarmo(target(t))+crew(target(t)).augment(5)+tacbonus+add_talent(3,10,1)+add_talent(t,20,1) or ap=4 or ap=1 or roll=25 then
                     if not(crew(target(t)).typ=13 and ap=4) then crew(target(t)).hp=crew(target(t)).hp-1
                     dam=dam-1
@@ -653,9 +656,9 @@ function rnd_crewmember(onship as short=0) as short
 end function
 
 function get_freecrewslot() as short
-    dim as short b,slot,debug
+    dim as short b,slot
 
-    if debug=1 and _debug=1 then rlprint ""&player.h_maxcrew &":"&player.crewpod &":"&player.cryo
+    DbgPrint(""&player.h_maxcrew &":"&player.crewpod &":"&player.cryo)
     for b=1 to (player.h_maxcrew+player.crewpod)*player.bunking+player.cryo
         if crew(b).hp<=0 then return b
     next
@@ -684,11 +687,12 @@ end function
 
 
 function add_member(a as short,skill as short) as short
-    dim as short slot,b,f,c,cc,debug,nameno,i,cat,j,turret,rask,changeap
+    dim as short slot,b,f,c,cc,nameno,i,cat,j,turret,rask,changeap
     dim as string text,help
     dim _del as _crewmember
     dim as string n(200,1)
     dim as short ln(1)
+    
     f=freefile
     open "data/crewnames.txt" for input as #f
     do
@@ -708,7 +712,7 @@ function add_member(a as short,skill as short) as short
             slot=showteam(0,1,"Replace who?")
         endif
     endif
-    if debug=1 and _debug=1 then rlprint ""&slot
+    DbgPrint(""&slot)
     if slot<0 then return -1
     if slot>=0 then
 
@@ -2072,7 +2076,7 @@ function crew_menu(crew() as _crewmember, from as short, r as short=0,text as st
                         set__color( 10,bg)
                         draw string (34*_fw2,y*_fh2) ," Awayteam ",,font2,custom,@_col
                     endif
-                    if debug=1 and _debug=1 then draw string (40*_fw2,y*_fh2),""&crew(b-offset).oldonship,,font2,custom,@_col
+                    if debug=1 then draw string (40*_fw2,y*_fh2),""&crew(b-offset).oldonship,,font2,custom,@_col
                     if crew(b-offset).hp<=0 then
                         set__color( 12,bg)
                         draw string (34*_fw2,y*_fh2) ," Dead ",,font2,custom,@_col

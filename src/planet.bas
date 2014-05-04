@@ -1966,6 +1966,7 @@ function makecavemap(enter as _cords,tumod as short,dimod as short, spemap as sh
 end function
 
 function makeplanetmap(a as short,orbit as short,spect as short) as short
+    DimDebugL(0)
     dim gascloud as short
     dim b1 as short
     dim b2 as short
@@ -1989,7 +1990,7 @@ function makeplanetmap(a as short,orbit as short,spect as short) as short
     dim t as _rect
     dim r(255) as _rect
     dim wmap(60,20) as short
-    dim as short last,wantsize,larga,largb,lno,mi,old,alwaysstranded,debug
+    dim as short last,wantsize,larga,largb,lno,mi,old,alwaysstranded
     if a<=0 then 
        rlprint "ERROR: Attempting to make planet map at "&a,14
        return 0
@@ -2323,7 +2324,7 @@ function makeplanetmap(a as short,orbit as short,spect as short) as short
         endif
         alwaysstranded=1
         'Stranded ship
-        if rnd_range(1,300)<15-disnbase(player.c)/10+planets(a).grav*10 or (alwaysstranded=1 and _debug>0) then
+        if rnd_range(1,300)<15-disnbase(player.c)/10+planets(a).grav*10 or (alwaysstranded=1 and debug>0) then
             p1=rnd_point
             b=rnd_range(1,100+player.turn/5000)'!
             c=rnd_range(1,6)
@@ -2333,7 +2334,7 @@ function makeplanetmap(a as short,orbit as short,spect as short) as short
             if b>75 then d=8
             if b>95 then d=12
             planetmap(p1.x,p1.y,a)=(-127-c-d)*-1
-            if alwaysstranded=1 and _debug=1 then planetmap(p1.x,p1.y,a)=241
+            if alwaysstranded=1 and debug=1 then planetmap(p1.x,p1.y,a)=241
             'planetmap(p1.x,p1.y,a)=241
             for b=0 to 1+d
                 if rnd_range(1,100)<11 then placeitem(rnd_item(RI_StrandedShip),p1.x,p1.y,a)
@@ -2422,7 +2423,11 @@ function makeplanetmap(a as short,orbit as short,spect as short) as short
     endif
     
     for b=0 to planets(a).life
-        if debug=99 and _debug=1 then rlprint "chance:"&(planets(a).life+1)*3
+#if __FB_DEBUG__
+        if debug=99 then 
+			DbgPrint("chance:" &b &(planets(a).life+1)*3)
+        EndIf
+#endif
         if rnd_range(1,100)<(planets(a).life+1)*3 then 
             planets(a).mon_template(b)=makemonster(1,a)
             planets(a).mon_noamin(b)=cint((rnd_range(1,planets(a).life)*planets(a).mon_template(b).diet)/2)
@@ -3050,6 +3055,7 @@ function makewhplanet() as short
 end function
 
 function make_special_planet(a as short) as short
+    DimDebugL(0)
     dim as short x,y,b,c,d,b1,b2,b3,cnt,wx,wy,ti,x1,y1
     dim as _cords p,p1,p2,p3,p4,p5
     dim as _cords pa(5)
@@ -3057,6 +3063,7 @@ function make_special_planet(a as short) as short
     dim as _cords gc,gc1
     dim it as _items
     dim addship as _driftingship
+
     ' UNIQUE PLANETS
     '
     for b=0 to lastspecial
@@ -3551,7 +3558,7 @@ function make_special_planet(a as short) as short
                 next
             next
             
-            if (a=specialplanet(10) and rnd_range(1,100)<50) or _debug=2 then planetmap(p3.x,12,a)=-112
+            if (a=specialplanet(10) and rnd_range(1,100)<50) or debug=2 then planetmap(p3.x,12,a)=-112
             planetmap(p3.x,10,a)=70
             planetmap(p3.x,11,a)=71
     
@@ -3582,7 +3589,7 @@ function make_special_planet(a as short) as short
                     endif
                 next
             next
-            if rnd_range(1,100)<50 or _debug=2 then planetmap(c+1,p4.y+3,a)=112
+            if rnd_range(1,100)<50 or debug=2 then planetmap(c+1,p4.y+3,a)=112
             planetmap(c,p4.y-3,a)=-259
             planetmap(c,p4.y-2,a)=74
             do
@@ -5721,6 +5728,7 @@ function make_special_planet(a as short) as short
 end function
 
 function make_drifter(d as _driftingship, bg as short=0,broken as short=0,f2 as short=0) as short
+    DimDebugL(0)
     dim as short a,m,roll,x,y,f,ti,xs,ys,x2,y2,addweap,addcarg,ff,fc,wc,i,j,l
     dim as byte retirementshop,antiques,oneway,lockermap(60,20)
     dim as short randomshop(8),lastrandomshop
@@ -5731,6 +5739,7 @@ function make_drifter(d as _driftingship, bg as short=0,broken as short=0,f2 as 
     dim from as _cords
     dim dest as _cords
     dim lastcrate as short
+    
     randomshop(1)=262 'Mudds
     randomshop(2)=270 'Retirement
     randomshop(3)=261 'Hospital
@@ -5739,7 +5748,9 @@ function make_drifter(d as _driftingship, bg as short=0,broken as short=0,f2 as 
     randomshop(6)=98 'Black Market
     lastrandomshop=6 '
     
-    if _debug=18 then d.s=18
+#if __FB_DEBUG__
+    if debug=18 then d.s=18
+#endif
     
     if bg=0 then
         m=d.m
@@ -6151,21 +6162,23 @@ function make_drifter(d as _driftingship, bg as short=0,broken as short=0,f2 as 
         planets(m).wallset=rnd_range(0,7)
     end select
     
-    if _Debug=18 then
+#if __FB_DEBUG__
+    if debug=18 then
         for x=0 to 60
             for y=0 to 20
                 planetmap(x,y,m)=abs(planetmap(x,y,m))
             next
         next
     endif
+#endif
     
-    if d.s=20 and _debug=2412 then
+    if d.s=20 and debug=2412 then
         planets(m).mon_template(3)=makemonster(34,m)
         planets(m).mon_noamin(3)=5
         planets(m).mon_noamax(3)=5
     endif
     
-    if d.s=20 and (rnd_range(1,100)<10 or _debug>0) then
+    if d.s=20 and (rnd_range(1,100)<10 or debug>0) then
         from.x=38
         from.y=1
         from.m=lastplanet
@@ -6217,7 +6230,7 @@ function make_drifter(d as _driftingship, bg as short=0,broken as short=0,f2 as 
             planets(dest.m).mon_noamax(0)=5
         endif
         
-        if rnd_range(1,100)<50 or _Debug>0 then
+        if rnd_range(1,100)<50 or debug>0 then
             planets(dest.m).mon_template(1)=makemonster(104,dest.m)
             planets(dest.m).mon_noamin(1)=1
             planets(dest.m).mon_noamax(1)=5
@@ -6678,18 +6691,24 @@ function makemudsshop(slot as short, x1 as short, y1 as short)  as short
 end function
 
 function station_event(m as short) as short
+    DimDebug(0)
     dim p as _cords
     dim as short c,s,i,j,r,r2
+
     for i=10 to 1 step -1
         if planets(m).mon_template(i).made=0 and s=0 then s=i
     next
     planets_flavortext(m)="Something is going on here today."
     r=rnd_range(1,100)
     r2=rnd_range(1,100)
-    if _debug=1501 then 
+
+#if __FB_DEBUG__
+    if debug=1501 then 
         r=60
         r2=50
     endif
+#endif
+    
     select case r
     case is<35 'Good stuff
         select case r2
@@ -6854,11 +6873,12 @@ end function
 
 
 function make_eventplanet(slot as short) as short
+    DimDebug(0)'4
     dim as _cords p1,from,dest
     dim as _cords gc1,gc
-    dim as short x,y,a,b,t1,t2,t,maxt,debug
+    dim as short x,y,a,b,t1,t2,t,maxt    
     static generated(11) as short
-    debug=4
+    
     if orbitfrommap(slot)<>1 then
         maxt=10
     else
@@ -6887,11 +6907,15 @@ function make_eventplanet(slot as short) as short
     
     generated(t)+=1
     't=4
-    if debug=1 and _debug=1 then 
+
+#if __FB_DEBUG__
+    if debug=1 then 
         print "making "&t & " on planet "&slot &" in system " &sysfrommap(slot)
         no_key=keyin
     endif
-    if debug=4 and _Debug>1 then t=7
+    if debug=4 then t=7
+#endif
+    
     if t=1 then 'Mining Colony in Distress Flag 22 
         make_mine(slot)
     endif
@@ -7002,7 +7026,9 @@ function make_eventplanet(slot as short) as short
         portal(lastportal).dest=rnd_point(0,lastplanet)
         portal(lastportal).dest.m=lastplanet
         portal(lastportal).discovered=show_portals
-        if debug<>0 and _debug=1 then portal(lastportal).discovered=1
+#if __FB_DEBUG__
+        if debug<>0 then portal(lastportal).discovered=1
+#endif
         planets(slot).mon_template(0)=makemonster(4,slot)
         planets(slot).mon_noamin(0)=15
         planets(slot).mon_noamax(0)=25
@@ -8332,14 +8358,16 @@ end function
 
 
 function get_random_system(unique as short=0,gascloud as short=0,disweight as short=0,hasgarden as short=0) as short 'Returns a random system. If unique=1 then specialplanets are possible
-    dim as short a,b,c,p,u,ad,debug,cc,f
+    DimDebug(0)'1
+    dim as short a,b,c,p,u,ad,cc,f
     dim pot(laststar*100) as short
-    'debug=1
     
-    if debug=1 and _debug=1 then
+#if __FB_DEBUG__
+    if debug=1 then
         f=freefile
         open "getrandsystem.csv" for append as #f
     endif
+#endif
     
     for a=0 to laststar
         if map(a).discovered=0 and map(a).spec<8 then
@@ -8366,7 +8394,9 @@ function get_random_system(unique as short=0,gascloud as short=0,disweight as sh
                 else
                     cc=1
                 endif
-                if debug=1 and _debug=1 then print #f,a &";"& cc &";"& disnbase(map(a).c)
+#if __FB_DEBUG__
+                if debug=1 then print #f,a &";"& cc &";"& disnbase(map(a).c)
+#endif
                 for p=1 to cc
                     if b<laststar*100 then
                         b=b+1
@@ -8377,10 +8407,12 @@ function get_random_system(unique as short=0,gascloud as short=0,disweight as sh
             endif
         endif
     next
-    if debug=1 and _debug=1 then
+#if __FB_DEBUG__
+    if debug=1 then
         print #f,"+++++"
         close #f
     endif
+#endif
         
     if b>0 then 
         c=pot(rnd_range(1,b))

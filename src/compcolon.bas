@@ -1,5 +1,5 @@
 function colonize_planet(st as short) as short
-    dim as short planet,debug,d
+    dim as short planet,d
     dim as _cords p
     
     planet=get_com_colon_candidate(st)
@@ -10,13 +10,13 @@ function colonize_planet(st as short) as short
         d=rnd_range(1,4)*2
         p=movepoint(p,d)
         if d=2 or d=8 then 
-        planetmap(p.x,p.y,planet)=31
+	        planetmap(p.x,p.y,planet)=31
         else
-        planetmap(p.x,p.y,planet)=32
+	        planetmap(p.x,p.y,planet)=32
         endif
         p=movepoint(p,d)
         planetmap(p.x,p.y,planet)=68
-        if debug=1 and _debug=1 then rlprint "Built colony at "& map(sysfrommap(planet)).c.x &":"&map(sysfrommap(planet)).c.y
+        DbgPrint("Built colony at "& map(sysfrommap(planet)).c.x &":"&map(sysfrommap(planet)).c.y)
     endif
     return 0
 end function
@@ -47,8 +47,8 @@ end function
 
 function grow_colony(map as short) as short
     dim as _cords p,p2 
-    dim as short dx,dy,list(16),build,comp,roll,debug
-    debug=0
+    dim as short dx,dy,list(16),build,comp,roll
+
     comp=planets(map).colflag(0)
     list(2)=68 'Landing Pad
     list(3)=16 'Housing
@@ -77,7 +77,7 @@ function grow_colony(map as short) as short
     planets(map).colflag(1)+=count_tiles(68,map)*5
     planets(map).colflag(1)+=rnd_range(1,60)
     roll=rnd_range(1,100)
-    if debug=1 and _debug=1 then rlprint roll &":"& planets(map).colflag(1)
+    DbgPrint(roll &":"& planets(map).colflag(1))
     if roll<planets(map).colflag(1) then
         if rnd_range(1,100)<66 then
             if planets(map).colflag(4)=0 then

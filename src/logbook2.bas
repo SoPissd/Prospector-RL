@@ -3,15 +3,16 @@
 declare function lb_listmake(lobk() as string, lobn() as short, lobc() as short,lobp() as _cords) as short
 
 function logbook() as short
-    cls
+    DimDebug(0)
     dim lobk(255) as string 'lobk is description
     dim lobn(255) as short 'lobn is n to get map(n)
     dim lobc(255) as short 'lobc is bg set__color(
     dim lobp(255) as _cords 'lobc is bg set__color(
     static as short curs
-    dim as short x,y,a,b,p,m,lx,ly,dlx,diff,i,last,ll,debug
+    dim as short x,y,a,b,p,m,lx,ly,dlx,diff,i,last,ll
     dim as string key,lobk1,lobk2
     
+    Cls
     ll=fix(20*_fh1/_fh2)
     last=lb_listmake(lobk(),lobn(),lobc(),lobp())
     for a=1 to last       'tests all lobn for special planets, system comments and planets comments for coloring bg
@@ -77,7 +78,9 @@ function logbook() as short
         rlprint "Logbook: Press " &key_sc &" or enter to choose system. ESC to exit.",15
         
         if lobn(curs)>=0 then
-            if debug=1 and _debug=1 and key="t" then player.c=lobp(curs)
+#if __FB_DEBUG__
+            if debug=1 and key="t" then player.c=lobp(curs)
+#endif
             show_minimap(lobp(curs).x,lobp(curs).y)
             show_dotmap(lobp(curs).x,lobp(curs).y)
             if lobn(curs)>laststar then show_wormholemap(lobn(curs))
@@ -192,10 +195,14 @@ function logbook() as short
 end function
 
 function ap_astar(start as _cords,ende as _cords,diff as short) as short
+    DimDebug(0)
     dim map(sm_x,sm_y) as short
-    dim as short x,y,debug
+    dim as short x,y
     
-    if debug=2 and _debug=1 then rlprint ""&diff
+#if __FB_DEBUG__
+    if debug=2 then rlprint ""&diff
+#endif
+
     for x=0 to sm_x 
         for y=0 to sm_y
             map(x,y)=0
@@ -205,10 +212,12 @@ function ap_astar(start as _cords,ende as _cords,diff as short) as short
             else
                 map(x,y)=100*diff
             endif
-            if debug=1 and _debug=1 then
+#if __FB_DEBUG__
+            if debug=1 then
                 set__color( map(x,y),0)
                 pset(x,y)
             endif
+#endif
         next
     next
     lastapwp=a_star(apwaypoints(),ende,start,map(),sm_x,sm_y,0)
@@ -299,7 +308,8 @@ function show_dotmap(x1 as short, y1 as short) as short
 end function
 
 function show_minimap(xx as short,yy as short) as short
-    dim as short a,x1,y1,x,y,osx,osy,n,bg,wid,px,py,debug,f
+    DimDebug(0)
+    dim as short a,x1,y1,x,y,osx,osy,n,bg,wid,px,py,f
     
     x1=xx
     y1=yy
@@ -377,12 +387,7 @@ function show_minimap(xx as short,yy as short) as short
         
         if planets(drifting(a).m).flags(0)=0 then
             set__color( 7,0)
-            if debug=1 and _debug=1 then
-                f=freefile
-                open "debuglog.txt" for append as #f
-                print #f,drifting(a).g_tile.x &":"& drifting(a).g_tile.y &":"& drifting(a).y
-                close #f
-            endif
+            DbgPrint(drifting(a).g_tile.x &":"& drifting(a).g_tile.y &":"& drifting(a).y)
             'drifting(a).g_tile.y=1
             'drifting(a).p=1
             if drifting(a).g_tile.x=0 or drifting(a).g_tile.x=5 or drifting(a).g_tile.x>9 then drifting(a).g_tile.x=rnd_range(1,4)
@@ -430,12 +435,16 @@ function show_minimap(xx as short,yy as short) as short
 end function
 
 function show_wormholemap(j as short=0) as short
-    dim as short px,py,i,debug
+    DimDebugL(0)
+    dim as short px,py,i
+    
     px=_screenx-2-sm_x*2
     py=11*_fh1+_fh2+2
     
     if j>0 then
-        if debug=1 and _debug=1 then map(j).planets(2)=1
+#if __FB_DEBUG__
+        if debug=1 then map(j).planets(2)=1
+#endif
         if map(j).planets(2)=1 then
             set__color( 1,0)
             line(map(j).c.x*2+px,map(j).c.y*2+py)-(map(map(j).planets(1)).c.x*2+px,map(map(j).planets(1)).c.y*2+py),15
@@ -444,7 +453,9 @@ function show_wormholemap(j as short=0) as short
     endif
     
     for i=laststar+1 to laststar+wormhole
-        if debug=1 and _debug=1 then map(i).planets(2)=1
+#if __FB_DEBUG__
+        if debug=1 then map(i).planets(2)=1
+#endif
         if map(i).planets(2)=1 then
             set__color( 1,0)
             line(map(i).c.x+px,map(i).c.y+py)-(map(map(i).planets(1)).c.x+px,map(map(i).planets(1)).c.y+py),15
@@ -501,9 +512,9 @@ end function
 '    no_key=keyin
 
 function lb_listmake(lobk() as string, lobn() as short, lobc() as short,lobp()as _cords) as short
+    DimDebug(0)
     dim last as short
     dim as short i,a,b,f,j
-    dim as short debug=1
     for a=0 to 255
         lobn(a)=-1
     next

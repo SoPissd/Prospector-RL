@@ -96,10 +96,25 @@
 	#define DbgEnd
 #endif
 
+' always
 
 #if _DbgLoadWin	<>1						'provide a substitute for debugbreak
 	#define DebugBreak					'see.. nothing at all.  
 #endif
+
+#Macro DimDebug(Value)					'use DimDebug to setup the var for debug mode only
+	#if __FB_DEBUG__
+	    dim as short debug=Value
+	#endif
+#EndMacro
+
+#Macro DimDebugL(Value)					'use DimDebugL to setup the var for either mode 
+	#if __FB_DEBUG__
+	    dim as short debug=Value
+	#else								' use dimDebugL for stuff like:  If <this> or debug then <dothat>
+	    dim as short debug=0
+	#endif
+#EndMacro
 
 
 ' cut 'n paste
@@ -111,10 +126,3 @@
 #else
 #endif
 
-#if __FB_DEBUG__
-    dim as short debug=0
-#else
-    dim as short debug=0
-#endif
-
->>>>>>> DEBUG now provides control over includes and debug-logging

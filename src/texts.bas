@@ -36,9 +36,10 @@ function get_rumor(i as short=18) as string
 end function
 
 function show_standing() as short
+    DimDebugL(0)'1
     dim scale(6) as string
     dim as string facname(8),stscore(7)
-    dim as short a,debug,l
+    dim as short a,l
 
     facname(ft_merchant)="Merchants"
     facname(ft_pirate)="Pirates"
@@ -58,7 +59,9 @@ function show_standing() as short
     for a=1 to 7
         stscore(a)=scale(faction(0).war(a)/20)
         if alliance(a)>0 then stscore(a)=stscore(a) &" (Alliance member)"
-        if debug=1 and _debug=1 then stscore(a)=stscore(a) '& faction(0).war(a)/20 &"-"&faction(0).war(a)
+#if __FB_DEBUG__
+        if debug=1 then stscore(a)=stscore(a) '& faction(0).war(a)/20 &"-"&faction(0).war(a)
+#endif
     next
     l=len(stscore(1))+len("Companies:")
     scale(6)="{15}Faction standing:{11} | Companies:"&space(35-l)&stscore(1)
@@ -314,7 +317,9 @@ function show_quests() as short
     next
     txt=txt &"|{15}Patrol:{11}|"
     for a=0 to 12
-        if _debug=1111 then txt &= patrolquest(a).status &" " 
+#if __FB_DEBUG__ ' _debug=1111 
+		txt &= patrolquest(a).status &" " 
+#endif
         if patrolquest(a).status=1 then txt=txt &"  " &patrolquest(a).show &"|"
     next
     txt=txt &"|{15}Other:{11}|"
@@ -727,9 +732,10 @@ function date_string() as string
 end function
 
 function crew_bio(i as short) as string
+    DimDebugL(0)'1
     dim t as string
     dim as short a
-    dim as byte debug=0
+    
     if crew(i).typ<=9 or (crew(i).typ>=14 and crew(i).typ<=16) then
         t="Age:"& 18+crew(i).story(6) &" Size: 1."& 60+crew(i).story(7)*4 &"m Weight:" &50+crew(i).story(8)*4+crew(i).story(7) &"kg. ||"
         select case crew(i).story(0)
@@ -774,13 +780,15 @@ function crew_bio(i as short) as string
         for a=1 to 25
             if crew(i).talents(a)>0 then t=t &" |"&talent_desc(a)
         next
-        if debug=1 and _debug=1 then
+#if __FB_DEBUG__
+        if debug=1 then
             if crew(i).story(10)=0 then
                 t=t & "W"
             else
                 t=t &"M"
             endif
         endif
+#endif
     endif
     if crew(i).target<>0 then t="Passenger for station "&crew(i).target &"."
     return t
@@ -1566,10 +1574,11 @@ function money_text() as string
 end function
 
 function make_unflags(unflags() as byte) as short
-    dim as short a,debug,foundspec
+    DimDebugL(0)'1
+    dim as short a,foundspec
     for a=0 to lastspecial
         if specialplanet(a)>0 and specialplanet(a)<=lastplanet then
-            if planets(specialplanet(a)).mapstat>0 or (debug=1 and _debug=1) then
+            if planets(specialplanet(a)).mapstat>0 or (debug=1) then
                 unflags(a)=1
                 foundspec=1
             endif

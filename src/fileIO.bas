@@ -189,7 +189,7 @@ function check_filestructure() as short
 end function
 
 function load_palette() as short
-    dim as short f,i,j,k,debug
+    dim as short f,i,j,k
     dim as string l,w(3)
     if not(fileexists("p.pal")) then
         color rgb(255,255,0),0
@@ -204,7 +204,6 @@ function load_palette() as short
     line input #f,l 'First do not need to be checked
     do
         line input #f,l
-        if debug=1 and _debug=1 then print l
         k=1
         w(1)=""
         w(2)=""
@@ -214,12 +213,8 @@ function load_palette() as short
             if mid(l,j,1)=" " then k+=1
         next
         palette_(i)=RGB(val(w(1)),val(w(2)),val(w(3)))
-        if debug=1 and _debug=1 then
-            print w(1);":";w(2);":";w(3)
-            print palette_(i)
-        endif
+        DbgPrint( i &": " &l &" -> " +w(1) +":" +w(2) +":" +w(3) +" -> " &palette_(i))
         i+=1
-        if debug=2 and _debug=1 then print i;":";
     loop until eof(f)
     close #f
     return 0
@@ -358,13 +353,16 @@ end function
 
 
 function load_fonts() as short
-    dim as short a,debug,f
+    DimDebugL(0)'1
+    dim as short a,f
     dim as integer depth
 
-    if debug=1 and _debug=1 then
+#if __FB_DEBUG__
+    if debug=1 then
         f=freefile
         open "fontlog.txt" for append as #f
     endif
+#endif
     if ((not fileexists("graphics/font"&_fohi1 &".bmp")) or (not fileexists("graphics/font"&_fohi2 &".bmp"))) then
         if configflag(con_customfonts)=0 then
             if not fileexists("graphics/ships.bmp") then configflag(con_tiles)=1
@@ -419,7 +417,9 @@ function load_fonts() as short
     _textlines=fix((22*_fh1)/_fh2)+fix((_screeny-_fh1*22)/_fh2)-1
     _screenx=_mwx*_fw1+25*_fw2
     screenres _screenx,_screeny,16,2,FB.GFX_WINDOWED
-    if debug=1 and _debug=1 then print #f,"Made screen"
+#if __FB_DEBUG__
+    if debug=1 then print #f,"Made screen"
+#endif
     
     Print "Loading Fonts"
     'gfx.font.loadttf("graphics/Nouveau_IBM.ttf", FONT1, 32, 448, _fh1)
@@ -429,10 +429,14 @@ function load_fonts() as short
     if configflag(con_customfonts)=0 then
         print "loading font 1"
         font1=load_font(""&_fohi1,_FH1)
-        if debug=1 and _debug=1  then print #f,"Loaded Font 1"
+#if __FB_DEBUG__
+        if debug=1  then print #f,"Loaded Font 1"
+#endif
         print "loading font 2"
         font2=load_font(""&_fohi2,_FH2)
-        if debug=1 and _debug=1 then print #f,"Loaded Font 2"
+#if __FB_DEBUG__
+        if debug=1then print #f,"Loaded Font 2"
+#endif
         titlefont=load_font("26",26)
     else
         _screenx=1024
@@ -469,14 +473,16 @@ function load_fonts() as short
     if _screeny<>_lines*_fh1 then _screeny=_lines*_fh1
     _textlines=fix((22*_fh1)/_fh2)+fix((_screeny-_fh1*22)/_fh2)-1
     _screenx=_mwx*_fw1+25*_fw2
-    screenres _screenx,_screeny,16,2,(GFX_ALWAYS_ON_TOP OR GFX_WINDOWED)
+    screenres _screenx,_screeny,16,2,(FB.GFX_ALWAYS_ON_TOP OR FB.GFX_WINDOWED)
     screenres _screenx,_screeny,16,2,FB.GFX_WINDOWED
     sidebar=(_mwx+1)*_fw1+_fw2
 
-    if debug=1 and _debug=1 then
+#if __FB_DEBUG__
+    if debug=1 then
         print #f,"reset screen size"
         close #f
     endif
+#endif
     return 0
 end function
 
@@ -1849,7 +1855,7 @@ function load_dialog(fn as string, n() as _dialognode) as short
 end function
 
 function string_towords(word() as string, s as string, break as string, punct as short=0) as short
-    dim as short i,a,debug
+    dim as short i,a
     'Starts with 0,
     for a=0 to ubound(word)
         word(a)=""
@@ -1859,7 +1865,7 @@ function string_towords(word() as string, s as string, break as string, punct as
             redim word(i)
         endif
         if mid(s,a,1)=break then
-            if debug=1 and _debug=1 then rlprint word(i)
+            DbgPrint(word(i))
             i+=1
         else
             if punct=1 and (mid(s,a,1)="." or mid(s,a,1)=",") then
@@ -2292,7 +2298,7 @@ function load_bones() as short
             for x=0 to 60
                 for y=0 to 20
                     get #f,,planetmap(x,y,m)
-                    if _debug_bones=1 and _debug=1 then planetmap(x,y,m)=-planetmap(x,y,m)
+                    if _debug_bones=1 then planetmap(x,y,m)=-planetmap(x,y,m)
                 next
             next
             map(sys).discovered=4
@@ -2302,7 +2308,7 @@ function load_bones() as short
             for x=0 to 60
                 for y=0 to 20
                     get #f,,planetmap(x,y,m)
-                    if _debug_bones=1 and _debug=1 then planetmap(x,y,m)=-planetmap(x,y,m)
+                    if _debug_bones=1 then planetmap(x,y,m)=-planetmap(x,y,m)
                 next
             next
             p=rnd_point(m,0)
@@ -2343,7 +2349,9 @@ function getbonesfile() as string
         d=dir()
         chance=chance+1
     loop until d=""
-    if _debug_bones=2 and _debug=1 then print "chance for bones file:"&chance
+    if _debug_bones=2 then 
+		DbgPrint("chance for bones file:"&chance)
+    EndIf
     d=dir$("bones/*.bon")
     do
         if (rnd_range(1,100)<chance or _debug_bones=1) and s="" then s=d

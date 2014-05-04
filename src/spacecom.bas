@@ -43,14 +43,20 @@ function spacecombat(byref atts as _fleet,ter as short) as short
     dim as uinteger localturn
     dim old as _cords
     dim as _cords exitcords
+
+#if __FB_DEBUG__
     dim as byte debug=11
     dim as string dbugstring
+#else
+    dim as byte debug=0
+#endif
     'debug=10
     if debug=10 then
         for a=0 to 128
             if e_track_v(a)>0 then rlprint ""&e_track_v(a)
         next
     endif
+    
     for x=0 to 60
         for y=0 to 20
             combatmap(x,y)=0
@@ -149,13 +155,21 @@ function spacecombat(byref atts as _fleet,ter as short) as short
             if attacker(d).hull>0 then attacker(d).e.tick
         next
 
-        if debug=9 and _debug=1 then rlprint dbugstring
+#if __FB_DEBUG__
+        if debug=9 then 
+			DbgPrint(dbugstring)
+        EndIf
+#endif
 
    '
         if player.hull>0 then 'playermovement
             if player.e.e=0 then
 
-                if debug=9 and _debug=1 then rlprint ""&f
+#if __FB_DEBUG__
+                if debug=9 then 
+					DbgPrint(""&f)
+                EndIf
+#endif
                 if player.c.x=0 or player.c.y=0 or player.c.x=60 or player.c.y=20 then f=-1
 
                 if f<>0 then
@@ -678,9 +692,8 @@ end function
 
 
 function com_direction(dest as _cords,target as _cords) as short
-
-    dim as short dx,dy,direction,debug,osx
-
+    DimDebugL(0)
+    dim as short dx,dy,direction,osx
     dx=target.x-dest.x
     dy=target.y-dest.y
     if dx<0 and dy>0 then direction=1
@@ -691,25 +704,31 @@ function com_direction(dest as _cords,target as _cords) as short
     if dx<0 and dy<0 then direction=7
     if dx=0 and dy<0 then direction=8
     if dx>0 and dy<0 then direction=9
-    if debug=1 and _debug=1 then
+#if __FB_DEBUG__
+    if debug=1 then
         set__color(11,0)
         screenset 1,1
         osx=calcosx(player.c.x,1)
         draw string((target.x-osx)*_fw1,target.y*_fh1),""&direction,,font1,custom,@_col
-
     endif
+#endif
     return direction
-
 end function
 
 function com_turn(dircur as byte,dirdest as byte,turnrate as byte) as short
     'Returns the direction to get from dircur to dirdest
-    dim as short disright,disleft,tdir,rightleft,debug,f
+    DimDebug(0)
+    dim as short disright,disleft,tdir,rightleft,f
 
-    if debug=1 and _debug=1 then
+#if __FB_DEBUG__
+    if debug=1 then
         f=freefile
         open "turningdata.csv" for output as #f
     endif
+#endif
+
+
+
     if turnrate=-1 then return dircur 'Probes can't turn
     if dircur<>dirdest  then
 
@@ -717,15 +736,20 @@ function com_turn(dircur as byte,dirdest as byte,turnrate as byte) as short
         do
             tdir=bestaltdir(tdir,0)
             disright+=1
-            if debug=1 and _debug=1 then print #f,dirdest &";"&tdir
+#if __FB_DEBUG__
+            if debug=1 then print #f,dirdest &";"&tdir
+#endif
         loop until tdir=dirdest or disright>9
 
         tdir=dircur
         do
             tdir=bestaltdir(tdir,1)
             disleft+=1
-            if debug=1 and _debug=1 then print #f,dirdest &";"&tdir
+#if __FB_DEBUG__
+            if debug=1 then print #f,dirdest &";"&tdir
+#endif
         loop until tdir=dirdest or disleft>9
+        '
         if disright=disleft then
             return bestaltdir(dircur,rnd_range(0,1))
         else
@@ -738,23 +762,26 @@ function com_turn(dircur as byte,dirdest as byte,turnrate as byte) as short
             return dircur
         endif
     endif
-    if debug=1 and _debug=1 then close #f
+#if __FB_DEBUG__
+    if debug=1 then close #f
+#endif
     return dirdest
 end function
 
 function com_NPCMove(defender as _ship,attacker() as _ship,e_track_p() as _cords,e_track_v() as short,e_map() as byte,byref e_last as short) as short
-    dim as short b,c,debug,i,a
+    DimDebug(0)'2
+    dim as short b,c,i,a
     dim as string text
     dim dontgothere(15) as short
     dim as _cords old
-    debug=2
+    
     com_findtarget(defender,attacker())
     for b=1 to 14 'enemymovement
         if attacker(b).hull>0 then
             if attacker(b).e.e=0 and attacker(b).engine>0 then
                 if attacker(b).target.x<>attacker(b).c.x or attacker(b).target.y<>attacker(b).c.y then
                    attacker(b).di=com_turn(attacker(b).di,com_direction(attacker(b).c,attacker(b).target),attacker(b).turnrate)
-                   if debug=1 and _debug=1 then rlprint ""&com_direction(attacker(b).c,attacker(b).target)
+                   DbgPrint(""&com_direction(attacker(b).c,attacker(b).target))
                    old=attacker(b).c
                    attacker(b).c=movepoint(attacker(b).c,attacker(b).di)
                    if (e_map(attacker(b).c.x,attacker(b).c.y)>0 or combatmap(attacker(b).c.x,attacker(b).c.y)>0) and rnd_range(1,attacker(b).pilot(0))+rnd_range(1,6)>8 then
@@ -774,7 +801,9 @@ function com_NPCMove(defender as _ship,attacker() as _ship,e_track_p() as _cords
                     if e_track_v(a)>0 then
                         attacker(b)=com_damship(attacker(b),e_track_v(a),c_gre)
                         text=attacker(b).desig &" runs into plasma stream! "
-                        if _debug=1 then text=text &"Nr."&a &"C:"&cords(attacker(b).c) &" "&cords(e_track_p(a))
+#if __FB_DEBUG__
+                        text=text &"Nr."&a &"C:"&cords(attacker(b).c) &" "&cords(e_track_p(a))
+#endif
                         if distance(attacker(b).c,player.c)<=player.sensors*player.senac then
                             if text<>"" then rlprint text,10
                         else
@@ -962,6 +991,7 @@ function com_vismask(c as _cords) as short
 end function
 
 function com_display(defender as _ship, attacker() as _ship,  marked as short, e_track_p() as _cords,e_track_v() as short,e_map() as byte,e_last as short,mines_p() as _cords,mines_v() as short,mines_last as short) as short
+    DimDebug(0)'2
     dim as short x,y,a,b,c,f,osx
     dim as single d
     dim p1 as _cords
@@ -969,15 +999,13 @@ function com_display(defender as _ship, attacker() as _ship,  marked as short, e
     dim as _cords p,pts(128),list_c(64)
     dim list_e(128) as short
     dim last as short
-    dim debug as byte
-    debug=2
+
     osx=calcosx(defender.c.x,1)
     com_vismask(player.c)
     last=com_targetlist(list_c(),list_e(),defender,attacker(),mines_p(),mines_v(),mines_last)
     senbat =(defender.sensors+2)*defender.senac
     senbat1=(defender.sensors+1)*defender.senac
     senbat2= defender.sensors   *defender.senac
-
 
     for x=defender.c.x-senbat-1 to defender.c.x+senbat+1
         for y=defender.c.y-senbat-1 to defender.c.y+senbat+1
@@ -1019,7 +1047,9 @@ function com_display(defender as _ship, attacker() as _ship,  marked as short, e
                         if e_track_v(b)=5 or e_track_v(b)=6 then put ((e_track_p(b).x-osx)*_tix,e_track_p(b).y*_tiy),gtiles(82),trans
                         if e_track_v(b)=3 or e_track_v(b)=4 then put ((e_track_p(b).x-osx)*_tix,e_track_p(b).y*_tiy),gtiles(83),trans
                         if e_track_v(b)=1 or e_track_v(b)=2 then put ((e_track_p(b).x-osx)*_tix,e_track_p(b).y*_tiy),gtiles(84),trans
-                        if debug=2 and _debug=1 then draw string(_tix+(e_track_p(b).x-osx)*_fw1,_tiy+e_track_p(b).y*_fh1),"B"& b &"V:"&e_track_v(b),,font1,custom,@_tcol
+#if __FB_DEBUG__
+                        if debug=2 then draw string(_tix+(e_track_p(b).x-osx)*_fw1,_tiy+e_track_p(b).y*_fh1),"B"& b &"V:"&e_track_v(b),,font1,custom,@_tcol
+#endif
                     else
                         set__color( 0,0)
                         if e_track_v(b)>6 then set__color( 15,0)
@@ -1039,12 +1069,14 @@ function com_display(defender as _ship, attacker() as _ship,  marked as short, e
             if vismask(attacker(b).c.x,attacker(b).c.y)=1 then
                 if distance(attacker(b).c,defender.c)<=senbat1 then attacker(b).questflag(11)=1
                 if configflag(con_tiles)=0 then
-                    if debug=1 and _debug=1 then
+#if __FB_DEBUG__
+                    if debug=1 then
                         f=freefile
                         open "tileerror" for output as #f
                         print #f,"attacker(b).di " &attacker(b).di &"attacker(b).ti_no:"&attacker(b).ti_no
                         close #f
                     endif
+#endif
                     if attacker(b).di=0 then attacker(b).di=rnd_range(1,8)
                     if attacker(b).di=5 then attacker(b).di=9
                     d=distance(attacker(b).c,defender.c)
@@ -1063,11 +1095,13 @@ function com_display(defender as _ship, attacker() as _ship,  marked as short, e
                     if c=marked then
                         put ((attacker(b).c.x-osx)*_tix,attacker(b).c.y*_tiy),gtiles(85),trans
                     endif
-                    if debug=3 and _debug=1 then
+#if __FB_DEBUG__
+                    if debug=3 then
                         if attacker(b).target.x<>0 then
                             line ((attacker(b).c.x-osx)*_tix+_tix/2,attacker(b).c.y*_tiy+_tiy/2)-((attacker(b).target.x-osx)*_tix+_tix/2,attacker(b).target.y*_tiy+_tiy/2),rgb(255,0,0)
                         endif
                     endif
+#endif
 
                 else
                     if b=marked then
@@ -1108,7 +1142,9 @@ function com_display(defender as _ship, attacker() as _ship,  marked as short, e
     draw_shield(defender,osx)
     if configflag(con_tiles)=0 then
         put ((defender.c.x-osx)*_tix,defender.c.y*_tiy),stiles(player.di,player.ti_no),trans
-        if debug=2 and _debug=1 then draw string((defender.c.x-osx)*_fw1+_fw1,defender.c.y*_fh1),defender.c.x &":"&defender.c.y,,font2,custom,@_col
+#if __FB_DEBUG__
+        if debug=2 then draw string((defender.c.x-osx)*_fw1+_fw1,defender.c.y*_fh1),defender.c.x &":"&defender.c.y,,font2,custom,@_col
+#endif
     else
         set__color( _shipcolor,0)
         draw string(defender.c.x*_fw1,defender.c.y*_fh1),"@",,font1,custom,@_col
@@ -1501,10 +1537,14 @@ function com_dropmine(defender as _ship,mines_p() as _cords,mines_v() as short,b
             else
                 text=text &"/"&mdesig(a).desig
             endif
-            if _debug=1 then text=text &mdesig(a).w.s
+#if __FB_DEBUG__
+            text=text &mdesig(a).w.s
+#endif
         endif
     next
-    if _debug=1 then crew(2).talents(13)=1
+#if __FB_DEBUG__
+    crew(2).talents(13)=1
+#endif
     if add_talent(2,13,1)>0 then
         text=text &"/Improvised mine"
         impmine=c+1
@@ -1680,10 +1720,7 @@ function com_detonatemine(d as short,mines_p() as _cords, mines_v() as short, by
         mines_last=0
         return 0
     end if
-    if _debug=1 then
-        rlprint "detonating mine"
-        sleep
-    endif
+    DbgPrint("detonating mine")
     if rnd_range(1,100)>item(mines_v(d)).v3 then
         rlprint "The mine was a dud"
         destroyitem(mines_v(d))
@@ -2061,21 +2098,25 @@ function com_mindist(s as _ship) as short
 end function
 
 function com_victory(attacker() as _ship) as short
-    dim as short a,enemycount
-    dim as short debug,f
-    debug=2
+    DimDebug(0)'2
+    dim as short a,enemycount,f
+
     for a=1 to 14
         if attacker(a).hull>0 and attacker(a).aggr=0 then enemycount+=1
-        if debug=1 and _debug=1 and attacker(a).hull>0 then rlprint a &":x:"&attacker(a).c.x &":y:"&attacker(a).c.y
+#if __FB_DEBUG__
+        if debug=1 and attacker(a).hull>0 then rlprint a &":x:"&attacker(a).c.x &":y:"&attacker(a).c.y
+#endif
     next
-    if debug=2 and _debug=1 then
+
+#if __FB_DEBUG__
+    if debug=2 then
         f=freefile
         open "enemycount" for output as #f
         print #f,enemycount
         close #f
     endif
-
-    if debug=1 and _debug=1 then rlprint "Enemycount"&enemycount
+#endif
+    DbgPrint("Enemycount"&enemycount)
     if enemycount>0 then return enemycount
     return 0
 end function

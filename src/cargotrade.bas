@@ -131,6 +131,7 @@ end function
 function sell_alien(sh as short) as short
     dim t as string
     dim as short i,c,biodata
+DbgLogExplorePlanet("sell_alien: " &sh &"; lastcagedmonster: " &lastcagedmonster &"; ub cagedmonster: " &ubound(cagedmonster))
     if lastcagedmonster=0 then
         rlprint "You have nothing to sell."
         return 0
@@ -141,6 +142,7 @@ function sell_alien(sh as short) as short
             t=t &"/"&cagedmonster(i).sdesc
         next
         t=t & "/Exit"
+DbgLogExplorePlanet("sell_alien: " & t)
         c=menu(bg_parent,t)
         if c>0 and c<=lastcagedmonster then
             biodata=get_biodata(cagedmonster(c))
@@ -223,19 +225,20 @@ function botsanddrones_shop() as short
 end function
 
 function pay_bonuses(st as short) as short
-    dim as uinteger a,tarval,debug,c
+    DimDebug(0)
+    dim as uinteger a,tarval,c
     dim as single factor
     for a=0 to 3
         if reward(a)>0 then c=1
     next
     if ano_money>0 then c=1
-    if debug=1 and _debug=1 then rlprint c &":"& basis(st).company+2
+    DbgPrint(c &":"& basis(st).company+2)
     if c=1 then combon(basis(st).company+2).value+=1
     combon(7).value=player.turn/(7*24*60)
     for a=0 to 8
         if a<3 or a>6 then
             tarval=combon(a).base*(combon(a).rank+1)^2
-            if debug=1 and _debug=1 then rlprint tarval &":"& combon(a).value
+            DbgPrint(tarval &":"& combon(a).value)
             if combon(a).value>=tarval and combon(c).rank<6 then
                 combon(a).rank+=1
                 factor=(combon(a).rank^2/2)*100
@@ -251,7 +254,7 @@ function pay_bonuses(st as short) as short
     next
     for a=3 to 6
         tarval=combon(a).base*(combon(a).rank+1)^2
-        if debug=1 and _debug=1 then rlprint tarval &":"& combon(a).value
+        DbgPrint(tarval &":"& combon(a).value)
     next
     
     if combon(3).value>1 and combon(4).value=0 and combon(5).value=0 and combon(6).value=0 then c=3
@@ -458,6 +461,7 @@ function findcompany(c as short) as short
 end function
 
 function company(st as short) as short
+    DimDebugL(0)
     dim as short b,c,q,complete
     dim m as integer
     dim as single a
@@ -779,7 +783,7 @@ function company(st as short) as short
         factionadd(1,0,1)
     endif
     
-    if questroll<33 or _debug=1011 then questroll=give_quest(st)    
+    if questroll<33 or debug then questroll=give_quest(st)    
     
     pay_bonuses(st)
     
@@ -890,6 +894,7 @@ function company(st as short) as short
 end function
 
 function casino(staked as short=0, st as short=-1) as short
+    DimDebugL(0)
     dim as short a,b,c,d,e,f,pr,bet,num,fi,col,times,mbet,gpld,asst,x,y,z,t,price,bonus,passenger,i
     dim ba(3) as short
     dim localquestguy(lastquestguy+4) as short
@@ -900,15 +905,12 @@ function casino(staked as short=0, st as short=-1) as short
     dim p as _cords
     dim coltable(36) as short
     dim qgindex(15) as short
-    dim as short debug
     dim as string randomgender
     if rnd_range(1,100)<50 then
         randomgender="he"
     else
         randomgender="her"
     endif
-    
-    debug=1
     
     coltable(0)=10
     coltable(1)=12
@@ -962,7 +964,9 @@ function casino(staked as short=0, st as short=-1) as short
             if questguy(i).location=st then
                 questguy(i).lastseen=st 'For the quest log
                 localquestguy(leave)=i
-                if debug=1 and _debug=1 then menustring=menustring &st &"(W:"&questguy(i).want.type &" M:" &questguy(i).want.motivation &")"
+#if __FB_DEBUG__
+#endif
+                if debug=1 then menustring=menustring &st &"(W:"&questguy(i).want.type &" M:" &questguy(i).want.motivation &")"
                 menustring=menustring & questguyjob(questguy(i).job) &" "&questguy(i).n &"/"
                 qgindex(leave)=i
                 leave+=1
@@ -1281,7 +1285,8 @@ function casino(staked as short=0, st as short=-1) as short
 end function
 
 function play_slot_machine() as short
-    dim as short bet,win,a,b,c,d,debug
+    DimDebugL(0)
+    dim as short bet,win,a,b,c,d
     do
         set__color(11,0)
         cls
@@ -2618,7 +2623,7 @@ function customize_item() as short
                         rlprint "How many?(1-"&nr &")"
                         nr=getnumber(0,nr,0)
                     endif
-                    if debug=1 and _debug=1 then rlprint ""&nr
+                    DbgPrint(""&nr)
                     price=(item(i).v3+1)*(item(i).v3+1)*100*nr*haggle_("down")
                     if askyn("That will cost "&price &" Cr.(y/n)") then
                         if paystuff(price) then 
@@ -2938,8 +2943,7 @@ end function
 
 ' trading
 function merctrade(byref f as _fleet) as short
-    dim as short st,a,debug
-    debug=1
+    dim as short st,a
     st=-1
     for a=0 to 2
         if f.c.x=basis(a).c.x and f.c.y=basis(a).c.y then st=a
@@ -2955,15 +2959,14 @@ end function
 
 function refuel_f(f as _fleet, st as short) as _fleet
     'Refuels a fleet at a space station
-    dim as short demand,ships,a,debug
-    debug=1
+    dim as short demand,ships,a
     for a=0 to 15
         if f.mem(a).hull>0 then ships+=1
     next
     demand=cint(f.fuel*ships/30)
     basis(st).inv(9).v-=demand
     if basis(st).inv(9).v<0 then basis(st).inv(9).v=0
-    if debug=1 and _debug=1 then rlprint ships &" ships refueling "&demand &" fuel, on base " & basis(st).inv(9).v
+    DbgPrint(ships &" ships refueling "&demand &" fuel, on base " & basis(st).inv(9).v)
     f.fuel=0
     return f
 end function
@@ -3374,13 +3377,13 @@ dim re as short
 end function
 
 function change_prices(st as short,etime as short) as short
+    DimDebug(0)
     dim a as short
     dim b as short
     dim c as short
     dim supply as short
     dim demand as short
     dim change as short
-    dim as short debug=1
     dim c1 as single
     dim c2 as single
     dim c3 as single
@@ -3464,7 +3467,7 @@ function change_prices(st as short,etime as short) as short
         if basis(st).inv(9).v>10 then basis(st).inv(9).v=10
         if basis(st).inv(9).p<20 then basis(st).inv(9).p=20 
         if basis(st).inv(9).p>300 then basis(st).inv(9).p=300 
-        if debug=1 and _debug=1 then rlprint "Price st "&st &":"& basis(st).inv(9).p
+        DbgPrint("Price st "&st &":"& basis(st).inv(9).p)
     next
     for c=12 to 1 step -1
         goods_prices(0,c,st)=goods_prices(0,c-1,st)

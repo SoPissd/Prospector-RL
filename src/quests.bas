@@ -271,11 +271,13 @@ function give_patrolquest(employer as short) as short
             questroll=999
         endif
     endif
-    if _debug=1111 and j>-1 then
+#if __FB_DEBUG__ '    _debug=1111 
+	if j>-1 then
         for i=0 to 12
-            rlprint i &"Status:"&patrolquest(i).status
+            DbgPrint( i &"Status:"&patrolquest(i).status)
         next
     endif
+#endif
     return 0
 end function
 
@@ -343,17 +345,18 @@ function reward_bountyquest(employer as short) as short
     return 0
 end function
 function questguy_newloc(i as short) as short
-    dim as short j,noperstation(2),s1,s2,s3,debug
+    dim as short j,noperstation(2),s1,s2,s3
+    
     for j=1 to lastquestguy
         if questguy(j).location>=0 then' Is on a big station
             noperstation(questguy(j).location)+=1
         endif
     next
-    if debug=1 and _debug=1 then rlprint "Newloc called:" & noperstation(0) &":"& noperstation(1) &":" &noperstation(2)
+    DbgPrint("Newloc called:" & noperstation(0) &":"& noperstation(1) &":" &noperstation(2))
     s1=find_high(noperstation(),2,0)
     s3=find_low(noperstation(),2,0)
     s2=3-s1-s3's2 is the one that isn't s1 or s3
-    if debug=1 and _debug=1 then rlprint s1 &":"& s2 &":"& s3
+    DbgPrint(s1 &":"& s2 &":"& s3)
     if questguy(i).location=-1 then
         if rnd_range(1,100)<=50 then
             questguy(i).location=s3
@@ -392,12 +395,13 @@ function questguy_newloc(i as short) as short
 end function
 
 function questguy_newquest(i as short) as short
+    DimDebugL(qt_travel)    
     dim wanttable(25,2) as short
     dim hastable(25,2) as short
-    dim as short f,j,l,debug
+    dim as short f,j,l
     dim as string w(5),li
+    
     f=freefile
-    debug=qt_travel
     open "data/wanthas.csv" for input as #f
     do
         line input #f,li
@@ -423,7 +427,7 @@ function questguy_newquest(i as short) as short
         else 'Specific
             l=questguy(i).job+7
         endif
-        if debug=1 and _debug=1 then rlprint "adding want from line "&l
+        DbgPrint("adding want from line "&l)
         if rnd_range(1,100)<50 then
             questguy(i).want.type=wanttable(l,1)
         else
@@ -437,7 +441,9 @@ function questguy_newquest(i as short) as short
                 questguy(i).want.type=wanttable(l,2)
             endif
         endif
-        IF debug>0 and _debug>0 then questguy(i).want.type=debug
+#if __FB_DEBUG__
+        IF debug>0 then questguy(i).want.type=debug
+#endif
         make_questitem(i,q_want)
         questguy(i).want.motivation=rnd_range(0,2)
     endif    
@@ -447,7 +453,7 @@ function questguy_newquest(i as short) as short
         else 'Specific
             l=questguy(i).job+7
         endif
-        if debug=1 and _debug=1 then rlprint "adding has from line "&l
+        DbgPrint("adding has from line "&l)
         if rnd_range(1,100)<50 then
             questguy(i).has.type=hastable(l,1)
         else
@@ -461,7 +467,9 @@ function questguy_newquest(i as short) as short
                 questguy(i).has.type=hastable(l,2)
             endif
         endif
-        IF debug>0 and _debug>0 then questguy(i).has.type=debug
+#if __FB_DEBUG__
+        IF debug>0 then questguy(i).has.type=debug
+#endif
         make_questitem(i,q_has)
         questguy(i).want.motivation=rnd_range(0,2)
     endif
@@ -491,12 +499,7 @@ function make_questitem(i as short,wanthas as short) as short
         o=@questguy(i).has
         'has
     endif
-    if _Debug=33 then
-        f=freefile
-        open "MQI.txt" for append as #f
-        print #f,"I:"&i &" Wanthas"&wanthas &" Type:"&(*o).type
-        close #f
-    endif
+    DbgLogMQI("I:"&i &" Wanthas"&wanthas &" Type:"&(*o).type)    
     if (*o).type=1 then 'Equipment item
         if wanthas=q_want then
             questguy(i).want.it.ty=rnd_range(2,4) 'What kind of Item
@@ -757,13 +760,7 @@ function make_questitem(i as short,wanthas as short) as short
         
     endif
     
-    if _Debug=33 then
-        f=freefile
-        open "MQI.txt" for append as #f
-        print #f,"Done"
-        close #f
-    endif
-    
+    DbgLogMQI("Done")
     return 0
 end function
 
@@ -823,10 +820,11 @@ function questguy_dialog(i as short) as short
 end function
 
 function update_questguy_dialog(i as short,node() as _dialognode,iteration as short) as short
-    dim as short debug,j,jj,o
+    DimDebug(0)'2
+    dim as short j,jj,o
     dim as string himher(1),heshe(1)
     dim deletenode as _dialognode
-    debug=2
+
     himher(1)="him"
     himher(0)="her"
     heshe(1)="he"
@@ -1021,7 +1019,9 @@ function update_questguy_dialog(i as short,node() as _dialognode,iteration as sh
     else
         node(1).option(o).answer="Bye" 
     endif
-    if _debug>0 then node(1).option(o).answer="Bye" & o
+#if __FB_DEBUG__
+    node(1).option(o).answer &= o
+#endif
     node(1).option(o).no=0
     
     node(2).statement="I am "&questguy(i).n &", "&add_a_or_an(questguyjob(questguy(i).job),0) &"."
@@ -1460,25 +1460,24 @@ end function
 
 function do_dialog(no as short,e as _monster, fl as short) as short
     dim node(64) as _dialognode
-    dim as short last,debug
+    dim as short last
     last=load_dialog("data/dialog" &no & ".csv",node())
     no=1
-    debug=1
     do
         display_ship(0)
-        if debug=1 and _debug=1 then rlprint node(no).effekt
+        DbgPrint(node(no).effekt)
         no=node_menu(no,node(),e,fl)
-        if debug=1 and _debug=1 then rlprint "Next node:"&no
+        DbgPrint("Next node:"&no)
     loop until no=0
     return 0
 end function
 
 function node_menu(no as short,node() as _dialognode,e as _monster, fl as short,qgindex as short=0) as short
+    DimDebugL(0)'1
     dim as string text,rh,lh
-    dim as short a,c,flag,debug,effekt
-    debug=1
-    if node(no).effekt="PAYWALL" then
-        
+    dim as short a,c,flag,effekt
+
+    if node(no).effekt="PAYWALL" then        
         lh=left(node(no).statement,instr(node(no).statement,"<->")-1)
         rh=right(node(no).statement,len(node(no).statement)-2-instr(node(no).statement,"<->"))
         rlprint lh,11
@@ -1506,7 +1505,7 @@ function node_menu(no as short,node() as _dialognode,e as _monster, fl as short,
             
         endif
     endif
-    if debug=1 and _debug=1 then rlprint "debug!"
+    DbgPrint("debug!")
     if node(no).effekt="PAYWALL" then
         rlprint adapt_nodetext(rh,e,fl,qgindex),11
     else
@@ -1518,11 +1517,15 @@ function node_menu(no as short,node() as _dialognode,e as _monster, fl as short,
         if node(no).param(5)>0 then return node(no).param(5)
     endif
     text="You say"
-    if qgindex>0 and _debug=1 then text=text &questguy(qgindex).talkedto
+#if __FB_DEBUG__
+    if qgindex>0 then text=text &questguy(qgindex).talkedto
+#endif
     for a=1 to 16
         if node(no).option(a).answer<>"" then 
             text=text &"/"& adapt_nodetext(node(no).option(a).answer,e,fl,qgindex)
-            if debug=1 and _debug=1 then text=text &"("& node(no).option(a).no &")"
+#if __FB_DEBUG__
+            if debug=1 then text=text &"("& node(no).option(a).no &")"
+#endif
             flag+=1
         endif
     next
@@ -1532,7 +1535,7 @@ function node_menu(no as short,node() as _dialognode,e as _monster, fl as short,
             c=menu(bg_shiptxt,text,,0,20-flag,1)
         loop until c>=0
         rlprint adapt_nodetext(node(no).option(c).answer,e,fl,qgindex),15
-        if debug=1 and _debug=1 then rlprint "you choose "&node(no).option(c).no &":"&c,11
+        DbgPrint("you choose "&node(no).option(c).no &":"&c) ',11)
         return node(no).option(c).no
     else
         return node(no).option(1).no
@@ -1726,7 +1729,8 @@ function dialog_effekt(effekt as string,p() as short,e as _monster, fl as short)
     endif
     
     if effekt="TEACHTALENT" then
-        if (questguy(p(0)).friendly(0)>=1 or questguy(p(0)).want.given>0 or _debug=2020) and questguy(p(0)).flag(10)>0 then
+        if (questguy(p(0)).friendly(0)>=1 or questguy(p(0)).want.given>0) and questguy(p(0)).flag(10)>0 then
+        'if (questguy(p(0)).friendly(0)>=1 or questguy(p(0)).want.given>0 or _debug=2020) and questguy(p(0)).flag(10)>0 then
             rlprint "I think I could teach you a thing or two about that."
             if askyn("Do you want to learn "&talent_desig(questguy(p(0)).flag(10))&" for " &p(1)& " Cr.?(y/n)") then
                 if paystuff(p(1)) then
@@ -3696,7 +3700,9 @@ function give_quest(st as short) as short
         st2=rnd_range(0,2)
     loop until st2<>st
     
-    if _debug=1111 then questroll=14
+#if __FB_DEBUG__
+    'if _debug=1111 then questroll=14
+#endif
     
     if questroll>16 then
         'standard quest by office
@@ -3764,9 +3770,11 @@ function give_quest(st as short) as short
         do
             a=rnd_range(0,2)
         loop until a<>st
-        if _debug=1111 then stqroll=14
+#if __FB_DEBUG__
+'        if _debug=1111 then stqroll=14
+#endif
         select case stqroll
-        case 1 to 3
+        	case 1 to 3
             if askyn("The company rep needs some cargo delivered to station "&a+1 &". He is willing to pay 200 credits. Do you accept? (y/n)" ) then
                 bay=getnextfreebay
                 if bay<=0 then 

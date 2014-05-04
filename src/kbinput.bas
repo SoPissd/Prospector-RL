@@ -1,13 +1,15 @@
 
 function keyin(byref allowed as string="" , blocked as short=0)as string
+    DimDebugL(0)'1
     dim key as string
     dim as string text
     static as byte recording
     static as byte seq
     static as string*3 comseq
     static as string*3 lastkey
-    dim as short a,b,i,tog1,tog2,tog3,tog4,ctr,f,it,debug
+    dim as short a,b,i,tog1,tog2,tog3,tog4,ctr,f,it
     dim as string control
+
     if walking<>0 then sleep 50
     flip
     if _test_disease=1 and allowed<>"" then allowed="#"&allowed
@@ -98,10 +100,9 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
 #if __FB_DEBUG__
             if debug>0 and key="\Ci" then
             	DbgItemDump
-
             endif
             
-            if _debug=-1 and key="�" then
+            if debug=-1 and key="�" then
                 for x=0 to 60
                     for y=0 to 20
                         planetmap(x,y,player.map)=abs(planetmap(x,y,player.map))
@@ -114,9 +115,10 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
             endif
                 
             
-            if _debug>0 and key=key_testspacecombat then
+            if debug>0 and key=key_testspacecombat then
                 spacecombat(fleet(rnd_range(6,lastfleet)),9)
             endif
+#endif
             
             if key=key_awayteam then
                 if location=lc_onship then

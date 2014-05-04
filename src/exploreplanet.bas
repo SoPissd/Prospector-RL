@@ -242,6 +242,7 @@ End Function
 Function ep_atship() As Short
     Dim As Short slot,a
     slot=player.map
+DbgLogExplorePlanet("ep_atship")
     If awayteam.c.y=player.landed.y And awayteam.c.x=player.landed.x And slot=player.landed.m Then
         location=lc_onship
         rlprint "You are at the ship. Press "&key_la &" to launch."
@@ -303,7 +304,7 @@ End Function
 
 Function ep_autoexploreroute(astarpath() As _cords,start As _cords,move As Short, slot As Short, rover As Short=0) As Short
     Dim As Short candidate(60,20)
-    Dim As Short x,y,explored,notargets,last,i,debug,rollover
+    Dim As Short x,y,explored,notargets,last,i,rollover
     Dim As Single d2,d
     Dim As _cords target,target2,p,path(1283)
     For x=0 To 60
@@ -318,14 +319,14 @@ Function ep_autoexploreroute(astarpath() As _cords,start As _cords,move As Short
     Else
         rollover=1
     EndIf
-    If _debug>0 Then
-        Screenset 1,1
-        For x=0 To 60
-            For y=0 To 20
-                If candidate(x,y)=255 Then Pset(x,y)
-            Next
+#if __FB_DEBUG__
+    Screenset 1,1
+    For x=0 To 60
+        For y=0 To 20
+            If candidate(x,y)=255 Then Pset(x,y)
         Next
-    EndIf
+    Next
+#endif
     d2=61*21
     If rover=0 Then
         For i=1 To itemindex.vlast'Can't look up location
@@ -371,7 +372,7 @@ Function ep_autoexploreroute(astarpath() As _cords,start As _cords,move As Short
             return -1
         endif
     Else
-        If debug=1 And _debug=1 Then rlprint d &":"& target.x &":"&target.y &"-"&d2 &":"& target2.x &":"&target2.y
+        DbgPrint(d &":"& target.x &":"&target.y &"-"&d2 &":"& target2.x &":"&target2.y)
         If d2<d Then
             target.x=target2.x
             target.y=target2.y
@@ -577,19 +578,20 @@ Function ep_communicateoffer(Key As String) As Short
 End Function
 
 Function ep_display_clouds(cloudmap() As Byte) As Short
-    Dim As Short x,y,slot,osx,debug,i
-
+    DimDebug(0)
+    Dim As Short x,y,slot,osx,i
     Dim p As _cords
-    debug=1
     slot=player.map
     osx=calcosx(awayteam.c.x,planets(slot).depth)
 
     For x=0 To _mwx
         For y=0 To 20
-            If debug=1 And _debug=1 Then
+#if __FB_DEBUG__
+            If debug=1 Then
                 Color cloudmap(x,y)
                 Pset (x,y)
             EndIf
+#endif
             p.x=x+osx
             p.y=y
             If p.x>60 Then p.x=p.x-61
@@ -612,7 +614,7 @@ End Function
 
 
 Function ep_display(osx As Short=555) As Short
-    Dim As Short a,b,x,y,slot,fg,bg,debug,alp,x2
+    Dim As Short a,b,x,y,slot,fg,bg,alp,x2
     Dim As Byte comitem,comdead,comalive,comportal
     Dim As _cords p,p1,p2
     slot=player.map
@@ -1126,10 +1128,10 @@ Function ep_inspect(ByRef localturn As Short) As Short
 End Function
 
 Function ep_items(localturn As Short) As Short
+    DimDebug(0)
     Dim As Short a,slot,i,x,y,curr,last
     Dim As _cords p1,p2,route(1284)
     Dim As Single dam
-    Dim As Short debug=1
 
     slot=player.map
     For a=1 To itemindex.vlast 'Drop items of dead monsters
@@ -1252,7 +1254,7 @@ Function ep_launch(ByRef nextmap As _cords) As Short
 End Function
 
 Function ep_planeteffect(shipfire() As _shipfire, ByRef sf As Single,lavapoint() As _cords,localturn As Short,cloudmap() As Byte) As Short
-    Dim As Short slot,a,b,r,debug,x,y
+    Dim As Short slot,a,b,r,x,y
     Dim As String text
     Static lastmet As Short
     Dim As _cords p1,p2
@@ -2138,6 +2140,7 @@ End Function
 Function ep_monstermove(spawnmask() As _cords, lsp As Short, mapmask() As Byte,nightday() As Byte) As Short
     Dim As Short deadcounter,i,j,flee,slot
     Dim As Byte message(8),see1,see2
+    
     slot=awayteam.slot
     for i=1 to lastenemy
         if enemy(i).hp>0 then
@@ -2167,7 +2170,7 @@ Function ep_monstermove(spawnmask() As _cords, lsp As Short, mapmask() As Byte,n
                     'Can't see it
                     If (enemy(i).aggr=0 Or enemy(i).aggr=2) And enemy(i).diet>0 and rnd_range(1,20)+enemy(i).cmmod<enemy(i).intel And enemy(i).faction>8 Then
                         enemy(i).aggr=1
-                        If _debug>0 or vismask(enemy(i).c.x,enemy(i).c.y)>0 Then rlprint "The "&enemy(i).sdesc &" seems to calm down."
+                        If vismask(enemy(i).c.x,enemy(i).c.y)>0 Then rlprint "The "&enemy(i).sdesc &" seems to calm down."
                     EndIf
                     
                     if enemy(i).pickup>=0 then enemy(i).target=rnd_point
@@ -2317,14 +2320,17 @@ Function ep_spawning(spawnmask() As _cords,lsp As Short, diesize As Short,nightd
 End Function
 
 Function ep_shipfire(shipfire() As _shipfire) As Short
-    Dim As Short sf2,a,b,c,x,y,dam,slot,osx,ani,f,debug,icechunkhole,dambonus
+    DimDebug(0)
+    Dim As Short sf2,a,b,c,x,y,dam,slot,osx,ani,f,icechunkhole,dambonus
     Dim As Short dammap(60,20)
     Dim As String txt
     Dim As Single r,ed
     Dim p2 As _cords
+
     If rnd_range(1,100)<10 And planets(slot).flags(29)>0  Then icechunkhole=1
-    If debug=2 And _debug=1 Then icechunkhole=1
-    If debug=1 And _debug=1 Then
+#if __FB_DEBUG__
+    If debug=2 Then icechunkhole=1
+    If debug=1 Then
         f=Freefile
         Open "sflog.txt" For Append As #f
             For a=0 To 16
@@ -2332,6 +2338,7 @@ Function ep_shipfire(shipfire() As _shipfire) As Short
             Next
         Close #f
     EndIf
+#endif
     slot=player.map
     osx=calcosx(awayteam.c.x,planets(slot).depth)
     display_planetmap(slot,osx,0)
@@ -2466,7 +2473,7 @@ End Function
 Function ep_radio(ByRef nextlanding As _cords,ByRef ship_landing As Short, shipfire() As _shipfire,lavapoint() As _cords, ByRef sf As Single,nightday() As Byte,localtemp() As Single) As Short
     Dim As _cords p,p1,p2,pc
     Dim As String text,mtext
-    Dim As Short a,b,slot,debug,osx,ex,shipweapon,roverlist(128),c
+    Dim As Short a,b,slot,osx,ex,shipweapon,roverlist(128),c
     Dim As _weap del
     slot=player.map
     osx=calcosx(awayteam.c.x,planets(slot).depth)
@@ -2480,7 +2487,7 @@ Function ep_radio(ByRef nextlanding As _cords,ByRef ship_landing As Short, shipf
         pc=locEOL
         text=Ucase(gettext(pc.x,pc.y,46,text))
         If Instr(text,"ROVER")>0 Then
-            If debug=1 And _debug=1 Then rlprint "Contacting Rover"
+            DbgPrint("Contacting Rover")
             b=0
             mtext="Rovers:/"
             For a=1 To itemindex.vlast 'Looking for Rover
@@ -2691,7 +2698,7 @@ Function ep_radio(ByRef nextlanding As _cords,ByRef ship_landing As Short, shipf
 End Function
 
 Function ep_roverreveal(i As Integer) As Short
-    Dim As Short x,y,slot,debug,j
+    Dim As Short x,y,slot,j
     Dim As Single d
     Dim As _cords p1
     slot=item(i).w.m
@@ -2699,7 +2706,6 @@ Function ep_roverreveal(i As Integer) As Short
     For x=0 To 60
         For y=0 To 20
             If vismask(x,y)>0 And planetmap(x,y,slot)<0 Then
-                If _Debug>0 Then debug+=1
                 planetmap(x,y,slot)=planetmap(x,y,slot)*-1
                 item(i).v6=item(i).v6+0.5*(item(i).v1/3)*planets(slot).mapmod
                 if itemindex.last(x,y)>0 then
@@ -2721,7 +2727,7 @@ function ep_rovermove(a as short, slot as short) as short
     if item(a).v3<=0 then
         If item(a).vt.x=-1 Then
             last=ep_autoexploreroute(route(),p1,item(a).v2,slot,1)
-            if _debug>0 then rlprint "last:"&last
+            DbgPrint("last:"&last)
             if last=-1 then return 0
             item(a).vt=route(last)
         Else
@@ -2751,7 +2757,7 @@ function ep_rovermove(a as short, slot as short) as short
     else
         item(a).v3-=1
         if item(a).v3<0 then item(a).v3=0
-        if _debug>0 then rlprint "V6"&item(a).v3
+        DbgPrint("V6"&item(a).v3)
     endif
     return 0
 end function
@@ -3225,11 +3231,12 @@ Function ep_closedoor() As Short
 End Function
 
 Function ep_examine() As Short
+    DimDebug(0)
     Dim As _cords p2,p3
     Dim As String Key,text
     Dim As Short a,deadcounter,slot,osx,x
-    Dim debug As Short
     Dim As _cords ship
+
     ship=player.landed
     slot=player.map
     p2.x=awayteam.c.x
@@ -3266,7 +3273,9 @@ Function ep_examine() As Short
                 For a=0 To lastportal
                     If p2.x=portal(a).from.x And p2.y=portal(a).from.y And slot=portal(a).from.m Then text=text & portal(a).desig &". "
                     If p2.x=portal(a).dest.x And p2.y=portal(a).dest.y And slot=portal(a).dest.m And portal(a).oneway=0 Then text= text &portal(a).desig &". "
-                    If debug=9 And _debug=1 And p2.x=portal(a).from.x And p2.y=portal(a).from.y And slot=portal(a).from.m Then text=text &a &":"&portal(a).from.m &"dest:"& portal(a).dest.m &":"& portal(a).dest.x &":"& portal(a).dest.y &"oneway:"&portal(a).oneway
+#if __FB_DEBUG__
+                    If debug=9 And p2.x=portal(a).from.x And p2.y=portal(a).from.y And slot=portal(a).from.m Then text=text &a &":"&portal(a).from.m &"dest:"& portal(a).dest.m &":"& portal(a).dest.x &":"& portal(a).dest.y &"oneway:"&portal(a).oneway
+#endif
                 Next
                 
                 if itemindex.last(p2.x,p2.y)>0 then
@@ -3300,7 +3309,9 @@ Function ep_examine() As Short
                                 Draw String (enemy(a).c.x*_fw1,enemy(a).c.y*_fh1), "%",,Font1,custom,@_col
                             EndIf
                             text=text & mondis(enemy(a))
-                            If _debug=1 And _debug=1 Then text=text &"("&a &" of "&lastenemy &")"
+#if __FB_DEBUG__
+                            text=text &"("&a &" of "&lastenemy &")"
+#endif
                         EndIf
                         Exit For 'there won't be more than one monster on one tile
                     EndIf
@@ -3423,20 +3434,20 @@ End Function
 
 
 Function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _shipfire, spawnmask() As _cords,lsp As Short,Key As String, loctemp As Single) As Short
-    Dim As Short a,b,c,d,e,r,sf,slot,st,debug
+    Dim As Short a,b,c,d,e,r,sf,slot,st
     Dim As Single fuelsell,fuelprice,minprice
     Dim towed As _ship
     Dim As String text
     Dim As _cords p,p1,p2
+	DbgLogExplorePlanet("in ep_gives: " &tmap(awayteam.c.x,awayteam.c.y).gives)
     awayteam.e.add_action(10)
     slot=player.map
-    If debug=1 And _debug=1 Then rlprint ""&tmap(awayteam.c.x,awayteam.c.y).gives
+    DbgPrint(""&tmap(awayteam.c.x,awayteam.c.y).gives)
     st=nearest_base(player.c)
     fuelprice=round_nr(basis(st).inv(9).p/30+disnbase(player.c)/15-count_gas_giants_area(player.c,3)/2,2)
     If fuelprice<1 Then fuelprice=1
     If planets(slot).flags(26)=9 Then fuelprice=fuelprice*3
     fuelsell=fuelprice/2
-
     If tmap(awayteam.c.x,awayteam.c.y).gives=1 Then
         If specialplanet(1)=slot Then specialflag(1)=1
         findartifact(0)

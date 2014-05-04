@@ -40,7 +40,7 @@ DbgScreeninfo
 #Include Once "astar.bas"			'needs types.bas
 #Include Once "math.bas"
 #Include Once "credits.bas"			'needs math.bas
-#Include Once "debug2.bas"			'last include. null stubs or code for running with -g
+#Include Once "debug2.bas"			'null stubs or code for running with -g
 #Include Once "retirement.bas"		'needs types.bas
 #Include Once "quests.bas"			'needs types.bas
 #Include Once "file.bi"				'needs fbgfx.bi
@@ -152,27 +152,25 @@ Do
 '		next
 
 #if __FB_DEBUG__
-        If _debug>0 Then
-                If Key="t" Then
-                    Screenset 1,1
-                    BLoad "graphics\spacestations.bmp"
-                    a=getnumber(0,10000,0)
-                    Put(30,0),gtiles(gt_no(a)),Pset
-                    no_key=keyin
-                    Sleep
-                EndIf
-                If Key="8" Then
-                	DbgMonsterCSV
-                	DbgTilesCSV
-                End If
-                If Key="9" Then
-                    Cls
-                    set__color(15,0)
-                    For a=1 To 10
-                        reroll_shops
-                        Print a
-                    Next
-                EndIf
+        If Key="t" Then
+            Screenset 1,1
+            BLoad "graphics\spacestations.bmp"
+            a=getnumber(0,10000,0)
+            Put(30,0),gtiles(gt_no(a)),Pset
+            no_key=keyin
+            Sleep
+        EndIf
+        If Key="8" Then
+          	DbgMonsterCSV
+           	DbgTilesCSV
+        End If
+        If Key="9" Then
+            Cls
+            set__color(15,0)
+            For a=1 To 10
+                reroll_shops
+                print a
+            Next
         EndIf
         If a=8 Then
 			DbgPricesCSV
@@ -210,12 +208,13 @@ END 0
 '
 
 Function start_new_game() As Short
+    DimDebugL(0)'1'127
+    Dim _debug As Byte	' needs renaming/removing still    
+
     Dim As String text
     Dim As Short a,b,c,f,d
     Dim doubleitem(4555) As Byte
     Dim i As _items
-    Dim debug As Byte
-    'debug=127
     
     make_spacemap()
     DbgPlanetTempCSV
@@ -351,10 +350,10 @@ Function start_new_game() As Short
         makeplanetmap(piratebase(0),3,map(sysfrommap(piratebase(0))).spec)
         planets(piratebase(0)).mapstat=1
         player.c=map(sysfrommap(piratebase(0))).c
-        If _debug>0 Then 
-            player.c.x=drifting(1).x
-            player.c.y=drifting(1).y
-        EndIf
+#if __FB_DEBUG__
+        player.c.x=drifting(1).x
+        player.c.y=drifting(1).y
+#endif
     EndIf
     player.turn=0
     If start_teleport=1 Then artflag(9)=1
@@ -519,16 +518,17 @@ End Function
 
 
 Function landing(mapslot As Short,lx As Short=0,ly As Short=0,Test As Short=0) As Short
+    DimDebug(0)'510
     Dim As Short l,m,a,b,c,d,dis,alive,dead,roll,target,xx,yy,slot,sys,landingpad,landinggear,who(128),last2,alle
     Dim light As Single
     Dim p As _cords
-    Dim As Short  last,debug
+    Dim As Short  last
     Dim nextmap As _cords
     Dim As _monster delaway
     Dim As String reason
+
     delaway.optoxy=awayteam.optoxy
     awayteam=delaway
-    debug=1
 
     p.x=lx
     p.y=ly
@@ -541,9 +541,11 @@ Function landing(mapslot As Short,lx As Short=0,ly As Short=0,Test As Short=0) A
         If configflag(con_warnings)=0 And player.hull=1 And planets(mapslot).depth=0 Then
             If Not askyn("Pilot: 'Are you sure captain? I can't guarantee I get this bucket up again'(Y/N)",14) Then Return 0
         EndIf
-        If _debug=510 Then
-            rlprint sys &","&mapslot
+#if __FB_DEBUG__
+        If debug=510 Then
+            DbgPrint( sys &","&mapslot)
         EndIf
+#endif
 
         If mapslot>0 Then
             set__color(11,0)
@@ -662,16 +664,16 @@ Function landing(mapslot As Short,lx As Short=0,ly As Short=0,Test As Short=0) A
         If player.dead=0 And awayteam.hp>0 Then
             
             Do
-                if _debug=2704 then print #freefile,"outerloop1"
+'                if _debug=2704 then print #freefile,"outerloop1"
                 savegame
-                if _debug=2704 then print #freefile,"outerloop2"
+'                if _debug=2704 then print #freefile,"outerloop2"
                 equip_awayteam(slot)
-                if _debug=2704 then print #freefile,"outerloop3"
+'                if _debug=2704 then print #freefile,"outerloop3"
                 nextmap=explore_planet(nextmap,slot)
-                if _debug=2704 then print #freefile,"outerloop4"
+'                if _debug=2704 then print #freefile,"outerloop4"
                 set__color(11,0)
                 removeequip
-                if _debug=2704 then print #freefile,"outerloop5"
+'                if _debug=2704 then print #freefile,"outerloop5"
                 c=1
                 For b=2 To 255
                     If crew(b).hp<=0 Then
@@ -688,13 +690,13 @@ Function landing(mapslot As Short,lx As Short=0,ly As Short=0,Test As Short=0) A
                     EndIf
                 Next
                 
-                if _debug=2704 then print #freefile,"outerloop6:"&nextmap.m
+'                if _debug=2704 then print #freefile,"outerloop6:"&nextmap.m
             Loop Until nextmap.m=-1 Or player.dead<>0
+
             For c=0 To 127
                 For b=6 To 127
                     If crew(b).hp<=0 Then Swap crew(b),crew(b+1)
                 Next
-
             Next
             For b=0 To 127
                 If crew(b).onship=4 Then
@@ -808,9 +810,8 @@ Function scanning() As Short
     Dim Key As String
     Dim As Short osx
     Dim As Single roll,target
-    Dim debug As Byte
     Dim As Short plife,mining
-    debug=1
+    
     'if getsystem(player)>0 then
     a=getplanet(get_system())
     slot=a
@@ -896,7 +897,7 @@ Function scanning() As Short
         EndIf
         If isgardenworld(mapslot) Then rlprint "This planet is earthlike."
         If planets(mapslot).colflag(0)>0 Then rlprint "There is "& add_a_or_an(companyname(planets(mapslot).colflag(0)),0) &" colony on this planet. They are sending greetings."
-        If debug=1 And _debug=1 Then rlprint "Map number "&slot &":"& mapslot
+        DbgPrint("Map number "&slot &":"& mapslot)
         osx=30-_mwx/2
 
         For a=0 To planets(mapslot).life
@@ -1066,16 +1067,18 @@ Function asteroid_mining(slot As Short) As Short
 End Function
 
 Function gasgiant_fueling(p As Short, orbit As Short, sys As Short) As Short
-    Dim As Short fuel,roll,noa,a,mo,m,probe,probeflag,hydrogenscoop,debug,freebay
-    Dim en As _fleet
+    Dim As Short fuel,roll,noa,a,mo,m,probe,probeflag,hydrogenscoop,freebay
+    Dim en As _fleet    
     Static restfuel As Byte
-    Dim As String mon(6)
+    
+    Dim As String mon(6)    
     mon(1)="a giant wormlike creature. It's biochemistry is based on liquid hydrogen. The heat of our engines is attracting it."
     mon(2)="an enormous blob of living plasma!"
     mon(3)="a gigantic creature resembling a jellyfish!"
     mon(4)="a flock of large tube shaped creatures with wide maws and sharp teeth!"
     mon(5)="a huge balloon floating in the wind with five, thin, several kilometers long tentacles!"
     mon(6)="a circular flat being floating among the clouds. Three bulges on the top are glowing with static electricity."
+
     If p=-20003 Then mo=2
     m=isgasgiant(p)
     If isgasgiant(p)>1 Then
@@ -1109,7 +1112,7 @@ Function gasgiant_fueling(p As Short, orbit As Short, sys As Short) As Short
                 display_ship
             EndIf
             If player.hull>0 Then
-                If debug=1 And _debug=1 Then rlprint ""& hydrogenscoop
+                DbgPrint(""& hydrogenscoop)
                 fuel=10+rnd_range(2,7)*hydrogenscoop+add_talent(2,9,3)
                 hydrogenscoop-=1
                 If hydrogenscoop<=0 Then hydrogenscoop=1
@@ -1189,7 +1192,8 @@ Function gasgiant_fueling(p As Short, orbit As Short, sys As Short) As Short
 End Function
 
 Function rg_icechunk() As Short
-    Dim As Short debug,x,y,b
+    DimDebug(0)
+    Dim As Short x,y,b
     Dim gc As _cords
     If rnd_range(1,100)>5+player.sensors Then Return 0
     rlprint "Your sensors seem to pick up something"
@@ -1241,11 +1245,11 @@ End Function
 
 
 Function dock_drifting_ship(a As Short)  As Short
-    Dim As Short m,b,c,x,y,debug
+    Dim As Short m,b,c,x,y
     Dim p(1024) As _cords
     Dim land As _cords
     Dim As Short Test=0
-    debug=1
+
     m=drifting(a).m
     If a<=3 And rnd_range(1,100)<10+Test And player.turn>5 Then
         station_event(m)
@@ -1263,10 +1267,7 @@ Function dock_drifting_ship(a As Short)  As Short
     land.x=p(c).x
     land.y=p(c).y
     land.m=m
-    If _debug=11 Then
-        rlprint "Got through dock_drifting_ship"
-        Sleep
-    EndIf
+    DbgPrint("Got through dock_drifting_ship")
     landing(m,p(c).x,p(c).y,1)
     Return 0
 End Function
@@ -1281,7 +1282,7 @@ Function move_rover(pl As Short)  As Short
     update_tmap(pl)
     make_locallist(pl)
     t=(player.turn-planets(pl).visited)
-    If _debug=9 Then Screenset 1,1
+    'If _debug=9 Then Screenset 1,1
     For i=1 To itemindex.vlast
         If item(itemindex.value(i)).ty=18 And item(itemindex.value(i)).w.p=0 And item(itemindex.value(i)).w.s=0 And item(itemindex.value(i)).w.m=pl And item(itemindex.value(i)).discovered>0 And t>0 Then
             ep_rovermove(itemindex.value(i),pl)
@@ -1455,7 +1456,7 @@ Function spacestation(st As Short) As _ship
     basis(st).docked+=1
     comstr.Reset
     display_ship
-    If _debug=1111 Then questroll=14
+    'If _debug=1111 Then questroll=14
     If player.turn>0 Then
         If basis(st).company=3 Then
             inspectionchance=5+faction(0).war(1)+foundsomething
@@ -1939,13 +1940,14 @@ Function move_ship(Key As String) As _ship
 End Function
 
 Function explore_space() As Short
-    Dim As Short a,b,d,c,f,fl,pl,x1,y1,x2,y2,lturn,debug,osx,osy
+    DimDebug(0)'11
+    Dim As Short a,b,d,c,f,fl,pl,x1,y1,x2,y2,lturn,osx,osy
     Dim As String Key,text,allowed
     Dim As _cords p1,p2
     Dim As Short planetcom,driftercom,fleetcom,wormcom
+
     lturn=0
-    debug=11
-    If debug=11 And _debug=1 Then rlprint basis(0).shop(sh_equipment) &":"& basis(1).shop(sh_equipment) &":"& basis(2).shop(sh_equipment)
+    DbgPrint(basis(0).shop(sh_equipment) &":"& basis(1).shop(sh_equipment) &":"& basis(2).shop(sh_equipment))
     For a=0 To lastitem
         For b=0 To lastitem
             If b<>a Then
@@ -1959,11 +1961,13 @@ Function explore_space() As Short
     For a=1 To 25
         If player.weapons(a).heat>0 Then player.weapons(a).heat=0
     Next
-    If _debug=11 Then
+#if __FB_DEBUG__
+    If debug=11 Then
         For a=1 To lastdrifting
             drifting(a).p=1
         Next
     EndIf
+#endif
     Screenset 0,1
     Cls
     bg_parent=bg_shipstarstxt
@@ -1978,10 +1982,14 @@ Function explore_space() As Short
     display_ship
     Flip
     Screenset 0,1
-    If debug=10 And _debug=1 Then rlprint spdescr(7)
+#if __FB_DEBUG__
+    If debug=10 Then
+		DbgPrint(spdescr(7))
+    EndIf
+#endif
     player.turn=fix(player.turn/10)*10 'Needs to be multiple of 10 for events to trigger
     Do
-        If debug=8 And _debug=1 Then rlprint "Lastfleet:"&lastfleet
+        DbgPrint("Lastfleet:"&lastfleet)
         player.turn+=10
         If show_specials<>0 Then rlprint "Planet is at " &map(sysfrommap(specialplanet(show_specials))).c.x &":"&map(sysfrommap(specialplanet(show_specials))).c.y
         If player.e.tick=-1 And player.dead=0 Then
@@ -1989,7 +1997,9 @@ Function explore_space() As Short
             allowed=key_awayteam & key_ra & key_drop &key_la &key_tala &key_dock &key_sc & key_rename & key_comment & key_save &key_quit &key_tow &key_walk &key_wait
             allowed= allowed & key_nw & key_north & key_ne & key_east & key_west & key_se & key_south & key_sw &key_optequip
             If artflag(25)>0 Then allowed=allowed &key_te
-            If debug=11 And _debug=1 Then allowed=allowed &"�"
+#if __FB_DEBUG__
+            If debug=11 Then allowed=allowed &"�"
+#endif
             For a=0 To 2
                 If player.c.x=basis(a).c.x And player.c.y=basis(a).c.y Then
                     rlprint "You are at Spacestation-"& a+1 &". Press "&key_dock &" to dock."
@@ -2088,8 +2098,8 @@ Function explore_space() As Short
             wormcom=0
             comstr.t=key_ra &" call by radio;"&key_drop &" launch probe;"&key_comment &" comment;"
 
-
-            If debug=11 And _debug=1 And Key="�" Then
+#if __FB_DEBUG__
+            If debug=11 And Key="�" Then
                 rlprint fleet(1).mem(1).hull &":"&fleet(2).mem(1).hull &":"&fleet(3).mem(1).hull
                 lastfleet=8
                 fleet(6)=makealienfleet
@@ -2099,6 +2109,7 @@ Function explore_space() As Short
                 fleet(8)=makealienfleet
                 fleet(8).c=basis(2).c
             EndIf
+#endif
 
             If Key=key_fi Then
                 For a=0 To 2
@@ -2468,6 +2479,7 @@ End Function
 
 
 Function explore_planet(from As _cords, orbit As Short) As _cords
+    DimDebug(0)
     Dim As Single a,b,c,d,e,f,g,x,y,sf,sf2,vismod
     Dim As Short slot,r,deadcounter,ship_landing,loadmonsters,allroll(8),osx
     Dim As Single dawn,dawn2
@@ -2485,7 +2497,7 @@ Function explore_planet(from As _cords, orbit As Short) As _cords
     Dim lsp As Short
     Dim ti As Short
     
-    if _debug=2704 then print #logfile,"Starting ep loop"
+    DbgLogExplorePlanet("Starting ep loop")
     
     bg_parent=bg_awayteamtxt
     
@@ -2501,7 +2513,6 @@ Function explore_planet(from As _cords, orbit As Short) As _cords
     Dim last_ae As Short
     Dim del_rec As _rect
 
-    Dim As Short debug=0
 'oob suchen
     For a=1 To 255
         enemy(a)=enemy(0)
@@ -2514,11 +2525,11 @@ Function explore_planet(from As _cords, orbit As Short) As _cords
     Flip
     set__color(11,0)
     Cls
-    If _Debug>0 Then
-        For a=0 To 9
-            rlprint planets(slot).mon_template(a).sdesc
-        Next
-    EndIf
+#if __FB_DEBUG__
+    For a=0 To 9
+        DbgPrint(planets(slot).mon_template(a).sdesc)
+    Next
+#endif
     slot=from.m
     planets(slot).mapstat=2
     deadcounter=0
@@ -2539,8 +2550,10 @@ Function explore_planet(from As _cords, orbit As Short) As _cords
 
     For x=0 To 60
         For y=0 To 20
-            If _debug=11 Then Print #f,planetmap(x,y,slot)
-            If _debug=312 Then planetmap(x,y,slot)=Abs(planetmap(x,y,slot))
+#if __FB_DEBUG__
+            If debug=11 Then Print #f,planetmap(x,y,slot)
+            If debug=312 Then planetmap(x,y,slot)=Abs(planetmap(x,y,slot))
+#endif
             If Abs(planetmap(x,y,slot))=1 Then watermap(x,y)=10
             If Abs(planetmap(x,y,slot))=2 Then watermap(x,y)=50
             If planets(slot).depth=0 Then
@@ -2620,7 +2633,7 @@ Function explore_planet(from As _cords, orbit As Short) As _cords
             loadmonsters=1
         EndIf
     Next
-    if _debug=2704 then print #logfile,"loadmonsters:"&loadmonsters
+    DbgLogExplorePlanet("loadmonsters:"&loadmonsters)
     If loadmonsters=0 Then 'No saved status, monsters need to be generated
         c=0
         For a=0 To 16
@@ -2732,7 +2745,7 @@ Function explore_planet(from As _cords, orbit As Short) As _cords
         For c=0 To 8
         b=(planets(slot).vault(c).h-2)*((planets(slot).vault(c).w-2))
         If b>4 Or planets(slot).vault(c).wd(5)=4 Then
-            If debug=1 And _debug=1 Then rlprint "Making vault at "&planets(slot).vault(c).x &":"& planets(slot).vault(c).y &":"& planets(slot).vault(c).w &":"& planets(slot).vault(c).h
+            DbgPrint("Making vault at "&planets(slot).vault(c).x &":"& planets(slot).vault(c).y &":"& planets(slot).vault(c).w &":"& planets(slot).vault(c).h)
             If planets(slot).vault(c).wd(16)=99 Then specialflag(15)=1
             If planets(slot).vault(c).wd(5)=1 Then
                 If b>9 Then
@@ -2755,7 +2768,7 @@ Function explore_planet(from As _cords, orbit As Short) As _cords
             If planets(slot).vault(c).wd(5)=2 And planets(slot).vault(c).wd(6)<>0 Then
                 b=rnd_range(1,4)+rnd_range(1,4)+planets(slot).depth
                 d=lastenemy
-                If debug=1 And _debug=1 Then rlprint "lastenemy"&lastenemy
+                DbgPrint("lastenemy"&lastenemy)
                 lastenemy=lastenemy+b
                 For e=d To lastenemy
                     text=text &d
@@ -2763,20 +2776,20 @@ Function explore_planet(from As _cords, orbit As Short) As _cords
                         x=rnd_range(planets(slot).vault(c).x,planets(slot).vault(c).x+planets(slot).vault(c).w)
                         y=rnd_range(planets(slot).vault(c).y,planets(slot).vault(c).y+planets(slot).vault(c).h)
                     Loop Until tmap(x,y).walktru=0
-                    If debug=1 And _debug=1 Then rlprint "Set monster at "&x &":"&y
+                    DbgPrint("Set monster at "&x &":"&y)
                     If planets(slot).vault(c).wd(6)>0 Then
                         enemy(e)=makemonster(planets(slot).vault(c).wd(6),slot)
                         enemy(e)=setmonster(enemy(d),slot,spawnmask(),lsp,x,y,d)
                     Else
                         enemy(e)=setmonster(planets(slot).mon_template(-planets(slot).vault(c).wd(6)),slot,spawnmask(),lsp,x,y,e)
-                        If debug=1 And _debug=1 Then rlprint "Enemy "&e &" is at "&enemy(e).c.x &":"&enemy(e).c.y
+                        DbgPrint("Enemy "&e &" is at "&enemy(e).c.x &":"&enemy(e).c.y)
                     EndIf
                 Next
-                If debug=1 And _debug=1 Then rlprint "lastenemy"&lastenemy
+                DbgPrint("lastenemy"&lastenemy)
             EndIf
 
             If planets(slot).vault(c).wd(5)=3 Then
-                If debug=1 And _debug=1 Then rlprint "lastenemy"&lastenemy
+                DbgPrint("lastenemy"&lastenemy)
                 b=rnd_range(1,4)+rnd_range(1,4)+planets(slot).depth
                 d=lastenemy
                 lastenemy=lastenemy+b
@@ -2785,11 +2798,11 @@ Function explore_planet(from As _cords, orbit As Short) As _cords
                         x=rnd_range(planets(slot).vault(c).x,planets(slot).vault(c).x+planets(slot).vault(c).w)
                         y=rnd_range(planets(slot).vault(c).y,planets(slot).vault(c).y+planets(slot).vault(c).h)
                     Loop Until tmap(x,y).walktru=0
-                    If debug=1 And _debug=1 Then rlprint "Set monster at "&x &":"&y
+                    DbgPrint("Set monster at "&x &":"&y)
                     enemy(e)=makemonster(59,slot)
                     enemy(e)=setmonster(enemy(d),slot,spawnmask(),lsp,x,y,e,1)
                 Next
-                If debug=1 And _debug=1 Then rlprint "lastenemy"&lastenemy
+                DbgPrint("lastenemy"&lastenemy)
             EndIf
             If planets(slot).vault(c).wd(5)=4 Then
                 For x=planets(slot).vault(c).x To planets(slot).vault(c).x+planets(slot).vault(c).w
@@ -2822,7 +2835,7 @@ EndIf
         planets(slot).mon_template(a).slot=a
     Next
     
-    if _debug=2704 then print #logfile,"Move rovers"
+    DbgLogExplorePlanet("Move rovers")
     move_rover(slot)
     'if planets(slot).colony<>0 then growcolony(slot)
 
@@ -2953,7 +2966,7 @@ EndIf
         equip_awayteam(slot)
     EndIf
     
-    if _debug=2704 then print #logfile,"equip"
+    DbgLogExplorePlanet("equip")
     equip_awayteam(slot)
 
     c=0
@@ -2968,7 +2981,7 @@ EndIf
         EndIf
     Next
     
-    if _debug=2704 then print #logfile,"locallists"
+    DbgLogExplorePlanet("locallists")
     make_locallist(slot)
 
     lsp=0
@@ -3034,15 +3047,12 @@ EndIf
 
     dawn=rnd_range(1,60)
     
-    if _debug=2704 then print #logfile,"Tile effects"
+    DbgLogExplorePlanet("Tile effects")
     For a=0 To 5
        ep_tileeffects(areaeffect(),last_ae,lavapoint(),nightday(),localtemp(),cloudmap())
     Next
     
-    If _debug=11 Then
-        rlprint "moving enemies"
-        Sleep
-    EndIf
+    DbgPrint("moving enemies")
     Do
         b=0
         For a=1 To lastenemy
@@ -3053,27 +3063,20 @@ EndIf
         Next
     Loop Until b=0
 
-    If debug=99 And _debug=1 Then rlprint "Death in:" &planets(slot).death &"(in)"
-    
-    rlprint planets_flavortext(slot),15
-        
+    DbgPrint("Death in:" &planets(slot).death &"(in)")    
+    rlprint planets_flavortext(slot),15        
     If no_enemys=1 Then lastenemy=0
+    DbgPrint("Setting screen")
 
-    If _debug=11 Then
-        rlprint "Setting screen"
-        Sleep
-    EndIf
     If savefrom(0).map=0 Then
         nextmap=ep_planetmenu(awayteam.c,slot,shipfire(),spawnmask(),lsp,localtemp(awayteam.c.x,awayteam.c.y))
         If nextmap.m=-1 Then Return nextmap
     EndIf
-    
-    
-    savefrom(0)=savefrom(16)
+	savefrom(0)=savefrom(16)
     
     osx=calcosx(awayteam.c.x,planets(slot).depth)
     
-    if _debug=2704 then print #logfile,"Displaystuff"
+    DbgLogExplorePlanet("Displaystuff")
     Screenset 0,1
     set__color(11,0)
     Cls
@@ -3099,7 +3102,7 @@ EndIf
     '
     '***********************
     Do
-        if _debug=2704 then print #logfile,"1"
+        DbgLogExplorePlanet("1")
         If show_all=1 Then
             set__color( 15,0)
             Locate 21,1
@@ -3120,7 +3123,7 @@ EndIf
 
         If configflag(con_warnings)=0 And nightday(awayteam.c.x)=1 And nightday(old.x)<>1 Then rlprint "The sun rises"
         If configflag(con_warnings)=0 And nightday(awayteam.c.x)=2 And nightday(old.x)<>2 Then rlprint "The sun sets"
-        if _Debug=2704 then print #logfile,"Update masks"
+        DbgLogExplorePlanet("Update masks")
         lsp=ep_updatemasks(spawnmask(),mapmask(),nightday(),dawn,dawn2)
         mapmask(awayteam.c.x,awayteam.c.y)=-9
         
@@ -3135,7 +3138,7 @@ EndIf
                 player.turn+=1
             EndIf
             
-            if _debug=2704 then print #logfile,"2"
+            DbgLogExplorePlanet("2")
             ep_tileeffects(areaeffect(),last_ae,lavapoint(),nightday(),localtemp(),cloudmap())
             ep_lava(lavapoint())
             lastenemy=ep_spawning(spawnmask(),lsp,diesize,nightday())
@@ -3154,7 +3157,7 @@ EndIf
         EndIf
         
         
-        if _debug=2704 then print #logfile,"3 ae"&awayteam.e.e
+        DbgLogExplorePlanet("3 ae" & awayteam.e.e)
         deadcounter=ep_monstermove(spawnmask(),lsp,mapmask(),nightday())
 
         If player.dead>0 Or awayteam.hp<=0 Then allowed=""
@@ -3163,7 +3166,7 @@ EndIf
         If ship_landing>0 Then ep_landship(ship_landing, nextlanding, nextmap)
 
         
-        if _debug=2704 then print #logfile,"4 ae"&awayteam.e.e
+        DbgLogExplorePlanet("4 ae" & awayteam.e.e)
         
         If  tmap(awayteam.c.x,awayteam.c.y).resources>0 Or planetmap(awayteam.c.x,awayteam.c.y,slot)=17 Or  (tmap(awayteam.c.x,awayteam.c.y).no>2 And tmap(awayteam.c.x,awayteam.c.y).gives>0 And player.dead=0 And (awayteam.c.x<>old.x Or awayteam.c.y<>old.y))  Then
             old=awayteam.c
@@ -3192,7 +3195,7 @@ EndIf
             walking=0
         EndIf
 
-        if _debug=2704 then print #logfile,"5  ae"&awayteam.e.e &nextmap.m
+        DbgLogExplorePlanet("5  ae" & awayteam.e.e & nextmap.m)
         If (player.dead=0 And awayteam.e.tick=-1) Then
             
             Screenset 0,1
@@ -3216,7 +3219,7 @@ EndIf
             Flip
             
             If nextmap.m=0 Then Key=(keyin(allowed,walking))
-            if _debug=2704 then print #logfile, "&"&key
+            DbgLogExplorePlanet("&" & key)
             If Key="" Then
                 screenset 0,1
                 Cls
@@ -3234,7 +3237,7 @@ EndIf
                 if awayteam.hp<0 then player.dead=14
             endif
             
-            if _debug=2704 then print #logfile,"&heal"
+            DbgLogExplorePlanet("&heal")
             
             heal_awayteam(awayteam,0)
 
@@ -3297,21 +3300,21 @@ EndIf
                 EndIf
             EndIf
             
-            if _debug=2704 then print #logfile,"hitmonster"
+            DbgLogExplorePlanet("hitmonster")
             ep_playerhitmonster(old,mapmask())
-            if _debug=2704 then print #logfile,"checkmove"
+            DbgLogExplorePlanet("checkmove")
             ep_checkmove(old,Key)
             If old.x<>awayteam.c.x Or old.y<>awayteam.c.y Or Key=key_portal Or Key=key_inspect Then nextmap=ep_Portal()
-            if _debug=2704 then print #logfile,"nextmap"&nextmap.m
+            DbgLogExplorePlanet("nextmap"&nextmap.m)
             
             ep_planeteffect(shipfire(),sf,lavapoint(),localturn,cloudmap())
-            if _debug=2704 then print #logfile,"PE"
+            DbgLogExplorePlanet("PE")
             ep_areaeffects(areaeffect(),last_ae,lavapoint(),cloudmap())
-            if _debug=2704 then print #logfile,"AE"
+            DbgLogExplorePlanet("AE")
             If old.x<>awayteam.c.x Or old.y<>awayteam.c.y Or Key=key_pickup Then ep_pickupitem(Key)
-            if _debug=2704 then print #logfile,"PU"
+            DbgLogExplorePlanet("PU")
             If Key=key_inspect Or _autoinspect=0 And (old.x<>awayteam.c.x Or old.y<>awayteam.c.y) Then ep_inspect(localturn)
-            if _debug=2704 then print #logfile,"in"
+            DbgLogExplorePlanet("in")
             If vacuum(awayteam.c.x,awayteam.c.y)=1 And awayteam.helmet=0 Then ep_helmet()
             If vacuum(awayteam.c.x,awayteam.c.y)=0 And vacuum(old.x,old.y)=1 And awayteam.helmet=1 Then ep_helmet
         'Display all stuff
@@ -3340,7 +3343,7 @@ EndIf
             Next
             rlprint ""
             Flip
-            if _debug=2704 then print logfile,"drew everything again and flipped"
+            DbgLogExplorePlanet("drew everything again and flipped")
             'screenset 1,1
 
             If rnd_range(1,100)<disease(awayteam.disease).nac Then
@@ -3461,14 +3464,14 @@ EndIf
                 EndIf
             EndIf
         Next
-        If debug=99 And _debug=1 Then rlprint "Death in:"&planets(slot).death
+        DbgPrint("Death in:"&planets(slot).death)
         ' and the world moves on
         update_world(0)
                 
-        if _debug=2704 then print #logfile,"end loop"&nextmap.m
+        DbgLogExplorePlanet("end loop" & nextmap.m)
     Loop Until awayteam.hp<=0 Or nextmap.m<>0 Or player.dead<>0
     
-    if _debug=2704 then print #logfile,"1"&nextmap.m
+    DbgLogExplorePlanet("1" & nextmap.m)
     '
     ' END exploring
 
@@ -3624,7 +3627,7 @@ EndIf
     'if slot=specialplanet(12) and player.dead<>0 then player.dead=17
     If player.dead<>0 Then screenshot(3)
     
-    if _debug=2704 then print #logfile,"exit"&nextmap.m
+    DbgLogExplorePlanet("exit" & nextmap.m)
     Return nextmap
 End Function
 
@@ -3756,13 +3759,12 @@ End Function
 
 
 Function grenade(from As _cords,map As Short) As _cords
+    DimDebug(0)
     Dim As _cords target,ntarget
     Dim As Single dx,dy,x,y,launcher
     Dim As Short a,ex,r,t,osx
     Dim As String Key
     Dim As _cords p,pts(60*20)
-
-    Dim As Short debug=0
 
     target.x=from.x
     target.y=from.y
@@ -3772,7 +3774,7 @@ Function grenade(from As _cords,map As Short) As _cords
     y=from.y
     p=from
     launcher=findbest(17,-2)
-    If debug=1 And _debug=1 Then rlprint ""&launcher
+    DbgPrint(""&launcher)
     If launcher>0 Then
         rlprint "Choose target"
         Do
@@ -3857,7 +3859,7 @@ Function grenade(from As _cords,map As Short) As _cords
         target.y=y
         EndIf
     EndIf
-    If debug=1 And _debug=1 Then rlprint ""&target.x &":"& target.y
+    DbgPrint(""&target.x &":"& target.y)
     Return target
 End Function
 
@@ -4071,14 +4073,15 @@ Function wormhole_navigation() As Short
 End Function
 
 Function space_radio() As Short
+    DimDebug(0)
     Dim As Short i,closestfleet,closestdrifter,lc,j,disnum,dis,y
     Dim As _cords p
     Dim dummy As _monster
     Dim du(2) As Short
-    Dim debug As Short
     Dim c(25) As _cords
     Dim contacts(25) As Short
     Dim As String fname(8),text,dname(2)
+
     dname(0)=" (Strong signal)"
     dname(1)=""
     dname(2)=" (Weak signal)"
@@ -4144,7 +4147,9 @@ Function space_radio() As Short
                         disnum=2
                     End Select
                     text=text &"/"&shiptypes(drifting(Abs(contacts(j))).s)&dname(disnum)
-                    If _debug=1310 Then text &="("&contacts(j) &")"
+#if __FB_DEBUG__
+                    If debug=1310 Then text &="("&contacts(j) &")"
+#endif
                 EndIf
             Next
             text=text &"/Cancel"
@@ -4170,7 +4175,7 @@ Function space_radio() As Short
         If fleet(i).ty=3 Then do_dialog(3,dummy,i)
         dummy.lang=fleet(i).ty+26
         dummy.aggr=1
-        If debug=2 And _debug=1 Then rlprint ""&dummy.lang
+        DbgPrint( "dummy.lang: " & dummy.lang)
         If fleet(i).ty=6 Then communicate(dummy,1,1)
         If fleet(i).ty=7 Then communicate(dummy,1,1)
 
@@ -4227,15 +4232,15 @@ End Function
 
 Function move_probes() As Short
     Dim As Short i,x,y,j,navcom,t,d
-    if _debug>0 then rlprint "Move probes"
+    DbgPrint("Move probes")
     If lastprobe>0 Then
     navcom=player.equipment(se_navcom)
     For i=1 To lastprobe
-        if _debug>0 then rlprint "Probe "&i &" exists."
+        DbgPrint("Probe "&i &" exists.")
         If probe(i).m>0 Then
             probe(i).z-=item(probe(i).m).v5
             If probe(i).z<=0 Then
-                if _debug>0 then rlprint "Moving probe "&i
+                DbgPrint("Moving probe "&i)
                 probe(i).z+=10
                 For j=laststar+1 To laststar+wormhole
                     If map(j).c.x=probe(i).x And map(j).c.y=probe(i).y Then
@@ -4504,15 +4509,15 @@ Function move_monster(i As short, target As _cords,flee as byte,rollover as byte
 End Function
 
 Function monsterhit(attacker As _monster, defender As _monster,vis As Byte) As _monster
+    DimDebug(0)
     Dim mname As String
     Dim text As String
     Dim a As Short
     Dim b As Short
     Dim noa As Short
     Dim col As Short
-    Dim As Short debug
     if attacker.hp<=0 or defender.hp<=0 then return defender
-    if _debug>0 then rlprint attacker.sdesc &":"&defender.sdesc
+    DbgPrint(attacker.sdesc &":"&defender.sdesc)
     If vis>0 Then
         If attacker.stuff(1)=1 And attacker.stuff(2)=1 Then mname="flying "
         mname=mname & attacker.sdesc
@@ -4550,7 +4555,7 @@ Function monsterhit(attacker As _monster, defender As _monster,vis As Byte) As _
         If defender.hp<=0 Then defender.killedby=attacker.made
     EndIf
     attacker.e.add_action(attacker.atcost)
-    If debug=1 And _debug=1 Then rlprint "DEBUG MESSAGE dam:"& b
+    DbgPrint("dam:"& b)
     Return defender
 End Function
 
@@ -4874,7 +4879,6 @@ Function error_handler(text as string) As Short
 	   EndIf
 	EndIf
 	'
-	'goto WAITANDEXIT
 	return 0
 End Function
 

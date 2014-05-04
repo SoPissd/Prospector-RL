@@ -1,9 +1,9 @@
 function play_poker(st as short) as short
     dim card(52) as integer
-    dim as short i,k,x,y,dealer,curcard,j,l,ci,pli,winner,move,debug,speedup,pot,folded
+    dim as short i,k,x,y,dealer,curcard,j,l,ci,pli,winner,move,speedup,pot,folded
     dim p(4) as _pokerplayer
-    debug=1
     dim rules as _pokerrules
+
     pcards.LoadCards("graphics/cards2.bmp")
     p(4).name="You"
     select case st
@@ -249,8 +249,8 @@ end function
 
 function player_eval(p() as _pokerplayer,i as short,rules as _pokerrules) as short
     dim as _handrank ph(4)
-    dim as short pli(4),j,knowall,flag,pir,debug,stillin,price
-    debug=2
+    dim as short pli(4),j,knowall,flag,pir,stillin,price
+
     for j=1 to 4
         if p(j).fold=0 then stillin+=1
         pli(j)=j
@@ -292,10 +292,9 @@ end function
 
 function ace_highlo_eval(c() as integer,knowall as short) as _handrank
     dim as _handrank h1,h2
-    dim as short debug
     h1=poker_eval(c(),0,knowall)
     h2=poker_eval(c(),1,knowall)
-    if debug=1 and _debug=1 then print h1.rank ;":";h2.rank
+    DbgPrint(h1.rank ;":";h2.rank)
     if better_hand(h1,h2)=1 then return h1
     return h2
 end function
@@ -356,21 +355,21 @@ end function
 
 
 function sort_cards(card() as integer,knowall as short=0) as short
-    dim as short i,flag,debug,start
+    dim as short i,flag,start
     if knowall=0 then
         start=2
     else
         start=1
     endif
     do
-    flag=0
-    for i=start to 4
-        if pcards.crank(card(i))>pcards.crank(card(i+1)) then
-            swap  card(i) , card(i+1)
-            flag=1
-        endif
-    next
-    if debug=1 and _debug=1 then print ".";
+	    flag=0
+	    for i=start to 4
+	        if pcards.crank(card(i))>pcards.crank(card(i+1)) then
+	            swap  card(i) , card(i+1)
+	            flag=1
+	        endif
+	    next
+    	DbgPrint(".";)
     loop until flag=0
     return 0
 end function
@@ -379,10 +378,10 @@ function poker_eval(cardin() as integer, acehigh as short,knowall as short) as _
     dim r as _handrank
     dim card(5) as integer
     dim cc(5) as _cardcount
-    dim as short i,flag,debug,flush,strait,countpairs,j,start
+    dim as short i,flag,flush,strait,countpairs,j,start
+
     'take card 1, count how often others are there. 
     'Aces are wild would solve the high/lo problem (Just or=1 to every test)
-    debug=1
     
     for i=1 to 5
         card(i)=cardin(i)
@@ -537,9 +536,10 @@ end function
 
 function poker_winner(p() as _pokerplayer) as short
     'Check if 3 have folded
-    dim as short i,cfold,winner,cbet,stillin(4),cin,flag,tieat,debug,nop
-    
+    DimDebug(0)
+    dim as short i,cfold,winner,cbet,stillin(4),cin,flag,tieat,nop
     dim victory as _handrank
+
     for i=1 to 4
         if p(i).name<>"" then nop+=1
     next
@@ -558,27 +558,31 @@ function poker_winner(p() as _pokerplayer) as short
         if p(stillin(1)).pot<>p(stillin(i)).pot then return 0
     next
     
-    if debug=1 and _debug=1 then
+#if __FB_DEBUG__
+    if debug=1 then
         for i=1 to cin
             draw string(500,i*12),stillin(i) &":"&p(stillin(i)).win.rank &":"& p(stillin(i)).win.high(1)
         next
     endif
+#endif
     
     
     do
-        if debug=1 and _debug=1 then rlprint "Entering loop"
-        if debug=1 and _debug=1 then
+        DbgPrint("Entering loop")
+#if __FB_DEBUG__
+        if debug=1 then
             for i=1 to cin
                 draw string(500,i*12),stillin(i) &":"&p(stillin(i)).win.rank &":"& p(stillin(i)).win.high(1)
             next
             sleep
         endif
+#endif
         
         flag=0
         for i=1 to cin-1
             select case better_hand(p(stillin(i)).win,p(stillin(i+1)).win) 
                 case 2
-                    if debug=1 and _debug=1 then rlprint "swapping pos "&i
+                    DbgPrint("swapping pos "&i)
                     flag=1
                     'swap p(stillin(i)),p(stillin(i+1))
                     swap stillin(i),stillin(i+1)
@@ -588,16 +592,22 @@ function poker_winner(p() as _pokerplayer) as short
             end select
         next
         
-        if debug=1 and _debug=1 and flag=0 then rlprint "Leaving loop"
+        if flag=0 then 
+			DbgPrint("Leaving loop")
+        EndIf
     loop until flag=0
+    
     for i=1 to cin
         p(stillin(i)).rank=i
     next
-    if debug=1 and _debug=1 then
+
+#if __FB_DEBUG__
+    if debug=1 then
         for i=1 to cin
             draw string(500,200+i*12),stillin(i) &":"&p(stillin(i)).win.rank &":"& p(stillin(i)).win.high(1)
         next
     endif
+#endif
     
     if tieat=0 or tieat>1 then
         return stillin(1)
@@ -612,9 +622,10 @@ end function
     'find best hand
     
 function draw_poker_table(p() as _pokerplayer,reveal as short=0,winner as short=0,r as _pokerrules) as short
-    dim as short x,y,i,j
-    
+    DimDebug(0)'22
+    dim as short x,y,i,j    
     dim as string handname(9),playerinfo,tacticname(9)
+    
     handname(1)="high card"
     handname(2)="pair"
     handname(3)="two pair"
@@ -642,7 +653,9 @@ function draw_poker_table(p() as _pokerplayer,reveal as short=0,winner as short=
         if p(i).in=1 then
             playerinfo=p(i).name &" (In Pot: "& credits(p(i).pot*r.bet) &" Cr.)"
             if crew(1).talents(5)>0 and i<4 then playerinfo &= " (Tactic: "& tacticname(p(i).risk) &", "& p(i).money &" Cr.)"
-            if _debug<>22 then draw string (x,y+pcards.cardheight),playerinfo,,font2,custom,@_col
+#if __FB_DEBUG__
+            if debug<>22 then draw string (x,y+pcards.cardheight),playerinfo,,font2,custom,@_col
+#endif
             if p(i).fold=0 then
                 for j=1 to 5
                     if p(i).card(j)>0 then 
@@ -656,7 +669,9 @@ function draw_poker_table(p() as _pokerplayer,reveal as short=0,winner as short=
                             endif
                         endif
                         set__color(15,0)
-                        if _debug=22 then draw string(x,y+pcards.cardheight),pcards.csuit(p(i).card(j))&":"&p(i).card(j),,font2,custom,@_col
+#if __FB_DEBUG__
+                        if debug=22 then draw string(x,y+pcards.cardheight),pcards.csuit(p(i).card(j))&":"&p(i).card(j),,font2,custom,@_col
+#endif
                         x+=pcards.cardwidth
                     endif
                 next

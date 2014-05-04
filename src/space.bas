@@ -259,10 +259,10 @@ function make_spacemap() as short
     print "Asteroid belts:";astcou
     print "Gas giants:";gascou
     sleep 1250
-    if _debug>0 then
-        dim key as string
-        key=keyin
-    endif
+#if __FB_DEBUG__
+    dim key as string
+    key=keyin
+#endif
     return 0
 end function
 
@@ -288,12 +288,12 @@ end function
 
 
 function add_stars() as short
-    dim as short a,cc,b,f,debug
+    DimDebugL(0)'2    
+    dim as short a,cc,b,f
     dim as string l
     dim as _stars del
     dim as _planet delpl
     
-    'debug=2
     for a=0 to max_maps
         planets(a)=delpl
     next
@@ -344,7 +344,7 @@ function add_stars() as short
                 cc+=1
                 map(a).planets(1)=cc
             else
-                if debug=1 and _debug=1 then rlprint map(a).c.x &":"&map(a).c.y
+                DbgPrint(map(a).c.x &":"&map(a).c.y)
                 map(a).spec=10
                 map(a).planets(1)=-20002
                 if rnd_range(1,100)<25 then 
@@ -377,7 +377,8 @@ function add_wormholes() as short
     dim as short a,i,last,x,y,ano,qux1,quy1,qux2,quy2,highest,qdivx,qdivy
     
     dim quadrant(2,2) as byte
-    if _debug>0 then rlprint "W:"&wormhole
+    
+    DbgPrint("W:"&wormhole)
     for a=laststar+1 to laststar+wormhole-1 step 2
         do 
             qux1=rnd_range(0,2)
@@ -396,7 +397,7 @@ function add_wormholes() as short
             map(a+1).c.x=rnd_range(0,sm_x/3)+qux2*sm_x/3
             map(a+1).c.y=rnd_range(0,sm_y/3)+quy2*sm_y/3
         loop until distance(map(a).c,map(a+1).c)>sm_x/3
-        if _debug>0 then rlprint "wormhole "&a
+        DbgPrint("wormhole "&a)
         map(a).spec=9
         map(a).ti_no=77
         map(a).planets(1)=a+1
@@ -556,12 +557,12 @@ function add_easy_planets(start as _cords) as short
 end function
 
 function add_event_planets() as short
-    dim as short sys,d,planet,debug,f
+    dim as short sys,d,planet,f
     
     for d=0 to 5
         sys=get_random_system()
         if sys>0 then
-            if debug=1 and _debug=1 then print "disc:";map(sys).discovered
+            DbgPrint("disc:";map(sys).discovered)
             if map(sys).discovered=0 then
                 planet=getrandomplanet(sys)
                 
@@ -579,9 +580,9 @@ function add_event_planets() as short
 end function
 
 function add_drifters() as short
+    DimDebug(0)
     dim as short a,b,c,d,e,f,ba(3)
     dim as _cords p
-    dim as byte makelog=1
     
     for e=firstwaypoint to lastwaypoint
         if targetlist(e).x=basis(0).c.x and targetlist(e).y=basis(0).c.y then ba(1)=e 
@@ -589,12 +590,17 @@ function add_drifters() as short
         if targetlist(e).x=basis(2).c.x and targetlist(e).y=basis(2).c.y then ba(3)=e 
     next
     
-    if makelog=1 then
+#if __FB_DEBUG__
+    if debug=1 then
         f=Freefile
         open "drifter.log" for output as #f
     endif
+#endif
+    
     for a=1 to lastdrifting
-        if makelog=1 then print #f,a
+#if __FB_DEBUG__
+        if debug=1 then print #f,a
+#endif
         lastplanet=lastplanet+1
         drifting(a).x=rnd_range(0,sm_x)
         drifting(a).y=rnd_range(0,sm_y)
@@ -609,12 +615,16 @@ function add_drifters() as short
         if a=7 or a=8 then drifting(a).s=rnd_range(9,12)
         if a>=9 and a<=11 then drifting(a).s=rnd_range(5,8)
         if a>=12 and a<=16 then drifting(a).s=rnd_range(1,4)
-        if makelog=1 then print #f,drifting(a).x;":";drifting(a).y;":";drifting(a).s;":";drifting(a).m
+#if __FB_DEBUG__
+    if debug=1 then print #f,drifting(a).x;":";drifting(a).y;":";drifting(a).s;":";drifting(a).m
+#endif
     
         if drifting(a).s<=22 then make_drifter(drifting(a),0,0,f)
         drifting(a).p=show_all
     next
-    if makelog=1 then close #f
+#if __FB_DEBUG__
+    if debug=1 then close #f
+#endif
     drifting(1).x=targetlist(firstwaypoint).x
     drifting(1).y=targetlist(firstwaypoint).y
     planets(drifting(1).m).atmos=5
@@ -688,13 +698,15 @@ function add_drifters() as short
     planets(drifting(3).m).mon_noamin(2)=1
     planets(drifting(3).m).mon_noamax(2)=2
     
-    if _debug=-1 then
+#if __FB_DEBUG__
+    if debug=-1 then
         drifting(1).s=9
         drifting(1).m=lastplanet
         lastplanet+=1
         make_drifter(drifting(1))
         deletemonsters(drifting(1).m)
     endif
+#endif
     
     planetmap(19,10,drifting(3).m)=-287
     if rnd_range(1,100)<33 then add_company_shop(3,3)
@@ -798,7 +810,9 @@ end function
     
 
 function add_caves() as short
-    dim as short a,b,debug
+    DimDebug(0)
+    dim as short a,b
+    
     lastportal=22
     for a=0 to lastportal
          
@@ -840,14 +854,14 @@ function add_caves() as short
             portal(a).oneway=0
             map(sysfrommap(portal(a).from.m)).discovered=5
             
-            if debug=1 and _debug=1 then
+#if __FB_DEBUG__
+            if debug=1 then
                 portal(a).from.x=30
-                portal(a).from.y=10
-                
+                portal(a).from.y=10                
             endif
+#endif
     next
 	DbgPortalsCSV
-
     return 0
 end function
 
@@ -875,14 +889,15 @@ function add_piratebase() as short
         dist(a)=dist(a)-disnbase(map(list(a)).c)
     next
     'List = candidates
-    if _debug>0 then 
-        f=freefile
-        open "distances.csv" for output as #f
-        for a=0 to c
-            print #f,a &";" &cint(dist(a)) &";"&cint(disnbase(map(list(a)).c))
-        next
-        close #f
-    end if
+
+#if __FB_DEBUG__
+    f=freefile
+    open "distances.csv" for output as #f
+    for a=0 to c
+        print #f,a &";" &cint(dist(a)) &";"&cint(disnbase(map(list(a)).c))
+    next
+    close #f
+#endif
     
     for a=0 to _noPB
         dist(0)=9999
@@ -904,8 +919,10 @@ function add_piratebase() as short
 end function
 
 function add_questguys() as short
-    dim as short i,debug,f,j
+    DimDebugL(0)'1'2020
+    dim as short i,j
     dim alreadyhere(17) as byte
+    
     questguy(0).n="Questguy0" 'WE should never see this guy
     for i=0 to lastquestguy
         questguy(i)=questguy(0) 'Delete quest guy
@@ -914,11 +931,16 @@ function add_questguys() as short
         questguy(i).location=-2 'Everybody starts nowhere
     next
     
-    debug=1
+#if __FB_DEBUG__
+	dim as short f
     f=freefile
-    if debug=1 and _debug=1 then open "questguys.log" for output as #f
+    if debug=1 then open "questguys.log" for output as #f
+#endif
+    
     for i=1 to lastquestguy
-        if debug=1 and _debug=1 then print #f,"Making qg "&i
+#if __FB_DEBUG__
+        if debug=1 then print #f,"Making qg "&i
+#endif
         questguy(i).n=character_name(questguy(i).gender)
         if i=1 then 
             questguy(i).location=0
@@ -948,7 +970,9 @@ function add_questguys() as short
             questguy(i).risk+=2
         end select
         if questguy(i).risk>9 then questguy(i).risk=9 
-        if debug=1 and _debug=1 then print #f,"Doing newquest"
+#if __FB_DEBUG__
+        if debug=1 then print #f,"Doing newquest"
+#endif
         questguy_newquest(i)
         for j=0 to lastquestguy
             questguy(i).friendly(j)=rnd_range(0,2) '0 hates you, 2 loves you
@@ -968,7 +992,7 @@ function add_questguys() as short
             if questguy(i).money<=0 then questguy(i).money=rnd_range(100,300)
         end select' 
         
-        if rnd_range(1,100)<20 or _debug=2020 then 'talent to share
+        if rnd_range(1,100)<20 or debug=2020 then 'talent to share
             if rnd_range(1,100)<66 then 'Job specific
                 select case questguy(i).job
                 case 1,2
@@ -993,19 +1017,23 @@ function add_questguys() as short
             endif
         endif
         
-        if debug=1 and _debug=1 then 
+#if __FB_DEBUG__
+        if debug=1 then 
             print #f,i;"flag 3";questguy(i).flag(3)
             print #f,i;"flag 4";questguy(i).flag(4)
+	        print #f,i;"Outloan:"&questguy(questguy(i).flag(1)).loan ;" to "; questguy(questguy(i).flag(1)).n
+	        print #f,"Money:"&questguy(i).money
         endif
-        if debug=1 and _debug=1 then print #f,i;"Outloan:"&questguy(questguy(i).flag(1)).loan ;" to "; questguy(questguy(i).flag(1)).n
-        if debug=1 and _debug=1 then print #f,"Money:"&questguy(i).money
+#endif
     next
-    if debug=1 and _debug=1 then 
+#if __FB_DEBUG__
+    if debug=1  then 
         for i=1 to lastquestguy
             print #f,questguy(i).n ;" loaned ";questguy(questguy(i).flag(1)).loan;" to "; questguy(questguy(i).flag(1)).n
         next
         close #f
     endif
+#endif
     return 0
 end function
 
@@ -1046,13 +1074,13 @@ function distribute_stars() as short
 end function
 
 function gen_traderoutes() as short
+    DimDebugL(0)'1
     dim as _cords start,goal,wpl(40680)
     dim as _cords p
     dim t as short
     dim map(sm_x,sm_y) as short
     dim as integer x,y,i,offset,a,d,r
     dim as integer fp,lp,smallstation
-    dim as byte debug
     dim as byte visited(2)
     
     lastwaypoint=5
@@ -1073,7 +1101,7 @@ function gen_traderoutes() as short
             'if spacemap(x,y-1)<>0 and spacemap(x,y-1)<>1 and disnbase(p)>3 then map(x,y)=1
             'if spacemap(x-1,y)<>0 and spacemap(x-1,y)<>1 and disnbase(p)>3 then map(x,y)=1
             'if spacemap(x-1,y)<>0 and spacemap(x-1,y)<>1 and disnbase(p)>3 then map(x,y)=1
-            if map(x,y)>0 and show_NPCs=1 and _debug=1 then
+            if map(x,y)>0 and show_NPCs=1 and debug=1 then
                 locate y+1,x+1
                 print "#"
             endif
@@ -1149,12 +1177,16 @@ function gen_traderoutes() as short
 start=targetlist(lastwaypoint)
 goal=targetlist(firstwaypoint)
 offset=lastwaypoint+1
-if debug=5 and _debug=1 then
+
+#if __FB_DEBUG__
+if debug=5 then
     locate goal.y+1,goal.x+1
     print "G"
     locate start.y+1,start.x+1
     print "S"
 endif
+#endif
+
 lp=A_Star(wpl(),goal,start,map(),sm_x,sm_y)
 
     if lp>0 then
@@ -1164,11 +1196,13 @@ lp=A_Star(wpl(),goal,start,map(),sm_x,sm_y)
             spacemap(wpl(i).x,wpl(i).y)=0
             wpl(i).x=0
             wpl(i).y=0
-            if debug=5 and _debug=1 then
+#if __FB_DEBUG__
+            if debug=5 then
                 sleep 50
                 locate targetlist(i+offset).y+1,targetlist(i+offset).x+1
                 print "*"
             endif
+#endif
         next
     endif
     lastwaypoint=lastwaypoint+lp
@@ -1203,7 +1237,8 @@ lp=A_Star(wpl(),goal,start,map(),sm_x,sm_y)
 '    lastwaypoint=lastwaypoint+lp
     firstwaypoint=11
 '    
-    if debug=5 and _debug=1 then
+#if __FB_DEBUG__
+    if debug=5 then
         for x=0 to sm_x
             for y=0 to sm_y
                 if spacemap(x,y)<>0 and spacemap(x,y)<>1 then 
@@ -1249,7 +1284,7 @@ lp=A_Star(wpl(),goal,start,map(),sm_x,sm_y)
         sleep
         
     endif
-    if debug=5 and _debug=1 then
+    if debug=5 then
         for a=11 to lastwaypoint
             locate targetlist(a).y+1,targetlist(a).x+1
             print "*"
@@ -1267,6 +1302,7 @@ lp=A_Star(wpl(),goal,start,map(),sm_x,sm_y)
         next
         sleep    
     endif
+#endif
 '    
 '    targetlist(0)=basis(0).c
 '    targetlist(1).x=rnd_range(0,30)
@@ -1285,7 +1321,8 @@ lp=A_Star(wpl(),goal,start,map(),sm_x,sm_y)
 end function
 
 function gen_shops() as short
-    dim  as short i,j,flag,debug,mudddone,lastshopspec,botsdone
+    DimDebugL(0)'1
+    dim  as short i,j,flag,mudddone,lastshopspec,botsdone
     dim as byte shopspec(7)
     
     lastshopspec=7
@@ -1320,16 +1357,20 @@ function gen_shops() as short
         case else
             basis(i).pricelevel=1
         end select
-        if rnd_range(1,100)<(1-basis(i).pricelevel)*100 or _debug=1 then basis(i).shop(sh_used)=1
+        if rnd_range(1,100)<(1-basis(i).pricelevel)*100 or debug=1 then basis(i).shop(sh_used)=1
     next
     if mudddone=0 then basis(rnd_range(0,2)).shop(Sh_mudds)=1
     if botsdone=0 then basis(rnd_range(0,2)).shop(Sh_bots)=1
-    if _debug=1 and debug=1 then
+
+#if __FB_DEBUG__
+    if debug=1 then
         for i=0 to 2
             basis(i).shop(sh_mudds)=1
             basis(i).shop(sh_bots)=1
         next
     endif
+#endif
+    
     j=0
     lastshopspec=5
     for i=0 to lastshopspec

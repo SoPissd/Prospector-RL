@@ -32,9 +32,9 @@ end function
 
 function rnd_item(t as short) as _items
     dim i as _items
-    dim as short r,debug
+    dim as short r
     dim items(25) as short
-    debug=1
+
     if t=RI_Lamps then 
         if rnd_range(1,100)<66 then
             i=make_item(28)
@@ -3578,9 +3578,11 @@ function uid_pos(uid as uinteger) as integer
 end function
 
 function get_item_list(invit() as _items, invnit()as short,ty as short=0,ty2 as short=0,ty3 as short=0,ty4 as short=0,noequip as short=0) as short
-    dim as short b,a,set,lastinv,lastinv2,swapflag,tylabel,c,f,debug,equipnum(1024),isequipment
+    DimDebug(0)
+    dim as short b,a,set,lastinv,lastinv2,swapflag,tylabel,c,f,equipnum(1024),isequipment
     dim as _items inv(ubound(invit))
     dim as Short invn(ubound(invit))
+
     if noequip=1 then
         noequip=0
         for a=0 to 128
@@ -3633,16 +3635,17 @@ function get_item_list(invit() as _items, invnit()as short,ty as short=0,ty2 as 
                         if a<>inv(b).w.s then
                             
                             if inv(b).id=item(a).id and inv(b).ty=item(a).ty and item(a).ty<>15 then
-                               
-                               invn(b)+=1
-                               if _debug=1 and debug=22 then inv(b).desigp &=a
-                               set=1
-                               if _debug=1 and debug=22 then
-                                   f=freefile
-                                   open "itemadded.txt" for append as #f
-                                   print #f,a &";"& b &";"& item(a).desig  &";"& item(a).id &"invn"&invn(b)&"�"& inv(b).desig
-                                   close #f
+								invn(b)+=1
+                               	set=1
+#if __FB_DEBUG__
+                                if debug=22 then inv(b).desigp &=a
+                                if debug=22 then
+                                	f=freefile
+                                    open "itemadded.txt" for append as #f
+                                    print #f,a &";"& b &";"& item(a).desig  &";"& item(a).id &"invn"&invn(b)&"�"& inv(b).desig
+                                    close #f
                                 endif
+#endif
                             endif
                             if item(a).ty=15 then
                                 if inv(b).ty=15 and inv(b).v2=item(a).v2 and inv(b).v1=item(a).v1 then
@@ -3654,19 +3657,16 @@ function get_item_list(invit() as _items, invnit()as short,ty as short=0,ty2 as 
                         endif
                     next
                 endif
-                if set=0 then
-                    
-                                   
+                if set=0 then                                   
                     lastinv+=1
                     inv(lastinv)=item(a)
                     inv(lastinv).w.s=a
-                    invn(lastinv)=1 
-    
-                   
+                    invn(lastinv)=1                   
                 endif
             endif
         endif
-        if debug=22 and _debug=1 then
+#if __FB_DEBUG__
+        if debug=22 then
             f=freefile
             open "GILitems.txt" for append as #f
             print #f,"Turn "&a
@@ -3675,17 +3675,20 @@ function get_item_list(invit() as _items, invnit()as short,ty as short=0,ty2 as 
             next
             close #f
         endif
+#endif
     next
-    if _debug=1 and debug=22 then
-       f=freefile
-       open "itemadded.txt" for append as #f
-       print #f,"####"
-       for a=1 to lastinv
+#if __FB_DEBUG__
+    if debug=22 then
+		f=freefile
+        open "itemadded.txt" for append as #f
+        print #f,"####"
+        for a=1 to lastinv
             print #f,a &";"& inv(a).desig  &";"& inv(a).id &"invn"&invn(a)
-       next
-       print #f,"####"
-       close #f
+        next
+        print #f,"####"
+        close #f
     endif
+#endif
         
     for a=1 to lastinv
         if inv(a).ty=2 then 
@@ -3722,12 +3725,14 @@ function get_item_list(invit() as _items, invnit()as short,ty as short=0,ty2 as 
                     c+=1
                     invit(c)=inv(a)
                     invnit(c)=invn(a)
-                    if _debug=1 and debug=22 then
+#if __FB_DEBUG__
+                    if debug=22 then
                        f=freefile
                        open "itemadded.txt" for append as #f
                        print #f,c &";"& invit(c).desig  &"; invn"&invnit(c)
                        close #f
                     endif
+#endif
                 endif
             next
         endif
@@ -3790,13 +3795,28 @@ function getrnditem(fr as short,ty as short) as short
 end function
 
 function get_item(ty as short=0,ty2 as short=0,byref num as short=0,noequ as short=0) as short
+<<<<<<< HEAD
     dim as short last,marked,i,c,debug,j
+||||||| parent of a048194... DimDebugL(0)
+    dim as short last,i,c,debug,j
+=======
+    dim as short last,i,c,j
+>>>>>>> a048194... DimDebugL(0)
     dim as _items inv(1024)
     dim as short invn(1024)
     dim as string key,helptext
+<<<<<<< HEAD
     debug=1
+||||||| parent of a048194... DimDebugL(0)
+    static as short marked=0
+    
+    debug=1
+=======
+    static as short marked=0
+    
+>>>>>>> a048194... DimDebugL(0)
     i=1
-    if debug=1 and _debug=1 then rlprint "Getting itemlist:ty:"&ty &"ty2"&ty2
+    DbgPrint("Getting itemlist:ty:"&ty &"ty2"&ty2)
     last=get_item_list(inv(),invn(),,,,,noequ)
     if ty<>0 or ty2<>0 then
         marked=1
@@ -3809,7 +3829,7 @@ function get_item(ty as short=0,ty2 as short=0,byref num as short=0,noequ as sho
                 c+=1
             endif
             if inv(i).ty<>ty and inv(i).ty<>ty2 and inv(i).ty<>0 then
-                if debug=1 and _debug=1 then rlprint "Removing "&inv(i).desig
+                DbgPrint("Removing "&inv(i).desig)
                 for j=i to last
                     invn(j)=invn(j+1)
                     inv(j)=inv(j+1)
@@ -3819,7 +3839,7 @@ function get_item(ty as short=0,ty2 as short=0,byref num as short=0,noequ as sho
                 i+=1
             endif
         loop until i>last
-        if debug=1 and _debug=1 then rlprint "removed "&c &" items" &last-c
+        DbgPrint("removed "&c &" items" &last-c)
         last-=c
         if last=1 then return inv(last).w.s
         if last<=0 then return -1
@@ -4133,20 +4153,27 @@ end function
 '    return i
 
 function first_unused(i as short) as short
-    dim as short a,debug
+    DimDebugL(0)
+    dim as short a
     
     if item_assigned(i)=0 then return i
-    if debug=1 and _debug=1 then rlprint "Item "&i &"assigned, looking for alternative"
+    DbgPrint("Item "&i &"assigned, looking for alternative")
     for a=0 to lastitem
         if item(a).w.s<0 and a<>i then
             if item(a).desig=item(i).desig and item(a).v1=item(i).v1 and item(a).v2=item(i).v2 and item(a).v3=item(i).v3 then
-                if debug=1 and _debug=1 and item_assigned(a)=0 then rlprint "Item " &a & "is alternative"
-                if debug=1 and _debug=1 and item_assigned(a)>0 then rlprint "Item " &a & "is used by"&item_assigned(a)-1
+#if __FB_DEBUG__
+                if debug=1 and item_assigned(a)=0 then
+					DbgPrint("Item " &a & "is alternative")
+                EndIf
+                if debug=1 and item_assigned(a)>0 then
+                	DbgPrint("Item " &a & "is used by"&item_assigned(a)-1)
+                EndIf 
+#endif
                 if item_assigned(a)=0 then return a
             endif
         endif
     next
-    if debug=1 and _debug=1 then rlprint "No alt found"
+    DbgPrint("No alt found")
     return i
 end function
 

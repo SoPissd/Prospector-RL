@@ -547,15 +547,6 @@ end function
 
 Dim Shared alliance(7) As Byte
 
-dim shared logfile as short
-
-
-if _debug=2704 then
-    logfile=freefile
-    open "exploreplanet.log" for append as logfile
-    print #logfile,"Start"
-endif
-
 Function _ship.diop() As Byte
     If this.di=1 Then Return 9
     If this.di=2 Then Return 8
@@ -2382,7 +2373,9 @@ Declare Function piratecrunch(f As _fleet) As _fleet
 Declare Function clearfleetlist() As Short
 Declare Function countfleet(ty As Short) As Short
 Declare Function meet_fleet(f As Short)As Short
+#if __FB_DEBUG__
 Declare Function debug_printfleet(f As _fleet) As String
+#endif
 Declare Function fleet_battle(ByRef red As _fleet,ByRef blue As _fleet) As Short
 Declare Function getship(f As _fleet) As Short
 Declare Function furthest(List() As _cords,last As Short, a As _cords,b As _cords) As Short
@@ -2705,10 +2698,10 @@ function _index.remove(v as short, c as _cords) as short
 end function
 
 function _index.move(v as short,oc as _cords,nc as _cords) as short
-    if _debug>0 then rlprint last(oc.x,oc.y) &":"&last(nc.x,nc.y)
+    DbgPrint(last(oc.x,oc.y) &":"&last(nc.x,nc.y))
     remove(v,oc)
     add(v,nc)
-    if _debug>0 then rlprint last(oc.x,oc.y) &":"&last(nc.x,nc.y)
+    DbgPrint(last(oc.x,oc.y) &":"&last(nc.x,nc.y))
     return 0
 end function
 

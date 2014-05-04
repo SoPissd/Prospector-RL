@@ -6,14 +6,16 @@ function space_mapbmp() as short
     dim as any ptr img
     dim as short x,y,a,n,ti_no,minx,maxx,miny,maxy
     dim as byte debug=1
-    if debug=1  and _debug=1 then rlprint "configflag(con_tiles)"&configflag(con_tiles)
+    DbgPrint("configflag(con_tiles)"&configflag(con_tiles))
     minx=-1
     miny=-1
     maxx=-1
     maxy=-1
     for x=0 to sm_x
         for y=0 to sm_y
-            if debug=1 and _debug=1 then spacemap(x,y)=abs(spacemap(x,y))
+#if __FB_DEBUG__ 'huh
+            spacemap(x,y)=abs(spacemap(x,y))
+#endif
             if spacemap(x,y)>0 then
                 if minx=-1 or minx>x then minx=x
                 if miny=-1 or miny>y then miny=y
@@ -96,7 +98,10 @@ function space_mapbmp() as short
         next
     next
     for a=1 to lastdrifting
-        if drifting(a).p=1 or (debug=1  and _debug=1) then
+#if __FB_DEBUG__
+'        if drifting(a).p=1 or (debug=1  and _debug=1) then
+#endif
+        if drifting(a).p=1 or (debug=1) then
             if configflag(con_tiles)=0 then
                 if drifting(a).g_tile.x=0 or drifting(a).g_tile.x=5 or drifting(a).g_tile.x>9 then drifting(a).g_tile.x=rnd_range(1,4)
                 put img,((drifting(a).x-minx)*_fw1,(drifting(a).y-miny)*_fh1),stiles(drifting(a).g_tile.x,drifting(a).g_tile.y),trans
@@ -107,7 +112,10 @@ function space_mapbmp() as short
         endif
     next
     for a=0 to laststar+wormhole
-        if map(a).discovered>0  or (debug=1 and _debug=1) then
+#if __FB_DEBUG__
+'        if map(a).discovered>0  or (debug=1 and _debug=1) then
+#endif
+        if map(a).discovered>0  or (debug=1) then
             if configflag(con_tiles)=0 then
                 put img,((map(a).c.x-minx)*_fw1,(map(a).c.y-miny)*_fh1),gtiles(map(a).ti_no),trans
             else
@@ -147,7 +155,8 @@ function space_mapbmp() as short
         set__color( _shipcolor,0)
         draw string img,((player.c.x-minx)*_fw1,(player.c.y-miny)*_fh1),"@",,Font1,custom,@_col
     endif
-    if debug=1 and _debug=1 then
+#if __FB_DEBUG__
+    if debug=1 then
         set__color(15,0)
         for a=11 to lastwaypoint
             x=targetlist(a).x
@@ -157,6 +166,7 @@ function space_mapbmp() as short
             endif
         next
     endif
+#endif
     savepng( "summary/" &player.desig &"-map.png", img, 1)
     imagedestroy img
     return 0

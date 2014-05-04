@@ -160,7 +160,8 @@ end function
 
 function join_fight(f as short) as short
     dim as string q,fname(10)
-    dim as short f2,des,faggr,f2aggr,i,debug,fty,f2ty,side 
+    dim as short f2,des,faggr,f2aggr,i,fty,f2ty,side
+     
     f2=fleet(f).fighting
     gen_fname(fname())
     fty=fleet(f).ty
@@ -276,8 +277,8 @@ end function
 
 function fleet_battle(byref red as _fleet,byref blue as _fleet) as short
     dim as integer rscore,bscore
-    dim as short i,f,t,j,debug,dam
-    debug=1
+    dim as short i,f,t,j,dam
+
     'Only one side shoots, collide fleets calls both alternately
     for i=1 to 15
         if red.mem(i).hull>0 and rnd_range(1,6)>4 then 'exits and has Initiative
@@ -290,7 +291,7 @@ function fleet_battle(byref red as _fleet,byref blue as _fleet) as short
                         if dam>0 then 
                             blue.mem(t).hull=blue.mem(t).hull-red.mem(i).weapons(f).dam
                             if blue.mem(t).hull<=0 and blue.mem(t).bounty>0 then bountyquest(blue.mem(t).bounty).status=3
-                            if debug=1 and _debug=1 then rlprint blue.mem(i).desig &"hit "&red.mem(t).desig &" for " &dam &" damage"
+                            DbgPrint(blue.mem(i).desig &"hit "&red.mem(t).desig &" for " &dam &" damage")
                         endif
                     endif
                 endif
@@ -370,7 +371,7 @@ end function
 
 function decide_if_fight(f1 as short,f2 as short) as short
     'Decides if f1 and f2 should start a fight
-    dim as byte fighting,aggr1,aggr2 ,debug
+    dim as byte fighting,aggr1,aggr2
     
     
     fighting=0
@@ -391,14 +392,14 @@ function decide_if_fight(f1 as short,f2 as short) as short
     'Eris always annihilates fleets that aren't space stations
     if (fleet(f1).ty=10 and f2<=5) then fleet(f2).ty=0 
     if (fleet(f2).ty=10 and f1<=5) then fleet(f1).ty=0 
-    if debug=1 and _debug=1 then rlprint "f1:"&aggr1 &"F2:"&aggr2
+    DbgPrint("f1:"&aggr1 &"F2:"&aggr2)
     'Ancient aliens attack everything
     if fleet(f1).ty=5 or fleet(f2).ty=5 then fighting=1
     
     if f1<=5 or f2<=5 and player.turn<5000 then fighting=0 'Spacestations aren't attcked before turn 5000
     
     if fighting=1 then
-        if debug=1 and _debug=1 then rlprint "fight initiated between " &fleet(f1).ty &" and "&fleet(f2).ty
+        DbgPrint("fight initiated between " &fleet(f1).ty &" and "&fleet(f2).ty)
         fleet(f1).fighting=f2
         fleet(f2).fighting=f1
         fleet(f1).con(2)=f2
@@ -411,13 +412,14 @@ end function
 
 function ss_sighting(i as short) as short
     dim as string text,text2,text3
-    dim as short fn,fn2,a,s,c,debug
+    dim as short fn,fn2,a,s,c
     dim as _cords p
+    
     if basis(i).lastsighting=0 then return 0
     fn=basis(i).lastsighting
     fn2=basis(i).lastfight
-    debug=1
-    if debug=1 and _debug=1 then rlprint fn &":"&fn2
+
+    DbgPrint(fn &":"&fn2)
     c=11
     
     if rnd_range(1,100)>basis(i).lastsightingturn-player.turn then
@@ -605,10 +607,12 @@ function move_fleets() as short
 end function
 
 function make_fleet() as _fleet
-    dim as short roll,i,e,debug
+    DimDebugL(0)
+    dim as short roll,i,e
     dim as _fleet f
+
     roll=rnd_range(1,6)
-    if (countfleet(1)<countfleet(2) or faction(0).war(1)>faction(0).war(2)) or (debug=1 and _debug=1) then 
+    if (countfleet(1)<countfleet(2) or faction(0).war(1)>faction(0).war(2)) or (debug=1) then 
         f=makemerchantfleet
     else
         if configflag(con_easy)=1 or player.turn>25000 then 
@@ -617,12 +621,14 @@ function make_fleet() as _fleet
             f=makepatrol
         endif
     endif
-    if roll+patrolmod>10 and debug=0 and _debug=1 then 
+#if __FB_DEBUG__
+    if roll+patrolmod>10 and debug=0 then 
         if show_npcs=1 then rlprint roll &":" &patrolmod
         f=makepatrol
         patrolmod=0
         makepat=makepat+1
     endif
+#endif
     e=999
     for i=1 to 15
         if f.mem(i).movepoints(0)<e and f.mem(i).movepoints(0)>0 then e=f.mem(i).movepoints(0)
@@ -784,7 +790,8 @@ end function
 function makemerchantfleet() as _fleet
     dim f as _fleet
     dim text as string
-    dim as short a,b,debug
+    dim as short a,b
+    
     f.ty=1
     a=rnd_range(1,3)
     for b=1 to a
@@ -1134,16 +1141,17 @@ function count_diet(slot as short,diet as short) as short
 end function
 
 function makemonster(a as short, map as short, forcearms as byte=0) as _monster
+    DimDebugL(0)
     dim enemy as _monster
-    dim as short d,e,l,mapo,g,r,ahp,debug,prettybonus,tastybonus
+    dim as short d,e,l,mapo,g,r,ahp,prettybonus,tastybonus
     dim as single easy
     static ti(11) as string
     static ch(11) as short
     static ad(11) as single
     dim as string prefix
-    debug=1
+
     if a=0 then
-        if debug=1 and _debug=1 then rlprint "ERROR: Making monster 0",14
+        DbgPrint("ERROR: Making monster 0")',14)
         return enemy
     endif
     
@@ -1227,7 +1235,7 @@ function makemonster(a as short, map as short, forcearms as byte=0) as _monster
         if d=8 then enemy.diet=3
         if d<5 then enemy.diet=2
         if d>=5 and d<8 then enemy.diet=1
-        if enemy.diet=1 and debug=1 and _debug=1 then rlprint "Rate:" &(count_diet(map,1)+1)& ":" &(count_diet(map,2)+1)& "="& (count_diet(map,1)+1)/(count_diet(map,2)+1)
+        if enemy.diet=1 and debug=1 then rlprint "Rate:" &(count_diet(map,1)+1)& ":" &(count_diet(map,2)+1)& "="& (count_diet(map,1)+1)/(count_diet(map,2)+1)
         if enemy.diet=1 and (count_diet(map,1)+1)/(count_diet(map,2)+1)<=.25 then enemy.diet=2 'Need 3 herbivoures at least to support one carni
         if enemy.diet=3 and (count_diet(map,3)+1)/(count_diet(map,1)+1)<=.25 then enemy.diet=2 'Need 3 carni at least to support one scav
         enemy.speed=rnd_range(0,5)+rnd_range(0,4)+rnd_range(0,enemy.weapon)
@@ -5396,6 +5404,7 @@ dim as short c,b
     return p
 end function
     
+#if __FB_DEBUG__
 function debug_printfleet(f as _fleet) as string
     dim text as string
     dim a as short
@@ -5404,3 +5413,5 @@ function debug_printfleet(f as _fleet) as string
     next
     return text
 end function
+#endif
+
