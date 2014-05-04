@@ -3795,26 +3795,12 @@ function getrnditem(fr as short,ty as short) as short
 end function
 
 function get_item(ty as short=0,ty2 as short=0,byref num as short=0,noequ as short=0) as short
-<<<<<<< HEAD
-    dim as short last,marked,i,c,debug,j
-||||||| parent of a048194... DimDebugL(0)
-    dim as short last,i,c,debug,j
-=======
     dim as short last,i,c,j
->>>>>>> a048194... DimDebugL(0)
     dim as _items inv(1024)
     dim as short invn(1024)
     dim as string key,helptext
-<<<<<<< HEAD
-    debug=1
-||||||| parent of a048194... DimDebugL(0)
     static as short marked=0
     
-    debug=1
-=======
-    static as short marked=0
-    
->>>>>>> a048194... DimDebugL(0)
     i=1
     DbgPrint("Getting itemlist:ty:"&ty &"ty2"&ty2)
     last=get_item_list(inv(),invn(),,,,,noequ)
@@ -3846,7 +3832,6 @@ function get_item(ty as short=0,ty2 as short=0,byref num as short=0,noequ as sho
     endif
     if marked=0 then
         do
-            
             marked+=1
             if marked>last then marked=0
         loop until invn(marked)>0
@@ -3855,6 +3840,7 @@ function get_item(ty as short=0,ty2 as short=0,byref num as short=0,noequ as sho
         display_item_list(inv(),invn(),marked,last,2,2)
         helptext=inv(marked).describe
         if inv(marked).ty=26 then helptext=helptext & caged_monster_text
+        'helptext = ""&marked &" " &last
         c=textbox(helptext,22,2,25,11,1)
         key=keyin(key_north &key_south)
         for i=0 to c
