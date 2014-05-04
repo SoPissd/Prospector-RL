@@ -589,7 +589,7 @@ function destroyitem(b as short) as short
             lastitem=lastitem+1
             item(b)=item(lastitem)
             lastitem=lastitem-1
-            'dprint "ERROR: attempted to destroy nonexistent item "& b,14
+            'rlprint "ERROR: attempted to destroy nonexistent item "& b,14
         endif
         return -1
     endif
@@ -639,7 +639,7 @@ function calc_resrev() as short
 end function
 
 function placeitem(i as _items,x as short=0,y as short=0, m as short=0, p as short=0, s as short=0) as short
-    if m>0 and s<0 then dprint "m:"&m &"s:"&s &"lp:"&lastplanet
+    if m>0 and s<0 then rlprint "m:"&m &"s:"&s &"lp:"&lastplanet
     i.w.x=x
     i.w.y=y
     i.w.m=m
@@ -661,7 +661,7 @@ function placeitem(i as _items,x as short=0,y as short=0, m as short=0, p as sho
             endif
         next
     endif
-    dprint "ITEM PLACEMENT ERROR!(lastitem="&lastitem &")",14
+    rlprint "ITEM PLACEMENT ERROR!(lastitem="&lastitem &")",14
 end function
 
 function item_filter() as short
@@ -723,7 +723,7 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
     dim i as _items
     dim as short f,roll,target,rate
     if uid=4294967295 then 
-        dprint "Can't make any more items!"
+        rlprint "Can't make any more items!"
         return i
     endif
     rate=5000-disnbase(player.c)*10
@@ -3135,7 +3135,7 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         if i.v3>0 then i.price=i.price*(i.v3/20)
     endif
     
-    'if i.desig="" or i.desigp="" then dprint "ERROR: Item #" &a &" does not exist.",14,14
+    'if i.desig="" or i.desigp="" then rlprint "ERROR: Item #" &a &" does not exist.",14,14
     if a=320 then return i 'Never modify standard spacesuits
     i=modify_item(i,nomod)
     return i
@@ -3796,7 +3796,7 @@ function get_item(ty as short=0,ty2 as short=0,byref num as short=0,noequ as sho
     dim as string key,helptext
     debug=1
     i=1
-    if debug=1 and _debug=1 then dprint "Getting itemlist:ty:"&ty &"ty2"&ty2
+    if debug=1 and _debug=1 then rlprint "Getting itemlist:ty:"&ty &"ty2"&ty2
     last=get_item_list(inv(),invn(),,,,,noequ)
     if ty<>0 or ty2<>0 then
         marked=1
@@ -3809,7 +3809,7 @@ function get_item(ty as short=0,ty2 as short=0,byref num as short=0,noequ as sho
                 c+=1
             endif
             if inv(i).ty<>ty and inv(i).ty<>ty2 and inv(i).ty<>0 then
-                if debug=1 and _debug=1 then dprint "Removing "&inv(i).desig
+                if debug=1 and _debug=1 then rlprint "Removing "&inv(i).desig
                 for j=i to last
                     invn(j)=invn(j+1)
                     inv(j)=inv(j+1)
@@ -3819,7 +3819,7 @@ function get_item(ty as short=0,ty2 as short=0,byref num as short=0,noequ as sho
                 i+=1
             endif
         loop until i>last
-        if debug=1 and _debug=1 then dprint "removed "&c &" items" &last-c
+        if debug=1 and _debug=1 then rlprint "removed "&c &" items" &last-c
         last-=c
         if last=1 then return inv(last).w.s
         if last<=0 then return -1
@@ -3911,7 +3911,7 @@ end function
 '    cu=1
 '    a=0
 '    'Sort by value
-'    dprint "Sorting by value"
+'    rlprint "Sorting by value"
 '    do
 '        a+=1
 '        set=0
@@ -3925,7 +3925,7 @@ end function
 '        next
 '    loop until set=0
 '    
-'    dprint "Sorting by filter"
+'    rlprint "Sorting by filter"
 '    
 ''    do
 ''        tylabel+=1
@@ -4136,17 +4136,17 @@ function first_unused(i as short) as short
     dim as short a,debug
     
     if item_assigned(i)=0 then return i
-    if debug=1 and _debug=1 then dprint "Item "&i &"assigned, looking for alternative"
+    if debug=1 and _debug=1 then rlprint "Item "&i &"assigned, looking for alternative"
     for a=0 to lastitem
         if item(a).w.s<0 and a<>i then
             if item(a).desig=item(i).desig and item(a).v1=item(i).v1 and item(a).v2=item(i).v2 and item(a).v3=item(i).v3 then
-                if debug=1 and _debug=1 and item_assigned(a)=0 then dprint "Item " &a & "is alternative"
-                if debug=1 and _debug=1 and item_assigned(a)>0 then dprint "Item " &a & "is used by"&item_assigned(a)-1
+                if debug=1 and _debug=1 and item_assigned(a)=0 then rlprint "Item " &a & "is alternative"
+                if debug=1 and _debug=1 and item_assigned(a)>0 then rlprint "Item " &a & "is used by"&item_assigned(a)-1
                 if item_assigned(a)=0 then return a
             endif
         endif
     next
-    if debug=1 and _debug=1 then dprint "No alt found"
+    if debug=1 and _debug=1 then rlprint "No alt found"
     return i
 end function
 
@@ -4327,7 +4327,7 @@ end function
 
 function findartifact(v5 as short) as short
             dim c as short
-            dprint "After examining closely, your science officer has found an alien artifact."
+            rlprint "After examining closely, your science officer has found an alien artifact."
             
             if all_resources_are=0 then
                 if v5=0 then
@@ -4347,7 +4347,7 @@ function findartifact(v5 as short) as short
                 artflag(c)=1                
                 artifact(c)
             else
-                dprint "Science officer can't figure out what it is.",14
+                rlprint "Science officer can't figure out what it is.",14
                 reward(4)=reward(4)+1
             endif
             return 0
@@ -4357,19 +4357,19 @@ function artifact(c as short) as short
     dim as short a,b,d,e,f
     dim text as string
     if c=1 then
-        dprint "It is an improved fuel system!"
+        rlprint "It is an improved fuel system!"
         player.equipment(se_fuelsystem)=5
         player.fueluse=0.5
     endif
     
     
     if c=3 then
-        dprint "It is a very powerful portable scanner!"
+        rlprint "It is a very powerful portable scanner!"
         player.stuff(3)=2
     endif
     
     if c=4 then
-        dprint "It is a disintegrator cannon!"
+        rlprint "It is a disintegrator cannon!"
         artflag(4)=0                
         d=player.h_maxweaponslot
         text="Weapon Slots:/"
@@ -4399,103 +4399,103 @@ function artifact(c as short) as short
     endif
     
     if c=6 then 
-        dprint "It is an Improved ships engine!"
+        rlprint "It is an Improved ships engine!"
         player.engine=6
     endif
     if c=7 then 
-        dprint "It is a powerful ships sensor array!"
+        rlprint "It is a powerful ships sensor array!"
         player.sensors=6
     endif
     if c=8 then
-        dprint "These are cryogenic chambers. They are empty, but still working. You can easily install them on your ship."
+        rlprint "These are cryogenic chambers. They are empty, but still working. You can easily install them on your ship."
         player.cryo=player.cryo+rnd_range(1,6)
         artflag(8)=0
     endif
     if c=9 then
-        dprint "This is a portable Teleportation Device!"
+        rlprint "This is a portable Teleportation Device!"
         reward(5)=5
     endif
     if c=10 then
-        dprint "It is a portable air recycling system!"
+        rlprint "It is a portable air recycling system!"
         player.stuff(4)=2
     endif
     if c=11 then
         artflag(11)=0
-        dprint "its a data crystal containing info on one of the systems in this sector"
+        rlprint "its a data crystal containing info on one of the systems in this sector"
         d=rnd_range(1,laststar)
         for e=1 to 9
             if map(d).planets(e)>0 then f=f+1
         next
         if map(d).discovered>=1 then
-            dprint "But you have already discovered that that system."
+            rlprint "But you have already discovered that that system."
         else
-            dprint "It is at "&cords(map(d).c) &". It is "&add_a_or_an(spectralname(map(d).spec),0)&" with " & f & " planets."  
+            rlprint "It is at "&cords(map(d).c) &". It is "&add_a_or_an(spectralname(map(d).spec),0)&" with " & f & " planets."  
             map(d).discovered=1
         endif
     endif 
     if c=12 then
-        dprint "It's a ships cloaking device!"
+        rlprint "It's a ships cloaking device!"
         placeitem(make_item(87),0,0,0,-1)
         
     endif
     
     if c=13 then
-        dprint "It's a special shield to protect ships from wormholes!"
+        rlprint "It's a special shield to protect ships from wormholes!"
     endif
     
     if c=14 then
-        dprint "It's a powerful ancient bomb!"
+        rlprint "It's a powerful ancient bomb!"
         placeitem(make_item(301),0,0,0,0,-1)
         artflag(14)=0
     endif
     
     if c=15 then
-        dprint "It's a portable cloaking device!"
+        rlprint "It's a portable cloaking device!"
         placeitem(make_item(302),0,0,0,0,-1)
     endif
     
     if c=16 then
-        dprint "It's a device that allows to navigate wormholes!"
+        rlprint "It's a device that allows to navigate wormholes!"
     endif
     
     if c=17 then
-        dprint "It's a sophisticated piloting AI"
+        rlprint "It's a sophisticated piloting AI"
         player.pipilot=7
     endif
     
     if c=18 then
-        dprint "It's a sophisticated gunner AI"
+        rlprint "It's a sophisticated gunner AI"
         player.pigunner=7
     endif
     
     if c=19 then
-        dprint "It's a sophisticated science AI"
+        rlprint "It's a sophisticated science AI"
         player.piscience=7
     endif
     
     if c=20 then
-        dprint "It's a sophisticated medical AI"
+        rlprint "It's a sophisticated medical AI"
         player.pidoctor=8
     endif
     
     if c=21 then
-        dprint "It's technical specifications on neutronium-production!"
+        rlprint "It's technical specifications on neutronium-production!"
     endif
     if c=22 then
-        dprint "It's technical specifications how to build quantum-warheads!"
+        rlprint "It's technical specifications how to build quantum-warheads!"
     endif
     
     if c=23 then
-        dprint "It's a batch of hull repairing nanobots!"
+        rlprint "It's a batch of hull repairing nanobots!"
     endif
     
     if c=24 then
-        dprint "It's an ammo teleportation system!"
+        rlprint "It's an ammo teleportation system!"
         player.reloading=1
     endif
     
     if c=25 then
-        dprint "It's a wormhole generator!"
+        rlprint "It's a wormhole generator!"
     endif
     
     return 0

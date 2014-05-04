@@ -1747,7 +1747,7 @@ Dim Shared shtiles(7,4) As Any Ptr
 Dim Shared gt_no(4096) As Integer
 Dim Shared scr As Any Ptr
 
-Dim Shared dprintline As Byte
+Dim Shared rlprintline As Byte
 Dim Shared bestaltdir(9,1) As Byte
 Dim Shared piratebase(_NoPB) As Short 'Mapnumber of piratebase
 Dim Shared specialplanet(lastspecial) As Short
@@ -2154,7 +2154,7 @@ Declare Function cure_awayteam(where As Short) As Short
 Declare Function heal_awayteam(ByRef a As _monster,heal As Short) As Short
 Declare Function dam_awayteam(dam As Short,ap As Short=0,dis As Short=0) As String
 Declare Function dplanet(p As _planet,orbit As Short, scanned As Short,slot As Short) As Short
-Declare Function dprint(text As String, col As Short=11) As Short
+Declare Function rlprint(text As String, col As Short=11) As Short
 Declare Function scrollup(b As Short) As Short
 Declare Function blink(ByVal p As _cords, osx As Short) As Short
 Declare Function Cursor(target As _cords,map As Short, osx As Short,osy As Short=0,radius As Short=0) As String
@@ -2693,10 +2693,10 @@ function _index.remove(v as short, c as _cords) as short
 end function
 
 function _index.move(v as short,oc as _cords,nc as _cords) as short
-    if _debug>0 then dprint last(oc.x,oc.y) &":"&last(nc.x,nc.y)
+    if _debug>0 then rlprint last(oc.x,oc.y) &":"&last(nc.x,nc.y)
     remove(v,oc)
     add(v,nc)
-    if _debug>0 then dprint last(oc.x,oc.y) &":"&last(nc.x,nc.y)
+    if _debug>0 then rlprint last(oc.x,oc.y) &":"&last(nc.x,nc.y)
     return 0
 end function
 

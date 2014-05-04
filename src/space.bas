@@ -344,7 +344,7 @@ function add_stars() as short
                 cc+=1
                 map(a).planets(1)=cc
             else
-                if debug=1 and _debug=1 then dprint map(a).c.x &":"&map(a).c.y
+                if debug=1 and _debug=1 then rlprint map(a).c.x &":"&map(a).c.y
                 map(a).spec=10
                 map(a).planets(1)=-20002
                 if rnd_range(1,100)<25 then 
@@ -377,7 +377,7 @@ function add_wormholes() as short
     dim as short a,i,last,x,y,ano,qux1,quy1,qux2,quy2,highest,qdivx,qdivy
     
     dim quadrant(2,2) as byte
-    if _debug>0 then dprint "W:"&wormhole
+    if _debug>0 then rlprint "W:"&wormhole
     for a=laststar+1 to laststar+wormhole-1 step 2
         do 
             qux1=rnd_range(0,2)
@@ -396,7 +396,7 @@ function add_wormholes() as short
             map(a+1).c.x=rnd_range(0,sm_x/3)+qux2*sm_x/3
             map(a+1).c.y=rnd_range(0,sm_y/3)+quy2*sm_y/3
         loop until distance(map(a).c,map(a+1).c)>sm_x/3
-        if _debug>0 then dprint "wormhole "&a
+        if _debug>0 then rlprint "wormhole "&a
         map(a).spec=9
         map(a).ti_no=77
         map(a).planets(1)=a+1

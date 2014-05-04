@@ -37,7 +37,7 @@ function buytitle() as short
                 retirementassets(a+8)=1
             endif
         else
-            dprint "You already have a better title."
+            rlprint "You already have a better title."
         endif
     endif
     
@@ -103,12 +103,12 @@ function retirement() as short
                 if b>0 and b<10 then
                     if retirementassets(b-1)=0 or b=2 or b=1 then
                         if paystuff(price(b)) then
-                            dprint "You buy "&add_a_or_an(asset(b),0) &"." 
+                            rlprint "You buy "&add_a_or_an(asset(b),0) &"." 
                 
                             if retirementassets(b-1)<255 then retirementassets(b-1)+=1
                         endif
                     else
-                        dprint "You already have that"
+                        rlprint "You already have that"
                     endif
                 endif
             loop until b=-1 or b=10

@@ -94,15 +94,15 @@ function scrap_component() as short
     if askyn("Do you want to cannibalize the "&tmap(awayteam.c.x,awayteam.c.y).desc &" for parts?(y/n)") then
         if skill_test(st_average,player.science(0)) then
             if skill_test(st_hard,player.science(0)) then
-                dprint "You found enough parts for a ton of weapons parts"
+                rlprint "You found enough parts for a ton of weapons parts"
                 w=6
             else
-                dprint "You found enough parts for a ton of techgoods."
+                rlprint "You found enough parts for a ton of techgoods."
                 w=4
             endif
             load_quest_cargo(w,1,0)
         else
-            dprint "You didn't find enough usable parts."
+            rlprint "You didn't find enough usable parts."
         endif
         tmap(awayteam.c.x,awayteam.c.y)=tiles(201)
         planetmap(awayteam.c.x,awayteam.c.y,awayteam.slot)=201
@@ -113,7 +113,7 @@ end function
 
 function mudds_shop() as short
     dim as short a,b
-    dprint "An overweight gentleman greets you 'Welcome to Mudds Incredible Bargains' Do you wish to buy or sell?"
+    rlprint "An overweight gentleman greets you 'Welcome to Mudds Incredible Bargains' Do you wish to buy or sell?"
     do
         display_ship
         a=menu(bg_parent,"Mudds Shop/Buy/Sell/Exit")
@@ -132,7 +132,7 @@ function sell_alien(sh as short) as short
     dim t as string
     dim as short i,c,biodata
     if lastcagedmonster=0 then
-        dprint "You have nothing to sell."
+        rlprint "You have nothing to sell."
         return 0
     endif
     do
@@ -166,7 +166,7 @@ function sell_alien(sh as short) as short
                     lastcagedmonster-=1
                 endif
             else
-                dprint "I wouldn't know what to do with that."
+                rlprint "I wouldn't know what to do with that."
             endif
             c=0
         endif
@@ -180,7 +180,7 @@ function botsanddrones_shop() as short
     price=15*haggle_("UP")
     do
     display_ship
-    dprint "Welcome to the Bot-Bin! This sectors most sophisticated 2nd hand robot store."
+    rlprint "Welcome to the Bot-Bin! This sectors most sophisticated 2nd hand robot store."
     a=menu(bg_parent,"The Bot-bin/Buy/Sell/Exit")
     if a=1 then 
         do
@@ -214,7 +214,7 @@ function botsanddrones_shop() as short
                     next
                 endif
             else
-                dprint "You don't have any debris to sell."
+                rlprint "You don't have any debris to sell."
             endif
         endif
     endif
@@ -229,21 +229,21 @@ function pay_bonuses(st as short) as short
         if reward(a)>0 then c=1
     next
     if ano_money>0 then c=1
-    if debug=1 and _debug=1 then dprint c &":"& basis(st).company+2
+    if debug=1 and _debug=1 then rlprint c &":"& basis(st).company+2
     if c=1 then combon(basis(st).company+2).value+=1
     combon(7).value=player.turn/(7*24*60)
     for a=0 to 8
         if a<3 or a>6 then
             tarval=combon(a).base*(combon(a).rank+1)^2
-            if debug=1 and _debug=1 then dprint tarval &":"& combon(a).value
+            if debug=1 and _debug=1 then rlprint tarval &":"& combon(a).value
             if combon(a).value>=tarval and combon(c).rank<6 then
                 combon(a).rank+=1
                 factor=(combon(a).rank^2/2)*100
-                If a=0 then dprint "For exploring "&(combon(a).value) &" planets you receive a bonus of "&credits(int(combon(a).rank*factor)) &" Cr.",11
-                If a=1 then dprint "For recording biodata of "&credits(combon(a).value) &" aliens you receive a bonus of "&credits(int(combon(a).rank*factor)) &" Cr.",11
-                If a=2 then dprint "For delivering "&credits(cint(reward(2)*basis(st).resmod*haggle_("up"))) &" Cr. worth of resources you receive a bonus of "&int(combon(a).rank*factor) &" Cr.",11
-                If a=7 and combon(a).rank>1 then dprint "For continued exclusive business over "&(combon(a).value) &" weeks you receive a bonus of "&credits(int(combon(a).rank*factor)) &" Cr.",11
-                If a=8 then dprint "For destroying "&credits(combon(a).value) &" pirate ships you receive a bonus of "&int(combon(a).rank*factor) &" Cr.",11
+                If a=0 then rlprint "For exploring "&(combon(a).value) &" planets you receive a bonus of "&credits(int(combon(a).rank*factor)) &" Cr.",11
+                If a=1 then rlprint "For recording biodata of "&credits(combon(a).value) &" aliens you receive a bonus of "&credits(int(combon(a).rank*factor)) &" Cr.",11
+                If a=2 then rlprint "For delivering "&credits(cint(reward(2)*basis(st).resmod*haggle_("up"))) &" Cr. worth of resources you receive a bonus of "&int(combon(a).rank*factor) &" Cr.",11
+                If a=7 and combon(a).rank>1 then rlprint "For continued exclusive business over "&(combon(a).value) &" weeks you receive a bonus of "&credits(int(combon(a).rank*factor)) &" Cr.",11
+                If a=8 then rlprint "For destroying "&credits(combon(a).value) &" pirate ships you receive a bonus of "&int(combon(a).rank*factor) &" Cr.",11
                 combon(a).value=0
                 addmoney(int(combon(a).rank*factor),mt_bonus)
             endif
@@ -251,7 +251,7 @@ function pay_bonuses(st as short) as short
     next
     for a=3 to 6
         tarval=combon(a).base*(combon(a).rank+1)^2
-        if debug=1 and _debug=1 then dprint tarval &":"& combon(a).value
+        if debug=1 and _debug=1 then rlprint tarval &":"& combon(a).value
     next
     
     if combon(3).value>1 and combon(4).value=0 and combon(5).value=0 and combon(6).value=0 then c=3
@@ -264,7 +264,7 @@ function pay_bonuses(st as short) as short
             if combon(c).value>=tarval and combon(c).rank<6 then
                  combon(c).rank+=1
                  factor=(combon(a).rank^2/2)*100
-                 dprint "For exclusively selling to " & companyname(basis(st).company) & " you receive a bonus of "& credits(int(combon(c).rank*100)) & "Cr.",15
+                 rlprint "For exclusively selling to " & companyname(basis(st).company) & " you receive a bonus of "& credits(int(combon(c).rank*100)) & "Cr.",15
                  addmoney(int(combon(c).rank*factor),mt_bonus)
            endif
         endif
@@ -375,7 +375,7 @@ function upgradehull(t as short,byref s as _ship,forced as short=0) as short
         flg=-1
     endif
     if ques<>"" then
-        dprint ques,14 
+        rlprint ques,14 
         if askyn("Do you really want to transfer to the new hull?") then 
             flg=-1
         else
@@ -424,7 +424,7 @@ function upgradehull(t as short,byref s as _ship,forced as short=0) as short
 '                if a<b then
 '                    tto=tto+1
 '                    n.weapons(tto)=s.weapons(a)
-'                    dprint "Transfering "&s.weapons(a).desig &" to slot "&tto
+'                    rlprint "Transfering "&s.weapons(a).desig &" to slot "&tto
 '                    weapons=weapons-1
 '                endif
 '                if a=b then
@@ -467,7 +467,7 @@ function company(st as short) as short
     display_ship(0)
     m=player.money
     if configflag(con_autosale)=0 then q=-1
-    dprint "you enter the company office"                    
+    rlprint "you enter the company office"                    
     reward_bountyquest(0)
     if player.questflag(1)=1 then
         if basis(st).repname="Omega Bioengineering" then
@@ -483,31 +483,31 @@ function company(st as short) as short
         a=0
     endif
     if player.questflag(2)=2 then
-        dprint "The Company Rep congratulates you on a job well done and pays you 15,000 Cr.",10
+        rlprint "The Company Rep congratulates you on a job well done and pays you 15,000 Cr.",10
         factionadd(0,1,-15)
         addmoney(15000,mt_quest)
         player.questflag(2)=4
     endif
     if player.questflag(2)=3 then
-        dprint "The Company Rep congratulates you on a job well done and pays you 10,000 Cr.",10
+        rlprint "The Company Rep congratulates you on a job well done and pays you 10,000 Cr.",10
         factionadd(0,1,-15)
         addmoney(10000,mt_quest)
         player.questflag(2)=4
     endif
     if player.questflag(3)=1 then
-        dprint "After some negotiations you convince the company rep to buy the secret of controling the alien ships for ... 1,000,000 CR!",10
+        rlprint "After some negotiations you convince the company rep to buy the secret of controling the alien ships for ... 1,000,000 CR!",10
         factionadd(0,1,-15)
         addmoney(1000000,mt_artifacts)
         player.questflag(3)=2
     endif
     if player.questflag(5)=2 then
-        dprint "The Company Rep congratulates you on a job well done and pays you 15,000 Cr.",10
+        rlprint "The Company Rep congratulates you on a job well done and pays you 15,000 Cr.",10
         factionadd(0,1,-15)
         addmoney(15000,mt_quest)
         player.questflag(5)=3
     endif 
     if player.questflag(6)=2 then
-        dprint "The Company Rep congratulates you on a job well done and pays you 15,000 Cr.",10
+        rlprint "The Company Rep congratulates you on a job well done and pays you 15,000 Cr.",10
         factionadd(0,1,-15)
         addmoney(15000,mt_quest)
         player.questflag(6)=3
@@ -515,77 +515,77 @@ function company(st as short) as short
     if player.questflag(7)>0 and basis(st).company=1 and planets(player.questflag(7)).flags(21)=1 then
         addmoney(1000,mt_map)
         factionadd(0,1,-15)
-        dprint "The company rep pays your 1,000 Cr. contract for mapping the planet",10
+        rlprint "The company rep pays your 1,000 Cr. contract for mapping the planet",10
         player.questflag(7)=0
     endif
     if player.questflag(9)=2 and basis(st).company=2 then 
         addmoney(5000,mt_artifacts)
         factionadd(0,1,-15)
-        dprint "The company rep pays your 5,000 Cr. contract for finding a robot factory.",10
+        rlprint "The company rep pays your 5,000 Cr. contract for finding a robot factory.",10
         player.questflag(9)=3
     endif
     if player.questflag(10)<0 and basis(st).company=4 then
         addmoney(2500,mt_quest)
         factionadd(0,1,-15)
-        dprint "The company rep pays you 2,500 Cr. for finding a planet to conduct their experiment on.",10
+        rlprint "The company rep pays you 2,500 Cr. for finding a planet to conduct their experiment on.",10
         planetmap(rnd_range(0,60),rnd_range(0,20),abs(player.questflag(10)))=16
         player.questflag(10)=0
     endif
     if player.questflag(11)=2 then 
         addmoney(5000,mt_quest)
         factionadd(0,1,-15)
-        dprint "The company rep remarks that these crystal creatures could be a threat to colonizing this sector and pays you your reward of 5,000 Cr.",10
+        rlprint "The company rep remarks that these crystal creatures could be a threat to colonizing this sector and pays you your reward of 5,000 Cr.",10
         player.questflag(11)=3
     endif
     if player.questflag(12)=0 and checkcomplex(specialplanet(33),1)=4 then 
         player.questflag(12)=1
         factionadd(0,1,-15)
         addmoney(10000,mt_quest)
-        dprint "The company rep pays you 10,000 Cr. for destroying the pirates asteroid hideout.",10
+        rlprint "The company rep pays you 10,000 Cr. for destroying the pirates asteroid hideout.",10
     endif
     
     if player.questflag(15)=2 then 
         player.questflag(15)=3
         factionadd(0,1,-15)
         addmoney(10000,mt_pirates)
-        dprint "The company rep pays you 10,000 Cr. for destroying the pirate Battleship 'Anne Bonny'.",10
+        rlprint "The company rep pays you 10,000 Cr. for destroying the pirate Battleship 'Anne Bonny'.",10
     endif
     
     if player.questflag(16)=2 then 
         player.questflag(16)=3
         factionadd(0,1,-15)
         addmoney(8000,mt_pirates)
-        dprint "The company rep pays you 8,000 Cr. for destroying the pirate Destroyer 'Black corsair'.",10
+        rlprint "The company rep pays you 8,000 Cr. for destroying the pirate Destroyer 'Black corsair'.",10
     endif
     
     if player.questflag(17)=2 then 
         player.questflag(17)=3
         factionadd(0,1,-15)
         addmoney(5000,mt_pirates)
-        dprint "The company rep pays you 5,000 Cr. for destroying the pirate Cruiser 'Hussar'.",10
+        rlprint "The company rep pays you 5,000 Cr. for destroying the pirate Cruiser 'Hussar'.",10
     endif
     
     if player.questflag(18)=2 then 
         player.questflag(18)=3
         factionadd(0,1,-15)
         addmoney(2500,mt_pirates)
-        dprint "The company rep pays you 2,500 Cr. for destroying the pirate fighter 'Adder'.",10
+        rlprint "The company rep pays you 2,500 Cr. for destroying the pirate fighter 'Adder'.",10
     endif
     
     if player.questflag(19)=2 then 
         player.questflag(19)=3
         factionadd(0,1,-15)
         addmoney(2500,mt_pirates)
-        dprint "The company rep pays you 2,500 Cr. for destroying the pirate fighter 'Widow'.",10
+        rlprint "The company rep pays you 2,500 Cr. for destroying the pirate fighter 'Widow'.",10
     endif
     
     for a=0 to lastitem
         if item(a).w.s=-1 and item(a).ty=47 and item(a).v1>1 then 
             if item(a).v2=0 then
-                dprint "The relatives of the spacer who's ID-tag you found put a reward of " & credits(item(a).v1*20) &" credits on any information on his wereabouts."
+                rlprint "The relatives of the spacer who's ID-tag you found put a reward of " & credits(item(a).v1*20) &" credits on any information on his wereabouts."
                 addmoney(item(a).v1*20,mt_quest)
             else
-                dprint "At least now we know. Here is your reward."
+                rlprint "At least now we know. Here is your reward."
                 addmoney(500,mt_quest)
                 player.questflag(26)=0
             endif
@@ -599,11 +599,11 @@ function company(st as short) as short
                 factionadd(0,1,1)
                 addmoney(1000,mt_blackmail)
                 companystats(1).capital=companystats(1).capital-rnd_range(1,100)
-                dprint "The Rep pays 1,000 Cr. for your Silence"
+                rlprint "The Rep pays 1,000 Cr. for your Silence"
             endif
         else
             if askyn("Do you want to sell "&companyname(basis(st).company) &" the secret of Eridiani Explorations Drug business?(y/n)") then
-                dprint "The Rep pays 10,000 Cr. for your the information"
+                rlprint "The Rep pays 10,000 Cr. for your the information"
                 companystats(1).capital=companystats(1).capital-15000
                 if companystats(1).capital<0 then companystats(1).capital=0
                 player.questflag(21)=2
@@ -619,11 +619,11 @@ function company(st as short) as short
                 factionadd(0,1,1)
                 addmoney(1000,mt_blackmail)
                 companystats(2).capital=companystats(2).capital-rnd_range(1,100)
-                dprint "The Rep pays 1,000 Cr. for your Silence"
+                rlprint "The Rep pays 1,000 Cr. for your Silence"
             endif
         else
             if askyn("Do you want to sell "&companyname(basis(st).company) &" the secret of Smith Heavy Industries slave business?(y/n)") then
-                dprint "The Rep pays 10,000 Cr. for your the information"
+                rlprint "The Rep pays 10,000 Cr. for your the information"
                 companystats(2).capital=companystats(2).capital-15000
                 if companystats(2).capital<0 then companystats(2).capital=0
                 player.questflag(22)=2
@@ -638,11 +638,11 @@ function company(st as short) as short
                 factionadd(0,1,1)
                 addmoney(1000,mt_blackmail)
                 companystats(3).capital=companystats(3).capital-rnd_range(1,100)
-                dprint "The Rep pays 1,000 Cr. for your Silence"
+                rlprint "The Rep pays 1,000 Cr. for your Silence"
             endif
         else
             if askyn("Do you want to sell "&companyname(basis(st).company) &" your information on Triax Traders agreement with pirates?(y/n)") then
-                dprint "The Rep pays 10,000 Cr. for your the information"
+                rlprint "The Rep pays 10,000 Cr. for your the information"
                 companystats(3).capital=companystats(3).capital-15000
                 if companystats(3).capital<0 then companystats(3).capital=0
                 player.questflag(23)=3
@@ -657,11 +657,11 @@ function company(st as short) as short
                 factionadd(0,1,1)
                 addmoney(1000,mt_blackmail)
                 companystats(4).capital=companystats(4).capital-rnd_range(1,100)
-                dprint "The Rep pays 1,000 Cr. for your Silence"
+                rlprint "The Rep pays 1,000 Cr. for your Silence"
             endif
         else
             if askyn("Do you want to sell "&companyname(basis(st).company) &" the secret of Omega Bioengineerings experiments?(y/n)") then
-                dprint "The Rep pays 10,000 Cr. for your the information"
+                rlprint "The Rep pays 10,000 Cr. for your the information"
                 companystats(4).capital=companystats(4).capital-15000
                 if companystats(4).capital<0 then companystats(4).capital=0
                 player.questflag(24)=2
@@ -703,13 +703,13 @@ function company(st as short) as short
     if findbest(24,-1)>0 then
         b=findbest(24,-1)
         if item(b).v5 mod 10=0 then
-            dprint "The company Rep is highly interested in buying that portable nanobot factory. He offers you "&credits((50000+100*item(b).v5)*basis(st).biomod) &" credits."
+            rlprint "The company Rep is highly interested in buying that portable nanobot factory. He offers you "&credits((50000+100*item(b).v5)*basis(st).biomod) &" credits."
             if askyn("Accept(y/n)") then
                 factionadd(0,1,-35)
                 addmoney((50000+100*item(b).v5)*basis(st).biomod,mt_artifacts)
                 destroyitem(findbest(24,-1))
             else
-                dprint "The offer stands."
+                rlprint "The offer stands."
             endif
         else
             item(b).v5+=1
@@ -734,7 +734,7 @@ function company(st as short) as short
             if planets(a).flags(23)=2 then c=a
         next
         if c>0 then
-            dprint "Thanks for helping wiping out those pirates!"
+            rlprint "Thanks for helping wiping out those pirates!"
             planets(c).flags(23)=3
             addmoney(2500,mt_pirates)
         endif
@@ -756,7 +756,7 @@ function company(st as short) as short
             else
                 a=disnbase(drifting(player.towed).start)
                 a=int(a*100)
-                dprint "The company pays you "&credits(a) &" Cr. for towing in the ship."
+                rlprint "The company pays you "&credits(a) &" Cr. for towing in the ship."
                 drifting(player.towed)=drifting(lastdrifting)
                 lastdrifting-=1
                 addmoney(a,mt_towed)
@@ -772,10 +772,10 @@ function company(st as short) as short
     next
     c=c+ano_money
     if c=0 then 
-        dprint "You have nothing to sell to "& basis(st).repname
+        rlprint "You have nothing to sell to "& basis(st).repname
     else
         companystats(basis(st).company).profit=companystats(basis(st).company).profit+1
-        dprint basis(st).repname &":"
+        rlprint basis(st).repname &":"
         factionadd(1,0,1)
     endif
     
@@ -796,14 +796,14 @@ function company(st as short) as short
             next
         next
         if q=-1 and basis(st).repname="Eridiani Explorations" then
-            if complete>1 then dprint "Eridiani explorations pays "&credits(complete*50) &" Cr. for the complete maps of "&complete &"planets"
-            if complete=1 then dprint "Eridiani explorations pays "&credits(complete*50) &" Cr. for the complete map of a planet"
+            if complete>1 then rlprint "Eridiani explorations pays "&credits(complete*50) &" Cr. for the complete maps of "&complete &"planets"
+            if complete=1 then rlprint "Eridiani explorations pays "&credits(complete*50) &" Cr. for the complete map of a planet"
             addmoney(complete*50,mt_map)
         endif
         
         if q=-1 then
             if cint((reward(7)/15)*basis(st).mapmod*haggle_("up"))>0 then
-                dprint "you transfer new map data on "&reward(0)&" km2. you get paid "&credits(cint((reward(7)/15)*basis(st).mapmod*haggle_("up")))&" Cr."
+                rlprint "you transfer new map data on "&reward(0)&" km2. you get paid "&credits(cint((reward(7)/15)*basis(st).mapmod*haggle_("up")))&" Cr."
                 addmoney(cint((reward(7)/15)*basis(st).mapmod*haggle_("up")),mt_map)
             endif
             reward(0)=0
@@ -815,9 +815,9 @@ function company(st as short) as short
         if configflag(con_autosale)=1 then q=askyn("do you want to sell bio data? (y/n)")
         if q=-1 then
             if lastcagedmonster=0 then
-                dprint "you transfer data on alien lifeforms worth "& credits(cint(reward(1)*basis(st).biomod*(1+0.1*crew(1).talents(2)))) &" Cr."
+                rlprint "you transfer data on alien lifeforms worth "& credits(cint(reward(1)*basis(st).biomod*(1+0.1*crew(1).talents(2)))) &" Cr."
             else
-                dprint "you transfer data on alien lifeforms and " &lastcagedmonster & " live specimen worth "& credits(cint(reward(1)*basis(st).biomod*(1+0.1*crew(1).talents(2)))) &" Cr."
+                rlprint "you transfer data on alien lifeforms and " &lastcagedmonster & " live specimen worth "& credits(cint(reward(1)*basis(st).biomod*(1+0.1*crew(1).talents(2)))) &" Cr."
             endif
             addmoney((reward(1)*basis(st).biomod*haggle_("up")),mt_bio)
             reward(1)=0
@@ -834,7 +834,7 @@ function company(st as short) as short
     if reward(2)>0 then
         if configflag(con_autosale)=1 then q=askyn("do you want to sell resources? (y/n)")
         if q=-1 then
-            dprint "you transfer resources for "& credits(cint(reward(2)*basis(st).resmod*(1+0.1*crew(1).talents(2)))) &" Cr."
+            rlprint "you transfer resources for "& credits(cint(reward(2)*basis(st).resmod*(1+0.1*crew(1).talents(2)))) &" Cr."
             addmoney(cint(reward(2)*basis(st).resmod*(1+0.1*crew(1).talents(2))),mt_ress)
             reward(2)=0
             destroy_all_items_at(15,-1)
@@ -844,7 +844,7 @@ function company(st as short) as short
     if reward(3)>0 then
         if configflag(con_autosale)=1 then q=askyn("do you want to collect your bounty for destroyed pirate ships? (y/n)")
         if q=-1 then
-            dprint "You recieve "&credits(cint(reward(3)*basis(st).pirmod*(1+0.1*crew(1).talents(2)))) &" Cr. as bounty for destroyed pirate ships."
+            rlprint "You recieve "&credits(cint(reward(3)*basis(st).pirmod*(1+0.1*crew(1).talents(2)))) &" Cr. as bounty for destroyed pirate ships."
             addmoney(cint(reward(3)*basis(st).pirmod*(1+0.1*crew(1).talents(2))),mt_pirates)
             reward(3)=0
         endif
@@ -853,7 +853,7 @@ function company(st as short) as short
         if configflag(con_autosale)=1 then q=askyn("do you want to sell your information on wormholes and anomalies? (y/n)")
         if q=-1 then
             if basis(st).company=3 then ano_money=cint(ano_money*1.5)
-            dprint "You recieve "&credits(ano_money) &" credits for your information on wormholes and anomalies."
+            rlprint "You recieve "&credits(ano_money) &" credits for your information on wormholes and anomalies."
             addmoney(ano_money,mt_ano)
             ano_money=0
         endif
@@ -866,25 +866,25 @@ function company(st as short) as short
                 m+=(rnd_range(1,3)+rnd_range(1,3))*1000
             next
             if m<0 then m=2147483647
-            dprint basis(st).repname &" pays " &credits(m) &" credits for the alien curiosity"
+            rlprint basis(st).repname &" pays " &credits(m) &" credits for the alien curiosity"
             addmoney(m,mt_artifacts)
             reward(4)=0
         endif
     endif
     if reward(6)>1 then
-        dprint "The Company pays you 50,000 Cr. for eliminating the pirate threat in this sector!"
+        rlprint "The Company pays you 50,000 Cr. for eliminating the pirate threat in this sector!"
         addmoney(50000,mt_pirates)
         reward(6)=-1
     endif
     if reward(8)>0 then
-        dprint "The Company pays "&credits(reward(8)) &" Cr. for destroying pirate outposts"
+        rlprint "The Company pays "&credits(reward(8)) &" Cr. for destroying pirate outposts"
         addmoney(reward(8),mt_pirates)
         reward(8)=0
     endif
     
     ask_alliance(1)
     
-    dprint "you leave the company office"
+    rlprint "you leave the company office"
     if m<0 and player.money>0 then factionadd(0,1,-1)
     return 0
 end function
@@ -980,7 +980,7 @@ function casino(staked as short=0, st as short=-1) as short
             if b<>6 then 
                 drawroulettetable()
                 if b=1 then 
-                    dprint "which number?"
+                    rlprint "which number?"
                     fi=getnumber(1,36,18)
                 endif
                 if player.money>50+staked*50 then 
@@ -988,14 +988,14 @@ function casino(staked as short=0, st as short=-1) as short
                 else
                     mbet=player.money
                 endif
-                dprint "how much? (0-"& mbet &")"
+                rlprint "how much? (0-"& mbet &")"
                 bet=getnumber(0,mbet,0)
                 player.money=player.money-bet
                 display_ship()
                 if bet>0 then
                     changemoral(bet/3,0)
                     locate 14,25
-                    dprint "Rien Ne va plus "
+                    rlprint "Rien Ne va plus "
                     for d=1 to rnd_range(1,6)+10
                         num=rnd_range(0,36)
                         col=coltable(num)
@@ -1060,18 +1060,18 @@ function casino(staked as short=0, st as short=-1) as short
                         sleep d*d*2
                     endif
                     times=0
-                    if num=0 then dprint "Bank wins"
+                    if num=0 then rlprint "Bank wins"
                     if b=1 and fi=num then times=35
                     if b=2 and frac(num/2)=0 then times=2
                     if b=3 and frac(num/2)<>0 then times=2
                     if b=4 and coltable(num)=12 then times=2
                     if b=5 and coltable(num)=15 then times=2
                     if times>0 then
-                        dprint "you win " & credits(bet*times) & " Credits!"
+                        rlprint "you win " & credits(bet*times) & " Credits!"
                         addmoney(bet*times,mt_gambling)
                         mwon=mwon+bet*times
                     else
-                        dprint "You lose"
+                        rlprint "You lose"
                         mlos=mlos+bet
                     endif
                     gpld=gpld+1
@@ -1084,7 +1084,7 @@ function casino(staked as short=0, st as short=-1) as short
                 drawroulettetable()
                 if gpld<3 or mwon>mlos then 
                     if asst<5 then
-                        dprint "cmon, play another one"
+                        rlprint "cmon, play another one"
                         b=0
                         asst=asst+1
                     endif
@@ -1093,7 +1093,7 @@ function casino(staked as short=0, st as short=-1) as short
                        b=6
                        gpld=2
                     else
-                        dprint "good decision!"
+                        rlprint "good decision!"
                         b=0
                     endif
                 endif
@@ -1105,13 +1105,13 @@ function casino(staked as short=0, st as short=-1) as short
         if a=4 then
             drawroulettetable()
             if not paystuff(1) then                 
-                dprint "you can't even afford a drink."
+                rlprint "you can't even afford a drink."
                 if rnd_range(1,100)<20 and player.money>=-4 then 
-                    dprint "The barkeep has pity and hands you 5 credits to bet at the roulette table."
+                    rlprint "The barkeep has pity and hands you 5 credits to bet at the roulette table."
                     player.money+=5
                 endif
             else
-                dprint "you have a drink."
+                rlprint "you have a drink."
                 changemoral(1,0)
             endif
             if rnd_range(1,100)<25-passenger then 'Passenger
@@ -1142,34 +1142,34 @@ function casino(staked as short=0, st as short=-1) as short
                 p=fleet(rnd_range(1,lastfleet)).c
                 if p.x=0 and p.y=0 then p=rnd_point
                 if b=16 and rnd_range(1,100)<66 then p=map(piratebase(rnd_range(0,_NoPB))).c
-                if b=1 then dprint "An old miner tells you a tall tale about a planet he worked on. Short version: they dug too deep and released invisible monsters that drove them off the planet."
-                if b=2 then dprint "Another prospector tells you that he used ground radar to locate the ruins of an alien temple. Unfortunately the weather on the planet was so harsh his crew muntinied and demanded to return to the station immediately."
-                if b=3 then dprint "A merchant captain claims to have outrun the infamous 'Anne Bonny' at coordinates "&cords(p)&"."
-                if b=4 then dprint "A patrol captain claims to have shot down the infamous 'Anne Bonny' at coordinates "&cords(p)&"."
-                if b=5 then dprint "Your science officer finds no drinks he hasnt seen yet."
-                if b=6 then dprint "Your pilot wants to leave."
-                if b=7 then dprint "Your gunner thinks the owners could put up a dartboard here for practice."
-                if b=8 then dprint "A lone drunk informs you that the roulette wheel is rigged! He then asks you to buy him a drink."
-                if b=9 then dprint "A scoutship captain claims to have found a lutetium deposit at coordinates "&rnd_range(1,59) &":" &rnd_range(1,19) &" that was too large to load into his ship."
-                if b=10 then dprint "A security team member tells you a tall tale about fighting alien robots in an ancient city ruin 'They aren't gone. they are sleeping is what i say!'"
-                if b=11 then dprint "Another prospector and a patrol ship captain are discussing an incident on a planet at coordinates "&rnd_range(1,59) &":" &rnd_range(1,19) &". Two freelance prospectors had landed on it at the same time and got into a dispute over a palladium deposit. The patrol captain remarks that 'those guys should be taught a lesson'" 
-                if b=12 then dprint "A young man shows pictures of his brother. He was last seen on Station "&rnd_range(1,3)&", leaving with a scoutship, and hasn't returned."
-                if b=13 then dprint "you get told that the weather in the stations hydroponic garden was remarkably pleasant lately!"
-                if b=14 then dprint "you learn that the view from port E on the 5th ring of the station is spectacular"
-                if b=15 then dprint "You hear a story about an ancient robot ship prowling the sector, attacking everything on sight. The Anne Bonny is said to have escaped it once. Everything else is destroyed."
-                if b=16 then dprint "A patrolboat captain claims to have fought a big pirate fleet at coordinates "&cords(p) &"."
-                if b=17 then dprint "A light transport captain claims in a discussion on traderoutes that the average price for  "& goodsname(1) &" is "&avgprice(1) &"."
-                if b=18 then dprint "A Merchantman captain claims in a discussion on traderoutes that the average price for  "& goodsname(2) &" is "&avgprice(2) &"."
-                if b=19 then dprint "A heavy transport captain claims in a discussion on traderoutes that the average price for  "& goodsname(3) &" is "&avgprice(3) &"."
-                if b=20 then dprint "A Merchantman captain claims in a discussion on traderoutes that the average price for  "& goodsname(4) &" is "&avgprice(4) &"."
-                if b=21 then dprint "A armed merchantman captain claims in a discussion on traderoutes that the average price for  "& goodsname(5) &" is "&avgprice(5) &"."
-                if b=22 and st<>c then dprint "In a discussion about traderoutes a heavy transport captain claims that at station "& c+1 &" the price for  "& goodsname(d) &" is "& basis(c).inv(d).p &"."
-                if b=23 and st<>c then dprint "In a discussion about traderoutes a light transport captain claims that at station "& c+1 &" the price for  "& goodsname(d) &" is "& basis(c).inv(d).p &"."
-                if b=24 and st<>c then dprint "In a discussion about traderoutes a merchantman captain claims that at station "& c+1 &" the there is a  "& basis(c).inv(d).v &" ton stock of "& goodsname(d) &"."
-                if b=25 and st<>c then dprint "In a discussion about traderoutes a armed merchantman captain claims that at station "& c+1 &" the there is a  "& basis(c).inv(d).v &" ton stock of "& goodsname(d) &"."
-                if b=26 then dprint "Another prospector tells you that there is a rumor about a planet whith immortal inhabitants."
-                if b=27 then dprint "A science officer tells you that most animals on earth live for about 5 million heartbeats. 'Life expectancy is mainly a function of metabolism. A mouse just uses them up a little faster than an elephant.'"
-                if b=28 then dprint "A scout captain tells you that he went refueling on a gas giant when his sensors picked up a huge metallic structure. He decided discretion was the better part of valor and left, barely making it back to base."
+                if b=1 then rlprint "An old miner tells you a tall tale about a planet he worked on. Short version: they dug too deep and released invisible monsters that drove them off the planet."
+                if b=2 then rlprint "Another prospector tells you that he used ground radar to locate the ruins of an alien temple. Unfortunately the weather on the planet was so harsh his crew muntinied and demanded to return to the station immediately."
+                if b=3 then rlprint "A merchant captain claims to have outrun the infamous 'Anne Bonny' at coordinates "&cords(p)&"."
+                if b=4 then rlprint "A patrol captain claims to have shot down the infamous 'Anne Bonny' at coordinates "&cords(p)&"."
+                if b=5 then rlprint "Your science officer finds no drinks he hasnt seen yet."
+                if b=6 then rlprint "Your pilot wants to leave."
+                if b=7 then rlprint "Your gunner thinks the owners could put up a dartboard here for practice."
+                if b=8 then rlprint "A lone drunk informs you that the roulette wheel is rigged! He then asks you to buy him a drink."
+                if b=9 then rlprint "A scoutship captain claims to have found a lutetium deposit at coordinates "&rnd_range(1,59) &":" &rnd_range(1,19) &" that was too large to load into his ship."
+                if b=10 then rlprint "A security team member tells you a tall tale about fighting alien robots in an ancient city ruin 'They aren't gone. they are sleeping is what i say!'"
+                if b=11 then rlprint "Another prospector and a patrol ship captain are discussing an incident on a planet at coordinates "&rnd_range(1,59) &":" &rnd_range(1,19) &". Two freelance prospectors had landed on it at the same time and got into a dispute over a palladium deposit. The patrol captain remarks that 'those guys should be taught a lesson'" 
+                if b=12 then rlprint "A young man shows pictures of his brother. He was last seen on Station "&rnd_range(1,3)&", leaving with a scoutship, and hasn't returned."
+                if b=13 then rlprint "you get told that the weather in the stations hydroponic garden was remarkably pleasant lately!"
+                if b=14 then rlprint "you learn that the view from port E on the 5th ring of the station is spectacular"
+                if b=15 then rlprint "You hear a story about an ancient robot ship prowling the sector, attacking everything on sight. The Anne Bonny is said to have escaped it once. Everything else is destroyed."
+                if b=16 then rlprint "A patrolboat captain claims to have fought a big pirate fleet at coordinates "&cords(p) &"."
+                if b=17 then rlprint "A light transport captain claims in a discussion on traderoutes that the average price for  "& goodsname(1) &" is "&avgprice(1) &"."
+                if b=18 then rlprint "A Merchantman captain claims in a discussion on traderoutes that the average price for  "& goodsname(2) &" is "&avgprice(2) &"."
+                if b=19 then rlprint "A heavy transport captain claims in a discussion on traderoutes that the average price for  "& goodsname(3) &" is "&avgprice(3) &"."
+                if b=20 then rlprint "A Merchantman captain claims in a discussion on traderoutes that the average price for  "& goodsname(4) &" is "&avgprice(4) &"."
+                if b=21 then rlprint "A armed merchantman captain claims in a discussion on traderoutes that the average price for  "& goodsname(5) &" is "&avgprice(5) &"."
+                if b=22 and st<>c then rlprint "In a discussion about traderoutes a heavy transport captain claims that at station "& c+1 &" the price for  "& goodsname(d) &" is "& basis(c).inv(d).p &"."
+                if b=23 and st<>c then rlprint "In a discussion about traderoutes a light transport captain claims that at station "& c+1 &" the price for  "& goodsname(d) &" is "& basis(c).inv(d).p &"."
+                if b=24 and st<>c then rlprint "In a discussion about traderoutes a merchantman captain claims that at station "& c+1 &" the there is a  "& basis(c).inv(d).v &" ton stock of "& goodsname(d) &"."
+                if b=25 and st<>c then rlprint "In a discussion about traderoutes a armed merchantman captain claims that at station "& c+1 &" the there is a  "& basis(c).inv(d).v &" ton stock of "& goodsname(d) &"."
+                if b=26 then rlprint "Another prospector tells you that there is a rumor about a planet whith immortal inhabitants."
+                if b=27 then rlprint "A science officer tells you that most animals on earth live for about 5 million heartbeats. 'Life expectancy is mainly a function of metabolism. A mouse just uses them up a little faster than an elephant.'"
+                if b=28 then rlprint "A scout captain tells you that he went refueling on a gas giant when his sensors picked up a huge metallic structure. He decided discretion was the better part of valor and left, barely making it back to base."
                 if b=29 then
                     'Merchant captain selling data
                     c=rnd_range(0,3)
@@ -1191,7 +1191,7 @@ function casino(staked as short=0, st as short=-1) as short
                     ba(0)=10
                     if askyn(text &"(y/n)") then
                         if paystuff(pr) then
-                            dprint "The merchant captain hands you a data crystal."
+                            rlprint "The merchant captain hands you a data crystal."
                             for e=ba(c) to ba(d)
                                 for x=targetlist(e).x-1 to targetlist(e).x+1
                                     for y=targetlist(e).y-1 to targetlist(e).y+1
@@ -1213,56 +1213,56 @@ function casino(staked as short=0, st as short=-1) as short
                 endif
                 if b=30 then
                     c=sysfrommap(specialplanet(13))
-                    dprint "A frequent patron tells you that Murchesons ditch is at coordinates "&cords(map(c).c)&"."
+                    rlprint "A frequent patron tells you that Murchesons ditch is at coordinates "&cords(map(c).c)&"."
                 endif
                 if b=31 then
                     c=sysfrommap(specialplanet(10))
-                    dprint "A scout pilot tells you that there is an independent colony at coordinates "&cords(map(c).c)&"."
+                    rlprint "A scout pilot tells you that there is an independent colony at coordinates "&cords(map(c).c)&"."
                 endif
                 if b=32 then
                     c=sysfrommap(specialplanet(14))
-                    dprint "A well doing merchant tells you that he bought his armed merchantman class ship in a system at coordinates "&cords(map(c).c)&"."
+                    rlprint "A well doing merchant tells you that he bought his armed merchantman class ship in a system at coordinates "&cords(map(c).c)&"."
                 endif
                 if b=34 then
                     c=sysfrommap(specialplanet(27))
-                    dprint "A scout pilot claims that nobody has ever returned from exploring a system at coordinates "& cords(map(c).c) &"."
+                    rlprint "A scout pilot claims that nobody has ever returned from exploring a system at coordinates "& cords(map(c).c) &"."
                 endif
                 if b=35 then
                     c=sysfrommap(specialplanet(39))
-                    dprint "A merchant says he buys all his grain at coordinates "&cords(map(c).c) &"."
+                    rlprint "A merchant says he buys all his grain at coordinates "&cords(map(c).c) &"."
                 endif
                 if b=36 or b=37 or b=38 or b=39 then
-                    dprint "A scout ship captain tells a tale about how he got chased back to his ship by hostile aliens, but then had the genius idea to order his ship by radio to fire it's ship weapons at them, with devastating results!"
+                    rlprint "A scout ship captain tells a tale about how he got chased back to his ship by hostile aliens, but then had the genius idea to order his ship by radio to fire it's ship weapons at them, with devastating results!"
                 endif
                 
                 if b=40 or b=41 then
-                    dprint "A cruiser captain recounts a battle against a pirate fleet, that was going badly, until he managed to force his opponents into his plasma stream, destroying their ships."
+                    rlprint "A cruiser captain recounts a battle against a pirate fleet, that was going badly, until he managed to force his opponents into his plasma stream, destroying their ships."
                 endif
                 
-                if b=42 then dprint "Somebody tells you that the leader of the pirates is choosen in a spaceship duel."
+                if b=42 then rlprint "Somebody tells you that the leader of the pirates is choosen in a spaceship duel."
                 
                 
-                if b=44 then dprint "A merchant captain proclaims: 'If you want to avoid pirate attacks, just fly a triax traders flag!' " &first_uc(randomgender) & " is pretty drunk and refuses to elaborate."
+                if b=44 then rlprint "A merchant captain proclaims: 'If you want to avoid pirate attacks, just fly a triax traders flag!' " &first_uc(randomgender) & " is pretty drunk and refuses to elaborate."
                 
-                if b=1001 then dprint "An explorer captain tells a funny story about a captain "& randomgender &" knew, who didn't return from an expedition to a system at "&cords(map(bonesflag).c) &"."
+                if b=1001 then rlprint "An explorer captain tells a funny story about a captain "& randomgender &" knew, who didn't return from an expedition to a system at "&cords(map(bonesflag).c) &"."
 
                 if b=100 then 
                     if faction(0).war(1)>50 then
                         if askyn ("A seedy looking indivdual approaches you. 'If you are interested I could keep you informed about what the merchants are loading. What do you say? 100 Cr. each time you come here?'(y/n)") then
                             factionadd(0,1,-1)
                             basis(st).spy=1 
-                            dprint "'Deal then. Of course we never had this conversation'"
+                            rlprint "'Deal then. Of course we never had this conversation'"
                         else
-                            dprint "He says: 'I must have mistaken you for someone else. I apologize' and dissapears in the crowd."
+                            rlprint "He says: 'I must have mistaken you for someone else. I apologize' and dissapears in the crowd."
                             factionadd(0,1,1)
                         endif
                     else
                         if askyn ("A seedy looking indivdual comes up to you. 'If you are interested i could see to it that the pirates don't get information about your cargo. what do you say? 100 Cr. each time you come here?'(y/n)") then
                             factionadd(0,1,-1)
                             basis(st).spy=2 
-                            dprint "'Deal then. Of course we never had this conversation'"
+                            rlprint "'Deal then. Of course we never had this conversation'"
                         else
-                            dprint "He says: 'I must have mistaken you for someone else. I apologize' and dissapears in the crowd."
+                            rlprint "He says: 'I must have mistaken you for someone else. I apologize' and dissapears in the crowd."
                             factionadd(0,1,+1)
                         endif
                     endif
@@ -1286,7 +1286,7 @@ function play_slot_machine() as short
         set__color(11,0)
         cls
         display_ship
-        dprint "How much do you want to bet(0-100)"
+        rlprint "How much do you want to bet(0-100)"
         bet=getnumber(0,100,0)
         if bet>player.money then bet=0
         if bet>0 then
@@ -1347,11 +1347,11 @@ function play_slot_machine() as short
             if (a=9 or b=9 or c=9) then win=win+1
             
             if win=0 then
-                dprint "You lose "& bet &" Cr."
+                rlprint "You lose "& bet &" Cr."
             else
                 
                 addmoney(bet*win,mt_gambling)
-                dprint "You win "& bet*win &" Cr."
+                rlprint "You win "& bet*win &" Cr."
             endif
             if debug=0 then sleep
         endif
@@ -1381,7 +1381,7 @@ function add_passenger(n as string,typ as short, price as short, bonus as short,
             infect(c,rnd_range(1,12))
         endif
     else
-        dprint "You don't have enough room"
+        rlprint "You don't have enough room"
     endif
     return 0
 end function
@@ -1411,19 +1411,19 @@ function check_passenger(st as short) as short
                 t=(crew(b).time-player.turn)/(60*24)
                 price=crew(b).price+crew(b).bonus*t
                 if price<0 then price=10
-                if t>0 then dprint crew(b).n &" is very happy that " &lcase(heshe(crew(b).story(10)))& " arrived early.",c_gre
-                if t=0 then dprint crew(b).n &" is happy to have arrived on time."
-                if t<0 then dprint crew(b).n &" isn't happy at all that " &lcase(heshe(crew(b).story(10)))& " arrived too late.",c_yel
+                if t>0 then rlprint crew(b).n &" is very happy that " &lcase(heshe(crew(b).story(10)))& " arrived early.",c_gre
+                if t=0 then rlprint crew(b).n &" is happy to have arrived on time."
+                if t<0 then rlprint crew(b).n &" isn't happy at all that " &lcase(heshe(crew(b).story(10)))& " arrived too late.",c_yel
                 addmoney(price,mt_quest2)
-                dprint heshe(crew(b).story(10)) &" pays you "&credits(price) &" Cr.",c_gre
+                rlprint heshe(crew(b).story(10)) &" pays you "&credits(price) &" Cr.",c_gre
                 crew(b)=cr
             else
                 crew(b).morale-=10
                 t=crew(b).time-player.turn
                 if t<0 then crew(b).morale+=t
                 if rnd_range(1,100)<10 then
-                    if t<0 then dprint crew(b).n &" reminds you that " &lcase(heshe(crew(b).story(10)))& " should have been at station "&crew(b).target & " by "&display_time(crew(b).time) &"."
-                    if t>0 then dprint crew(b).n &" reminds you that " &lcase(heshe(crew(b).story(10)))& " should be at station "&crew(b).target & " by turn "&display_time(crew(b).time) &"."
+                    if t<0 then rlprint crew(b).n &" reminds you that " &lcase(heshe(crew(b).story(10)))& " should have been at station "&crew(b).target & " by "&display_time(crew(b).time) &"."
+                    if t>0 then rlprint crew(b).n &" reminds you that " &lcase(heshe(crew(b).story(10)))& " should be at station "&crew(b).target & " by turn "&display_time(crew(b).time) &"."
                 endif
             endif
         endif
@@ -1459,12 +1459,12 @@ function refuel(st as short,price as single) as short
         if cint(refueled*price)>player.money then refueled=fix(player.money/price)
         player.money-=cint(refueled*price)
         player.fuel+=cint(refueled)
-        dprint "Your fill your tanks."
+        rlprint "Your fill your tanks."
     else
         if refueled=0 then
-            dprint "Your tanks are full."
+            rlprint "Your tanks are full."
         else
-            dprint "You have no money."
+            rlprint "You have no money."
         endif
     endif
     totammo=missing_ammo
@@ -1479,12 +1479,12 @@ function refuel(st as short,price as single) as short
                 endif
             next
         loop until totammo=0 or player.money<(player.loadout+1)^2
-        dprint "You reload."
+        rlprint "You reload."
     else
         if totammo=0 then
-            dprint "Your ammo bins are full."
+            rlprint "Your ammo bins are full."
         else
-            dprint "You have no money."
+            rlprint "You have no money."
         endif
     endif
     return 0
@@ -1505,14 +1505,14 @@ function repair_hull(pricemod as single=1) as short
     
     display_ship
     if player.hull<max_hull(player) then
-        dprint "you can add up to " & max_hull(player)-player.hull &" Hull points (" & credits(fix(pricemod*100*(0.5+0.5*player.armortype))) & " Cr. per point, max " &minimum(max_hull(player)-player.hull,int(player.money/100)) &")"
+        rlprint "you can add up to " & max_hull(player)-player.hull &" Hull points (" & credits(fix(pricemod*100*(0.5+0.5*player.armortype))) & " Cr. per point, max " &minimum(max_hull(player)-player.hull,int(player.money/100)) &")"
         b=getnumber(0,max_hull(player)-player.hull,player.hull)
         if b>0 then
             if b+player.hull>max_hull(player) then b=max_hull(player)-player.hull
             if paystuff(b*pricemod*100*(0.5+0.5*player.armortype)) then player.hull=player.hull+b
         endif
     else
-        dprint "your ship is fully armored"
+        rlprint "your ship is fully armored"
     endif
 
     return 0
@@ -1672,7 +1672,7 @@ function sick_bay(st as short=0,obe as short=0) as short
         set__color(11,0)
         cls
         display_ship()
-        dprint ""
+        rlprint ""
         a=menu(bg_parent,n &"/ Buy supplies / Treat crewmembers/ Buy crew augments/Exit")
         if a=1 then
             shop(21+st,1,"Medical Supplies")
@@ -1696,12 +1696,12 @@ function sick_bay(st as short=0,obe as short=0) as short
                                 crew(b).onship=crew(b).oldonship
                             endif
                         next
-                        dprint cured &" crewmembers were cured."
+                        rlprint cured &" crewmembers were cured."
                         player.disease=0
                     endif
                 endif
             else
-                dprint "You have no sick crewmembers."
+                rlprint "You have no sick crewmembers."
                 player.disease=0
             endif
         endif
@@ -1710,7 +1710,7 @@ function sick_bay(st as short=0,obe as short=0) as short
                 set__color(11,0)
                 cls
                 display_ship()
-                dprint ""
+                rlprint ""
                 b=menu(bg_parent,"Augments/"&augn(0)&"Exit","/"&augd(0))
                 if b>0 and b<=lastaug then
                     do
@@ -1754,7 +1754,7 @@ function sick_bay(st as short=0,obe as short=0) as short
                                                         crew(c).hpmax=crew(c).hpmax+augv(b)-crew(c).augment(augf(b))
                                                     endif
                                                     crew(c).augment(augf(b))=augv(b)
-                                                    dprint augn(b) & " installed in "&crew(c).n &"."
+                                                    rlprint augn(b) & " installed in "&crew(c).n &"."
                                                     if crew(c).augment(0)>3 and rnd_range(1,6) +rnd_range(1,6)-crew(c).augment(12)*2>11-crew(c).augment(0) then
                                                         if rnd_range(1,100)<33-crew(c).augment(12)*15 then
                                                             crew(c).hp=0
@@ -1763,33 +1763,33 @@ function sick_bay(st as short=0,obe as short=0) as short
                                                             if crew(c).hp>crew(c).hpmax then crew(c).hp=crew(c).hpmax
                                                         endif
                                                         if crew(c).hp<=0 then
-                                                            dprint crew(c).n &" has died during the operation."
+                                                            rlprint crew(c).n &" has died during the operation."
                                                         else
-                                                            dprint crew(c).n &" was permanently injured during the operation."
+                                                            rlprint crew(c).n &" was permanently injured during the operation."
                                                         endif
                                                         no_key=keyin
                                                         if c=1 then player.dead=28
                                                     endif
                                                 endif
                                             else
-                                                dprint "We can't install more than 3 augmentations."
+                                                rlprint "We can't install more than 3 augmentations."
                                                 no_key=keyin
                                             endif
                                         else
                                             if crew(c).hp>0 then 
-                                                dprint "You don't have enough money.",14
+                                                rlprint "You don't have enough money.",14
                                                 no_key=keyin
                                             else 
-                                                dprint crew(c).n &" is dead."
+                                                rlprint crew(c).n &" is dead."
                                                 no_key=keyin
                                             endif
                                         endif
                                     else
-                                        dprint crew(c).n &" already has "&augn(b)&"."
+                                        rlprint crew(c).n &" already has "&augn(b)&"."
                                         no_key=keyin
                                     endif
                                 else
-                                    dprint "We can only install augments in humans."
+                                    rlprint "We can only install augments in humans."
                                     no_key=keyin
                                 endif
                                 c+=1
@@ -1914,13 +1914,13 @@ function ship_inspection(price as short) as short
     if paystuff(price) then
         if rnd_range(1,6) +rnd_range(1,6)>10-player.cursed then 'Heavily cursed stuff is easier to find. It gets harder to find the little stuff
             if player.cursed=0 then
-                dprint "Your ship is in excellent shape.",c_gre
+                rlprint "Your ship is in excellent shape.",c_gre
             else
                 player.cursed-=1
-                dprint "The inspection does reveal some minor flaws. Luckily they are quickly fixed.",c_yel
+                rlprint "The inspection does reveal some minor flaws. Luckily they are quickly fixed.",c_yel
             endif
         else
-            dprint "Your ship is in excellent shape.",c_gre
+            rlprint "Your ship is in excellent shape.",c_gre
         endif
     endif
     return 0
@@ -1932,13 +1932,13 @@ function buy_ship(st as short,ds as string,pr as short) as short
     if paystuff(pr) then
         if st<>player.h_no then
             if upgradehull(st,player)=-1 then
-                dprint "you buy "&add_a_or_an(ds,0)&" hull"
+                rlprint "you buy "&add_a_or_an(ds,0)&" hull"
                 return -1
             else
                 player.money=player.money+pr'Just returning the money
             endif             
         else
-            dprint "You already have that hull."
+            rlprint "You already have that hull."
             player.money=player.money+pr'Just returning the money
         endif
     endif
@@ -1977,13 +1977,13 @@ function change_loadout() as short
     a=menu(bg_ship,text,help)
     if a>0 and a<ex then
         if a=player.loadout+1 then
-            dprint "You already have that loadout"
+            rlprint "You already have that loadout"
         else
             player.loadout=a-1
             for i=1 to 9
                 if player.weapons(i).ammo>0 then player.weapons(i).ammo=0
             next
-            dprint "Your loadout is now "&ammotypename(player.loadout) &"."
+            rlprint "Your loadout is now "&ammotypename(player.loadout) &"."
         endif
     endif
     
@@ -2017,7 +2017,7 @@ function change_armor(st as short) as short
     a=menu(bg_ship,text,help)
     if a>0 and a<e then
         if a=player.armortype then
-            dprint "You already have that armortype"
+            rlprint "You already have that armortype"
         else
             if paystuff(price(a)) then player.armortype=a
         endif
@@ -2035,7 +2035,7 @@ function ship_design(where as byte) as short
     dim incr(10) as short
     dim h as _ship
     if count_lines("data/customs.csv")>20 then 
-        dprint "Too many designs in custom.csv. You need to delete one before you can add new ones"
+        rlprint "Too many designs in custom.csv. You need to delete one before you can add new ones"
         return 0
     endif
     
@@ -2151,7 +2151,7 @@ function ship_design(where as byte) as short
             open "data/customs.csv" for append as #f
             print #f,h.h_desig &";"& h.h_price &";"& h.h_maxhull &";"& h.h_maxshield &";"& h.h_maxengine &";"& h.h_maxsensors &";"& h.h_maxcargo &";"& h.h_maxcrew &";"& h.h_maxweaponslot &";"& h.h_maxfuel &";"& h.h_sdesc &";10;" & h.h_desc
             close #f
-            dprint "Ship design saved"
+            rlprint "Ship design saved"
         endif
     endif
     set__color(11,0)
@@ -2197,12 +2197,12 @@ function custom_ships(where as byte) as short
             if paystuff(pr(c)) then
                 if st(c)<>player.h_no then
                     if upgradehull(st(c),player)=-1 then
-                        dprint "you buy "&add_a_or_an(ds(c),0)&" hull"
+                        rlprint "you buy "&add_a_or_an(ds(c),0)&" hull"
                     else
                         player.money=player.money+pr(c)
                     endif             
                 else
-                    dprint "You already have that hull."
+                    rlprint "You already have that hull."
                     player.money=player.money+pr(c)
                 endif
             endif
@@ -2265,48 +2265,48 @@ function shipupgrades(st as short) as short
 '                if d>0 and d<13 then
 '                    if player.money>=shopitem(d,20).price then
 '                        if shopitem(d,20).ty=50 then
-'                            if shopitem(d,20).v1>player.h_maxsensors then dprint "Your ship is too small for those."
-'                            if shopitem(d,20).v1<player.sensors then dprint "You already have better sensors."
-'                            if shopitem(d,20).v1=player.sensors then dprint "That is the same as your current sensor system."
+'                            if shopitem(d,20).v1>player.h_maxsensors then rlprint "Your ship is too small for those."
+'                            if shopitem(d,20).v1<player.sensors then rlprint "You already have better sensors."
+'                            if shopitem(d,20).v1=player.sensors then rlprint "That is the same as your current sensor system."
 '                            if shopitem(d,20).v1>player.sensors and shopitem(d,20).v1<=player.h_maxsensors then
 '                                player.sensors=shopitem(d,20).v1
 '                                paystuff(shopitem(d,20).price)
-'                                dprint "You buy "&shopitem(d,20).desig &"."
+'                                rlprint "You buy "&shopitem(d,20).desig &"."
 '                            endif
 '                        endif
 '                        if shopitem(d,20).ty>50 and shopitem(d,20).ty<53 then
 '                            if findbest(shopitem(d,20).ty,-1)<0 then
 '                                placeitem(shopitem(d,20),0,0,0,0,-1)
 '                                paystuff(shopitem(d,20).price)
-'                                dprint "You buy "&shopitem(d,20).desig &"."
+'                                rlprint "You buy "&shopitem(d,20).desig &"."
 '                            else
 '                                if item(findbest(shopitem(d,20).ty,-1)).v1<shopitem(d,20).v1 then
-'                                    dprint "You already have a better "&shopitem(d,20).desig &"."
+'                                    rlprint "You already have a better "&shopitem(d,20).desig &"."
 '                                else
-'                                    dprint "You already have "&add_a_or_an(shopitem(d,20).desig,0) &"."
+'                                    rlprint "You already have "&add_a_or_an(shopitem(d,20).desig,0) &"."
 '                                endif
 '                            endif
 '                        endif
 '                        if shopitem(d,20).ty=53 then
-'                            if shopitem(d,20).v1<player.ecm then dprint "you already have a better ECM system."
-'                            if shopitem(d,20).v1=player.ecm then dprint "That is the same as your current ECM system."
+'                            if shopitem(d,20).v1<player.ecm then rlprint "you already have a better ECM system."
+'                            if shopitem(d,20).v1=player.ecm then rlprint "That is the same as your current ECM system."
 '                            if shopitem(d,20).v1>player.ecm then 
 '                                player.ecm=shopitem(d,20).v1
 '                                paystuff(shopitem(d,20).price)
-'                                dprint "You buy "&shopitem(d,20).desig &"."
+'                                rlprint "You buy "&shopitem(d,20).desig &"."
 '                            endif
 '                        endif
 '                        if shopitem(d,20).ty=54 then
-'                            if shopitem(d,20).v1<player.shieldedcargo then dprint "you already have a better cargo shielding."
-'                            if shopitem(d,20).v1=player.shieldedcargo then dprint "That is the same as your current cargo shielding."
+'                            if shopitem(d,20).v1<player.shieldedcargo then rlprint "you already have a better cargo shielding."
+'                            if shopitem(d,20).v1=player.shieldedcargo then rlprint "That is the same as your current cargo shielding."
 '                            if shopitem(d,20).v1>player.shieldedcargo then 
 '                                player.shieldedcargo=shopitem(d,20).v1
 '                                paystuff(shopitem(d,20).price)
-'                                dprint "You buy "&shopitem(d,20).desig &"."
+'                                rlprint "You buy "&shopitem(d,20).desig &"."
 '                            endif
 '                        endif
 '                    else
-'                        dprint "You don't have enough money."
+'                        rlprint "You don't have enough money."
 '                    endif
 '                endif
 '            endif
@@ -2325,17 +2325,17 @@ function shipupgrades(st as short) as short
 '                do
 '                    d=menu(bg_parent,"Shields:/ Shields MKI   -  300 Cr/ Shields MKII  - 1200 Cr/ Shields MKIII - 2700 Cr/ Shields MKIV  - 4800 Cr/ Shields MKV   - 7500 Cr/ Exit")
 '                    if d<6 and d<=player.h_maxshield then
-'                        if d<player.shieldmax then dprint "you already have better shields"
-'                        if d=player.shieldmax then dprint "You already have this shieldgenerator"
+'                        if d<player.shieldmax then rlprint "you already have better shields"
+'                        if d=player.shieldmax then rlprint "You already have this shieldgenerator"
 '                        if d>player.shieldmax and d<6 then
 '                            if paystuff(d*d*300) then
 '                                player.shieldmax=d
-'                                dprint "You upgrade your shields"
+'                                rlprint "You upgrade your shields"
 '                                d=6
 '                            endif
 '                        endif
 '                    else
-'                        if d<6 then dprint "That shieldgenerator doesnt fit in your hull"
+'                        if d<6 then rlprint "That shieldgenerator doesnt fit in your hull"
 '                    endif
 '                    display_ship()
 '                loop until d=6
@@ -2401,27 +2401,27 @@ function buy_engine() as short
     
         d=menu(bg_parent,metxt,hetxt)
         if d<6 and d<=player.h_maxengine then
-            if d<player.engine then dprint "You already have a better engine."
-            if d=player.engine then dprint "You already have this engine."
+            if d<player.engine then rlprint "You already have a better engine."
+            if d=player.engine then rlprint "You already have this engine."
             if d>player.engine and d<6 then
                 if paystuff(iprice(d)) then
                     player.engine=d
-                    dprint "You upgrade your engine."
+                    rlprint "You upgrade your engine."
                     display_ship()
                     d=6
                 endif
             endif
         else
-            if d<6 then dprint "That engine doesn't fit in your hull."
+            if d<6 then rlprint "That engine doesn't fit in your hull."
             if d=6 then 
                 if paystuff(250) then
-                    dprint "You buy all terrain landing gear."
+                    rlprint "You buy all terrain landing gear."
                     placeitem(make_item(75),,,,,-1)
                 endif
             endif
             if d=7 then 
                 if paystuff(500) then
-                    dprint "You buy improved all terrain landing gear."
+                    rlprint "You buy improved all terrain landing gear."
                     placeitem(make_item(76),,,,,-1)
                 endif
             endif
@@ -2431,11 +2431,11 @@ function buy_engine() as short
             if d=8 then
                 if paystuff(250) then
                     if player.manjets<1 then
-                        dprint "You buy Maneuver Jets I."
+                        rlprint "You buy Maneuver Jets I."
                         player.manjets=1
                     else
-                        if player.manjets>1 then dprint "you alrealdy have better maneuvering jets."
-                        if player.manjets=1 then dprint "you alrealdy have these maneuvering jets."
+                        if player.manjets>1 then rlprint "you alrealdy have better maneuvering jets."
+                        if player.manjets=1 then rlprint "you alrealdy have these maneuvering jets."
                         player.money=player.money+250 'Just returning money
                     endif
                 endif
@@ -2444,11 +2444,11 @@ function buy_engine() as short
             if d=9 then
                 if paystuff(500) then
                     if player.manjets<2 then
-                        dprint "You buy Maneuver Jets II."
+                        rlprint "You buy Maneuver Jets II."
                         player.manjets=2
                     else
-                        if player.manjets>2 then dprint "you alrealdy have better maneuvering jets."
-                        if player.manjets=2 then dprint "you alrealdy have these maneuvering jets."
+                        if player.manjets>2 then rlprint "you alrealdy have better maneuvering jets."
+                        if player.manjets=2 then rlprint "you alrealdy have these maneuvering jets."
                         player.money=player.money+500 'returning money
                     endif
                 endif
@@ -2457,11 +2457,11 @@ function buy_engine() as short
             if d=10 then
                 if paystuff(1000) then
                     if player.manjets<3 then
-                        dprint "You buy Maneuver Jets III."
+                        rlprint "You buy Maneuver Jets III."
                         player.manjets=3
                     else
-                        if player.manjets>3 then dprint "you alrealdy have better maneuvering jets."
-                        if player.manjets=3 then dprint "you alrealdy have these maneuvering jets."
+                        if player.manjets>3 then rlprint "you alrealdy have better maneuvering jets."
+                        if player.manjets=3 then rlprint "you alrealdy have these maneuvering jets."
                         player.money=player.money+1000 'Returning money
                     endif
                 endif
@@ -2531,7 +2531,7 @@ function buy_weapon(st as short) as short
         set__color(11,0)
         cls
         display_ship()        
-        dprint ""
+        rlprint ""
         d=menu(bg_parent,weapons,help,2,2)
         flip
         if d>=1 and d<=last then
@@ -2554,9 +2554,9 @@ function buy_weapon(st as short) as short
                 if c<b then
                     if paystuff(wsinv(d).p*haggle_("down")) then
                         if wsinv(d).made<=14 then
-                            dprint "You buy "&add_a_or_an(wsinv(d).desig,0) &"."
+                            rlprint "You buy "&add_a_or_an(wsinv(d).desig,0) &"."
                         else
-                            dprint "You buy "&wsinv(d).desig &"."
+                            rlprint "You buy "&wsinv(d).desig &"."
                         endif
                         player.weapons(c)=wsinv(d)
                         for i=d to last
@@ -2611,14 +2611,14 @@ function customize_item() as short
         if a=1 then
             i=get_item(2,4)
             if i>0 then
-                dprint "Let's take a look at your "&item(i).desig &"."
+                rlprint "Let's take a look at your "&item(i).desig &"."
                 if item(i).v3<4 then
                     nr=count_items(item(i))
                     if nr>1 then 
-                        dprint "How many?(1-"&nr &")"
+                        rlprint "How many?(1-"&nr &")"
                         nr=getnumber(0,nr,0)
                     endif
-                    if debug=1 and _debug=1 then dprint ""&nr
+                    if debug=1 and _debug=1 then rlprint ""&nr
                     price=(item(i).v3+1)*(item(i).v3+1)*100*nr*haggle_("down")
                     if askyn("That will cost "&price &" Cr.(y/n)") then
                         if paystuff(price) then 
@@ -2641,19 +2641,19 @@ function customize_item() as short
                     endif
                 endif
             else
-                dprint "Come back when you have a weapon to modify."
+                rlprint "Come back when you have a weapon to modify."
             endif
         endif
         if a=2 or a=3 then
             i=get_item(3)
             if i>0 then
-                dprint "Let's take a look at your "&item(i).desig &"."
+                rlprint "Let's take a look at your "&item(i).desig &"."
                 i2=lowest_by_id(item(i).id)
                 if i2>0 then i=i2
                 if a=2 then price=100
                 if a=3 then price=250
                 if item(i).v2>0 then 
-                    dprint "That suit is already camoflaged."
+                    rlprint "That suit is already camoflaged."
                 else
                     price=price*nr*haggle_("down")
                     if askyn("that will cost "&price &" Cr.(y/n)") then
@@ -2672,13 +2672,13 @@ function customize_item() as short
                     endif
                 endif
             else
-                dprint "Come back when you have a suit to modify."
+                rlprint "Come back when you have a suit to modify."
             endif
         endif
         if a=4 then
             i=get_item()
             if i>0 then
-                dprint "Let's take a look at your "&item(i).desig &"."
+                rlprint "Let's take a look at your "&item(i).desig &"."
                 price=50*haggle_("down")
                 if askyn("That will cost " &price & " cr.(y/n)") then
                     if paystuff(price) then
@@ -2688,7 +2688,7 @@ function customize_item() as short
                     endif
                 endif
             else
-                dprint "Come back when you have something to acidproof."
+                rlprint "Come back when you have something to acidproof."
             endif
         endif
     loop until a=5
@@ -2740,7 +2740,7 @@ function stockmarket(st as short) as short
             b=menu(bg_parent,text &"/Exit",,2,2)
             if b>0 and b<last+1 then
                 if cn(b)>0 then
-                    dprint "How many shares of "&companyname(cn(b))&" do you want to buy?"
+                    rlprint "How many shares of "&companyname(cn(b))&" do you want to buy?"
                     amount=getnumber(0,99,0)
                     if amount>0 then
                         if paystuff(companystats(cn(b)).rate*amount) then
@@ -2759,7 +2759,7 @@ function stockmarket(st as short) as short
             if b>0 then
                 c=getshares(b)
                 if c>99 then c=99
-                dprint "How many shares of "&companyname(b)&" do you want to sell? (max "&c &")"
+                rlprint "How many shares of "&companyname(b)&" do you want to sell? (max "&c &")"
                     
                 d=getnumber(0,c,0)
                 if d>0 then
@@ -2802,7 +2802,7 @@ function getsharetype() as short
             return -1
         endif
     else
-        dprint "You don't own any shares to sell"
+        rlprint "You don't own any shares to sell"
     endif
     return -1
 end function
@@ -2845,7 +2845,7 @@ function dividend() as short
     next
     if payout(0)>1 then
         for a=1 to 4
-            if payout(a)>0 then dprint "Your share in "&companyname(a) &" has paid a dividend of "&int(payout(a)) &" Cr."
+            if payout(a)>0 then rlprint "Your share in "&companyname(a) &" has paid a dividend of "&int(payout(a)) &" Cr."
         next
         addmoney(int(payout(0)),mt_trading)
     endif
@@ -2873,7 +2873,7 @@ end function
 
 function buyshares(comp as short,n as short) as short
     dim a as short
-    if companystats(comp).shares=0 then dprint "No shares availiable for this company",14
+    if companystats(comp).shares=0 then rlprint "No shares availiable for this company",14
     if lastshare+n>2048 then n=2048-lastshare
     if n>0 and companystats(comp).shares>0 then
         for a=1 to n
@@ -2945,7 +2945,7 @@ function merctrade(byref f as _fleet) as short
         if f.c.x=basis(a).c.x and f.c.y=basis(a).c.y then st=a
     next
     if st<>-1 then
-        if show_NPCs then dprint "fleet is trading at "&st+1 &"."
+        if show_NPCs then rlprint "fleet is trading at "&st+1 &"."
         f=unload_f(f,st)
         f=load_f(f,st)
         f=refuel_f(f,st)
@@ -2963,7 +2963,7 @@ function refuel_f(f as _fleet, st as short) as _fleet
     demand=cint(f.fuel*ships/30)
     basis(st).inv(9).v-=demand
     if basis(st).inv(9).v<0 then basis(st).inv(9).v=0
-    if debug=1 and _debug=1 then dprint ships &" ships refueling "&demand &" fuel, on base " & basis(st).inv(9).v
+    if debug=1 and _debug=1 then rlprint ships &" ships refueling "&demand &" fuel, on base " & basis(st).inv(9).v
     f.fuel=0
     return f
 end function
@@ -3001,7 +3001,7 @@ function load_f(f as _fleet, st as short) as _fleet
             if loaded(a)>0 and loaded(a+1)>0 then text=text &", "
         next
         if loaded(5)>0 then text=text & loaded(a) &" tons of "& goodsname(a) &"."
-        if player.landed.m=0 then dprint "We have a transmission from station "&st+1 &". A trader just left with "&text &".",15    
+        if player.landed.m=0 then rlprint "We have a transmission from station "&st+1 &". A trader just left with "&text &".",15    
     endif
     
     return f
@@ -3024,7 +3024,7 @@ function unload_s(s as _ship,st as short) as _ship
             t=s.cargo(a).x-1 'type of cargo
             basis(st).inv(t).v=basis(st).inv(t).v+1  
             s.cargo(a).x=1
-            'dprint "sold " &t
+            'rlprint "sold " &t
         endif
     next
     return s
@@ -3040,7 +3040,7 @@ function load_s(s as _ship, good as short, st as short) as short
         result=bay
         basis(st).inv(good).v=basis(st).inv(good).v-1
         s.cargo(bay).x=s.cargo(bay).x+good
-        'dprint "bought " &good &" stored in "& bay &" Inv:"& basis(st).inv(good).v 
+        'rlprint "bought " &good &" stored in "& bay &" Inv:"& basis(st).inv(good).v 
     endif
     return result
 end function
@@ -3119,7 +3119,7 @@ function showprices(st as short) as short
         next
 
     endif
-    dprint "a: absolute, r: relative, esq to quit."
+    rlprint "a: absolute, r: relative, esq to quit."
     no_key=keyin
     if no_key="a" then relative=0
     if no_key="r" then relative=1
@@ -3147,8 +3147,8 @@ function buygoods(st as short) as short
             if m>0 then
                 display_ship
                 displaywares(st)
-                if st<>10 then dprint "how many tons of "& goodsname(c) &" do you want to buy?"
-                if st=10 then dprint "how many tons of "& goodsname(c) &" do you want to transfer?"
+                if st<>10 then rlprint "how many tons of "& goodsname(c) &" do you want to buy?"
+                if st=10 then rlprint "how many tons of "& goodsname(c) &" do you want to transfer?"
                 d=getnumber(0,m,0)
                 p=basis(st).inv(c).p
                 if d>0 and d<=m then 
@@ -3160,23 +3160,23 @@ function buygoods(st as short) as short
                         next
                         if d=1 then 
                             if st=10 then
-                                dprint "You transfer a ton of "& goodsname(c) &"."
+                                rlprint "You transfer a ton of "& goodsname(c) &"."
                             else
-                                dprint "You buy a ton of "& goodsname(c) &" for "& credits(p*d) &" Cr."
+                                rlprint "You buy a ton of "& goodsname(c) &" for "& credits(p*d) &" Cr."
                             endif
                         endif
                         if d>1 then
                             if st=10 then
-                                dprint "You transfer "& d & " tons of "& goodsname(c) &"."
+                                rlprint "You transfer "& d & " tons of "& goodsname(c) &"."
                             else
-                                dprint "You buy "& d & " tons of "& goodsname(c) &" for "& credits(p*d) &" Cr."
+                                rlprint "You buy "& d & " tons of "& goodsname(c) &" for "& credits(p*d) &" Cr."
                             endif
                         endif
                         basis(st).inv(c).v=basis(st).inv(c).v-d
                     endif
                 endif
             else
-                dprint "No room for additional cargo.",14
+                rlprint "No room for additional cargo.",14
                 no_key=keyin
             endif
         endif
@@ -3232,15 +3232,15 @@ function sellgoods(st as short) as short
                     m=getinvbytype(ct) ' wie viele insgesamt
                     if player.cargo(c).x<=10 then
                         if st<>10 then 
-                            dprint "how many tons of "& goodsname(ct) &" do you want to sell?"
+                            rlprint "how many tons of "& goodsname(ct) &" do you want to sell?"
                         else
-                            dprint "how many tons of "& goodsname(ct) &" do you want to leave behind?"
+                            rlprint "how many tons of "& goodsname(ct) &" do you want to leave behind?"
                         endif
                         sold=getnumber(0,m,0)
                         if sold>0 then
                             for i=1 to sold
                                 bay=get_invbay_bytype(ct)
-                                dprint "Unloading " & goodsname(ct) &" in bay "& bay &"."
+                                rlprint "Unloading " & goodsname(ct) &" in bay "& bay &"."
                                 if player.cargo(bay).y=0 then
                                     addmoney(basis(st).inv(ct).p*merchant,mt_piracy)
                                 else
@@ -3250,7 +3250,7 @@ function sellgoods(st as short) as short
                                 player.cargo(bay).x=1
                                 player.cargo(bay).y=0
                             next
-                            if st<>10 then dprint "Sold " & sold & " tons of " & goodsname(Ct) & " for " & cint(basis(st).inv(ct).p*sold*merchant) &" Cr."
+                            if st<>10 then rlprint "Sold " & sold & " tons of " & goodsname(Ct) & " for " & cint(basis(st).inv(ct).p*sold*merchant) &" Cr."
                             'removeinvbytype(player.cargo(c).x-1,sold)
                             'no_key=keyin
                             'c=b+1
@@ -3261,7 +3261,7 @@ function sellgoods(st as short) as short
         else
             c=-1
         endif
-        if em=0 then dprint "Your cargo bays are empty.",c_yel
+        if em=0 then rlprint "Your cargo bays are empty.",c_yel
         if c=b+1 then
             if askyn("Do you really want to sell all?(y/n)") then
                 for i=1 to 10
@@ -3272,11 +3272,11 @@ function sellgoods(st as short) as short
                         else
                             addmoney(basis(st).inv(ct).p*merchant,mt_trading)
                         endif
-                        dprint "You sell a ton of "& goodsname(ct) &" for "&credits(basis(st).inv(ct).p*merchant) &" Cr."
+                        rlprint "You sell a ton of "& goodsname(ct) &" for "&credits(basis(st).inv(ct).p*merchant) &" Cr."
                         player.cargo(i).x=1
                         player.cargo(i).y=0
                     else
-                        if player.cargo(i).x>1 then dprint "Can't sell cargo in bay "&i &".",c_yel
+                        if player.cargo(i).x>1 then rlprint "Can't sell cargo in bay "&i &".",c_yel
                     endif
                 next
             endif
@@ -3339,7 +3339,7 @@ function check_tasty_pretty_cargo() as short
     freebay=getnextfreebay
     if freebay>0 then
         if reward(rwrd_pretty)>=100 then
-            dprint "You have collected enough beautiful animal parts to produce a cargo ton of luxury items"
+            rlprint "You have collected enough beautiful animal parts to produce a cargo ton of luxury items"
             if askyn("Do you want to do so?(y/n)") then
                 reward(rwrd_pretty)-=100
                 player.cargo(freebay).x=4
@@ -3351,7 +3351,7 @@ function check_tasty_pretty_cargo() as short
     
     if freebay>0 then
         if reward(rwrd_tasty)>=100 then
-            dprint "You have collected enough tasty animal parts to produce a cargo ton of food!"
+            rlprint "You have collected enough tasty animal parts to produce a cargo ton of food!"
             if askyn("Do you want to do so?(y/n)") then
                 reward(rwrd_tasty)-=100
                 player.cargo(freebay).x=2
@@ -3464,7 +3464,7 @@ function change_prices(st as short,etime as short) as short
         if basis(st).inv(9).v>10 then basis(st).inv(9).v=10
         if basis(st).inv(9).p<20 then basis(st).inv(9).p=20 
         if basis(st).inv(9).p>300 then basis(st).inv(9).p=300 
-        if debug=1 and _debug=1 then dprint "Price st "&st &":"& basis(st).inv(9).p
+        if debug=1 and _debug=1 then rlprint "Price st "&st &":"& basis(st).inv(9).p
     next
     for c=12 to 1 step -1
         goods_prices(0,c,st)=goods_prices(0,c-1,st)
@@ -3646,7 +3646,7 @@ end function
 
 function paystuff(price as integer) as integer
     if player.money<price then
-        dprint "you dont have enough money",c_yel
+        rlprint "you dont have enough money",c_yel
         return 0
     else
         player.money=player.money-price 'Paystuff
@@ -3706,7 +3706,7 @@ function shop(sh as short,pmod as single,shopn as string) as short
     t=t & "/Exit"
     desc=desc &"/"
     display_ship()
-    dprint("")
+    rlprint("")
     c=menu(bg_parent,t,desc,2,2)
     select case c
     case order
@@ -3716,96 +3716,96 @@ function shop(sh as short,pmod as single,shopn as string) as short
     case else
         select case inv(c).ty
         case 150'sensors
-            if inv(c).v1<player.sensors then dprint "You already have better sensors."
-            if inv(c).v1=player.sensors then dprint "These sensors aren't better than the one you already have."
-            if inv(c).v1>player.h_maxsensors then dprint "These sensors don't fit in your ship."
+            if inv(c).v1<player.sensors then rlprint "You already have better sensors."
+            if inv(c).v1=player.sensors then rlprint "These sensors aren't better than the one you already have."
+            if inv(c).v1>player.h_maxsensors then rlprint "These sensors don't fit in your ship."
             if inv(c).v1>player.sensors and inv(c).v1<=player.h_maxsensors then
                 if paystuff(inv(c).price*pmod) then 
                     player.sensors=inv(c).v1
-                    dprint "You buy a "&inv(c).desig &"."
+                    rlprint "You buy a "&inv(c).desig &"."
                 endif
             endif
         case 151'engine
-            if inv(c).v1<player.engine then dprint "You already have a better engine."
-            if inv(c).v1=player.engine then dprint "this engine isn't better than the one you already have."
-            if inv(c).v1>player.h_maxengine then dprint "This engine doesn't fit in your ship."
+            if inv(c).v1<player.engine then rlprint "You already have a better engine."
+            if inv(c).v1=player.engine then rlprint "this engine isn't better than the one you already have."
+            if inv(c).v1>player.h_maxengine then rlprint "This engine doesn't fit in your ship."
             if inv(c).v1>player.engine and inv(c).v1<=player.h_maxengine then
                 if paystuff(inv(c).price*pmod) then
                     player.engine=inv(c).v1
-                    dprint "You buy a "&inv(c).desig &"."
+                    rlprint "You buy a "&inv(c).desig &"."
                 endif
             endif
         case 152'shield
-            if inv(c).v1<player.shieldmax then dprint "You already have a better shieldgenerator."
-            if inv(c).v1=player.shieldmax then dprint "This shield generator isn't better than the one you already have."
-            if inv(c).v1>player.h_maxshield then dprint "This shield generator doesn't fit in your ship."
+            if inv(c).v1<player.shieldmax then rlprint "You already have a better shieldgenerator."
+            if inv(c).v1=player.shieldmax then rlprint "This shield generator isn't better than the one you already have."
+            if inv(c).v1>player.h_maxshield then rlprint "This shield generator doesn't fit in your ship."
             if inv(c).v1>player.shieldmax and inv(c).v1<=player.h_maxshield then
                 if paystuff(inv(c).price*pmod) then
                     player.shieldmax=inv(c).v1
-                    dprint "You buy a "&inv(c).desig &"."
+                    rlprint "You buy a "&inv(c).desig &"."
                 endif
             endif
         case 153 'Shipdetection
-            if inv(c).v1<player.equipment(se_shipdetection) then dprint "You already have a better ship detection system."
-            if inv(c).v1=player.equipment(se_shipdetection) then dprint "You already have the same ship detection system."
+            if inv(c).v1<player.equipment(se_shipdetection) then rlprint "You already have a better ship detection system."
+            if inv(c).v1=player.equipment(se_shipdetection) then rlprint "You already have the same ship detection system."
             if inv(c).v1>player.equipment(se_shipdetection) then 
                 if paystuff(inv(c).price*pmod) then 
                     player.equipment(se_shipdetection)=inv(c).v1
-                    dprint "You buy a "&inv(c).desig &"."
+                    rlprint "You buy a "&inv(c).desig &"."
                 endif
             endif
         case 154 'navcomp
-            if inv(c).v1=player.equipment(se_navcom) then dprint "You already have a navigational computer."
+            if inv(c).v1=player.equipment(se_navcom) then rlprint "You already have a navigational computer."
             if inv(c).v1>player.equipment(se_navcom) then 
                 if paystuff(inv(c).price*pmod) then 
                     player.equipment(se_navcom)=inv(c).v1
-                    dprint "You buy a "&inv(c).desig &"."
+                    rlprint "You buy a "&inv(c).desig &"."
                 endif
             endif
             
         case 155 'ECM
-            if inv(c).v1<player.equipment(se_ECM) then dprint "You already have a better ECM system."
-            if inv(c).v1=player.equipment(se_ECM) then dprint "You already have the same ECM system."
+            if inv(c).v1<player.equipment(se_ECM) then rlprint "You already have a better ECM system."
+            if inv(c).v1=player.equipment(se_ECM) then rlprint "You already have the same ECM system."
             if inv(c).v1>player.equipment(se_ECM) then 
                 if paystuff(inv(c).price*pmod) then 
                     player.equipment(se_ECM)=inv(c).v1
-                    dprint "You buy a "&inv(c).desig &"."
+                    rlprint "You buy a "&inv(c).desig &"."
                 endif
             endif
             
         case 156 'Cargoshielding
-            if inv(c).v1<player.equipment(se_CargoShielding) then dprint "You already have better cargo shielding."
-            if inv(c).v1=player.equipment(se_CargoShielding) then dprint "You already have the same cargo shielding."
+            if inv(c).v1<player.equipment(se_CargoShielding) then rlprint "You already have better cargo shielding."
+            if inv(c).v1=player.equipment(se_CargoShielding) then rlprint "You already have the same cargo shielding."
             if inv(c).v1>player.equipment(se_CargoShielding) then 
                 if paystuff(inv(c).price*pmod) then player.equipment(se_CargoShielding)=inv(c).v1
             endif
         case 157 'Fuelsystem
-            if inv(c).v1<player.equipment(se_Fuelsystem) then dprint "You already have a better fuel system."
-            if inv(c).v1=player.equipment(se_Fuelsystem) then dprint "You already have the same fuel system."
+            if inv(c).v1<player.equipment(se_Fuelsystem) then rlprint "You already have a better fuel system."
+            if inv(c).v1=player.equipment(se_Fuelsystem) then rlprint "You already have the same fuel system."
             if inv(c).v1>player.equipment(se_Fuelsystem) then 
                 if paystuff(inv(c).price*pmod) then 
                     player.equipment(se_fuelsystem)=inv(c).v1
                     player.fueluse=1-inv(c).v1/10
-                    dprint "You buy " &add_a_or_an(inv(c).desig,0) & "."
+                    rlprint "You buy " &add_a_or_an(inv(c).desig,0) & "."
             
                 endif
             endif
         case 21
             best=findbest(21,-1)
             if best>0 then
-                if item(best).v1>inv(c).v1 then dprint "you already have a better infirmary"
-                if item(best).v1=inv(c).v1 then dprint "you already have such an infirmary"
+                if item(best).v1>inv(c).v1 then rlprint "you already have a better infirmary"
+                if item(best).v1=inv(c).v1 then rlprint "you already have such an infirmary"
                 if item(best).v1<inv(c).v1 then 
                     if paystuff(inv(c).price*pmod) then 
                         placeitem(inv(c),0,0,0,0,-1)'player already has one and t his one is better
-                        dprint "You buy " &add_a_or_an(inv(c).desig,0) & "."
+                        rlprint "You buy " &add_a_or_an(inv(c).desig,0) & "."
             
                     endif
                 endif
             else
                 if paystuff(inv(c).price*pmod) then 
                     placeitem(inv(c),0,0,0,0,-1)'Its the first
-                    dprint "You buy " &add_a_or_an(inv(c).desig,0) & "."
+                    rlprint "You buy " &add_a_or_an(inv(c).desig,0) & "."
             
                 endif
             endif
@@ -3813,7 +3813,7 @@ function shop(sh as short,pmod as single,shopn as string) as short
         case else
             if paystuff(int(inv(c).price*pmod))=-1 then
                 player.money=player.money+int(inv(c).price*pmod)'Giving back
-                dprint "How many "&inv(c).desigp &" do you want to buy? (Max: " &fix(player.money/(inv(c).price*pmod)) &")"
+                rlprint "How many "&inv(c).desigp &" do you want to buy? (Max: " &fix(player.money/(inv(c).price*pmod)) &")"
                 v=getnumber(0,fix(player.money/(inv(c).price*pmod)),0)
                 if v>0 then
                     if paystuff(inv(c).price*pmod*v)=-1 and v>0 then
@@ -3823,9 +3823,9 @@ function shop(sh as short,pmod as single,shopn as string) as short
                             placeitem(inv(c),0,0,0,0,-1)
                         next
                         if v=1 then
-                            dprint "you buy "&add_a_or_an(inv(c).desig,0) & " for "& credits(int(inv(c).price*pmod))&" Cr."
+                            rlprint "you buy "&add_a_or_an(inv(c).desig,0) & " for "& credits(int(inv(c).price*pmod))&" Cr."
                         else
-                            dprint "you buy "& v &" "&inv(c).desigp &" for "&credits(int(inv(c).price*pmod*v)) &" Cr."
+                            rlprint "you buy "& v &" "&inv(c).desigp &" for "&credits(int(inv(c).price*pmod*v)) &" Cr."
                         endif
                     endif
                 endif
@@ -3843,7 +3843,7 @@ function place_shop_order(sh as short) as short
     dim as _cords p
     dim as _items i
     p=locEOL
-    dprint "What would you like to order?"
+    rlprint "What would you like to order?"
     t=gettext(p.x,p.y,26,t)
     t=ucase(t)
     f=0
@@ -3878,14 +3878,14 @@ function place_shop_order(sh as short) as short
         i=make_item(candidate)
         if askyn("Do you want to order "&add_a_or_an(i.desig,0) &"? (y/n)") then
             shop_order(sh)=candidate
-            dprint "I can't say for certain when it will arive, but it should be here soon."
+            rlprint "I can't say for certain when it will arive, but it should be here soon."
             f=3
             candidate=0
         else
             tried(candidate)=1
         endif
     else
-        dprint "I don't think I ever heard of those."
+        rlprint "I don't think I ever heard of those."
         f=3
     endif
     loop until f=3
@@ -4314,9 +4314,9 @@ function buysitems(desc as string,ques as string, ty as short, per as single=1,a
     dim as integer a,b,answer,price,really
     dim text as string
     if configflag(con_autosale)=0 then 
-        dprint desc & " (autoselling on)"
+        rlprint desc & " (autoselling on)"
     else
-        dprint desc & " (autoselling off)"
+        rlprint desc & " (autoselling off)"
     endif
     if ques<>"" then
         answer=askyn(ques)
@@ -4339,7 +4339,7 @@ function buysitems(desc as string,ques as string, ty as short, per as single=1,a
                         if configflag(con_autosale)=1 or b=0 then b=askyn("Do you want to sell the "&item(a).desig &" for "& price &" Cr.?(y/n)")             
                         if item(a).w.s=-2 and b=-1 then b=askyn("The "&item(a).desig &" is in use. do you really want to sell it?(y/n)")
                         if b=-1 then    
-                            dprint "you sell the "&item(a).desig &" for " &price & " Cr."
+                            rlprint "you sell the "&item(a).desig &" for " &price & " Cr."
                             addmoney(price,mt_trading)
                             reward(2)=reward(2)-item(a).v5               
                             factionadd(0,1,item(a).price/disnbase(player.c)/100*aggrmod)
@@ -4367,9 +4367,9 @@ function buysitems(desc as string,ques as string, ty as short, per as single=1,a
                 endif
             next
             if text<>"" then
-                dprint text
+                rlprint text
             else
-                dprint "You couldn't sell anything."
+                rlprint "You couldn't sell anything."
             endif
             
         endif

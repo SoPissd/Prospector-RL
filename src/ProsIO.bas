@@ -27,9 +27,9 @@ function change_captain_appearance(x as short,y as short) as short
         a=menu(bg_noflip,text,"",x,y)
         select case a
         case 1
-            dprint ""
+            rlprint ""
             crew(1).n=gettext(LocEOL.x,LocEOL.y,16,crew(1).n)
-            dprint "Are you male or female?(m/f)"
+            rlprint "Are you male or female?(m/f)"
             no_key=keyin
             if lcase(no_key)="m" then
                 crew(1).story(10)=0
@@ -40,17 +40,17 @@ function change_captain_appearance(x as short,y as short) as short
             crew(1).story(10)+=1
             if crew(1).story(10)>1 then crew(1).story(10)=0
         case 3
-            dprint "Age: "
+            rlprint "Age: "
             crew(1).story(6)=getnumber(18,120,20)-18
             'age
         case 4
-            dprint "Height in cm: "
+            rlprint "Height in cm: "
             n=getnumber(100,300,180)
             n=n-160
             crew(1).story(7)=n
             'height
         case 5
-            dprint "Weight in kg: "
+            rlprint "Weight in kg: "
             n=getnumber(50,500,100)
             n=(n-50-crew(1).story(7))/4
             crew(1).story(8)=n
@@ -886,7 +886,7 @@ function display_station(a as short) as short
         if fleet(a).fighting<>0 then
             set__color( c_red,0,vismask(basis(a).c.x,basis(a).c.y))
             draw string (x*_fw1,y*_fh1),"x",,Font2,custom,@_col
-            if player.turn mod 10=0 then dprint "Station "&a+1 &" is sending a distress signal! They are under attack!",c_red
+            if player.turn mod 10=0 then rlprint "Station "&a+1 &" is sending a distress signal! They are under attack!",c_red
         endif
     endif
     if debug=1 and _debug=1 then draw string (x*_fw1,y*_fh1),""&count_gas_giants_area(basis(a).c,7) &":"& basis(a).inv(9).v ,,Font2,custom,@_col
@@ -976,7 +976,7 @@ function display_ship(show as byte=0) as short
     if player.fuel<(player.fuelmax+player.fuelpod)*0.5 then
         if wg=0 then
             wg=1
-            dprint "Fuel low",14
+            rlprint "Fuel low",14
             if configflag(con_sound)=0 or configflag(con_sound)=2 then
                 #ifdef _FMODSOUND
                 FSOUND_PlaySound(FSOUND_FREE, sound(2))
@@ -994,7 +994,7 @@ function display_ship(show as byte=0) as short
     if player.fuel<(player.fuelmax+player.fuelpod)*0.2 then
         if wg=1 then
             wg=2
-            dprint "Fuel very low",12
+            rlprint "Fuel very low",12
             if configflag(con_sound)=0 or configflag(con_sound)=2 then
                 #ifdef _FMODSOUND
                 FSOUND_PlaySound(FSOUND_FREE, sound(2))
@@ -1226,7 +1226,7 @@ function display_awayteam(showshipandteam as byte=1,osx as short=555) as short
             l+=1
             draw string(sidebar,l*_fh2),tmap(awayteam.c.x,awayteam.c.y).desc,,Font2,custom,@_col ';planetmap(awayteam.c.x,awayteam.c.y,map)
         else
-            dprint tmap(awayteam.c.x,awayteam.c.y).desc '&planetmap(awayteam.c.x,awayteam.c.y,map)
+            rlprint tmap(awayteam.c.x,awayteam.c.y).desc '&planetmap(awayteam.c.x,awayteam.c.y,map)
         endif
         l+=2
         draw string(sidebar,l*_fh2),"Credits: " &credits(player.money),,Font2,custom,@_col
@@ -1349,7 +1349,7 @@ function display_monsters(osx as short) as short
     for a=1 to lastenemy
         if enemy(a).ti_no=-1 then enemy(a).ti_no=rnd_range(0,8)+1500 'Assign sprite range
         if enemy(a).hp>0 then
-            if _debug>0 then dprint cords(p)
+            if _debug>0 then rlprint cords(p)
             p=enemy(a).c
             if comstr.comalive=0 and awayteam.c.x>=p.x-1 and awayteam.c.x<=p.x+1 and awayteam.c.y>=p.y-1 and awayteam.c.y<=p.y+1 then
                 comstr.t=comstr.t & key_co &" Chat, " & key_of &" Offer;"
@@ -1543,9 +1543,9 @@ function display_system(in as short,forcebar as byte=0,hi as byte=0) as short
                 bl=bl &"ms:"&map(in).planets(a)
             endif
         next
-        dprint bl &":"& hi
+        rlprint bl &":"& hi
     endif
-    if debug=2 and _debug=1 then dprint ""&x
+    if debug=2 and _debug=1 then rlprint ""&x
     return 0
 end function
 
@@ -1753,9 +1753,9 @@ function planet_cursor(p as _cords,mapslot as short,byref osx as short,shteam as
         display_awayteam(,osx)
     endif
     if planetmap(p.x,p.y,mapslot)>0 then
-        dprint cords(p)&": "&tiles(planetmap(p.x,p.y,mapslot)).desc
+        rlprint cords(p)&": "&tiles(planetmap(p.x,p.y,mapslot)).desc
     else
-        dprint cords(p)&": "&"Unknown"
+        rlprint cords(p)&": "&"Unknown"
     endif
     flip
     return key
@@ -1766,7 +1766,7 @@ function getplanet(sys as short,forcebar as byte=0) as short
     dim as string text,key
     dim as _cords p1
     if sys<0 or sys>laststar then
-        dprint ("ERROR:System#:"&sys,14)
+        rlprint ("ERROR:System#:"&sys,14)
         return -1
     endif
     map(sys).discovered=2
@@ -1778,8 +1778,8 @@ function getplanet(sys as short,forcebar as byte=0) as short
         if map(sys).planets(a)<>0 then b=1
     next
     if b>0 then
-        dprint "Enter to select, arrows to move,ESC to quit"
-        if show_mapnr=1 then dprint map(sys).planets(p)&":"&isgasgiant(map(sys).planets(p))
+        rlprint "Enter to select, arrows to move,ESC to quit"
+        if show_mapnr=1 then rlprint map(sys).planets(p)&":"&isgasgiant(map(sys).planets(p))
         do
             display_system(sys,,p)
             key=""
@@ -1788,7 +1788,7 @@ function getplanet(sys as short,forcebar as byte=0) as short
             if keyminus(key) or key=key_west or key=key_south then p=prevplan(p,sys)
             if key=key_comment then
                 if map(sys).planets(p)>0 then
-                    dprint "Enter comment on planet: "
+                    rlprint "Enter comment on planet: "
                     p1=locEOL
                     planets(map(sys).planets(p)).comment=gettext(p1.x,p1.y,60,planets(map(sys).planets(p)).comment)
                 endif
@@ -1812,7 +1812,7 @@ end function
 '    dim lastplanet as short
 '    dim p1 as _cords
 '    if sys<0 or sys>laststar then
-'        dprint ("ERROR:System#:"&sys,14)
+'        rlprint ("ERROR:System#:"&sys,14)
 '        return -1
 '    endif
 '    for a=1 to 9
@@ -1844,8 +1844,8 @@ end function
 '            if xo<=4 then xo=4
 '            if xo+18>58 then xo=42
 '        endif
-'        dprint "Enter to select, arrows to move,ESC to quit"
-'        if show_mapnr=1 then dprint map(sys).planets(p)&":"&isgasgiant(map(sys).planets(p))
+'        rlprint "Enter to select, arrows to move,ESC to quit"
+'        if show_mapnr=1 then rlprint map(sys).planets(p)&":"&isgasgiant(map(sys).planets(p))
 '        do
 '            displaysystem(sys)
 '            if keyplus(key) or a=6 then
@@ -1863,7 +1863,7 @@ end function
 '            if p<1 then p=lastplanet
 '            if p>9 then p=firstplanet
 '            x=xo+(p*2)
-'            if left(displaytext(25),14)<>"Asteroid field" or left(displaytext(25),15)<>"Planet at orbit" then dprint "System " &map(sys).desig &"."
+'            if left(displaytext(25),14)<>"Asteroid field" or left(displaytext(25),15)<>"Planet at orbit" then rlprint "System " &map(sys).desig &"."
 '            if map(sys).planets(p)>0 then
 '                if planets(map(sys).planets(p)).comment="" then
 '                    if isasteroidfield(map(sys).planets(p))=1 then
@@ -1889,7 +1889,7 @@ end function
 '                        displaytext(25)= "Planet at orbit " &p &": " &planets(map(sys).planets(p)).comment &"."
 '                    endif
 '                endif
-'                dprint ""
+'                rlprint ""
 '                locate yo,x
 '                set__color( 15,3
 '                if isgasgiant(map(sys).planets(p))=0 and isasteroidfield(map(sys).planets(p))=0 then print "o"
@@ -1907,7 +1907,7 @@ end function
 '                        if map(sys).planets(p)=-20002 then displaytext(25)= "Planet at orbit " &p &". A methane-ammonia gas giant."
 '                        if map(sys).planets(p)=-20003 then displaytext(25)= "Planet at orbit " &p &". A hot jupiter."
 '                    endif
-'                    dprint ""
+'                    rlprint ""
 '                endif
 '                locate yo,x
 '                set__color( 15,3
@@ -1920,7 +1920,7 @@ end function
 '            endif
 '            key=keyin
 '            if key=key_comment then
-'                dprint "Enter comment on planet: "
+'                rlprint "Enter comment on planet: "
 '                p1=locEOL
 '                planets(map(sys).planets(p)).comment=gettext(p1.x,p1.y,60,planets(map(sys).planets(p)).comment)
 '            endif
@@ -2061,7 +2061,7 @@ function textbox(text as string,x as short,y as short,w as short,_
         draw string(x+w*_fw2-_fw2,y+maxlines*_fh2-_fh2),"+",,font2,custom,@_col
         draw string(x+w*_fw2-_fw2,y+maxlines*_fh2),chr(25),,font2,custom,@_col
 
-        if debug=1 and _debug=1 then dprint "LC:" &linecount &"ML:"&maxlines
+        if debug=1 and _debug=1 then rlprint "LC:" &linecount &"ML:"&maxlines
         scroll_bar(offset,linecount,maxlines,maxlines-4,x+w*_fw2-_fw2,y+2*_fh2,14)
     endif
     text=addt
@@ -2120,7 +2120,7 @@ function scrollup(b as short) as short
     return 0
 end function
 
-function dprint(t as string, col as short=11) as short
+function rlprint(t as string, col as short=11) as short
     dim as short a,b,c,delay
     dim text as string
     dim wtext as string

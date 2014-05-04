@@ -6,7 +6,7 @@ function space_mapbmp() as short
     dim as any ptr img
     dim as short x,y,a,n,ti_no,minx,maxx,miny,maxy
     dim as byte debug=1
-    if debug=1  and _debug=1 then dprint "configflag(con_tiles)"&configflag(con_tiles)
+    if debug=1  and _debug=1 then rlprint "configflag(con_tiles)"&configflag(con_tiles)
     minx=-1
     miny=-1
     maxx=-1
@@ -290,7 +290,7 @@ function post_mortemII(text as string) as short
             if i=page then draw string(x+1,4*_fh1-_fh2),header(i),,font2,custom,@_tcol
             x+=len(header(i))*_fw2+_fw1
         next
-        dprint ""
+        rlprint ""
         flip
         key=keyin(,3)
         select case key
@@ -353,7 +353,7 @@ function postmort_html(text as string) as short
     wend
     close f
     fname="summary/("&date_string &")" &player.desig &".html"
-    dprint "saving to "&fname &". Key to continue."
+    rlprint "saving to "&fname &". Key to continue."
     f=freefile
     open fname for output as f
     for i=1 to ll

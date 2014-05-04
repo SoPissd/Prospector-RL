@@ -74,7 +74,7 @@ function logbook() as short
             next
         next
         
-        dprint "Logbook: Press " &key_sc &" or enter to choose system. ESC to exit.",15
+        rlprint "Logbook: Press " &key_sc &" or enter to choose system. ESC to exit.",15
         
         if lobn(curs)>=0 then
             if debug=1 and _debug=1 and key="t" then player.c=lobp(curs)
@@ -85,9 +85,9 @@ function logbook() as short
                 if map(lobn(curs)).discovered>1 then
                     display_system(lobn(curs),1)
                 else
-                    dprint trim(map(lobn(curs)).desig)&": only long range data."
+                    rlprint trim(map(lobn(curs)).desig)&": only long range data."
                 endif
-                if map(lobn(curs)).comment<>"" then dprint map(lobn(curs)).comment
+                if map(lobn(curs)).comment<>"" then rlprint map(lobn(curs)).comment
                 'fill msg area with planets comments, if there are more then shown, then msg there are more.
                 p=0
                 b=0
@@ -98,30 +98,30 @@ function logbook() as short
                     m=map(lobn(curs)).planets(p)
                     if m>0 then
                         if planets(m).comment<>"" then
-                            if b<2 then dprint "Orbit " &p &":" &planets(m).comment &"." 'print when b=0 or b=1
+                            if b<2 then rlprint "Orbit " &p &":" &planets(m).comment &"." 'print when b=0 or b=1
                             if b=2 then lobk1=str(p) &":" &planets(m).comment &"." 'store third planet comments
                             b+=1
                         endif
                     endif
                 loop until p=9 or b=3 'test for 4 planets with comments
                 if b>1 and lobk1<>"" then
-                    if b=2 then dprint "Orbit " &lobk1 endif
-                    if b=3 then dprint "Orbit " &lobk1 &" .Enter to see more comments."
+                    if b=2 then rlprint "Orbit " &lobk1 endif
+                    if b=3 then rlprint "Orbit " &lobk1 &" .Enter to see more comments."
                 elseif b>1 then
-                    if b=2 then dprint "Orbit " &p endif
-                    if b=3 then dprint "Orbit " &p &" .Enter to see more comments."
+                    if b=2 then rlprint "Orbit " &p endif
+                    if b=3 then rlprint "Orbit " &p &" .Enter to see more comments."
                 endif
                 
                 if key=key_comment and lobn(curs)<>0 then
                     screenset 1,1
-                    dprint "Enter comment on system"
+                    rlprint "Enter comment on system"
                     map(lobn(curs)).comment=gettext(LocEOL.x,LocEOL.y,60,map(lobn(curs)).comment)
                     if map(lobn(curs)).comment<>"" then lobc(curs)=228
                 endif
                 if key=key__enter and map(lobn(curs)).discovered>1 then
                 for p=1 to 9
                     if map(lobn(curs)).planets(p)>0 then
-                        if planets(map(lobn(curs)).planets(p)).comment<>"" then dprint "Orbit " &p &":" &planets(map(lobn(curs)).planets(p)).comment
+                        if planets(map(lobn(curs)).planets(p)).comment<>"" then rlprint "Orbit " &p &":" &planets(map(lobn(curs)).planets(p)).comment
                     endif
                 next
                 do
@@ -129,7 +129,7 @@ function logbook() as short
                     if p>0 then
                         m=map(lobn(curs)).planets(p)
                         if m>0 then
-                            if planets(m).comment<>"" then dprint planets(m).comment
+                            if planets(m).comment<>"" then rlprint planets(m).comment
                             if planetmap(0,0,m)=0 then
                                 cls
                                 display_ship(1)
@@ -144,7 +144,7 @@ function logbook() as short
                                     no_key=keyin(key_comment &key_report &key__esc)
                                     if no_key=key_comment then
                                         screenset 1,1
-                                        dprint "Enter comment on planet"
+                                        rlprint "Enter comment on planet"
                                         planets(m).comment=gettext(loceol.x,loceol.y,60,planets(m).comment)
                                         if planets(m).comment<>"" and map(lobn(curs)).comment="" then lobc(curs)=241
                                     endif
@@ -163,7 +163,7 @@ function logbook() as short
             
             endif
             if key=key_walk then
-                dprint "Setting autopilot, risk setting? (0 ignore gasclouds, 5 avoid all)"
+                rlprint "Setting autopilot, risk setting? (0 ignore gasclouds, 5 avoid all)"
                 diff=getnumber(0,5,0)
                 if auto_pilot(player.c,lobp(curs),diff)=1 then return 0
             endif
@@ -195,7 +195,7 @@ function ap_astar(start as _cords,ende as _cords,diff as short) as short
     dim map(sm_x,sm_y) as short
     dim as short x,y,debug
     
-    if debug=2 and _debug=1 then dprint ""&diff
+    if debug=2 and _debug=1 then rlprint ""&diff
     for x=0 to sm_x 
         for y=0 to sm_y
             map(x,y)=0
@@ -497,7 +497,7 @@ end function
 '            print "*"
 '        endif
 '    next
-'    dprint "Displaying wormhole map"
+'    rlprint "Displaying wormhole map"
 '    no_key=keyin
 
 function lb_listmake(lobk() as string, lobn() as short, lobc() as short,lobp()as _cords) as short

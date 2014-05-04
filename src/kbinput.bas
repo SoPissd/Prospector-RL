@@ -84,7 +84,7 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
             crew(a).duration=disease(b).duration
             crew(a).incubation=disease(b).incubation
             if b>player.disease then player.disease=b
-            dprint a &":" & b
+            rlprint a &":" & b
             a=0
             b=0
             key=""
@@ -96,7 +96,7 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
         if blocked=0 or blocked>=97 then
                         
             if _debug>0 and key="\Ci" then
-                dprint "Itemdump"
+                rlprint "Itemdump"
                 f=freefile
                 open "itemdump.txt" for output as #f
                 for i=0 to lastitem
@@ -114,7 +114,7 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
             endif
             
             if _debug>0 and key="�" then
-                dprint "Fleetdump"
+                rlprint "Fleetdump"
                 f=freefile
                 open "fleets.csv" for output as #f
                 for i=0 to lastfleet
@@ -178,7 +178,7 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
 
             if key=key_equipment then
                 a=get_item()
-                if a>0 then dprint item(a).ldesc
+                if a>0 then rlprint item(a).ldesc
                 key=keyin()
                 return ""
             endif
@@ -204,10 +204,10 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
             select case _autoinspect
                 case is =0
                     _autoinspect=1
-                    dprint "Autoinspect Off"
+                    rlprint "Autoinspect Off"
                 case is =1
                     _autoinspect=0
-                    dprint "Autoinspect On"                
+                    rlprint "Autoinspect On"                
             end select
             key=""     
         endif
@@ -216,10 +216,10 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
             select case _autopickup
                 case is =0
                     _autopickup=1
-                    dprint "Autopickup Off"
+                    rlprint "Autopickup Off"
                 case is =1
                     _autopickup=0
-                    dprint "Autopickup On"                
+                    rlprint "Autopickup On"                
             end select
             key=""     
         endif       
@@ -228,10 +228,10 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
             select case _HPdisplay
                 case is =0
                     _HPdisplay=1
-                    dprint "Hp display now displays icons"
+                    rlprint "Hp display now displays icons"
                 case is =1
                     _HPdisplay=0
-                    dprint "Hp display now displays HPs"
+                    rlprint "Hp display now displays HPs"
             end select
             key=""
         endif
@@ -242,7 +242,7 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
                 for b=0 to 7
                     text=text &":"&faction(a).war(b)
                 next
-                dprint text
+                rlprint text
             next
         endif
         if len(allowed)>0 and key<>key__esc and key<>key__enter and getdirection(key)=0 then
@@ -284,7 +284,7 @@ function cursor(target as _cords,map as short,osx as short,osy as short=0,radius
         endif
     endif
     if map<=0 then border=1
-    'dprint ""&planetmap(target.x,target.y,map)
+    'rlprint ""&planetmap(target.x,target.y,map)
     if map>0 then
         if planetmap(target.x,target.y,map)<0 then
             if configflag(con_tiles)=0 then
@@ -378,7 +378,7 @@ function getnumber(a as integer,b as integer, e as integer) as integer
     dim as integer c,d,i
     dim p as _cords
     screenset 1,1
-    dprint ""
+    rlprint ""
     if configflag(con_altnum)=0 then
         p=locEOL
         c=numfromstr((gettext(p.x,p.y,46,"")))
@@ -470,12 +470,12 @@ end function
 function askyn(q as string,col as short=11,sure as short=0) as short
     dim a as short
     dim key as string*1
-    dprint (q,col)
+    rlprint (q,col)
     do
         key=keyin
         displaytext(_lines-1)=displaytext(_lines-1)&key
         if key <>"" then 
-            dprint ""
+            rlprint ""
             if configflag(con_anykeyno)=0 and key<>key_yes then key="N"
         endif
     loop until key="N" or key="n" or key=" " or key=key__esc or key=key__enter or key=key_yes  
@@ -483,9 +483,9 @@ function askyn(q as string,col as short=11,sure as short=0) as short
     if key=key_yes or key=key__enter then a=-1
     if key<>key_yes and sure=1 then a=askyn("Are you sure? Let me ask that again:" & q)
     if key=key_yes then 
-        dprint "Yes.",15
+        rlprint "Yes.",15
     else
-        dprint "No.",15
+        rlprint "No.",15
     endif
     return a
 end function
@@ -592,33 +592,33 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
                 display_ship
             case bg_shiptxt
                 display_ship
-                dprint ""
+                rlprint ""
             case bg_shipstars
                 display_stars(1)
                 display_ship
             case bg_shipstarstxt
                 display_stars(1)
                 display_ship
-                dprint ""
+                rlprint ""
             case bg_awayteam
                 display_awayteam(0)
             case bg_awayteamtxt
                 display_awayteam(0)
-                dprint ""
+                rlprint ""
             case bg_randompic
                 background(backpic &".bmp")
             case bg_randompictxt
                 background(backpic &".bmp")
-                dprint ""
+                rlprint ""
             case bg_stock
                 display_ship
                 display_stock
                 portfolio(17,2)
-                dprint ""
+                rlprint ""
             case bg_roulette
                 drawroulettetable
                 display_ship
-                dprint ""
+                rlprint ""
             case is>=bg_trading
                 display_ship()
                 displaywares(bg-bg_trading)
@@ -640,7 +640,7 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
         if bg<>bg_noflip then 
             flip
         else
-            dprint ""
+            rlprint ""
         endif
         if player.dead=0 then key=keyin(,96+c)
         
