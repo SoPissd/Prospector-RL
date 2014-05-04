@@ -12,8 +12,8 @@
 
 	#ifdef __FB_WIN32__					'only under windows
 		#print Windows Debug mode
-		#define _DbgLoadMLD 0			'load the Memory Leak Detector
-		#define _DbgLoadWin 0			'load the Windows headers
+		#define _DbgOptLoadMLD 1		'load the Memory Leak Detector
+		#define _DbgOptLoadWin 1		'load the Windows headers
 	#else
 	#ifdef __FB_LINUX__					'only under linux
 		#print Linux Debug mode
@@ -88,7 +88,8 @@
 		#print Linux Release mode
 	#endif
 	#endif
-	#define _DbgLoadWin 0				'never in release			
+	#define _DbgOptLoadWin 0			'never in release			
+	#define _DbgOptLoadMLD 1		
 	#define _DbgPrintCSVs 0
 	'									'NOTICE!! these must be on their own line.  no IF x THEN DbgPrint()! 
 	#define DbgPrint(text)
@@ -98,8 +99,11 @@
 
 ' always
 
-#if _DbgLoadWin	<>1						'provide a substitute for debugbreak
+#if _DbgOptLoadWin	<>1					'provide a substitute for debugbreak
+	#print DebugBreak inactive
 	#define DebugBreak					'see.. nothing at all.  
+#else
+	#print DebugBreak enabled.
 #endif
 
 #Macro DimDebug(Value)					'use DimDebug to setup the var for debug mode only
