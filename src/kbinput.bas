@@ -666,5 +666,8 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
     set__color( 11,0)
     cls
     screenset 1,1
+    if logo <> 0 then
+      ImageDestroy(Logo)
+    EndIf
     return e
 end function
