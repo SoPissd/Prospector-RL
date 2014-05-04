@@ -25,16 +25,16 @@ function skill_test(bonus as short,targetnumber as short,echo as string="") as s
     roll=rnd_range(1,20)
     if roll+bonus>=targetnumber then
             if echo<>"" and configflag(con_showrolls)=0 then 
-                if bonus>0 then dprint echo &" needed "& targetnumber &", rolled "&roll &"+"& bonus &": Success.",c_gre
-                if bonus=0 then dprint echo &" needed "& targetnumber &", rolled "&roll &": Success.",c_gre
-                if bonus<0 then dprint echo &" needed "& targetnumber &", rolled "&roll & bonus &": Success.",c_gre
+                if bonus>0 then rlprint echo &" needed "& targetnumber &", rolled "&roll &"+"& bonus &": Success.",c_gre
+                if bonus=0 then rlprint echo &" needed "& targetnumber &", rolled "&roll &": Success.",c_gre
+                if bonus<0 then rlprint echo &" needed "& targetnumber &", rolled "&roll & bonus &": Success.",c_gre
             endif
         return -1
     else
         if echo<>"" and configflag(con_showrolls)=0 then 
-            if bonus>0 then dprint echo &" needed "& targetnumber &", rolled "&roll &"+"& bonus &": Failure.",c_red
-            if bonus<0 then dprint echo &" needed "& targetnumber &", rolled "&roll & bonus &": Failure.",c_red
-            if bonus=0 then dprint echo &" needed "& targetnumber &", rolled "&roll &": Failure.",c_red
+            if bonus>0 then rlprint echo &" needed "& targetnumber &", rolled "&roll &"+"& bonus &": Failure.",c_red
+            if bonus<0 then rlprint echo &" needed "& targetnumber &", rolled "&roll & bonus &": Failure.",c_red
+            if bonus=0 then rlprint echo &" needed "& targetnumber &", rolled "&roll &": Failure.",c_red
         endif
         return 0
     end if
@@ -107,12 +107,12 @@ function cure_awayteam(where as short) as short
         else
             pack=get_item()
             if item(pack).ty<>19 then
-                dprint "You can't use that",14
+                rlprint "You can't use that",14
                 pack=-1
             endif
         endif
         if pack>0 then
-            dprint "Using "&item(pack).desig &".",10
+            rlprint "Using "&item(pack).desig &".",10
             bonus=item(pack).v1
             destroyitem(pack)
         else
@@ -138,11 +138,11 @@ function cure_awayteam(where as short) as short
     next
     reward(1)+=biodata 'Cured a disease
     if crew(1).disease=0 then crew(1).onship=0
-    if cured>1 then dprint cured &" members of your crew where cured (gained "& biodata &" biodata).",10
-    if cured=1 then dprint cured &" member of your crew was cured (gained "& biodata &" biodata).",10
-    if cured=0 and sick>0 then dprint "No members of your crew where cured.",14
-    if sick>0 then dprint sick &" are still sick.",14
-    if cured>0 then dprint gainxp(5),c_gre
+    if cured>1 then rlprint cured &" members of your crew where cured (gained "& biodata &" biodata).",10
+    if cured=1 then rlprint cured &" member of your crew was cured (gained "& biodata &" biodata).",10
+    if cured=0 and sick>0 then rlprint "No members of your crew where cured.",14
+    if sick>0 then rlprint sick &" are still sick.",14
+    if cured>0 then rlprint gainxp(5),c_gre
     return 0
 end function
 
@@ -190,7 +190,7 @@ function changemoral(value as short, where as short) as short
         if item(a).ty=80 and item(a).w.s<0 then
             tribbles+=1
             if rnd_range(1,100)>=99 and rnd_range(1,100)>=99 then
-                dprint "Someone overfed a tribble."
+                rlprint "Someone overfed a tribble."
                 placeitem(make_item(250),,,,,-1)
             endif
         endif
@@ -252,11 +252,11 @@ function heal_awayteam(byref a as _monster,heal as short) as short
         next
     loop until heal=0 or ex=0
     if player.doctor(1)>0 and h=2 then
-        dprint "The doctor fixes some cuts and bruises"
-        dprint gainxp(5),c_gre
+        rlprint "The doctor fixes some cuts and bruises"
+        rlprint gainxp(5),c_gre
     endif
     if fac>0 and h=2 then
-        dprint "the nanobots heal your wounded"
+        rlprint "the nanobots heal your wounded"
         item(fac).v1=item(fac).v1-1
     endif
     hpdisplay(a)
@@ -282,9 +282,9 @@ function diseaserun(onship as short) as short
     for a=2 to 128
         if crew(a).hpmax>0 and crew(a).hp>0 and crew(a).disease>0 then
             if crew(a).incubation>0 then
-                dprint a &":"&crew(a).incubation
+                rlprint a &":"&crew(a).incubation
                 crew(a).incubation-=1
-                if crew(a).incubation=0 then dprint crew(a).n &" "& disease(crew(a).disease).desig &".",14
+                if crew(a).incubation=0 then rlprint crew(a).n &" "& disease(crew(a).disease).desig &".",14
             else
                 if crew(a).duration>0 then
                     crew(a).duration-=1
@@ -300,12 +300,12 @@ function diseaserun(onship as short) as short
                     if crew(a).duration=0 then
                         crew(a).disease=0
                         if rnd_range(1,100)+player.doctor(0)*5<disease(crew(a).disease).fatality then
-                            if crew(a).onship=onship then dprint crew(a).n &" dies from disease.",12
+                            if crew(a).onship=onship then rlprint crew(a).n &" dies from disease.",12
                             crew(a)=crew(0)
                             crew(a).disease=0
 
                         else
-                            if crew(a).onship=onship then dprint crew(a).n &" recovers.",10
+                            if crew(a).onship=onship then rlprint crew(a).n &" recovers.",10
                             crew(a).onship=crew(a).oldonship
                             crew(a).disease=0
                         endif
@@ -491,8 +491,8 @@ function repair_spacesuits(v as short=-1) as short
             endif
         endif
     next
-    if c=1 then dprint "Repaired a spacesuit."
-    if c>1 then dprint "Repaired " &c & " spacesuits."
+    if c=1 then rlprint "Repaired a spacesuit."
+    if c>1 then rlprint "Repaired " &c & " spacesuits."
     return 0
 end function
 
@@ -533,7 +533,7 @@ function levelup(p as _ship,from as short) as _ship
     dim conret(46) as byte
     dim levt(46) as byte
     dim debug as byte=0
-    if from=1 then dprint "Entering training."
+    if from=1 then rlprint "Entering training."
     for a=0 to 16
         levt(a)=0
         ret(a)=0
@@ -566,12 +566,12 @@ function levelup(p as _ship,from as short) as _ship
     next
 
     for a=1 to 46
-        if ret(a)=1 then dprint crew_desig(a)&" "&crew(a).n &" retired. ",12
-        if ret(a)>1 then dprint ret(a) &" "&crew_desig(a)&"s retired. ",12
-        if conret(a)=1 then dprint crew_desig(a)&" "&crew(a).n &" considered retiring but had a change of mind. ",14
-        if conret(a)>1 then dprint ret(a) &" "&crew_desig(a)&"s considered retiring but changed their minds. ",14
-        if ret(a)=1 and a>=30 then dprint "Your passenger " &crew(a).n & "decided to find another ship."
-        if ret(a)>1 and a>=30 then dprint a &" of your passengers decided to find another ship."
+        if ret(a)=1 then rlprint crew_desig(a)&" "&crew(a).n &" retired. ",12
+        if ret(a)>1 then rlprint ret(a) &" "&crew_desig(a)&"s retired. ",12
+        if conret(a)=1 then rlprint crew_desig(a)&" "&crew(a).n &" considered retiring but had a change of mind. ",14
+        if conret(a)>1 then rlprint ret(a) &" "&crew_desig(a)&"s considered retiring but changed their minds. ",14
+        if ret(a)=1 and a>=30 then rlprint "Your passenger " &crew(a).n & "decided to find another ship."
+        if ret(a)>1 and a>=30 then rlprint a &" of your passengers decided to find another ship."
     next
     for a=1 to 128
         if _showrolls=1 then text=text &crew(a).n &"Rolled "&rolls(a) &", needed"& 5+crew(a).hp^2
@@ -595,8 +595,8 @@ function levelup(p as _ship,from as short) as _ship
         if levt(a)=1 then text=text &crew_desig(a)&" "&crew(find_crew_type(a)).n &" got promoted. "
         if levt(a)>1 then text=text & levt(a) &" "&crew_desig(a)&"s got promoted. "
     next
-    if text<>"" then dprint text,10
-    if text="" and from=1 then dprint "Nobody got a promotion."
+    if text<>"" then rlprint text,10
+    if text="" and from=1 then rlprint "Nobody got a promotion."
     display_ship()
     return p
 end function
@@ -663,7 +663,7 @@ end function
 function get_freecrewslot() as short
     dim as short b,slot,debug
 
-    if debug=1 and _debug=1 then dprint ""&player.h_maxcrew &":"&player.crewpod &":"&player.cryo
+    if debug=1 and _debug=1 then rlprint ""&player.h_maxcrew &":"&player.crewpod &":"&player.cryo
     for b=1 to (player.h_maxcrew+player.crewpod)*player.bunking+player.cryo
         if crew(b).hp<=0 then return b
     next
@@ -716,7 +716,7 @@ function add_member(a as short,skill as short) as short
             slot=showteam(0,1,"Replace who?")
         endif
     endif
-    if debug=1 and _debug=1 then dprint ""&slot
+    if debug=1 and _debug=1 then rlprint ""&slot
     if slot<0 then return -1
     if slot>=0 then
 
@@ -837,23 +837,23 @@ function add_member(a as short,skill as short) as short
                 case 1,-1
                     addmoney(100,mt_startcash)
                     cat-=1
-                    dprint "Additional money: +100 Cr."
+                    rlprint "Additional money: +100 Cr."
                 case 2
                     if player.money>=100 then
                         addmoney(-100,mt_startcash)
                         cat+=1
-                        dprint "Less money: -100 Cr."
+                        rlprint "Less money: -100 Cr."
                     endif
                 case 3
                     cat-=1
                     for j=1 to 2
                         placeitem(make_item(320),0,0,0,0,-1)
                     next
-                    dprint "Item: 2 Spacesuits"
+                    rlprint "Item: 2 Spacesuits"
                 case 4
                     placeitem(make_item(250),0,0,0,0,-1)
                     cat-=1
-                    dprint "Item: A tribble"
+                    rlprint "Item: A tribble"
                 case 5
                     for j=1 to 2
                         if rnd_range(1,100)<50 then
@@ -862,7 +862,7 @@ function add_member(a as short,skill as short) as short
                             item(lastitem+1)=rnd_item(RI_WeakWeapons)
                         endif
 
-                        dprint "Item: "&add_a_or_an(item(lastitem+1).desig,1)
+                        rlprint "Item: "&add_a_or_an(item(lastitem+1).desig,1)
                         placeitem(item(lastitem+1),0,0,0,0,-1)
                         item(lastitem+1)=item(lastitem+2)
                     next
@@ -878,7 +878,7 @@ function add_member(a as short,skill as short) as short
                     case 2
                         startingweapon=1
                     end select
-                    dprint "Guaranteed energy weapon"
+                    rlprint "Guaranteed energy weapon"
                 case 7
                     select case startingweapon
                     case 0
@@ -890,7 +890,7 @@ function add_member(a as short,skill as short) as short
                         startingweapon=0
                         cat+=1
                     end select
-                    dprint "Guaranteed missile weapon"
+                    rlprint "Guaranteed missile weapon"
                 case 8
                     if player.cursed=1 then
                         cat-=1
@@ -899,7 +899,7 @@ function add_member(a as short,skill as short) as short
                     else
                         cat+=1
                         player.cursed=1
-                        dprint "Your ship is in need of repair and servicing"
+                        rlprint "Your ship is in need of repair and servicing"
                     endif
                 case turret
                     
@@ -915,7 +915,7 @@ function add_member(a as short,skill as short) as short
     
                         if j>6 then j+=13
                         if crew(slot).talents(j)<3 then
-                            dprint gain_talent(slot,j)
+                            rlprint gain_talent(slot,j)
                             cat-=2
                         endif
                     endif
@@ -1177,10 +1177,10 @@ function girlfriends(st as short) as short
             endif
         endif
     next
-    if gf=1 then dprint crew(whogf).n &" is very happy to see" & hisher(crew(whogf).story(10)) & "girlfriend/boyfriend"
-    if gf>1 then dprint gf &" crewmebers are very happy to see their girlfriends/boyfriends"
-    if mr=1 then dprint crew(whomr).n &" is very happy to see" & hisher(crew(whomr).story(10)) & "wife/husband"
-    if mr>1 then dprint mr &" crewmebers are very happy to see their wifes/husbands"
+    if gf=1 then rlprint crew(whogf).n &" is very happy to see" & hisher(crew(whogf).story(10)) & "girlfriend/boyfriend"
+    if gf>1 then rlprint gf &" crewmebers are very happy to see their girlfriends/boyfriends"
+    if mr=1 then rlprint crew(whomr).n &" is very happy to see" & hisher(crew(whomr).story(10)) & "wife/husband"
+    if mr>1 then rlprint mr &" crewmebers are very happy to see their wifes/husbands"
     return 0
 end function
 
@@ -1337,7 +1337,7 @@ function hiring(st as short,byref hiringpool as short,hp as short) as short
             if meni(b)>5 and meni(b)<=18 then 'Hire Crewmember
                 maxsec=total_bunks()
                 if max_security>0 then
-                    dprint "No. of " &cname(meni(b))& " to hire. (Max: "& minimum(maxsec,fix(player.money/cwage(meni(b))))&","&max_security & " with double bunking)"
+                    rlprint "No. of " &cname(meni(b))& " to hire. (Max: "& minimum(maxsec,fix(player.money/cwage(meni(b))))&","&max_security & " with double bunking)"
                     c=getnumber(0,maxsec*2,0)
                     if c>0 then
                         if paystuff(c*cwage(meni(b))) then
@@ -1348,12 +1348,12 @@ function hiring(st as short,byref hiringpool as short,hp as short) as short
                         endif
                     endif
                 else
-                    dprint "You don't have enough room to hire additional crew.",c_yel
+                    rlprint "You don't have enough room to hire additional crew.",c_yel
                 endif
             endif
 
             if meni(b)=101 then
-                dprint "Set standard wage from "&Wage &" to:"
+                rlprint "Set standard wage from "&Wage &" to:"
                 w=getnumber(1,20,Wage)
                 if w>0 then Wage=w
                 f=0
@@ -1365,7 +1365,7 @@ function hiring(st as short,byref hiringpool as short,hp as short) as short
                 cwage(17)=wage*2
                 cwage(18)=wage*2
 
-                dprint "Set to " &Wage &"Cr. Your crew now gets a total of "&f &" Cr. in wages"
+                rlprint "Set to " &Wage &"Cr. Your crew now gets a total of "&f &" Cr. in wages"
             endif
 
             if meni(b)=102 then
@@ -1427,7 +1427,7 @@ function hiring(st as short,byref hiringpool as short,hp as short) as short
 '                            player.money=player.money-c*c*Wage
 '                            if addmember(2,c)<>0 then exit for
 '                        else
-'                            dprint "Not enough money for first wage."
+'                            rlprint "Not enough money for first wage."
 '                        endif
 '                    endif
 '                endif
@@ -1437,7 +1437,7 @@ function hiring(st as short,byref hiringpool as short,hp as short) as short
 '                            player.money=player.money-c*c*Wage
 '                            if addmember(3,c)<>0 then exit for
 '                        else
-'                            dprint "Not enough money for first wage."
+'                            rlprint "Not enough money for first wage."
 '                        endif
 '                    endif
 '                endif
@@ -1447,7 +1447,7 @@ function hiring(st as short,byref hiringpool as short,hp as short) as short
 '                            player.money=player.money-c*c*Wage
 '                            if addmember(4,c)<>0 then exit for
 '                        else
-'                           dprint "Not enough money for first wage."
+'                           rlprint "Not enough money for first wage."
 '                        endif
 '                    endif
 '                endif
@@ -1457,21 +1457,21 @@ function hiring(st as short,byref hiringpool as short,hp as short) as short
 '                            player.money=player.money-c*c*Wage
 '                            if addmember(5,c)<>0 then exit for
 '                        else
-'                           dprint "Not enough money for first wage."
+'                           rlprint "Not enough money for first wage."
 '                        endif
 '                    endif
 '                endif
 '                hiringpool=hiringpool-1
 '            else
-'                if b<5 then dprint "Nobody availiable for the position. try again later."
+'                if b<5 then rlprint "Nobody availiable for the position. try again later."
 '            endif
 '            if b=5 then
 '                maxsec=maxsecurity()
-'                dprint "No. of security personel to hire. (Max: "& minimum(maxsec,fix(player.money/wage))&")"
+'                rlprint "No. of security personel to hire. (Max: "& minimum(maxsec,fix(player.money/wage))&")"
 '                c=getnumber(0,maxsec*2,0)
 '                if c>0 then
 '                if player.money<c*Wage then
-'                    dprint "Not enough money for first wage."
+'                    rlprint "Not enough money for first wage."
 '                else
 '                    for d=1 to c
 '                        if addmember(6,0)<>0 then exit for
@@ -1483,11 +1483,11 @@ function hiring(st as short,byref hiringpool as short,hp as short) as short
 '
 '            if b=6 then 'Squad leader
 '                maxsec=maxsecurity()
-'                dprint "No. of squad leaders to hire. (Max: "& minimum(maxsec,fix(player.money/wage))&")"
+'                rlprint "No. of squad leaders to hire. (Max: "& minimum(maxsec,fix(player.money/wage))&")"
 '                c=getnumber(0,maxsec*2,0)
 '                if maxsec>0 then
 '                    if player.money<wage*2*c then
-'                        dprint "Not enough money for first wage."
+'                        rlprint "Not enough money for first wage."
 '                    else
 '                        for d=1 to c
 '                            player.money-=wage*2
@@ -1499,11 +1499,11 @@ function hiring(st as short,byref hiringpool as short,hp as short) as short
 '
 '            if b=7 then 'Sniper
 '                maxsec=maxsecurity()
-'                dprint "No. of snipers to hire. (Max: "& minimum(maxsec,fix(player.money/wage))&")"
+'                rlprint "No. of snipers to hire. (Max: "& minimum(maxsec,fix(player.money/wage))&")"
 '                c=getnumber(0,maxsec*2,0)
 '                if maxsec>0 then
 '                    if player.money<wage*2*c then
-'                        dprint "Not enough money for first wage."
+'                        rlprint "Not enough money for first wage."
 '                    else
 '                        for d=1 to c
 '                            hiringpool-=1
@@ -1516,11 +1516,11 @@ function hiring(st as short,byref hiringpool as short,hp as short) as short
 '
 '            if b=8 then 'Paramedic
 '                maxsec=maxsecurity()
-'                dprint "No. of paramedics to hire. (Max: "& minimum(maxsec,fix(player.money/wage))&")"
+'                rlprint "No. of paramedics to hire. (Max: "& minimum(maxsec,fix(player.money/wage))&")"
 '                c=getnumber(0,maxsec*2,0)
 '                if maxsec>0 then
 '                    if player.money<wage*2*c then
-'                        dprint "Not enough money for first wage."
+'                        rlprint "Not enough money for first wage."
 '                    else
 '                        for d=1 to c
 '                            player.money-=wage*2
@@ -1534,13 +1534,13 @@ function hiring(st as short,byref hiringpool as short,hp as short) as short
 '            if neodog=1 then
 '                if b=9 then
 '                    maxsec=maxsecurity()
-'                    dprint "How many Neodogs do you want to buy? (Max: "& minimum(maxsec,fix(player.money/50))&")"
+'                    rlprint "How many Neodogs do you want to buy? (Max: "& minimum(maxsec,fix(player.money/50))&")"
 '                    c=getnumber(0,maxsec*2,0)
 '                    if c>0 then
 '                        if player.money<c*50 then
-'                            dprint "Not enough Credits."
+'                            rlprint "Not enough Credits."
 '                        else
-'                            dprint "you buy "&c &" Neodogs."
+'                            rlprint "you buy "&c &" Neodogs."
 '                            for d=1 to c
 '                                if addmember(11,0)<>0 then exit for
 '                            next
@@ -1551,13 +1551,13 @@ function hiring(st as short,byref hiringpool as short,hp as short) as short
 '
 '                if b=10 then
 '                    maxsec=maxsecurity()
-'                    dprint "How many Neoapes do you want to buy? (Max: "& minimum(maxsec,fix(player.money/75))&")"
+'                    rlprint "How many Neoapes do you want to buy? (Max: "& minimum(maxsec,fix(player.money/75))&")"
 '                    c=getnumber(0,maxsec*2,0)
 '                    if c>0 then
 '                        if player.money<c*75 then
-'                            dprint "Not enough Credits."
+'                            rlprint "Not enough Credits."
 '                        else
-'                            dprint "you buy "&c &" Neoapes."
+'                            rlprint "you buy "&c &" Neoapes."
 '                            for d=1 to c
 '                                if addmember(12,0)<>0 then exit for
 '                            next
@@ -1569,13 +1569,13 @@ function hiring(st as short,byref hiringpool as short,hp as short) as short
 '
 '            if b=9 and robots=1 then
 '                maxsec=maxsecurity()
-'                dprint "How many Robots do you want to buy? (Max: "& minimum(maxsec,fix(player.money/150))&")"
+'                rlprint "How many Robots do you want to buy? (Max: "& minimum(maxsec,fix(player.money/150))&")"
 '                c=getnumber(0,maxsec*2,0)
 '                if c>0 then
 '                    if player.money<c*150 then
-'                        dprint "Not enough Credits."
+'                        rlprint "Not enough Credits."
 '                    else
-'                        dprint "you buy "&c &" Robots."
+'                        rlprint "you buy "&c &" Robots."
 '                        for d=1 to c
 '                            if addmember(13,0)<>0 then exit for
 '                        next
@@ -1585,14 +1585,14 @@ function hiring(st as short,byref hiringpool as short,hp as short) as short
 '            endif
 '
 '            if (neodog=0 and robots=0 and b=9) or (neodog=1 and b=11) or (robots=1 and b=10) then
-'                dprint "Set standard wage from "&Wage &" to:"
+'                rlprint "Set standard wage from "&Wage &" to:"
 '                w=getnumber(1,20,Wage)
 '                if w>0 then Wage=w
 '                f=0
 '                for g=2 to 128
 '                    if Crew(g).paymod>0 and crew(g).hpmax>0 and crew(g).hp>0 then f=f+Wage*Crew(g).paymod
 '                next
-'                dprint "Set to " &Wage &"Cr. Your crew now gets a total of "&f &" Cr. in wages"
+'                rlprint "Set to " &Wage &"Cr. Your crew now gets a total of "&f &" Cr. in wages"
 '            endif
 '            if (neodog=0 and robots=0 and b=10) or (neodog=1 and b=12) or (robots=1 and b=11) then
 '                'fire
@@ -1693,7 +1693,7 @@ function equip_awayteam(m as short) as short
                     awayteam.blades_to=awayteam.blades_to+item(c).v1
                     crew(a).blad=c
                     item(c).w.s=-2
-                    'dprint crew(a).n &" grabs his "&item(c).desig
+                    'rlprint crew(a).n &" grabs his "&item(c).desig
                 endif
             endif
             if crew(a).pref_lrweap>0 then
@@ -1711,7 +1711,7 @@ function equip_awayteam(m as short) as short
                     awayteam.guns_to=awayteam.guns_to+item(c).v1
                     crew(a).weap=c
                     item(c).w.s=-2
-                    'dprint crew(a).n &" grabs his "&item(c).desig
+                    'rlprint crew(a).n &" grabs his "&item(c).desig
                 endif
             endif
             if crew(a).pref_armor>0 then
@@ -1724,7 +1724,7 @@ function equip_awayteam(m as short) as short
                 next
                 if c>0 then
                     wear_armor(a,c)
-                    'dprint crew(a).n &" grabs his "&item(c).desig
+                    'rlprint crew(a).n &" grabs his "&item(c).desig
                 endif
             endif
         endif
@@ -1756,7 +1756,7 @@ function equip_awayteam(m as short) as short
                 b=-1
                 if crew(a).equips<>1 then b=findbest(2,-1)
                 if b>-1 and crew(a).weap=0 then
-                    'dprint "Equipping "&item(b).desig & b
+                    'rlprint "Equipping "&item(b).desig & b
                     awayteam.secweap(a)=item(b).v1
                     awayteam.secweapran(a)=item(b).v2
                     awayteam.secweapthi(a)=item(b).v3
@@ -1817,7 +1817,7 @@ function equip_awayteam(m as short) as short
         'give to redshirt
         if crew(a).hp>0 and crew(a).onship=0 and crew(a).equips=0 and crew(a).blad=0 then
             if b>-1 then
-                'dprint "Equipping "&item(b).desig & b
+                'rlprint "Equipping "&item(b).desig & b
                 awayteam.secweapc(a)=item(b).v1
                 awayteam.blades_to=awayteam.blades_to+item(b).v1
                 crew(a).blad=b
@@ -1825,7 +1825,7 @@ function equip_awayteam(m as short) as short
             endif
         endif
     next
-    'dprint ""&awayteam.move
+    'rlprint ""&awayteam.move
     'count teleportation devices
     awayteam.movetype=0
     if awayteam.movetype<4 and cantswim<=hovers then awayteam.movetype=1

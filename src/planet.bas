@@ -293,7 +293,7 @@ function makecomplex(byref enter as _cords, down as short,blocked as byte=0) as 
     dim as short varchance
     slot=enter.m
 
-    if show_all=1 then dprint "Made complex at "&slot
+    if show_all=1 then rlprint "Made complex at "&slot
     if planets(slot).depth=0 then planets(slot).depth=1
     planets(slot).darkness=5
     planets(slot).vault(0)=r(0)
@@ -1638,7 +1638,7 @@ function makecavemap(enter as _cords,tumod as short,dimod as short, spemap as sh
     dim gascloud as short
     gascloud=spacemap(player.c.x,player.c.y)
     slot=enter.m
-    if show_all=1 then dprint "Made cave at "&slot
+    if show_all=1 then rlprint "Made cave at "&slot
         
     if planets(slot).depth=0 then planets(slot).depth=1
     planets(slot).darkness=5
@@ -1991,7 +1991,7 @@ function makeplanetmap(a as short,orbit as short,spect as short) as short
     dim wmap(60,20) as short
     dim as short last,wantsize,larga,largb,lno,mi,old,alwaysstranded,debug
     if a<=0 then 
-       dprint "ERROR: Attempting to make planet map at "&a,14
+       rlprint "ERROR: Attempting to make planet map at "&a,14
        return 0
     endif
     
@@ -2422,7 +2422,7 @@ function makeplanetmap(a as short,orbit as short,spect as short) as short
     endif
     
     for b=0 to planets(a).life
-        if debug=99 and _debug=1 then dprint "chance:"&(planets(a).life+1)*3
+        if debug=99 and _debug=1 then rlprint "chance:"&(planets(a).life+1)*3
         if rnd_range(1,100)<(planets(a).life+1)*3 then 
             planets(a).mon_template(b)=makemonster(1,a)
             planets(a).mon_noamin(b)=cint((rnd_range(1,planets(a).life)*planets(a).mon_template(b).diet)/2)
@@ -2481,7 +2481,7 @@ function makeplanetmap(a as short,orbit as short,spect as short) as short
     endif
     if isgardenworld(a) then planets_flavortext(a)="This place is lovely."
         
-    if planets(a).temp=0 and planets(a).grav=0 then dprint "Made a 0 planet,#"&a,c_red
+    if planets(a).temp=0 and planets(a).grav=0 then rlprint "Made a 0 planet,#"&a,c_red
     return 0
 end function
 
@@ -6266,36 +6266,36 @@ end function
 function addportal(from as _cords, dest as _cords, oneway as short, tile as short,desig as string, col as short) as short
     dim as short e,a
     if from.x<0 then 
-        dprint "error. tried to create portal at from.x="&from.x
+        rlprint "error. tried to create portal at from.x="&from.x
         dest.x=0
     endif
     if from.y<0 then 
-        dprint "error. tried to create portal at from.y="&from.y
+        rlprint "error. tried to create portal at from.y="&from.y
         from.y=0
     endif
     if from.x>60 then
-        dprint "error. tried to create portal at from.x="&from.x 
+        rlprint "error. tried to create portal at from.x="&from.x 
         from.x=60
     endif
     if from.y>20 then 
-        dprint "error. tried to create portal at from.y="&from.y
+        rlprint "error. tried to create portal at from.y="&from.y
         from.y=20
     endif
     
     if dest.x<0 then 
-        dprint "error. tried to create portal at dest.x="&dest.x
+        rlprint "error. tried to create portal at dest.x="&dest.x
         dest.x=0
     endif
     if dest.y<0 then 
-        dprint "error. tried to create portal at dest.y="&dest.y
+        rlprint "error. tried to create portal at dest.y="&dest.y
         dest.y=0
     endif
     if dest.x>60 then
-        dprint "error. tried to create portal at dest.x="&dest.x 
+        rlprint "error. tried to create portal at dest.x="&dest.x 
         dest.x=60
     endif
     if dest.y>20 then 
-        dprint "error. tried to create portal at Dest.y="&dest.y
+        rlprint "error. tried to create portal at Dest.y="&dest.y
         dest.y=20
     endif
     lastportal=lastportal+1
@@ -6314,7 +6314,7 @@ function addportal(from as _cords, dest as _cords, oneway as short, tile as shor
     if tile=asc("@") then portal(lastportal).ti_no=3007
     if tile=asc("o") and col=7 then portal(lastportal).ti_no=3004
     if tile=asc("O") then portal(lastportal).ti_no=3006
-    'dprint chr(tile)&":"&portal(lastportal).ti_no
+    'rlprint chr(tile)&":"&portal(lastportal).ti_no
 '    for e=0 to lastportal-1
 '        for f=0 to lastportal-1
 '            if f<>e then
@@ -6500,7 +6500,7 @@ function makevault(r as _rect,slot as short,nsp as _cords, typ as short,ind as s
                    if chksrd(p(b),slot)<=best and chksrd(p(b),slot)>0 then
                        c=b
                        best=chksrd(p(c),slot)
-                       if show_all then dprint "Points of door pos:"& best
+                       if show_all then rlprint "Points of door pos:"& best
                     endif
                 endif
             next
@@ -7352,7 +7352,7 @@ function addpyramid(p as _cords, slot as short) as short
             dest.x=p.x
             dest.y=p.y
             dest.m=lastplanet
-            if addpyramids=1 then dprint "Pyramid at "&from.x &":"& from.y
+            if addpyramids=1 then rlprint "Pyramid at "&from.x &":"& from.y
             addportal(from,dest,1,asc("^"),"A pyramid with an entry.",14)
             addportal(dest,from,1,asc("o"),"The exit.",7)
             
@@ -7591,7 +7591,7 @@ function addcastle(from as _cords,slot as short) as short
     last=0
     
     vaults(4)=findrect(2,map(),0,40)
-    if addpyramids=1 then dprint "Vault 4 at "&vaults(4).x &":"& vaults(4).y
+    if addpyramids=1 then rlprint "Vault 4 at "&vaults(4).x &":"& vaults(4).y
     
     if rnd_range(1,100)<33+addpyramids*100 then
         if rnd_range(1,100)<33 then
@@ -7615,7 +7615,7 @@ function addcastle(from as _cords,slot as short) as short
     endif    
     
     vaults(5)=findrect(0,map(),0,60)
-    if addpyramids=1 then dprint "garden at "&vaults(5).w &":"& vaults(5).h
+    if addpyramids=1 then rlprint "garden at "&vaults(5).w &":"& vaults(5).h
     
     for x=1 to 59
         for y=1 to 19
@@ -7765,7 +7765,7 @@ function addcastle(from as _cords,slot as short) as short
     from.m=slot
     addportal(from,dest,1,asc("O"),"A Fortress.",15)
     addportal(dest,from,1,asc("o"),"The front gate.",7)
-    if addpyramids=1 then dprint "Fortress at "&from.x &":"&from.y &":"&from.m
+    if addpyramids=1 then rlprint "Fortress at "&from.x &":"&from.y &":"&from.m
     return 0
 end function
 

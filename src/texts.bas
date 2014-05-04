@@ -794,7 +794,7 @@ function alerts() as short
     if awayteam.oxygen=awayteam.oxymax then wg=0
     if awayteam.jpfuel=awayteam.jpfuelmax and awayteam.movetype=2 then wj=0
     if int(awayteam.oxygen<awayteam.oxymax*.5) and wg=0 and awayteam.helmet=1 then
-        dprint ("Reporting oxygen tanks half empty",14)
+        rlprint ("Reporting oxygen tanks half empty",14)
         wg=1
         for a=1 to wg
             if configflag(con_sound)=0 or configflag(con_sound)=2 then
@@ -810,7 +810,7 @@ function alerts() as short
         if configflag(con_sound)=2 then no_key=keyin(" "&key__enter &key__esc)
     endif
     if int(awayteam.oxygen<awayteam.oxymax*.25) and wg=1 and awayteam.helmet=1 then
-        dprint ("Oxygen low.",14)
+        rlprint ("Oxygen low.",14)
         wg=2
         for a=1 to wg
             if configflag(con_sound=0) or configflag(con_sound)=2 then
@@ -828,7 +828,7 @@ function alerts() as short
         if configflag(con_sound)=2 then no_key=keyin(" "&key__enter &key__esc)
     endif
     if int(awayteam.oxygen<awayteam.oxymax*.125) and wg=2 and awayteam.helmet=1 then
-        dprint ("Switching to oxygen reserve!",12)
+        rlprint ("Switching to oxygen reserve!",12)
         wg=3
         for a=1 to wg
             if configflag(con_sound)=0 or configflag(con_sound)=2 then
@@ -862,7 +862,7 @@ function alerts() as short
                 endif
             next
             walking=0
-            dprint ("Jetpack fuel low",14)
+            rlprint ("Jetpack fuel low",14)
         endif
         if awayteam.jpfuel/awayteam.jpfuelmax<.3 and wj=1 then
             wj=2
@@ -880,7 +880,7 @@ function alerts() as short
                 endif
             next
             walking=0
-            dprint ("Jetpack fuel very low",14)
+            rlprint ("Jetpack fuel very low",14)
         endif
 
         if awayteam.jpfuel<5 and wj=2 then
@@ -898,7 +898,7 @@ function alerts() as short
                     if configflag(con_sound)=2 then no_key=keyin(" "&key__enter &key__esc)
                 endif
             next
-            dprint ("Switching to jetpack fuel reserve",12)
+            rlprint ("Switching to jetpack fuel reserve",12)
             walking=0
         endif
     else
@@ -1344,126 +1344,126 @@ function low_morale_message() as short
         case is<10
             select case rnd_range(1,10)
                 case is=1
-                    dprint crew(who).n &" thinks aloud about 'retiring the captain by plasma rifle'"
+                    rlprint crew(who).n &" thinks aloud about 'retiring the captain by plasma rifle'"
                 case is=2
-                    dprint "Somebody has painted a message on an airlock:'Crew to captain: Home is this way.'"
+                    rlprint "Somebody has painted a message on an airlock:'Crew to captain: Home is this way.'"
                 case is=3
-                    dprint crew(who).n &" throws his food in your direction."
+                    rlprint crew(who).n &" throws his food in your direction."
                 case is=4
-                    dprint "You overhear a group of crewmen talking about mutiny"
+                    rlprint "You overhear a group of crewmen talking about mutiny"
                 case is=5
-                    dprint crew(who).n &" has a nervous breakdown."
+                    rlprint crew(who).n &" has a nervous breakdown."
                 case is=6
-                    dprint crew(who).n &" freaks out, certain that the whole crew is going to die horribly."
+                    rlprint crew(who).n &" freaks out, certain that the whole crew is going to die horribly."
                 case is=7
-                    dprint "You catch " &crew(who).n &" staring down the barrel of " & hishersits & " gun."
+                    rlprint "You catch " &crew(who).n &" staring down the barrel of " & hishersits & " gun."
                 case is=8
-                    dprint crew(who).n &" wonders aloud about whether " & hishersits & " uniform is strong enough to hang " & himselfherself & " with."
+                    rlprint crew(who).n &" wonders aloud about whether " & hishersits & " uniform is strong enough to hang " & himselfherself & " with."
                 case is=9
-                    dprint crew(who).n &" rants about how there's no adventure out here, only death and horror."
+                    rlprint crew(who).n &" rants about how there's no adventure out here, only death and horror."
                 case is=10
-                    dprint crew(who).n &" rants about how you're the worst captain ever, and that you couldn't command your way out of a wet paper bag."
+                    rlprint crew(who).n &" rants about how you're the worst captain ever, and that you couldn't command your way out of a wet paper bag."
 
             end select
         case 11 to 20
             select case rnd_range(1,16)
                 case is=1
-                    dprint "A fight breaks out about the quality of the food."
+                    rlprint "A fight breaks out about the quality of the food."
                 case is=2
-                    dprint "You hear "& crew(who).n &" mutter 'Why don't you do it yourself, my captain?' before following your order."
+                    rlprint "You hear "& crew(who).n &" mutter 'Why don't you do it yourself, my captain?' before following your order."
                 case is=3
-                    dprint "Your speech on tardiness on duty is met with little interest."
+                    rlprint "Your speech on tardiness on duty is met with little interest."
                 case is=4
-                    dprint "You learn that the crew has renamed the ship, and it is ... colorfull"
+                    rlprint "You learn that the crew has renamed the ship, and it is ... colorfull"
                 case is=5
-                    dprint crew(who).n &" states that " & hesheit & " will quit the next time you dock, and that everybody who still has a full set of marbles should join him."
+                    rlprint crew(who).n &" states that " & hesheit & " will quit the next time you dock, and that everybody who still has a full set of marbles should join him."
                 case is=6
-                    dprint crew(who).n &" greets you with 'What suicide mission will it be today?'"
+                    rlprint crew(who).n &" greets you with 'What suicide mission will it be today?'"
                 case is=7
-                    dprint "A fight breaks out over the away team equipment."
+                    rlprint "A fight breaks out over the away team equipment."
                 case is=8
-                    dprint "A fight breaks out over the quality of the crew quarters."
+                    rlprint "A fight breaks out over the quality of the crew quarters."
                 case is=9
-                    dprint "A fight breaks out over which crew member has made the most mistakes so far."
+                    rlprint "A fight breaks out over which crew member has made the most mistakes so far."
                 case is=10
-                    dprint "A fight breaks out over who *needs* cybernetic implants."
+                    rlprint "A fight breaks out over who *needs* cybernetic implants."
                 case is=11
-                    dprint "A fight breaks out over who is getting the most pay."
+                    rlprint "A fight breaks out over who is getting the most pay."
                 case is=12
-                    dprint "A fight breaks out over the set__color( of the ship's paint."
+                    rlprint "A fight breaks out over the set__color( of the ship's paint."
                 case is=13
-                    dprint "You catch " &crew(who).n &" drinking at " & hishersits & " post."
+                    rlprint "You catch " &crew(who).n &" drinking at " & hishersits & " post."
                 case is=14
-                    dprint crew(who).n &" wishes aloud that he had better equipment... or a better leader."
+                    rlprint crew(who).n &" wishes aloud that he had better equipment... or a better leader."
                 case is=15
-                    dprint crew(who).n &" wonders aloud about whether any amount of money could be worth *this*."
+                    rlprint crew(who).n &" wonders aloud about whether any amount of money could be worth *this*."
                 case is=16
-                    dprint crew(who).n &" obsessively reviews " & hishersits & " last will and testament."
+                    rlprint crew(who).n &" obsessively reviews " & hishersits & " last will and testament."
 
             end select
         case 21 to 30
             select case rnd_range(1,10)
                 case is=1
-                    dprint crew(who).n &" tells you that there is a rather mean joke going around about you."
+                    rlprint crew(who).n &" tells you that there is a rather mean joke going around about you."
                 case is=2
-                    dprint crew(who).n &" asks if he can get a raise."
+                    rlprint crew(who).n &" asks if he can get a raise."
                 case is=3
-                    dprint crew(who).n &" reassures you that everybody is 100% behind your decions, no matter what some may say."
+                    rlprint crew(who).n &" reassures you that everybody is 100% behind your decions, no matter what some may say."
                 case is=4
-                    dprint crew(who).n &" reminds you that everybody makes mistakes, at least some of the time"
+                    rlprint crew(who).n &" reminds you that everybody makes mistakes, at least some of the time"
                 case is=5
-                    if dead<>0 then dprint crew(who).n &" is certain that the death of "&crew(dead).n &" was unavoidable."
+                    if dead<>0 then rlprint crew(who).n &" is certain that the death of "&crew(dead).n &" was unavoidable."
                 case is=6
-                    dprint crew(who).n &" is certain that the pay he receives will be better as soon as the ships ventures are a little more successfull."
+                    rlprint crew(who).n &" is certain that the pay he receives will be better as soon as the ships ventures are a little more successfull."
                 case is=7
-                    dprint crew(who).n &" mutters something about how this kind of thing was a lot more fun as a holodeck simulation."
+                    rlprint crew(who).n &" mutters something about how this kind of thing was a lot more fun as a holodeck simulation."
                 case is=8
-                    dprint crew(who).n &" seems a little skittish... more so than when " & hesheit & " first signed on."
+                    rlprint crew(who).n &" seems a little skittish... more so than when " & hesheit & " first signed on."
                 case is=9
-                    dprint crew(who).n &" says 'Hey, buck up. We're not dead yet, right? ...Right?'"
+                    rlprint crew(who).n &" says 'Hey, buck up. We're not dead yet, right? ...Right?'"
                 case is=10
-                    dprint crew(who).n &" complains about " & hishersits & " spacesuit not fitting right."
+                    rlprint crew(who).n &" complains about " & hishersits & " spacesuit not fitting right."
             end select
         case 110 to 120
             if rnd_range(1,100)<5 then
                 select case rnd_range(1,11)
                     case is=1
-                        dprint crew(who).n &" starts whistling."
+                        rlprint crew(who).n &" starts whistling."
                     case is=2
-                        dprint crew(who).n &" tells everybody about the special paintjob " & hesheit & " plans to get for " & hishersits & " spacesuit."
+                        rlprint crew(who).n &" tells everybody about the special paintjob " & hesheit & " plans to get for " & hishersits & " spacesuit."
                     case is=3
-                        dprint crew(who).n &" thinks this will be one of the more profitable hauls."
+                        rlprint crew(who).n &" thinks this will be one of the more profitable hauls."
                     case is=4
-                        dprint crew(who).n &" bores everyone to tears by explaining in depth how " & hesheit & " will invest enough to get a retirement pension out of " & hishersits & " (great) wage."
+                        rlprint crew(who).n &" bores everyone to tears by explaining in depth how " & hesheit & " will invest enough to get a retirement pension out of " & hishersits & " (great) wage."
                     case is=5
-                        dprint crew(who).n &" asks excitedly what everyone thinks what we are going to find next!"
+                        rlprint crew(who).n &" asks excitedly what everyone thinks what we are going to find next!"
                     case is=6
-                        dprint crew(who).n &" offers to put this really great series on the ships entertainment system."
+                        rlprint crew(who).n &" offers to put this really great series on the ships entertainment system."
                     case is=7
-                        dprint crew(who).n &" starts talking about this great book he just read."
+                        rlprint crew(who).n &" starts talking about this great book he just read."
                     case is=8
-                        dprint crew(who).n &" really liked what was for supper yesterday."
+                        rlprint crew(who).n &" really liked what was for supper yesterday."
                     case is=9
-                        dprint crew(who).n &" points out that the doc did a really good job on that wound" & hesheit & " got that one time."
+                        rlprint crew(who).n &" points out that the doc did a really good job on that wound" & hesheit & " got that one time."
                     case is=10
-                        dprint crew(who).n &" tells a really funny joke."
+                        rlprint crew(who).n &" tells a really funny joke."
                     case is=11
-                        dprint crew(who).n &" has no complaints."
+                        rlprint crew(who).n &" has no complaints."
                 end select
             endif
         case is>120
             if rnd_range(1,100)<5 then
             select case rnd_range(1,4)
                 case is=1
-                    dprint crew(who).n &" thinks this expedition is going great so far."
+                    rlprint crew(who).n &" thinks this expedition is going great so far."
                 case is=2
-                    dprint crew(who).n &" tells a funny joke."
+                    rlprint crew(who).n &" tells a funny joke."
                 case is=3
-                    dprint crew(who).n &" thinks you are the best captain ever!"
+                    rlprint crew(who).n &" thinks you are the best captain ever!"
                 case is=4
-                    dprint crew(who).n &" explains that he never earned as much money as here."
+                    rlprint crew(who).n &" explains that he never earned as much money as here."
                 case is=5
-                    dprint crew(who).n &" is certain the next thing we are going to find is going to be an artifact or something else equally cool!"
+                    rlprint crew(who).n &" is certain the next thing we are going to find is going to be an artifact or something else equally cool!"
             end select
             endif
     end select

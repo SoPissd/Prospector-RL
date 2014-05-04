@@ -8,16 +8,16 @@ function friendly_pirates(f as short) as short
     case 1
         if getnextfreebay=1 or player.cargo(1).x<=0 then
             'Really has no cargo
-            dprint "You convince them that you don't have cargo, and they leave.",c_gre
+            rlprint "You convince them that you don't have cargo, and they leave.",c_gre
             fleet(f).con(15)+=1
             r=0
         else
             if rnd_range(1,10)<fleet(f).mem(1).sensors*10-player.equipment(se_CargoShielding) then
-                dprint "They don't believe you!",c_red
+                rlprint "They don't believe you!",c_red
                 fleet(f).con(15)+=1
                 r=1
             else
-                dprint "They believe you and agree to leave you alone.",c_gre
+                rlprint "They believe you and agree to leave you alone.",c_gre
                 fleet(f).con(15)-=1
                 r=0
             endif
@@ -33,11 +33,11 @@ function friendly_pirates(f as short) as short
             endif
         loop until b=-1 or b>lastbay
         if rnd_range(1,mo)<fleet(f).con(1)+mo/3 or getnextfreebay=1 then
-            dprint "They are satisfied.",c_gre
+            rlprint "They are satisfied.",c_gre
             fleet(f).con(15)+=1
             r=0
         else
-            dprint "They don't think it's enough!",c_red
+            rlprint "They don't think it's enough!",c_red
             fleet(f).con(15)-=1
             r=1
         endif
@@ -48,19 +48,19 @@ function friendly_pirates(f as short) as short
                 player.cargo(i).y=0
             endif
         next
-        dprint "They are satisfied and leave.",c_gre
+        rlprint "They are satisfied and leave.",c_gre
         fleet(f).con(15)+=1
         r=0
     case 4
-        dprint "How much do you offer?"
+        rlprint "How much do you offer?"
         mo=getnumber(0,player.money,0)
         if mo>player.money/20+rnd_range(1,player.money/10)+rnd_range(1,player.money/10) then 
             paystuff(mo)
-            dprint "They agree to leave you alone.",c_gre
+            rlprint "They agree to leave you alone.",c_gre
             fleet(f).con(15)+=1
             r=0
         else
-            dprint "They don't think it's enough!",c_red
+            rlprint "They don't think it's enough!",c_red
             fleet(f).con(15)-=1
             r=1
         endif
@@ -114,19 +114,19 @@ function meet_fleet(f as short)as short
             if q=1 then
                 des=askyn(question)
             else
-                dprint question
+                rlprint question
                 return f
             endif
             if des=0 then
                 if q=1 then
                     if skill_test(player.pilot(location)+cloak-fleet(f).count,st_hard) then
-                        dprint "You got away!",c_gre
+                        rlprint "You got away!",c_gre
                     else
-                        dprint "They are closing in..."
+                        rlprint "They are closing in..."
                         des=-1
                     endif
                 else
-                    dprint "you return the greeting"
+                    rlprint "you return the greeting"
                 endif
             endif
             if des=-1 then
@@ -167,7 +167,7 @@ function join_fight(f as short) as short
     f2ty=fleet(f2).ty
     if f<=6 then fty=8
     if f2<=6 then f2ty=8
-    dprint add_a_or_an(fname(fty),1) &" and "& add_a_or_an(fname(f2ty),0) &" are fighting here."
+    rlprint add_a_or_an(fname(fty),1) &" and "& add_a_or_an(fname(f2ty),0) &" are fighting here."
     q="On which side do you want to join the fight?/"& fname(fty) &f &":"&fty &"/" & fname(f2ty)  &f2 &":"&f2ty  & "/Ignore fight"
     des=menu(bg_ship,q,"",0,18,1) 
     if des=3 or des=-1 then return 0
@@ -195,11 +195,11 @@ function join_fight(f as short) as short
         factionadd(0,fleet(f).ty,15)
         factionadd(0,fleet(f2).ty,-25)
     endif
-    dprint "You join the fight on the side of the "&fname(side) &".",c_yel
+    rlprint "You join the fight on the side of the "&fname(side) &".",c_yel
     fleet(f)=add_fleets(fleet(f),fleet(f2))
     playerfightfleet(f)
     if player.dead=0 then
-        dprint "The " & fname(side) & " hails your ship and thank you for your help in the battle.",c_gre
+        rlprint "The " & fname(side) & " hails your ship and thank you for your help in the battle.",c_gre
         fleet(f).ty=side
     endif
     return 0
@@ -230,7 +230,7 @@ function playerfightfleet(f as short) as short
     for a=1 to 8
         total=total+basis(10).inv(a).v
     next 
-    'dprint ""&total
+    'rlprint ""&total
     if total>0 and player.dead=0 then trading(10)
     if player.dead=-1 then player.dead=0
     if player.dead>0 then
@@ -290,7 +290,7 @@ function fleet_battle(byref red as _fleet,byref blue as _fleet) as short
                         if dam>0 then 
                             blue.mem(t).hull=blue.mem(t).hull-red.mem(i).weapons(f).dam
                             if blue.mem(t).hull<=0 and blue.mem(t).bounty>0 then bountyquest(blue.mem(t).bounty).status=3
-                            if debug=1 and _debug=1 then dprint blue.mem(i).desig &"hit "&red.mem(t).desig &" for " &dam &" damage"
+                            if debug=1 and _debug=1 then rlprint blue.mem(i).desig &"hit "&red.mem(t).desig &" for " &dam &" damage"
                         endif
                     endif
                 endif
@@ -391,14 +391,14 @@ function decide_if_fight(f1 as short,f2 as short) as short
     'Eris always annihilates fleets that aren't space stations
     if (fleet(f1).ty=10 and f2<=5) then fleet(f2).ty=0 
     if (fleet(f2).ty=10 and f1<=5) then fleet(f1).ty=0 
-    if debug=1 and _debug=1 then dprint "f1:"&aggr1 &"F2:"&aggr2
+    if debug=1 and _debug=1 then rlprint "f1:"&aggr1 &"F2:"&aggr2
     'Ancient aliens attack everything
     if fleet(f1).ty=5 or fleet(f2).ty=5 then fighting=1
     
     if f1<=5 or f2<=5 and player.turn<5000 then fighting=0 'Spacestations aren't attcked before turn 5000
     
     if fighting=1 then
-        if debug=1 and _debug=1 then dprint "fight initiated between " &fleet(f1).ty &" and "&fleet(f2).ty
+        if debug=1 and _debug=1 then rlprint "fight initiated between " &fleet(f1).ty &" and "&fleet(f2).ty
         fleet(f1).fighting=f2
         fleet(f2).fighting=f1
         fleet(f1).con(2)=f2
@@ -417,7 +417,7 @@ function ss_sighting(i as short) as short
     fn=basis(i).lastsighting
     fn2=basis(i).lastfight
     debug=1
-    if debug=1 and _debug=1 then dprint fn &":"&fn2
+    if debug=1 and _debug=1 then rlprint fn &":"&fn2
     c=11
     
     if rnd_range(1,100)>basis(i).lastsightingturn-player.turn then
@@ -505,9 +505,9 @@ function ss_sighting(i as short) as short
     endif
     'text=text & fn &"typ:"&fleet(fn).ty
     if text<>"" or text3<>"" or text2<>"" then 
-        dprint (text3),c
-        dprint (text),c
-        dprint (text2),c
+        rlprint (text3),c
+        rlprint (text),c
+        rlprint (text2),c
     endif
     return 0
 end function
@@ -592,7 +592,7 @@ function move_fleets() as short
                     if fleet(a).ty>5 and fleet(a).ty<8 then
                         if distance(fleet(a).c,basis(s).c)<fleet(a).mem(1).sensors then 
                             civ(fleet(a).ty-6).knownstations(s)=1
-                            if show_npcs then dprint civ(fleet(a).ty-6).n &"has discovered station "&s+1
+                            if show_npcs then rlprint civ(fleet(a).ty-6).n &"has discovered station "&s+1
                         endif
                     endif
                 next
@@ -618,7 +618,7 @@ function make_fleet() as _fleet
         endif
     endif
     if roll+patrolmod>10 and debug=0 and _debug=1 then 
-        if show_npcs=1 then dprint roll &":" &patrolmod
+        if show_npcs=1 then rlprint roll &":" &patrolmod
         f=makepatrol
         patrolmod=0
         makepat=makepat+1
@@ -803,7 +803,7 @@ function makemerchantfleet() as _fleet
     endif
     f.c=targetlist(firstwaypoint)
     f.t=firstwaypoint+1
-    if show_NPCs=1 then dprint ""&a &":"& b &":"& text
+    if show_NPCs=1 then rlprint ""&a &":"& b &":"& text
     return f
 end function 
 
@@ -939,7 +939,7 @@ function add_fleets(byref target as _fleet,byref source as _fleet) as _fleet
     endif
     'if target.ty=2 then target=piratecrunch(target)
     
-    if show_NPCs=1 then dprint text
+    if show_NPCs=1 then rlprint text
     return target
 end function
 
@@ -1143,7 +1143,7 @@ function makemonster(a as short, map as short, forcearms as byte=0) as _monster
     dim as string prefix
     debug=1
     if a=0 then
-        if debug=1 and _debug=1 then dprint "ERROR: Making monster 0",14
+        if debug=1 and _debug=1 then rlprint "ERROR: Making monster 0",14
         return enemy
     endif
     
@@ -1227,7 +1227,7 @@ function makemonster(a as short, map as short, forcearms as byte=0) as _monster
         if d=8 then enemy.diet=3
         if d<5 then enemy.diet=2
         if d>=5 and d<8 then enemy.diet=1
-        if enemy.diet=1 and debug=1 and _debug=1 then dprint "Rate:" &(count_diet(map,1)+1)& ":" &(count_diet(map,2)+1)& "="& (count_diet(map,1)+1)/(count_diet(map,2)+1)
+        if enemy.diet=1 and debug=1 and _debug=1 then rlprint "Rate:" &(count_diet(map,1)+1)& ":" &(count_diet(map,2)+1)& "="& (count_diet(map,1)+1)/(count_diet(map,2)+1)
         if enemy.diet=1 and (count_diet(map,1)+1)/(count_diet(map,2)+1)<=.25 then enemy.diet=2 'Need 3 herbivoures at least to support one carni
         if enemy.diet=3 and (count_diet(map,3)+1)/(count_diet(map,1)+1)<=.25 then enemy.diet=2 'Need 3 carni at least to support one scav
         enemy.speed=rnd_range(0,5)+rnd_range(0,4)+rnd_range(0,enemy.weapon)

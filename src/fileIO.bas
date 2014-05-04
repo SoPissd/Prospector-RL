@@ -1807,7 +1807,7 @@ function string_towords(word() as string, s as string, break as string, punct as
             redim word(i)
         endif
         if mid(s,a,1)=break then
-            if debug=1 and _debug=1 then dprint word(i)
+            if debug=1 and _debug=1 then rlprint word(i)
             i+=1
         else
             if punct=1 and (mid(s,a,1)="." or mid(s,a,1)=",") then
@@ -1904,7 +1904,7 @@ function configuration() as short
             configflag(con_sound)=configflag(con_sound)+1
             if configflag(con_sound)=3 then configflag(con_sound)=0
         case con_volume
-            dprint "Select volume (0-4)"
+            rlprint "Select volume (0-4)"
             _volume=getnumber(0,4,_volume)
             #ifdef _FMODSOUND
             IF _volume = 0 THEN FSOUND_SetSFXMasterVolume(0)
@@ -1919,15 +1919,15 @@ function configuration() as short
         case con_res
             d=menu(bg_randompic,"Resolution/Tiles/Text/Lines/Classic look: "& onoff(configflag(con_customfonts))&" (overrides if on)/Exit")
             if d=1 then
-                dprint "Set graphic font height:(8-28)"
+                rlprint "Set graphic font height:(8-28)"
                 _fohi1=Getnumber(8,28,_fohi1)
             endif
             if d=2 then
-                dprint "Set text font height:(8-28)"
+                rlprint "Set text font height:(8-28)"
                 _fohi2=Getnumber(8,28,_fohi2)
             endif
             if d=3 then
-                dprint "Number of display lines:"
+                rlprint "Number of display lines:"
                 _lines=Getnumber(22,33,_lines)
             endif
             if d=4 then
@@ -1939,10 +1939,10 @@ function configuration() as short
                 end select
             endif
             if _fohi2>_fohi1 then _fohi2=_fohi1
-            dprint "Resolution will be changed next time you start prospector."
+            rlprint "Resolution will be changed next time you start prospector."
         case con_gtmwx
             gt_mwx=getnumber(20,60,30)
-            dprint "Will be changed next time you start prospector."
+            rlprint "Will be changed next time you start prospector."
         case con_end,-1 'Exit, do nothing
         case else
             select case configflag(c)
@@ -2924,7 +2924,7 @@ function load_game(filename as string) as short
             next
         next
         close #f
-        dprint "Randombase:"&random_pirate_system
+        rlprint "Randombase:"&random_pirate_system
     endif
 
     return 0

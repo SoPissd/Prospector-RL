@@ -21,7 +21,7 @@ function sort_by_distance(c as _cords,p() as _cords,l() as short,last as short) 
     loop until sort=0
     if debug=1 and _debug=1 then
         for i=1 to last
-            dprint i &":"&int(distance(c,p(i)))
+            rlprint i &":"&int(distance(c,p(i)))
         next
     endif
     
@@ -582,11 +582,11 @@ function vis_test(a as _cords,p as _cords,test as short) as short
         if x1<0 or x2>60 then 'Wraps
             if x1<0 then x1+=61
             if x2>60 then x2-=61
-            'dprint "X1:"&x1 &"X2:"& x2 &":"& p.x
+            'rlprint "X1:"&x1 &"X2:"& x2 &":"& p.x
             if p.x>=x1 then return -1
-            'dprint "not p.x>=x1" &p.x &":"&x1
+            'rlprint "not p.x>=x1" &p.x &":"&x1
             if p.x<=x2 then return -1
-            'dprint "not p.x<=x2"&p.x &":"&x2
+            'rlprint "not p.x<=x2"&p.x &":"&x2
             return 0
         else 'Doesn't Wrap
             if p.x>=x1 and p.x<=x2 then return -1
@@ -869,7 +869,7 @@ function rnd_point(m as short=-1,w as short=-1,t as short=-1,vege as short=-1)as
         if a>0 then return p(rnd_range(0,a-1))
     endif
     if m>0 and t>0 and w=-1 then
-        if debug=1 and _debug=1 then dprint "Looking for tile "&t
+        if debug=1 and _debug=1 then rlprint "Looking for tile "&t
         for x=0 to 60
             for y=0 to 20
                 if abs(planetmap(x,y,m))=t then
@@ -879,10 +879,10 @@ function rnd_point(m as short=-1,w as short=-1,t as short=-1,vege as short=-1)as
                 endif
             next
         next
-        if a=0 and debug=1 and _debug=1 then dprint "No tiles found"
+        if a=0 and debug=1 and _debug=1 then rlprint "No tiles found"
         if a>0 then 
             a=rnd_range(1,a)
-            if debug=1 and _debug=1 then dprint "Point returned was "&p(a).x &":"&p(a).y
+            if debug=1 and _debug=1 then rlprint "Point returned was "&p(a).x &":"&p(a).y
             return p(a)
         else
             p(0).x=-1

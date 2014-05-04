@@ -37,7 +37,7 @@ function play_poker(st as short) as short
                 p(i).risk=rnd_range(3,9)
                 p(i).money=rules.limit*rules.bet*rnd_range(5,10)
             endif
-            dprint p(i).name &" joins the game."
+            rlprint p(i).name &" joins the game."
         next
         for i=1 to 4
             p(i).bet=0
@@ -81,7 +81,7 @@ function play_poker(st as short) as short
         
             
         if not paystuff(rules.bet) then
-            dprint "You don't have enough money to enter the game."
+            rlprint "You don't have enough money to enter the game."
             return 0
         end if
         
@@ -89,7 +89,7 @@ function play_poker(st as short) as short
         draw_poker_table(p(),,,rules)
         l=crew(1).talents(5)
         while l>0
-            dprint "Swap cards (1-5,0 to exit)"
+            rlprint "Swap cards (1-5,0 to exit)"
             do
                 no_key=keyin("012345")
             loop until val(no_key)<=5
@@ -108,7 +108,7 @@ function play_poker(st as short) as short
     '    for i=1 to 4
     '        if pi=4 then
     '            'Player swap card.
-    '            dprint "Do you want to swap a card(1-5,0 for none)"
+    '            rlprint "Do you want to swap a card(1-5,0 for none)"
     '            j=val(keyin)
     '            
     '        else
@@ -118,7 +118,7 @@ function play_poker(st as short) as short
     '        p(pi).pot=1
     '        
     '        if j>0 then 
-    '            dprint p(pi).name &" swaps card "&j
+    '            rlprint p(pi).name &" swaps card "&j
     '            curcard+=1
     '            p(pi).card(j)=card(curcard)
     '            draw_poker_table(p(),,rules)
@@ -130,7 +130,7 @@ function play_poker(st as short) as short
             cls
             pli=poker_next(pli,p())
             draw_poker_table(p(),,,rules)
-            dprint ""
+            rlprint ""
             flip
             if pli>0 then
                 if p(pli).fold=0 and p(pli).in=1 then
@@ -151,9 +151,9 @@ function play_poker(st as short) as short
                     if p(pli).bet=0 then 
                         p(pli).fold=1
                         if pli=4 then
-                            dprint "You fold."
+                            rlprint "You fold."
                         else
-                            dprint p(pli).name &" folds."
+                            rlprint p(pli).name &" folds."
                         endif
                         sleep 250
                     endif
@@ -162,15 +162,15 @@ function play_poker(st as short) as short
                     
                         if p(pli).pot+p(pli).bet>highest_pot(p()) then
                             if pli=4 then
-                                dprint "You raise."
+                                rlprint "You raise."
                             else
-                                dprint p(pli).name &" raises."
+                                rlprint p(pli).name &" raises."
                             endif
                         else
                             if pli=4 then
-                                dprint "You see."
+                                rlprint "You see."
                             else
-                                dprint p(pli).name &" sees."
+                                rlprint p(pli).name &" sees."
                             endif
                         endif
                         p(pli).pot+=p(pli).bet
@@ -201,25 +201,25 @@ function play_poker(st as short) as short
         
         
         if winner=4 or (folded=3 and p(4).fold=0) then
-            dprint "You win "&credits((p(1).pot+p(2).pot+p(3).pot+p(4).pot)*rules.bet) &" Cr.",c_gre
+            rlprint "You win "&credits((p(1).pot+p(2).pot+p(3).pot+p(4).pot)*rules.bet) &" Cr.",c_gre
             addmoney((p(1).pot+p(2).pot+p(3).pot+p(4).pot)*rules.bet,mt_gambling)
         endif
         
         if winner>0 and winner<4 then 
-            dprint "Winner:"&p(winner).name
+            rlprint "Winner:"&p(winner).name
             p(winner).money=p(winner).money+(p(1).pot+p(2).pot+p(3).pot+p(4).pot)*rules.bet
         endif
         if winner<0 then
-            dprint "Tie"
+            rlprint "Tie"
             if winner=-3 or winner=-4 then 
-                dprint "You win "&credits((p(1).pot+p(2).pot+p(3).pot+p(4).pot)*rules.bet/2) &" Cr.",c_gre
+                rlprint "You win "&credits((p(1).pot+p(2).pot+p(3).pot+p(4).pot)*rules.bet/2) &" Cr.",c_gre
                 addmoney((p(1).pot+p(2).pot+p(3).pot+p(4).pot)*rules.bet/2,mt_gambling)
             endif
         endif
         if folded<4 then
             no_key=keyin
         else
-            dprint "No winner."
+            rlprint "No winner."
         endif
         
         for i=1 to 4
@@ -262,7 +262,7 @@ function player_eval(p() as _pokerplayer,i as short,rules as _pokerrules) as sho
     if p(i).win.rank=1 then p(i).bet=0 'Never with just high card
     if p(i).money<(p(i).pot+p(i).bet)*rules.bet and p(i).bet>0 then
         'Sell has, else fold
-        dprint p(i).name &" is out of money.",c_yel
+        rlprint p(i).name &" is out of money.",c_yel
         if p(i).qg>0 then
             if questguy(p(i).qg).has.given=0 and questguy(p(i).qg).has.it.desig<>"" then 'He is a qg and has not given up his has yet
                 price=(p(i).pot+p(i).bet)*rules.bet-p(i).money
@@ -566,7 +566,7 @@ function poker_winner(p() as _pokerplayer) as short
     
     
     do
-        if debug=1 and _debug=1 then dprint "Entering loop"
+        if debug=1 and _debug=1 then rlprint "Entering loop"
         if debug=1 and _debug=1 then
             for i=1 to cin
                 draw string(500,i*12),stillin(i) &":"&p(stillin(i)).win.rank &":"& p(stillin(i)).win.high(1)
@@ -578,7 +578,7 @@ function poker_winner(p() as _pokerplayer) as short
         for i=1 to cin-1
             select case better_hand(p(stillin(i)).win,p(stillin(i+1)).win) 
                 case 2
-                    if debug=1 and _debug=1 then dprint "swapping pos "&i
+                    if debug=1 and _debug=1 then rlprint "swapping pos "&i
                     flag=1
                     'swap p(stillin(i)),p(stillin(i+1))
                     swap stillin(i),stillin(i+1)
@@ -588,7 +588,7 @@ function poker_winner(p() as _pokerplayer) as short
             end select
         next
         
-        if debug=1 and _debug=1 and flag=0 then dprint "Leaving loop"
+        if debug=1 and _debug=1 and flag=0 then rlprint "Leaving loop"
     loop until flag=0
     for i=1 to cin
         p(stillin(i)).rank=i
