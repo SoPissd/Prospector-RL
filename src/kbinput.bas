@@ -486,14 +486,15 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
     ' 0= headline 1=first entry
     dim as short blen
     dim as string text,help
-    dim lines(63) as string
-    dim helps(63) as string
-    dim shrt(63) as string
+    dim lines(256) as string
+    dim helps(256) as string
+    dim shrt(256) as string
     dim as string key,delhelp
     dim a as short
     dim b as short
     dim c as short
-    static loca as short
+    'static loca as short
+    dim loca as short
     dim e as short
     dim l as short
     dim hfl as short
