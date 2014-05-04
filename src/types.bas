@@ -195,7 +195,7 @@ Dim Shared As String*3 key_sw="1"
 Dim Shared As String*3 key_south="2"
 Dim Shared As String*3 key_se="3"
 Dim Shared As String*3 key_wait="5"
-Dim Shared As String*3 key_layfire="0"
+Dim Shared As String*3 key_layfire="f"
 Dim Shared As String*3 key_portal="<"
 Dim Shared As String*3 key_logbook="L"
 Dim Shared As String*3 key_togglehpdisplay="\Ch"
@@ -2723,4 +2723,5 @@ Function _commandstring.display(wl As Short) As Short
     Next
     Return 0
 End Function
+
 

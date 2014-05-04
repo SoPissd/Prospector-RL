@@ -1694,6 +1694,7 @@ function load_keyset() as short
                 if instr(lctext,"key_autoexplore")>0 then key_autoexplore=load_key(text)
                 if instr(lctext,"key_optequip")>0 then key_optequip=load_key(text)
 
+                if instr(lctext,"key_layfire")>0 then key_layfire=load_key(text)
                 if instr(lctext,"key_manual")>0 then key_manual=load_key(text)
                 if instr(lctext,"key_messages")>0 then key_messages=load_key(text)
                 if instr(lctext,"key_configuration")>0 then key_configuration=load_key(text)
