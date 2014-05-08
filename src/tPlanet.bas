@@ -1,4 +1,6 @@
 'tPlanet
+'#print tPLANET
+
 
 Type _planetsave
     awayteam As _monster
@@ -61,6 +63,20 @@ Dim Shared planets(max_maps) As _planet
 For a=0 To max_maps
     planets(a).darkness=5
 Next
+
+
+function deletemonsters(a as short) as short
+    dim b as short
+    dim m as _monster
+    if a>0 then
+        for b=0 to 16
+            planets(a).mon_template(b)=m
+            planets(a).mon_noamin(b)=0
+            planets(a).mon_noamax(b)=0
+        next
+    endif
+    return 0
+end function
 
 
 function isgardenworld(m as short) as short

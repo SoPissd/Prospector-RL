@@ -3,8 +3,12 @@ Dim as Short ErrorNr=0
 Dim as Short ErrorLn=0
 Dim as String ErrText=""
 '
+
 #Macro inc(section,file,comments)
 '#print #file "---" #comments
+#undef head
+#undef main
+'#print section
 #define section
 #include file
 #undef section
@@ -14,16 +18,45 @@ Dim as String ErrText=""
 inc("main",	"debug.bas",				"")
 inc("main",	"version.bas",				"")
 '
-inc("main",	"tRng.bas",					"")
-inc("main",	"tInit.bas",				"")
+#if _DbgOptLoadWin = 1			
+	#print loading windows headers			
+	inc("main",	"windows.bi",			windows header mandatory for debugbreak & console)
+#else
+#if _DbgOptLoadWin = 2			
+	#print loading winbase headers			
+	inc("main",	"winbase.bi",			windows header mandatory for debugbreak & console)
+#endif							
+#endif							
+'
+#if _DbgOptLoadMLD = 1
+	#print loading memory leak detector			
+	'#include once "crt.bi"
+	'#ifdef __FB_WIN32__
+	''# inclib "msvcrt"
+	'#endif
+	''#include once "crt/string.bi"
+	''#include once "crt/math.bi"
+	''#include once "crt/time.bi"
+	''#include once "crt/wchar.bi"
+	''#include once "crt/ctype.bi"
+	''#include once "crt/stdlib.bi"
+	''#include once "crt/stdio.bi"
+	''#include once "crt/fcntl.bi"
+	''#include once "crt/errno.bi"
+	'#if defined(__FB_WIN32__) or defined(__FB_DOS__)
+	''# include once "crt/dir.bi"
+	'#endif
+	inc("main",	"fbmld.bi",				memory-leak-detector)
+#endif							
+'
 '
 inc("main",	"fbGfx.bi",					"")
-#Macro draw_string(ds_x,ds_y,ds_text,ds_font,ds_col)
-	Draw String(ds_x,ds_y),ds_text,,ds_font,custom,@ds_col
-#EndMacro
-'
 inc("main",	"file.bi",					"")
 inc("main",	"zlib.bi",					"")
+'
+'
+inc("main",	"tRng.bas",					"")
+inc("main",	"tInit.bas",				"")
 '
 inc("main",	"tCoords.bas",				"")
 inc("main",	"tAstar.bas",				"")
@@ -73,9 +106,8 @@ inc("main",	"tItem.bas",				"")
 inc("main",	"tArtifacts.bas",			"")
 inc("main",	"tCivilisation.bas",		"")
 '
-inc("main",	"tSpacemap.bas",			"")
 inc("main",	"tPlanet.bas",				"")
-inc("main",	"tPlanetmap.bas",			"")
+inc("main",	"tSpacemap.bas",			"")
 inc("main",	"tFleet.bas",				"")
 inc("main",	"tPeople.bas",				"")
 inc("main",	"items.bas",				"")
@@ -87,8 +119,10 @@ inc("main",	"tRumors.bas",				"")
 '
 inc("main",	"tMap.bas",					"")
 inc("main",	"tWaypoints.bas",			"")
+inc("head",	"tPlanetmap.bas",			"")
 inc("main",	"planet.bas",				"")
-
+inc("main",	"tPlanetmap.bas",			"")
+'
 inc("main",	"retirement.bas",			"")
 inc("main",	"tPlayer.bas",				"")
 inc("main",	"tQuest.bas",				"")
@@ -105,6 +139,7 @@ inc("main",	"debug2.bas",				"")
 inc("main",	"space.bas",				"")
 inc("main",	"tTrading.bas",				"")
 inc("main",	"tShops.bas",				"")
+inc("main",	"tSpecialPlanet.bas",		"")
 inc("main",	"tBones.bas",				"")
 inc("main",	"tWorldgen.bas",			"")
 '
@@ -144,20 +179,12 @@ inc("main",	"tExplorespace.bas",		"")
 '
 inc("main",	"ProsIO.bas",				"")
 '
-#if _DbgOptLoadMLD = 1			
-inc("main",	"fbmld.bi",					memory-leak-detector)
-#endif							
-'
-#if _DbgOptLoadWin = 1			
-inc("main",	"windows.bi",				windows header mandatory for debugbreak & console)
-'inc("main",	"winbase.bi",				"windows header, mandatory for debugbreak & console")
-#endif							
-'
 inc("main",	"tMenu.bas",				"")
 inc("main",	"tSavegame.bas",			"")
 inc("main",	"globals.bas",				"")
 inc("main",	"tGameInit.bas",			"")
 inc("main",	"tGame.bas",				"")
+#undef main
 '
 
 function mainmenu() as string
@@ -224,8 +251,6 @@ function mainmenu() as string
     return key
 End function
 
-
-#undef main
 
 function main() as Integer
 	Do

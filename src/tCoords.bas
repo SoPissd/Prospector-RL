@@ -16,6 +16,14 @@ Type _driftingship extends _cords
     start As _cords
 End Type
 
+Type _rect
+    x As Short
+    y As Short
+    h As Short
+    w As Short
+    wd(16) As Byte
+End Type
+
 Dim Shared apwaypoints(1024) As _cords
 Dim Shared usedship(8) As _cords
 Dim Shared targetlist(4068) As _cords
@@ -94,4 +102,47 @@ function furthest(list() as _cords,last as short, a as _cords,b as _cords) as sh
 end function
 
 '
+
+function rndwallpoint(r as _rect, w as byte) as _cords
+    dim p as _cords
+    if w=1 then 'north wall
+        p.y=r.y-1
+        p.x=rnd_range(r.x+1,r.x+r.w-2)
+    endif
+    
+    if w=2 then 'East wall
+        p.x=r.x+r.w+1
+        p.y=rnd_range(r.y+1,r.y+r.h-2)
+    endif
+    
+    if w=3 then 'South wall
+        p.y=r.y+r.h+1
+        p.x=rnd_range(r.x+1,r.x+r.w-2)
+    endif
+    
+    if w=4 then 'west woll
+        p.x=r.x-1
+        p.y=rnd_range(r.y+1,r.y+r.h-2)
+    endif
+    return p
+    
+end function
+
+
+function rndwall(r as _rect) as short
+    dim as short a,b,c
+    dim po(4) as byte
+    for a=1 to 4
+        if r.wd(a)=0 then
+            b=b+1
+            po(b)=a
+        endif
+    next
+    if b>0 then
+        c=po(rnd_range(1,b))
+    else
+        c=-1
+    endif
+    return c
+end function
 

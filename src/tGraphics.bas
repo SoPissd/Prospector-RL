@@ -95,6 +95,13 @@ Function bmp_load( ByRef filename As String ) As Any Ptr
 End Function
 
 
+'
+
+#Macro draw_string(ds_x,ds_y,ds_text,ds_font,ds_col)
+	Draw String(ds_x,ds_y),ds_text,,ds_font,custom,@ds_col
+#EndMacro
+
+'
 
 Dim Shared As Byte _mwx=30
 

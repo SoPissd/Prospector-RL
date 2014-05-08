@@ -285,7 +285,7 @@ end function
 
 function explper() as short
     dim as single per
-    dim as integer a,b,tp,xx,yy,expl, exps,expp,total
+    dim as integer a,b,tp,xx,yy,exl, exps,expp,total
     for a=0 to laststar
         if map(a).discovered>0 then
             exps=exps+1
@@ -295,7 +295,7 @@ function explper() as short
                     if planets(map(a).planets(b)).mapstat<>0 then expp=expp+1
                     for xx=0 to 60
                         for yy=0 to 20
-                            if planetmap(xx,yy,map(a).planets(b))>0 then expl=expl+1
+                            if planetmap(xx,yy,map(a).planets(b))>0 then exl=exl+1
                             total=total+1
                         next
                     next
@@ -303,8 +303,8 @@ function explper() as short
             next
         endif
     next
-    if expl>0 and total>0 then
-        per=((expl/total)*100)
+    if exl>0 and total>0 then
+        per=((exl/total)*100)
         if per>100 then per=100
     endif
     return int(per)
@@ -313,7 +313,7 @@ end function
 
 function exploration_text() as string
     dim text as string
-    dim as short a,b,c,xx,yy,exps,expp,expl,tp,total,per,visited,docked,alldockings,wormdis,wormtra
+    dim as short a,b,c,xx,yy,exps,expp,exl,tp,total,per,visited,docked,alldockings,wormdis,wormtra
     dim discovered(lastspecial) as short
 
     for a=0 to laststar
@@ -324,7 +324,7 @@ function exploration_text() as string
                 if planets(map(a).planets(b)).mapstat<>0 then expp=expp+1
                 for xx=0 to 60
                     for yy=0 to 20
-                        if planetmap(xx,yy,map(a).planets(b))>0 then expl=expl+1
+                        if planetmap(xx,yy,map(a).planets(b))>0 then exl=exl+1
                         total=total+1
                     next
                 next

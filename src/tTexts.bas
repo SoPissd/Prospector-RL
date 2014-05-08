@@ -1,9 +1,5 @@
 
 
-
-
-
-
 function html_color(c as string, indent as short=0, wid as short=0) as string
     dim t as string
     t= "<span style="&chr(34) &" COLOR:"& c &"; font-family:arial;position:relative"

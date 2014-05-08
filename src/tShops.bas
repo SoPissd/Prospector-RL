@@ -679,3 +679,35 @@ function botsanddrones_shop() as short
     return 0
 end function
 
+function makemudsshop(slot as short, x1 as short, y1 as short)  as short
+    dim as short x,y
+    dim as _cords p3
+    if x1<3 then x1=3
+    if x1>57 then x1=57
+    if y1<3 then y1=3
+    if y1>17 then y1=17
+    planetmap(x1,y1,slot)=-262
+    planetmap(x1-1,y1,slot)=-32
+    planetmap(x1+1,y1,slot)=-32
+    planetmap(x1,y1+1,slot)=-31
+    planetmap(x1,y1-1,slot)=-31
+    planetmap(x1-2,y1,slot)=-68
+    planetmap(x1+2,y1,slot)=-68
+    planetmap(x1,y1+2,slot)=-68
+    planetmap(x1,y1-2,slot)=-68
+    
+    p3.x=x1+2
+    p3.y=y1+2
+    if p3.x+3<60 and p3.y+3<20 and rnd_range(1,100)<10 then 
+        for x=p3.x to p3.x+3
+            for y=p3.y to p3.y+3
+                planetmap(x,y,slot)=68
+            next
+        next
+        planetmap(p3.x+1,p3.y,slot)=70
+        planetmap(p3.x+2,p3.y,slot)=71
+    
+    endif
+    return 0
+end function
+

@@ -112,6 +112,21 @@ configdesc(con_damscream)="/ Damage scream:"
 
 '
 
+function explored_percentage_string() as string
+    dim as short x,y,ex
+    for x=0 to sm_x
+        for y=0 to sm_y
+            if spacemap(x,y)>0 then ex+=1
+        next
+    next
+    if ex<(sm_x*sm_y) then
+        return "Explored {15}"&ex &"{11} parsec ({15}"& int(ex/(sm_x*sm_y)*100) &" %{11} of the sector)"
+    else
+        return "Explored the complete sector."
+    endif
+end function
+
+
 function save_config(oldtiles as short) as short
     dim as short f,i
     f=freefile

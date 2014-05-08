@@ -317,7 +317,7 @@ end function
 function keybindings(allowed as string="") as short
     dim as short f,a,b,d,x,y,c,ls,lk,cl(99),colflag(99),lastcom,changed,fg,bg,o
     dim as _cords cc,ncc
-    dim as string keys(99),nkeys(99),varn(99),expl(99),coml(99),comn(99),comdes(99),text,newkey,text2
+    dim as string keys(99),nkeys(99),varn(99),exl(99),coml(99),comn(99),comdes(99),text,newkey,text2
     if not fileexists("keybindings.txt") then
         save_keyset
     endif
@@ -333,8 +333,8 @@ function keybindings(allowed as string="") as short
                 text=text2
                 keys(a)=load_key(text2,varn(a))
                 nkeys(a)=keys(a)
-                expl(a)=right(varn(a),len(varn(a))-4)
-                expl(a)=Ucase(left(expl(a),1))&right(expl(a),len(expl(a))-1)
+                exl(a)=right(varn(a),len(varn(a))-4)
+                exl(a)=Ucase(left(exl(a),1))&right(exl(a),len(exl(a))-1)
             endif
         else
             lastcom+=1
@@ -403,7 +403,7 @@ function keybindings(allowed as string="") as short
                 set__color( fg,bg)
 
                 draw string ((2*_fw2)+(x-1)*25*_fw2,(y+2)*_fh2),space(25),,FONT2,custom,@_col
-                draw string ((2*_fw2)+(x-1)*25*_fw2,(y+2)*_fh2),expl(b)& nkeys(b),,FONT2,custom,@_col
+                draw string ((2*_fw2)+(x-1)*25*_fw2,(y+2)*_fh2),exl(b)& nkeys(b),,FONT2,custom,@_col
                 endif
             next
         next
@@ -457,8 +457,8 @@ function keybindings(allowed as string="") as short
         if no_key=key__enter and keys(c)<>"" then
             screenset 1,1
             draw string ((2*_fw2)+(cc.x-1)*25*_fw2,(cc.y+2)*_fh2),space(25),,FONT2,custom,@_col
-            draw string ((2*_fw2)+(cc.x-1)*25*_fw2,(cc.y+2)*_fh2),expl(c),,FONT2,custom,@_col
-            newkey=gettext(2+(cc.x-1)*25+len(expl(c)),cc.y+2,3,"")
+            draw string ((2*_fw2)+(cc.x-1)*25*_fw2,(cc.y+2)*_fh2),exl(c),,FONT2,custom,@_col
+            newkey=gettext(2+(cc.x-1)*25+len(exl(c)),cc.y+2,3,"")
             newkey=trim(newkey)
             if newkey<>"" and newkey<>nkeys(c) then
                 nkeys(c)=newkey

@@ -365,7 +365,7 @@ function farthest(c as _cords, b as _cords) as single
 end function
 
 
-function fill_rect(r as _rect,wall as short, floor as short,map() as short) as short
+function fill_rect(r as _rect,wall as short, flor as short,map() as short) as short
     dim as short x,y 
     for x=r.x to r.x+r.w
         for y=r.y to r.y+r.h
@@ -373,7 +373,7 @@ function fill_rect(r as _rect,wall as short, floor as short,map() as short) as s
             if x=r.x or y=r.y or x=r.x+r.w or y=r.y+r.h then
                 map(x,y)=wall
             else 
-                map(x,y)=floor
+                map(x,y)=flor
             endif
         next
     next

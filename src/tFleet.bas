@@ -1,5 +1,7 @@
 'tFleet
 
+declare function rnd_point(m as short=-1,w as short=-1,t as short=-1,vege as short=-1)as _cords
+
 type _fleet
     ty As Short 'Type: 1=patrol 2=merchant 3=pirate
     e As _energycounter

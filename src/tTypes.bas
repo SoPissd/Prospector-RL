@@ -3,14 +3,6 @@
 #Define FALSE 0
 #Define TRUE (Not FALSE)
 
-Type _rect
-    x As Short
-    y As Short
-    h As Short
-    w As Short
-    wd(16) As Byte
-End Type
-
 Type _visit
     s As Short
     t As Integer
