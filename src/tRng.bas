@@ -58,11 +58,13 @@ End Property
 Property tRNG.Seed(ByVal aSeed as tRngSeed)
 	_seed.w=aSeed.w
 	_seed.z=aSeed.z
-	while isInvalidSeed
+	if isInvalidSeed then
 		randomize timer,5
-		_seed.w= cuint(2^32*rnd())
-		_seed.z= cuint(2^32*rnd())
-	wend
+		while isInvalidSeed
+			_seed.w= fix(rnd()*cast(uinteger, &hffffffff))
+			_seed.z= fix(rnd()*cast(uinteger, &hffffffff))
+		wend
+	EndIf 
 End Property
 
 'Wikipedia cites this as an example of a simple pseudo-random number generator:

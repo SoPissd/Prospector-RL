@@ -679,15 +679,15 @@ private function customize_item() as short
 end function
 
 
-
-
-
 private function nextemptyc() as short
 dim re as short
     dim a as short
     dim b as short
     for a=1 to 10
-        if player.cargo(a).x=0 and b=0 then b=a
+        if player.cargo(a).x=0 and b=0 then
+        	b=a
+        	exit for
+        EndIf
     next
     return b
 end function
