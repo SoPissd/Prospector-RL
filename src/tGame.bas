@@ -610,7 +610,7 @@ function mainmenu() as string
 End function
 
 
-function run() as Integer
+function Prospector() as Integer
 	Do
 	    setglobals
 	    DbgTilesCSV   

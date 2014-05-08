@@ -55,9 +55,16 @@ inc("main",	"file.bi",					"")
 inc("main",	"zlib.bi",					"")
 '
 '
-inc("main",	"tRng.bas",					"")
-inc("main",	"tInit.bas",				"")
+Cls
+Print
+Print "Prospector "&__VERSION__
+Print "Built "+__DATE__+" "+__TIME__
+Print "FB."+__FB_VERSION__
+Print
+DbgScreeninfo
+chdir exepath
 '
+inc("main",	"tRng.bas",					"")
 inc("main",	"tCoords.bas",				"")
 inc("main",	"tAstar.bas",				"")
 '
@@ -186,7 +193,7 @@ inc("main",	"globals.bas",				"")
 inc("main",	"tGameInit.bas",			"")
 inc("main",	"tGame.bas",				"")
 '
-ErrorNr= run()
+ErrorNr= Prospector()
 goto done
 '
 
