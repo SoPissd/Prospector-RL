@@ -23,7 +23,8 @@ Type _transfer
     froti As Short 'from what tile
 End Type
 
-
+Dim Shared portal(1024) As _transfer
+Dim Shared lastportal As Short
 
 
 
@@ -71,6 +72,8 @@ Type _comment
     l As Short
 End Type
 
+Dim Shared coms(255) As _comment
+
 
 
 Type _table
@@ -98,6 +101,8 @@ Type _disease
     oxy As Byte
     wounds As Byte
 End Type
+
+Dim Shared disease(17) As _disease
 
 
 Type _share

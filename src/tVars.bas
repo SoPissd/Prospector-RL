@@ -13,8 +13,6 @@ Dim Shared lastenemy As Short
 Dim Shared As UInteger _fgcolor_,_bgcolor_
 
 Dim Shared As Byte someonemoved
-Dim Shared As Byte _tix=24
-Dim Shared As Byte _tiy=24
 
 
 Dim Shared As Byte _NoPB=2
@@ -119,12 +117,8 @@ Dim Shared dtextcol(255) As Short
 Dim Shared patrolmod As Short
 
 Dim Shared shiptypes(20) As String
-Dim Shared disease(17) As _disease
 Dim Shared awayteamcomp(4) As Byte
 
-Dim Shared coms(255) As _comment
-Dim Shared portal(1024) As _transfer
-Dim Shared lastportal As Short
 Dim Shared lastplanet As Short
 Dim Shared lastcom As Short
 Dim Shared As Byte pf_stp=1

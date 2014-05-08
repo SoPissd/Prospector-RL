@@ -18,6 +18,9 @@ Dim Shared spacemap(sm_x,sm_y) As Short
 Dim shared as ubyte wormhole=8
 dim shared as ubyte laststar=90
 
+Dim Shared As Byte _tix=24
+Dim Shared As Byte _tiy=24
+
 Enum config
     con_empty
     con_res
