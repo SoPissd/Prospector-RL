@@ -98,6 +98,30 @@ end function
 
 
 
+function settactics() as short
+    dim as short a
+    dim text as string
+    screenshot(1)
+    text="Tactics:/"
+    for a=1 to 6
+        if a=player.tactic+3 then
+            text=text &" *"&tacdes(a)&"   "
+        else
+            text=text &"  "&tacdes(a)&"   "
+        endif
+        text=text &"/"
+    next
+    text=text &"Exit"
+    a=menu(bg_awayteam,text,,,,1)
+    if a<7 then
+        player.tactic=a-3
+    endif
+    screenshot(2)
+    return 0
+end function
+
+
+
 function weapon_string() as string
     dim as string t,weaponstring
     dim as short a,turrets

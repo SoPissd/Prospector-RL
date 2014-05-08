@@ -1,6 +1,5 @@
 'tKeys
 
-Declare function keyin(byref allowed as string="" , blocked as short=0)as string
 Declare Function askyn(q As String,col As Short=11,sure As Short=0) As Short
 Declare Function gettext(x As Short, y As Short, ml As Short, text As String,pixel As Short=0) As String
 
@@ -8,17 +7,7 @@ Declare Function gettext(x As Short, y As Short, ml As Short, text As String,pix
 'dim shared as FB.image ptr TITLEFONT
 Dim Shared As Any Ptr TITLEFONT
 Dim Shared As Any Ptr FONT1,FONT2
-Dim Shared As UByte _FH1,_FH2,_FW1,_FW2,_TFH
 
-
-Const xk=Chr(255)
-Const key__up = xk & "H"
-Const key__dn = xk & "P"
-Const key__rt= xk & "M"
-Const key__lt = xk & "K"
-Const key__esc = Chr(27)
-Const key__enter = Chr(13)
-Const key__space = Chr(32)
 
 Dim Shared As String*3 key_testspacecombat="\Cy"
 Dim Shared As String*3 key_manual="?"
@@ -67,14 +56,6 @@ Dim Shared As Byte _autopickup
 Dim Shared As String*3 key_ac="a"
 Dim Shared As String*3 key_ru="R"
 
-Dim Shared As String*3 key_nw="7"
-Dim Shared As String*3 key_north="8"
-Dim Shared As String*3 key_ne="9"
-Dim Shared As String*3 key_west="4"
-Dim Shared As String*3 key_east="6"
-Dim Shared As String*3 key_sw="1"
-Dim Shared As String*3 key_south="2"
-Dim Shared As String*3 key_se="3"
 Dim Shared As String*3 key_wait="5"
 Dim Shared As String*3 key_layfire="f"
 Dim Shared As String*3 key_portal="<"

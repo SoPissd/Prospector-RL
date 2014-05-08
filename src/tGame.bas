@@ -400,7 +400,7 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
             
             if key=key_manual then
                 a=menu(bg_parent,"Help/Manual/Keybindings/Configuration/Exit","",2,2)
-                if a=1 then manual
+                if a=1 then viewfile("readme.txt")
                 if a=2 then keybindings
                 if a=3 then configuration
                 return ""

@@ -1,4 +1,4 @@
-'Graphics
+'tGraphics
 
 Dim Shared As UShort _screenx=800
 Dim Shared As UShort _screeny=0

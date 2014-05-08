@@ -1,11 +1,10 @@
 'tConfig
+Declare function getnumber(a as integer,b as integer, e as integer) as integer
 
 Declare function UpdateMapSize(size as short) as Short
 Declare function SetCaptainsprite(nr as byte) as short
 Declare function set_volume(volume as Integer) as short
-Declare function rlprint(t as string, col as short=11) as short
 Declare function menu(bg as byte,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1) as short
-Declare Function getnumber(a As Integer,b As Integer, e As Integer) As Integer
 
 Dim Shared As UByte _fohi1, _fohi2
 Dim Shared As Byte _volume=2
@@ -154,6 +153,7 @@ function save_config(oldtiles as short) as short
     return 0
 end function
 
+
 function load_config() as short
     dim as short f,i,j
     dim as string text,rhs,lhs
@@ -274,6 +274,8 @@ function load_config() as short
     return 0
 end function
 
+
+
 function configuration() as short
     dim text as string
     dim onoff(1) as string
@@ -294,7 +296,7 @@ function configuration() as short
     sprite(0)="Brown"
     sprite(1)="White"
     sprite(2)=" Red "
-    screenshot(1)
+'    screenshot(1)
     do
         if configflag(con_customfonts)=1 then
             res="tiles:"&_fohi1 &" text:"& _fohi2 &" lines:"&_lines
@@ -370,7 +372,7 @@ function configuration() as short
 
     loop until c=con_end or c=-1
     if gamerunning=1 then SetCaptainsprite(configflag(con_captainsprite))
-    screenshot(2)
+'    screenshot(2)
     return save_config(oldtiles)
 end function
 

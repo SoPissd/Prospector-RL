@@ -67,30 +67,30 @@ inc("main",	"tEnums.bas",				"")
 inc("main",	"tVars.bas",				"")
 '
 inc("main",	"tUtils.bas",				"")
+inc("main",	"tGraphics.bas",			"")
+inc("main",	"kbinput.bas",				"")
 inc("main",	"fileIO.bas",				"")
 '
 On Error Goto errormessage
 inc("main",	"tError.bas",				"")
 '
+inc("main",	"tKeys.bas",				"")
+inc("main",	"tPrint.bas",				"")
+inc("main",	"tTextbox.bas",				"")
+inc("main",	"tConfig.bas",				"")
+inc("main",	"tInput.bas",				"")
+'
 inc("main",	"tMath.bas",				"")
 inc("main",	"tTime.bas",				"")
 inc("main",	"tTexts.bas",				"")
-'
-inc("main",	"tGraphics.bas",			"")
-inc("main",	"tPalette.bas",				"")
-'
-inc("main",	"tKeys.bas",				"")
 inc("main",	"tPng.bas",					"")
-inc("main",	"tConfig.bas",				"")
+'
 inc("main",	"tSound.bas",				"")
 inc("main",	"tCommandstring.bas",		"")
-inc("main",	"kbinput.bas",				"")
-'
 inc("main",	"tFonts.bas",				"")
 inc("main",	"tCards.bas",				"")
 inc("main",	"tTiles.bas",				"")
 inc("main",	"tTiledata.bas",			"")
-inc("main",	"tTextbox.bas",				"")
 '
 inc("main",	"tEnergycounter.bas",		"")
 inc("main",	"tWeapon.bas",				"")
@@ -149,22 +149,23 @@ inc("main",	"cargotrade.bas",			"")
 '
 inc("main",	"tSlotmachine.bas",			"")
 inc("main",	"tPoker.bas",				"")
-inc("main",	"poker.bas",				"")
 inc("main",	"tCasino.bas",				"")
 '
 inc("main",	"tCockpit.bas",				"")
 inc("main",	"tAutopilot.bas",			"")
 inc("main",	"tLogbook.bas",				"")
 inc("main",	"spacecom.bas",				"")
+inc("main",	"tSpacecombat.bas",			"")
 inc("main",	"quests.bas",				"")
 inc("main",	"pirates.bas",				"")
 inc("main",	"tCompany.bas",				"")
+inc("main",	"tRadio.bas",				"")
+inc("main",	"tPlanetmenu.bas",			"")
 inc("main",	"tDialog.bas",				"")
 '
 inc("main",	"highscore.bas",			"")
 '
 inc("main",	"tAutoexplore.bas",			"")
-inc("main",	"tRadio.bas",				"")
 inc("main",	"tRover.bas",				"")
 inc("main",	"tMonstermove.bas",			"")
 inc("main",	"tAttack.bas",				"")
@@ -176,8 +177,7 @@ inc("main",	"tExplore.bas",				"")
 inc("main",	"tLanding.bas",				"")
 inc("main",	"tFuel.bas",				"")
 inc("main",	"tExplorespace.bas",		"")
-'
-inc("main",	"ProsIO.bas",				"")
+inc("main",	"tPalette.bas",				"")
 '
 inc("main",	"tMenu.bas",				"")
 inc("main",	"tSavegame.bas",			"")
@@ -209,7 +209,7 @@ function mainmenu() as string
         EndIf
         If a=2 Then Key=from_savegame("2")
         If a=3 Then high_score("")
-        If a=4 Then manual
+        If a=4 Then viewfile("readme.txt")
         If a=5 Then configuration
         If a=6 Then keybindings
 
