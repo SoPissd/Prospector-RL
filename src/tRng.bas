@@ -31,8 +31,7 @@ Type tRng
   declare property dValue as double
   declare function uRange(ByVal uLow As UInteger, ByVal uHigh As UInteger) as UInteger
 Private:
-  _w as UInteger
-  _z as UInteger
+  _seed as tRngSeed
   declare property isInvalidSeed as short
 End Type
 
@@ -46,28 +45,23 @@ End Destructor
 'on setting the seed we have to exclude 
 'a couple of values that would break the cycling
 Property tRng.isInvalidSeed as Short
-  return (_w=0) or (_w=&h464fffffu) _
-      or (_z=0) or (_z=&h9068ffffu)
+  return (_seed.w=0) or (_seed.w=&h464fffffu) _
+      or (_seed.z=0) or (_seed.z=&h9068ffffu)
 End Property
 
 Property tRng.Seed As tRngSeed
-	' uh oh .. does it have to be like this?
-	' can i not write this without a helper variable?
-	dim x as tRngSeed
-	x.w=_w
-	x.z=_z
-	Property= x
+	Property= _seed
 End Property
 
 'use the built-in crypto generator to get two
 'high quality numbers to initialize on invalid seeds
 Property tRNG.Seed(ByVal aSeed as tRngSeed)
-	_w=aSeed.w
-	_z=aSeed.z
+	_seed.w=aSeed.w
+	_seed.z=aSeed.z
 	while isInvalidSeed
 		randomize timer,5
-		_w= cuint(2^32*rnd())
-		_z= cuint(2^32*rnd())
+		_seed.w= cuint(2^32*rnd())
+		_seed.z= cuint(2^32*rnd())
 	wend
 End Property
 
@@ -75,26 +69,20 @@ End Property
 '"the multiply-with-carry method invented by George Marsaglia. It is computationally
 ' fast and has good (albeit not cryptographically strong) randomness properties"
 Property tRNG.uValue as uInteger
-	_z = 36969 * (_z and &hFFFF) + (_z shr 16)
-	_w = 18000 * (_w and &hFFFF) + (_w shr 16)
-	return (_z shl 16) + _w
+	_seed.z = 36969 * (_seed.z and &hFFFF) + (_seed.z shr 16)
+	_seed.w = 18000 * (_seed.w and &hFFFF) + (_seed.w shr 16)
+	return (_seed.z shl 16) + _seed.w
 End Property
 
 Property tRNG.dValue as double
-' uh oh ... why do i need the helper variables here? do i need both?
-	dim as uInteger x,y
-	x= uValue
-	y= &hFFFFFFFF '2^33-1
-	return x/y
+	return uValue/cast(uinteger, &hffffffff) '2^33-1
 End Property
 
 Function tRng.uRange(ByVal uLow As UInteger, ByVal uHigh As UInteger) as UInteger
 	if uLow>uHigh then
 		return uRange(uHigh,uLow)
 	else
-		' i dont quite understand the rounding here. 
-		' see the test graph, 0 and 10 never rise above the average!
-		return dValue * (uHigh - uLow) + uLow   
+		return fix(dValue * (uHigh - uLow +1 )) + uLow   
 	endif
 End Function
 
