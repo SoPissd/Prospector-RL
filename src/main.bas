@@ -110,17 +110,18 @@ inc("main",	"tPlanet.bas",				"")
 inc("main",	"tSpacemap.bas",			"")
 inc("main",	"tFleet.bas",				"")
 inc("main",	"tPeople.bas",				"")
-inc("main",	"items.bas",				"")
+
+inc("main",	"tModifyitem.bas",			"")
+inc("main",	"tMakeitem.bas",			"")
 
 inc("main",	"tCrew.bas",				"")
 inc("main",	"tParty.bas",				"")
 '
 inc("main",	"tRumors.bas",				"")
 '
-inc("main",	"tMap.bas",					"")
 inc("main",	"tWaypoints.bas",			"")
 inc("head",	"tPlanetmap.bas",			"")
-inc("main",	"planet.bas",				"")
+inc("main",	"tMakeplanet.bas",			"")
 inc("main",	"tPlanetmap.bas",			"")
 '
 inc("main",	"retirement.bas",			"")

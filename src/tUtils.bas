@@ -251,3 +251,22 @@ Function fuzzymatch( s As String, t As String ) As single
 End If
 End Function
 
+
+function roman(i as integer) as string
+    select case i
+    case 1
+        return "I"
+    case 2
+        return "II"
+    case 3
+        return "III"
+    case 4
+        return "IV"
+    case 5
+        return "V"
+    case 6
+        return "VI"
+    end select
+end function
+
+

@@ -99,6 +99,32 @@ function make_weapon(a as short) as _weap
     endif
 end function
 
+
+function count_and_make_weapons(st as short) as short
+    dim as short a,b,flag
+    
+    b=0
+    for a=1 to 20
+        if makew(a,st)<>0 then 
+            b+=1
+            wsinv(b)=make_weapon(makew(a,st))
+        endif
+    next
+    
+    do
+        flag=0
+        for a=1 to b-1
+            if (wsinv(a).made>wsinv(a+1).made) or (wsinv(a).made=wsinv(a+1).made and wsinv(a).dam>wsinv(a+1).dam) then
+                flag=1
+                swap wsinv(a),wsinv(a+1)
+            endif
+        next
+    loop until flag=0
+    
+    return b
+end function
+
+
 function make_weap_helptext(w as _weap) as string
     dim help as string
     help=help &"{15}"&w.desig &"{11} | | "
