@@ -1,5 +1,7 @@
 'tCompany
 
+Dim Shared companystats(5) As _company
+
 function company(st as short) as short
     DimDebugL(0)
     dim as short b,c,q,complete
@@ -433,4 +435,57 @@ function company(st as short) as short
     return 0
 end function
 
+
+private function unload_s(s as _ship,st as short) as _ship    
+    dim as short a,b,c,d,e,f,t
+    
+    for a=1 to 25
+        if s.cargo(a).x>1 then
+            if st<=2 then companystats(basis(st).company).profit+=1
+            t=s.cargo(a).x-1 'type of cargo
+            basis(st).inv(t).v=basis(st).inv(t).v+1  
+            s.cargo(a).x=1
+            'rlprint "sold " &t
+        endif
+    next
+    return s
+end function
+
+'
+
+private function unload_f(f as _fleet, st as short) as _fleet
+    dim as short a
+    for a=1 to 15
+        f.mem(a)=unload_s(f.mem(a),st)
+    next
+    return f
+end function
+
+
+public function merctrade(byref f as _fleet) as short
+    dim as short st,a
+    st=-1
+    for a=0 to 2
+        if f.c.x=basis(a).c.x and f.c.y=basis(a).c.y then st=a
+    next
+    if st<>-1 then
+        if show_NPCs then rlprint "fleet is trading at "&st+1 &"."
+        f=unload_f(f,st)
+        f=load_f(f,st)
+        f=refuel_f(f,st)
+    endif
+    return 0
+end function
+
+
+'
+function com_remove(attacker() as _ship, t as short,flag as short=0) as short
+    dim a as short
+    if flag=0 then attacker(t)=unload_s(attacker(t),10)
+    if attacker(a).bounty>0 then bountyquest(attacker(a).bounty).status=2
+    for a=t to 14 'This works since 15 is empty
+        attacker(a)=attacker(a+1)
+    next
+    return 0
+end function
 

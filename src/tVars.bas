@@ -1,5 +1,6 @@
 'tVars
 
+'Dim Key As String
 
 Dim Shared pixelsize As Integer
 
@@ -88,16 +89,7 @@ Dim Shared spectralshrt(10) As String
 Dim Shared x As Short
 Dim Shared y As Short
 
-'Dim As Short a,b,c,d,e,f,g
-'Dim As Single x1,y1,x2,y2
-'Dim As _cords p1,p2,p3
-'Dim dummy As _monster
-'Dim dummycords As _cords
-'Dim text As String
-'Dim As Short astcou,gascou,pl
-
 Dim Shared flag(20) As Short
-Dim Key As String
 Dim Shared zeit As Integer
 Dim Shared stationroll As Short
 Dim Shared companyname(5) As String
@@ -106,7 +98,6 @@ Dim Shared shares(2048) As _share
 Dim Shared lastshare As Short
 Dim Shared combatmap(60,20) As Byte
 
-Dim Shared companystats(5) As _company
 
 Dim Shared _last_title_pic As Byte=14
 

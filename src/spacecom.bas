@@ -1,3 +1,7 @@
+'spacecom
+
+declare function com_remove(attacker() as _ship, t as short,flag as short=0) as short
+
 function display_station(a as short) as short
     dim as short x,y,t
 
@@ -1777,17 +1781,6 @@ function com_damship(byref t as _ship, dam as short, col as short) as _ship
     if t.shieldside(side)<0 then t.shieldside(side)=0
     if text<>"" then rlprint text,col
     return t
-end function
-
-
-function com_remove(attacker() as _ship, t as short,flag as short=0) as short
-    dim a as short
-    if flag=0 then attacker(t)=unload_s(attacker(t),10)
-    if attacker(a).bounty>0 then bountyquest(attacker(a).bounty).status=2
-    for a=t to 14 'This works since 15 is empty
-        attacker(a)=attacker(a+1)
-    next
-    return 0
 end function
 
 

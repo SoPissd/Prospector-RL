@@ -1,8 +1,124 @@
 'tGame
 
-'Declare function cursor(target as _cords,map as short,osx as short,osy as short=0,radius as short=0) as string
+Private Function clear_gamestate() As Short
+    Dim As Short a,x,y
+    Dim d_crew As _crewmember
+    Dim d_planet As _planet
+    Dim d_ship As _ship
+    Dim d_map As _stars
+    Dim d_fleet As _fleet
+    Dim d_basis As _basis
+    Dim d_drifter As _driftingship
+    Dim d_item As _items
+    Dim d_share As _share
+    Dim d_company As _company
+    Dim d_portal As _transfer
+    set__color(15,0)
+    Draw String(_screenx/2-7*_fw1,_screeny/2),"Resetting game",,font2,custom,@_col
 
-Function start_new_game() As Short
+    player=d_ship
+
+    For a=0 To 255
+        crew(a)=d_crew
+    Next
+
+    For a=0 To laststar+wormhole
+        map(a)=d_map
+    Next
+    wormhole=8
+
+    For a=0 To max_maps
+        planets(a)=d_planet
+        For x=0 To 60
+            For y=0 To 20
+                planetmap(x,y,a)=0
+            Next
+        Next
+    Next
+    lastplanet=0
+
+    For a=0 To lastspecial
+        specialplanet(a)=0
+    Next
+
+    For a=0 To lastfleet
+        fleet(a)=d_fleet
+    Next
+    lastfleet=0
+
+    For a=1 To lastdrifting
+        drifting(a)=d_drifter
+    Next
+    lastdrifting=16
+
+
+    For a=0 To 25000
+        item(a)=d_item
+    Next
+    lastitem=-1
+
+
+    Wage=10
+    basis(0)=d_basis
+    basis(0).c.x=50
+    basis(0).c.y=20
+    basis(0).discovered=1
+    basis(0)=makecorp(0)
+
+    basis(1)=d_basis
+    basis(1).c.x=10
+    basis(1).c.y=25
+    basis(1).discovered=1
+    basis(1)=makecorp(0)
+
+    basis(2)=d_basis
+    basis(2).c.x=75
+    basis(2).c.y=10
+    basis(2).discovered=1
+    basis(2)=makecorp(0)
+
+    basis(3)=d_basis
+    basis(3).c.x=-1
+    basis(3).c.y=-1
+    basis(3).discovered=0
+
+    baseprice(1)=50
+    baseprice(2)=200
+    baseprice(3)=500
+    baseprice(4)=1000
+    baseprice(5)=2500
+
+    For a=0 To 5
+        avgprice(a)=0
+    Next
+    For a=0 To 4
+        companystats(a)=d_company
+    Next
+    For a=0 To 2047
+        shares(a)=d_share
+    Next
+    lastshare=0
+
+
+    For a=0 To 20
+        flag(a)=0
+    Next
+
+    For a=0 To lastflag
+        artflag(a)=0
+    Next
+
+
+    For a=0 To 255
+        portal(a)=d_portal
+    Next
+
+
+    Return 0
+End Function
+
+
+Private Function start_new_game() As Short
     DimDebugL(0)'1'127
     Dim _debug As Byte	' needs renaming/removing still    
 
@@ -262,7 +378,7 @@ End Function
 
 
 
-function keyin(byref allowed as string="" , blocked as short=0)as string
+Private function keyin(byref allowed as string="" , blocked as short=0)as string
     DimDebugL(0)'1
     dim key as string
     dim as string text
@@ -516,7 +632,7 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
 end function
 
 
-Function from_savegame(Key As String) As String
+Private Function from_savegame(Key As String) As String
     Dim As Short c
     c=count_savegames
     set__color(11,0)
@@ -545,7 +661,7 @@ End Function
 
 
 
-function mainmenu() as string
+Private function mainmenu() as string
 	dim a as integer
 	dim key as string
 	dim text as string
@@ -610,10 +726,70 @@ function mainmenu() as string
 End function
 
 
-function Prospector() as Integer
+function check_filestructure() as short
+	if chdir("data")=-1 then
+		set__color(c_yel,0)
+		print "Can't find folder 'data'. Try reinstalling the game."
+		sleep
+		end
+	else
+		chdir("..")
+	endif
+
+	if (assertpath("bones")=-1) _
+	or (assertpath("savegames")=-1) _
+	or (assertpath("summary")=-1) _
+	then
+		set__color(c_yel,0)
+		print "Can not create folder. Try reinstalling the game."
+		sleep
+		end
+	endif
+
+	if fileexists("savegames/empty.sav") _ 
+	and (file_size("savegames/empty.sav")>0) then return 0
+	' not there or was empty for some reason yet to be eradicated
+	player.desig="empty"
+	savegame()
+	return 0
+end function
+
+
+sub register()
+	dim f as integer
+	If Not fileexists("register") Then
+    	Cls
+	    If askyn("This is the first time you start prospector. Do you want to see the keybindings before you start?(Y/N)") Then
+    	   keybindings()
+	    EndIf
+	    Cls
+	    f=Freefile
+	    Open "register" For Output As f
+	    Print #f,"0"
+	    Print #f,""
+	    If Menu(bg_randompic,"Autonaming:/Standard/Babylon 5 Shipnames")=2 Then
+	        Print #f,"b5shipnames.txt"
+	    EndIf
+	    Close #f
+	    set__color(11,0)
+	EndIf
+end sub
+
+
+Public function Prospector() as Integer
+	check_filestructure()
+	load_config()
+	load_fonts()
+	If configflag(con_tiles)=0 Or configflag(con_sysmaptiles)=0 Then load_tiles()
+	load_keyset()
+	load_sounds()
+	load_palette()
+	register()
+	DbgScreeninfo
+	'DbgWeapdumpCSV   
+    setglobals
+    DbgTilesCSV   
 	Do
-	    setglobals
-	    DbgTilesCSV   
 	    set__color(11,0)
 		dim key as string
 	    key= mainmenu()

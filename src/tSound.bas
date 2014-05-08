@@ -5,10 +5,10 @@
 #IfDef _FBSOUND
 	#print (Sound through fbsound)
 	#Define _sound
-	#define dprint
+	'#define dprint
 	Dim Shared Sound(12) As Integer
 	#Include "fbsound.bi"
-	#undef dprint
+	'#undef dprint
 #Else
 	#IfDef _FMODSOUND
 		#print (Sound through fmodsound)

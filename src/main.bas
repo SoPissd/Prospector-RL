@@ -1,4 +1,5 @@
 'main.bas
+
 Dim as Short ErrorNr=0
 Dim as Short ErrorLn=0
 Dim as String ErrText=""
@@ -86,24 +87,24 @@ inc("main",	"tPrint.bas",				"")
 inc("main",	"tTextbox.bas",				"")
 inc("main",	"tConfig.bas",				"")
 inc("main",	"tInput.bas",				"")
+inc("main",	"tSound.bas",				"")
 '
 inc("main",	"tMath.bas",				"")
 inc("main",	"tTime.bas",				"")
 inc("main",	"tTexts.bas",				"")
-inc("main",	"tPng.bas",					"")
-'
-inc("main",	"tSound.bas",				"")
 inc("main",	"tCommandstring.bas",		"")
+inc("main",	"tPng.bas",					"")
 inc("main",	"tFonts.bas",				"")
 inc("main",	"tCards.bas",				"")
 inc("main",	"tTiles.bas",				"")
 inc("main",	"tTiledata.bas",			"")
 '
+'
+'
 inc("main",	"tEnergycounter.bas",		"")
 inc("main",	"tWeapon.bas",				"")
 inc("main",	"tShip.bas",				"")
 inc("main",	"tCustomship.bas",			"")
-'
 inc("main",	"tMonster.bas",				"")
 inc("main",	"tFaction.bas",				"")
 inc("main",	"tStars.bas",				"")
@@ -112,21 +113,17 @@ inc("main",	"tItems.bas",				"")
 inc("main",	"tItem.bas",				"")
 inc("main",	"tArtifacts.bas",			"")
 inc("main",	"tCivilisation.bas",		"")
-'
 inc("main",	"tPlanet.bas",				"")
 inc("main",	"tSpacemap.bas",			"")
 inc("main",	"tFleet.bas",				"")
 inc("main",	"tPeople.bas",				"")
-
 inc("main",	"tModifyitem.bas",			"")
 inc("main",	"tMakeitem.bas",			"")
-
 inc("main",	"tCrew.bas",				"")
 inc("main",	"tParty.bas",				"")
-'
 inc("main",	"tRumors.bas",				"")
-'
 inc("main",	"tWaypoints.bas",			"")
+'
 inc("head",	"tPlanetmap.bas",			"")
 inc("main",	"tMakeplanet.bas",			"")
 inc("main",	"tPlanetmap.bas",			"")
@@ -135,7 +132,6 @@ inc("main",	"retirement.bas",			"")
 inc("main",	"tPlayer.bas",				"")
 inc("main",	"tQuest.bas",				"")
 inc("main",	"tCredits.bas"	,			"")
-'
 inc("main",	"tMakemonster.bas",			"")
 inc("main",	"crew.bas",					"")
 inc("main",	"tCommunicate.bas",			"")
@@ -150,8 +146,6 @@ inc("main",	"tShops.bas",				"")
 inc("main",	"tSpecialPlanet.bas",		"")
 inc("main",	"tBones.bas",				"")
 inc("main",	"tWorldgen.bas",			"")
-'
-inc("main",	"tStockmarket.bas",			"")
 inc("main",	"tShipyard.bas",			"")
 inc("main",	"cargotrade.bas",			"")
 '
@@ -167,10 +161,10 @@ inc("main",	"tSpacecombat.bas",			"")
 inc("main",	"quests.bas",				"")
 inc("main",	"pirates.bas",				"")
 inc("main",	"tCompany.bas",				"")
+inc("main",	"tStockmarket.bas",			"")
 inc("main",	"tRadio.bas",				"")
 inc("main",	"tPlanetmenu.bas",			"")
 inc("main",	"tDialog.bas",				"")
-'
 inc("main",	"highscore.bas",			"")
 '
 inc("main",	"tAutoexplore.bas",			"")
@@ -185,8 +179,8 @@ inc("main",	"tExplore.bas",				"")
 inc("main",	"tLanding.bas",				"")
 inc("main",	"tFuel.bas",				"")
 inc("main",	"tExplorespace.bas",		"")
-inc("main",	"tPalette.bas",				"")
 '
+inc("main",	"tPalette.bas",				"")
 inc("main",	"tMenu.bas",				"")
 inc("main",	"tSavegame.bas",			"")
 inc("main",	"globals.bas",				"")

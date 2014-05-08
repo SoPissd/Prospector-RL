@@ -12,8 +12,8 @@
 
 	#ifdef __FB_WIN32__					'only under windows
 		#print Windows Debug mode
-		#define _DbgOptLoadMLD 1		'load the Memory Leak Detector
-		#define _DbgOptLoadWin 1		'load the Windows headers
+		#define _DbgOptLoadMLD 0		'load the Memory Leak Detector
+		#define _DbgOptLoadWin 0		'load the Windows headers
 	#else
 	#ifdef __FB_LINUX__					'only under linux
 		#print Linux Debug mode
@@ -89,8 +89,8 @@
 	#endif
 	#endif
 	#define _DbgOptLoadWin 0			'never in release			
-	#define _DbgOptLoadMLD 1		
-	#define _DbgPrintCSVs 0
+	#define _DbgOptLoadMLD 0		
+	#define _DbgPrintCSVs 1
 	'									'NOTICE!! these must be on their own line.  no IF x THEN DbgPrint()! 
 	#define DbgPrint(text)
 	#define DbgScreeninfo
@@ -100,7 +100,7 @@
 ' always
 
 #if _DbgOptLoadWin	<>1					'provide a substitute for debugbreak
-	#print DebugBreak inactive
+	'#print DebugBreak inactive
 	#define DebugBreak					'see.. nothing at all.  
 #else
 	#print DebugBreak enabled.

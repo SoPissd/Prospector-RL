@@ -3,7 +3,7 @@ Declare function give_quest(st as short) as short
 
 '
 
-function load_s(s as _ship, good as short, st as short) as short
+private function load_s(s as _ship, good as short, st as short) as short
     dim as short bay,result,a
     for a=1 to 25
         if s.cargo(a).x=1 and bay=0 then bay=a
@@ -18,32 +18,7 @@ function load_s(s as _ship, good as short, st as short) as short
     return result
 end function
 
-function unload_s(s as _ship,st as short) as _ship    
-    dim as short a,b,c,d,e,f,t
-    
-    for a=1 to 25
-        if s.cargo(a).x>1 then
-            if st<=2 then companystats(basis(st).company).profit+=1
-            t=s.cargo(a).x-1 'type of cargo
-            basis(st).inv(t).v=basis(st).inv(t).v+1  
-            s.cargo(a).x=1
-            'rlprint "sold " &t
-        endif
-    next
-    return s
-end function
-
-'
-
-function unload_f(f as _fleet, st as short) as _fleet
-    dim as short a
-    for a=1 to 15
-        f.mem(a)=unload_s(f.mem(a),st)
-    next
-    return f
-end function
-
-function load_f(f as _fleet, st as short) as _fleet
+private function load_f(f as _fleet, st as short) as _fleet
     dim as short curship,curgood,buylevel,vol,suc,a
     dim loaded(8) as short
     dim text as string
@@ -82,7 +57,7 @@ function load_f(f as _fleet, st as short) as _fleet
     return f
 end function
 
-function refuel_f(f as _fleet, st as short) as _fleet
+private function refuel_f(f as _fleet, st as short) as _fleet
     'Refuels a fleet at a space station
     dim as short demand,ships,a
     for a=0 to 15
@@ -96,26 +71,8 @@ function refuel_f(f as _fleet, st as short) as _fleet
     return f
 end function
 
-function merctrade(byref f as _fleet) as short
-    dim as short st,a
-    st=-1
-    for a=0 to 2
-        if f.c.x=basis(a).c.x and f.c.y=basis(a).c.y then st=a
-    next
-    if st<>-1 then
-        if show_NPCs then rlprint "fleet is trading at "&st+1 &"."
-        f=unload_f(f,st)
-        f=load_f(f,st)
-        f=refuel_f(f,st)
-    endif
-    return 0
-end function
-
-
-'
-
-    
-function pay_bonuses(st as short) as short
+   
+private function pay_bonuses(st as short) as short
     DimDebug(0)
     dim as uinteger a,tarval,c
     dim as single factor
@@ -168,7 +125,7 @@ function pay_bonuses(st as short) as short
 end function
 
     
-function drawroulettetable() as short
+private function drawroulettetable() as short
     dim as short x,y,z
     dim coltable(36) as short
     coltable(0)=10
@@ -240,7 +197,7 @@ end function
 
 
 
-function count_gas_giants_area(c as _cords,r as short) as short
+private function count_gas_giants_area(c as _cords,r as short) as short
     dim as short cc,i,j
     for i=0 to laststar
         if distance(c,map(i).c)<r then
@@ -260,7 +217,7 @@ end function
 
 
 
-function refuel(st as short,price as single) as short
+private function refuel(st as short,price as single) as short
     dim as single refueled,b,totammo
     player.fuel=fix(Player.fuel)
     refueled=player.fuelmax+player.fuelpod-player.fuel
@@ -299,7 +256,7 @@ function refuel(st as short,price as single) as short
     return 0
 end function
 
-function repair_hull(pricemod as single=1) as short
+private function repair_hull(pricemod as single=1) as short
     dim as short a,b,c,d,add
     
     display_ship
@@ -317,7 +274,7 @@ function repair_hull(pricemod as single=1) as short
     return 0
 end function
 
-function sick_bay(st as short=0,obe as short=0) as short
+private function sick_bay(st as short=0,obe as short=0) as short
     dim text as string
     dim lastaug as byte
     dim augn(20) as string
@@ -604,7 +561,7 @@ end function
 
 
 
-function pirateupgrade() as short
+private function pirateupgrade() as short
     dim a as short
     if player.h_maxcrew>=10 then
         player.h_maxcrew=player.h_maxcrew-5
@@ -621,7 +578,7 @@ function pirateupgrade() as short
     return 0
 end function
 
-function customize_item() as short
+private function customize_item() as short
     dim as integer a,b,i,i2,j,price,c,nr
     dim as string t
     dim as byte debug=0
@@ -725,7 +682,7 @@ end function
 
 
 
-function nextemptyc() as short
+private function nextemptyc() as short
 dim re as short
     dim a as short
     dim b as short
@@ -736,7 +693,7 @@ dim re as short
 end function
 
 
-function change_prices(st as short,etime as short) as short
+private function change_prices(st as short,etime as short) as short
     DimDebug(0)
     dim a as short
     dim b as short
@@ -849,7 +806,7 @@ function change_prices(st as short,etime as short) as short
     return 0
 end function
 
-function removeinvbytype( t as short, am as short) as short
+private function removeinvbytype( t as short, am as short) as short
     dim a as short
     dim b as short
     t=t+1

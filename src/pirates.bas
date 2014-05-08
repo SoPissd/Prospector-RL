@@ -1,5 +1,8 @@
 'pirates
 
+declare function merctrade(byref f as _fleet) as short
+declare function unload_f(f as _fleet, st as short) as _fleet
+
 function clearfleetlist() as short
     dim as short a,b,c
     do

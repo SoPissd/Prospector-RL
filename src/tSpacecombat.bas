@@ -1,5 +1,7 @@
 'tSpacecombat
 
+declare function trading(st as short) as short
+
 function spacecombat(byref atts as _fleet,ter as short) as short
     dim attacker(16) as _ship
     'dim direction(15) as byte
