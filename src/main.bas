@@ -19,6 +19,27 @@ Dim as String ErrText=""
 inc("main",	"debug.bas",				"")
 inc("main",	"version.bas",				"")
 '
+' sound support
+#IfDef _FBSOUND
+	#print (Sound through fbsound)
+	#Define _sound
+	#define dprint
+	Dim Shared Sound(12) As Integer
+	#Include "fbsound.bi"
+	#undef dprint
+#Else
+	#IfDef _FMODSOUND
+		#print (Sound through fmodsound)
+		#Define _sound
+		Dim Shared Sound(12) As Integer Ptr
+		Dim Shared As Integer fmod_error
+		#IncLib "fmod.dll"
+		#Include "fmod.bi"
+	#Else
+		#print (No sound)
+	#EndIf
+#EndIf
+'
 #if _DbgOptLoadWin = 1			
 	#print loading windows headers			
 	inc("main",	"windows.bi",			windows header mandatory for debugbreak & console)
@@ -100,7 +121,6 @@ inc("main",	"tTiles.bas",				"")
 inc("main",	"tTiledata.bas",			"")
 '
 '
-'
 inc("main",	"tEnergycounter.bas",		"")
 inc("main",	"tWeapon.bas",				"")
 inc("main",	"tShip.bas",				"")
@@ -139,7 +159,6 @@ inc("main",	"tAwayteam.bas",			"")
 inc("main",	"tCargo.bas",				"")
 '
 inc("main",	"debug2.bas",				"")
-'
 inc("main",	"space.bas",				"")
 inc("main",	"tTrading.bas",				"")
 inc("main",	"tShops.bas",				"")
@@ -187,7 +206,28 @@ inc("main",	"globals.bas",				"")
 inc("main",	"tGameInit.bas",			"")
 inc("main",	"tGame.bas",				"")
 '
-ErrorNr= Prospector()
+#undef main
+function main() as Short
+	check_filestructure()
+	load_config()
+	load_fonts()
+	If configflag(con_tiles)=0 Or configflag(con_sysmaptiles)=0 Then load_tiles()
+	load_keyset()
+	load_sounds()
+	load_palette()
+	DbgScreeninfo
+	register()
+	'DbgWeapdumpCSV   
+    setglobals
+    DbgTilesCSV
+    return 0   
+End Function
+
+if main()=0 then
+	ErrorNr= Prospector()
+else
+	ErrorNr= -1 	
+endif
 goto done
 '
 

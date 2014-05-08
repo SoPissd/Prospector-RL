@@ -92,31 +92,33 @@ function file_size(filename as string) as integer
 	return -1
 end function
 
-function count_lines(file as string) as short
+function count_lines(filename as string) as short
     dim as short f,n
     dim dummy as string
     f=freefile
-    open file for input as #f
-    do
-        line input #f,dummy
-        if len(dummy)>0 then n+=1
-    loop until eof(f)
-    close #f
+	if Open(filename, For input, As #f)=0 then
+		do
+        	line input #f,dummy
+	        if len(dummy)>0 then n+=1
+	    loop until eof(f)
+	    close #f
+	endif
     return n
 end function
+
 
 function open_file(filename as string) as short
     dim f as short
     f=freefile
     if fileexists(filename) then
-        open filename for input as #f
-        return f
-    else
-        color rgb(255,255,0)
-        print "Couldn't find "&filename &"."
-        sleep
-        end
-    endif
+		if Open(filename, For input, As #f)=0 then
+        	return f
+		endif
+	endif
+    color rgb(255,255,0)
+    print "Couldn't find "&filename &"."
+    'sleep
+    return -1
 end function
 
 

@@ -54,6 +54,8 @@ Function _TilesCSV() as Short
 	return 0
 End Function
 
+declare function change_prices(st as short,etime as short) as short
+
 Function _PricesCSV() as Short
 	dim as Short f,a,b
 	dim as string Key

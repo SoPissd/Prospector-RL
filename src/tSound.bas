@@ -2,30 +2,6 @@
 
 ' sound support
 
-#IfDef _FBSOUND
-	#print (Sound through fbsound)
-	#Define _sound
-	'#define dprint
-	Dim Shared Sound(12) As Integer
-	#Include "fbsound.bi"
-	'#undef dprint
-#Else
-	#IfDef _FMODSOUND
-		#print (Sound through fmodsound)
-		#Define _sound
-		Dim Shared Sound(12) As Integer Ptr
-		Dim Shared As Integer fmod_error
-		#IncLib "fmod.dll"
-		#Include "fmod.bi"
-	#Else
-		#print (No sound)
-	#EndIf
-#EndIf
-
-'
-
-' sound support
-
 function set_volume(volume as Integer) as short
 	#ifdef _FMODSOUND
 	   Dim iLvl As Short
@@ -75,6 +51,7 @@ function load_sounds() as short
 		   Next
 	   else	   	
 			print "Error " &FSOUND_geterror() &" initializing FMODsound!"
+			LogWarning("Error " &FSOUND_geterror() &" initializing FMODsound!")
 			sleep 1500
 	   EndIf
     #endif
@@ -91,6 +68,7 @@ function load_sounds() as short
 			Print
 		else
 			print "Error initializing FBsound!"
+			LogWarning("Error initializing FBsound!")
 			sleep 1500
 		endif
 	#EndIf

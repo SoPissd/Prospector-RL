@@ -666,8 +666,9 @@ Private function mainmenu() as string
 	dim key as string
 	dim text as string
     Do        
-        a=Menu(bg_title,__VERSION__ &"/Start new game/Load game/Highscore/Manual/Configuration/Keybindings/Quit",,40,_lines-10*_fh2/_fh1)
-        If a=1 Then
+		do while inkey<>"": loop
+        a=Menu(bg_title,__VERSION__ &"/Load game/Start new game/Highscore/Manual/Configuration/Keybindings/Quit",,40,_lines-10*_fh2/_fh1)
+        If a=2 Then
             Key="1"
             If count_savegames()>20 Then
                 Key=""
@@ -681,7 +682,7 @@ Private function mainmenu() as string
                 EndIf
             EndIf
         EndIf
-        If a=2 Then Key=from_savegame("2")
+        If a=1 Then Key=from_savegame("2")
         If a=3 Then high_score("")
         If a=4 Then viewfile("readme.txt")
         If a=5 Then configuration
@@ -777,18 +778,6 @@ end sub
 
 
 Public function Prospector() as Integer
-	check_filestructure()
-	load_config()
-	load_fonts()
-	If configflag(con_tiles)=0 Or configflag(con_sysmaptiles)=0 Then load_tiles()
-	load_keyset()
-	load_sounds()
-	load_palette()
-	register()
-	DbgScreeninfo
-	'DbgWeapdumpCSV   
-    setglobals
-    DbgTilesCSV   
 	Do
 	    set__color(11,0)
 		dim key as string

@@ -1,7 +1,7 @@
 
-#Define NULL 0
-#Define FALSE 0
-#Define TRUE (Not FALSE)
+'#Define NULL 0
+'#Define FALSE 0
+'#Define TRUE (Not FALSE)
 
 Type _visit
     s As Short

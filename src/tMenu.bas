@@ -153,6 +153,7 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
         else
             rlprint ""
         endif
+		do while inkey<>"": loop
         if player.dead=0 then key=keyin(,96+c)
         
         if hfl=1 then 

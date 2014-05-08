@@ -2096,5 +2096,3 @@ function gen_fname(fname() as string) as short
     fname(8)="space station"
     return 0
 end function
-
-
