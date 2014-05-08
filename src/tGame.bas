@@ -544,3 +544,98 @@ Function from_savegame(Key As String) As String
 End Function
 
 
+
+function mainmenu() as string
+	dim a as integer
+	dim key as string
+	dim text as string
+    Do        
+        a=Menu(bg_title,__VERSION__ &"/Start new game/Load game/Highscore/Manual/Configuration/Keybindings/Quit",,40,_lines-10*_fh2/_fh1)
+        If a=1 Then
+            Key="1"
+            If count_savegames()>20 Then
+                Key=""
+                rlprint "Too many Savegames, choose one to overwrite",14
+                text=getfilename()
+                If text<>"" Then
+                    If askyn("Are you sure you want to delete "&text &"(y/n)") Then
+                        Kill("savegames/"&text)
+                        Key="1"
+                    EndIf
+                EndIf
+            EndIf
+        EndIf
+        If a=2 Then Key=from_savegame("2")
+        If a=3 Then high_score("")
+        If a=4 Then viewfile("readme.txt")
+        If a=5 Then configuration
+        If a=6 Then keybindings
+
+'		if key="8" then
+'			DbgItemsCSV()
+'		endif
+'		dodialog(1,dummy,0)
+'		for b=1 to 1000
+'           make_spacemap
+'           clear_gamestate
+'		next
+
+#if __FB_DEBUG__
+        If Key="t" Then
+            Screenset 1,1
+            BLoad "graphics\spacestations.bmp"
+            a=getnumber(0,10000,0)
+            Put(30,0),gtiles(gt_no(a)),Pset
+            no_key=keyin
+            Sleep
+        EndIf
+        If Key="8" Then
+          	DbgMonsterCSV
+           	DbgTilesCSV
+        End If
+        If Key="9" Then
+            Cls
+            set__color(15,0)
+            For a=1 To 10
+                reroll_shops
+                print a
+            Next
+        EndIf
+        If a=8 Then
+			DbgPricesCSV
+        EndIf
+#endif
+    Loop Until Key="1" Or Key="2" Or a=7
+    return key
+End function
+
+
+function run() as Integer
+	Do
+	    setglobals
+	    DbgTilesCSV   
+	    set__color(11,0)
+		dim key as string
+	    key= mainmenu()
+	    Cls
+	    If Key="1" Then start_new_game
+	    If Key="1" Or Key="2" Or Key="a" Or Key="b" And player.dead=0 Then
+	        Key=""
+	        gamerunning=1
+	        display_stars(1)
+	        display_ship(1)
+	        explore_space
+	    EndIf
+	    If Key="7" Or Key="g" Then 
+	    	return 0
+	    EndIf
+	    If player.dead>0 Then death_message()
+	    set__color( 15,0)
+    	If configflag(con_restart)=0 Then
+	        load_game("empty.sav")
+	        clear_gamestate
+	        gamerunning=0
+	    EndIf
+	Loop Until configflag(con_restart)=1
+	return 0
+end function

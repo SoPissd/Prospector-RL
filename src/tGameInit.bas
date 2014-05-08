@@ -29,22 +29,6 @@ function check_filestructure() as short
 end function
 
 
-
-'DebugBreak
-
-check_filestructure()
-load_config()
-load_fonts()
-If configflag(con_tiles)=0 Or configflag(con_sysmaptiles)=0 Then load_tiles()
-load_keyset()
-load_sounds()
-load_palette()
-
-DbgScreeninfo
-
-'sleep
-
-
 sub register()
 	dim f as integer
 	If Not fileexists("register") Then
@@ -65,6 +49,15 @@ sub register()
 	EndIf
 end sub
 
+
+check_filestructure()
+load_config()
+load_fonts()
+If configflag(con_tiles)=0 Or configflag(con_sysmaptiles)=0 Then load_tiles()
+load_keyset()
+load_sounds()
+load_palette()
 register()
 
-DbgWeapdumpCSV   
+DbgScreeninfo
+'DbgWeapdumpCSV   
