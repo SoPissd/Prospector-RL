@@ -727,6 +727,128 @@ function setglobals() as short
     next
     
     player.desig=""
+    gamedesig=player.desig
     
     return 0
 end function
+
+
+
+
+Function clear_gamestate() As Short
+    Dim As Short a,x,y
+    Dim d_crew As _crewmember
+    Dim d_planet As _planet
+    Dim d_ship As _ship
+    Dim d_map As _stars
+    Dim d_fleet As _fleet
+    Dim d_basis As _basis
+    Dim d_drifter As _driftingship
+    Dim d_item As _items
+    Dim d_share As _share
+    Dim d_company As _company
+    Dim d_portal As _transfer
+    set__color(15,0)
+    Draw String(_screenx/2-7*_fw1,_screeny/2),"Resetting game",,font2,custom,@_col
+
+    player=d_ship
+
+    For a=0 To 255
+        crew(a)=d_crew
+    Next
+
+    For a=0 To laststar+wormhole
+        map(a)=d_map
+    Next
+    wormhole=8
+
+    For a=0 To max_maps
+        planets(a)=d_planet
+        For x=0 To 60
+            For y=0 To 20
+                planetmap(x,y,a)=0
+            Next
+        Next
+    Next
+    lastplanet=0
+
+    For a=0 To lastspecial
+        specialplanet(a)=0
+    Next
+
+    For a=0 To lastfleet
+        fleet(a)=d_fleet
+    Next
+    lastfleet=0
+
+    For a=1 To lastdrifting
+        drifting(a)=d_drifter
+    Next
+    lastdrifting=16
+
+
+    For a=0 To 25000
+        item(a)=d_item
+    Next
+    lastitem=-1
+
+
+    Wage=10
+    basis(0)=d_basis
+    basis(0).c.x=50
+    basis(0).c.y=20
+    basis(0).discovered=1
+    basis(0)=makecorp(0)
+
+    basis(1)=d_basis
+    basis(1).c.x=10
+    basis(1).c.y=25
+    basis(1).discovered=1
+    basis(1)=makecorp(0)
+
+    basis(2)=d_basis
+    basis(2).c.x=75
+    basis(2).c.y=10
+    basis(2).discovered=1
+    basis(2)=makecorp(0)
+
+    basis(3)=d_basis
+    basis(3).c.x=-1
+    basis(3).c.y=-1
+    basis(3).discovered=0
+
+    baseprice(1)=50
+    baseprice(2)=200
+    baseprice(3)=500
+    baseprice(4)=1000
+    baseprice(5)=2500
+
+    For a=0 To 5
+        avgprice(a)=0
+    Next
+    For a=0 To 4
+        companystats(a)=d_company
+    Next
+    For a=0 To 2047
+        shares(a)=d_share
+    Next
+    lastshare=0
+
+
+    For a=0 To 20
+        flag(a)=0
+    Next
+
+    For a=0 To lastflag
+        artflag(a)=0
+    Next
+
+
+    For a=0 To 255
+        portal(a)=d_portal
+    Next
+
+
+    Return 0
+End Function
+

@@ -1,3 +1,431 @@
+    'find best hand
+    
+function poker_eval(cardin() as integer, acehigh as short,knowall as short) as _handrank
+    dim r as _handrank
+    dim card(5) as integer
+    dim cc(5) as _cardcount
+    dim as short i,flag,flush,strait,countpairs,j,start
+
+    'take card 1, count how often others are there. 
+    'Aces are wild would solve the high/lo problem (Just or=1 to every test)
+    
+    for i=1 to 5
+        card(i)=cardin(i)
+    next
+    
+    if acehigh=1 then
+        for i=1 to 5
+            if pcards.crank(card(i))=1 then pcards.crank(card(i))=14
+        next
+    else
+        for i=1 to 5
+            if pcards.crank(card(i))=14 then pcards.crank(card(i))=1
+        next
+    endif
+    
+    if knowall=1 then 
+        start=1
+    else
+        start=2
+    endif
+    do
+        flag=0
+        for i=start to 4
+            if pcards.crank(card(i))>pcards.crank(card(i+1)) then
+                swap  card(i) , card(i+1)
+                flag=1
+            endif
+        next
+        
+    loop until flag=0
+    r.high(1)=pcards.crank(card(5))
+    'Check if flush
+    flush=1
+    for i=start to 4
+        if pcards.csuit(card(i))<>pcards.csuit(card(i+1)) then flush=0
+    next
+    strait=1
+    for i=start to 4
+        if pcards.crank(card(i))<>pcards.crank(card(i+1))-1 then strait=0
+    next
+
+    if strait=1 and flush=1 then r.rank=9
+    if r.rank<>0 then return r
+    
+    for i=start to 5
+        if card(i)<>0 then
+            cc(i).rank=pcards.crank(card(i))
+            cc(i).no=1
+            for j=i+1 to 5
+                if pcards.crank(card(i))=pcards.crank(card(j)) and card(j)<>0 then 
+                    cc(i).no+=1
+                    card(j)=0
+                endif
+            next
+            card(i)=0
+        endif
+    next
+    
+    
+    do
+        flag=0
+        for i=1 to 4
+            if cc(i).no<cc(i+1).no then 
+                swap cc(i),cc(i+1)
+                flag=1
+            endif
+            
+        next
+    loop until flag=0
+    do
+        flag=0
+        for i=1 to 4
+            if cc(i).no=cc(i+1).no and cc(i).rank<cc(i+1).rank then
+                swap cc(i),cc(i+1)
+                flag=1
+            endif
+        next
+    loop until flag=0
+    
+    for i=1 to 5
+        r.high(i)=cc(i).rank
+    next
+    
+    'Check four of a kind
+    if cc(1).no=4 then
+        r.rank=8
+        
+        return r
+    endif
+    
+    if cc(1).no=3 and cc(2).no=2 then
+        r.rank=7
+        return r
+    endif
+    
+    'Flush
+    if flush=1 then 
+        r.rank=6
+        return r
+    endif
+    
+    'Strait
+    if strait=1 then
+        r.rank=5
+        return r
+    endif
+    
+    if cc(1).no=3 then
+        r.rank=4
+        return r
+    endif
+    
+    if cc(1).no=2 and cc(2).no=2 then
+        r.rank=3
+        return r
+    endif
+    
+    if cc(1).no=2 then
+        r.rank=2
+        return r
+    endif
+    
+    r.rank=1
+    
+    return r
+    
+end function
+
+
+function better_hand(h1 as _handrank,h2 as _handrank) as short
+    dim i as short
+    if h1.rank>h2.rank then return 1
+    if h1.rank<h2.rank then return 2
+    for i=1 to 5
+        if h1.high(i)>h2.high(i) then return 1
+        if h1.high(i)<h2.high(i) then return 2
+    next
+    return 0
+end function
+
+
+function ace_highlo_eval(c() as integer,knowall as short) as _handrank
+    dim as _handrank h1,h2
+    h1=poker_eval(c(),0,knowall)
+    h2=poker_eval(c(),1,knowall)
+    DbgPrint(h1.rank ;":";h2.rank)
+    if better_hand(h1,h2)=1 then return h1
+    return h2
+end function
+    
+
+function draw_poker_table(p() as _pokerplayer,reveal as short=0,winner as short=0,r as _pokerrules) as short
+    DimDebug(0)'22
+    dim as short x,y,i,j    
+    dim as string handname(9),playerinfo,tacticname(9)
+    
+    handname(1)="high card"
+    handname(2)="pair"
+    handname(3)="two pair"
+    handname(4)="three of a kind"
+    handname(5)="strait"
+    handname(6)="flush"
+    handname(7)="full house"
+    handname(8)="four of a kind"
+    handname(9)="strait flush"
+    
+    tacticname(1)="Coward"
+    tacticname(2)="Coward"
+    tacticname(3)="Extremly cautious"
+    tacticname(4)="Very cautious"
+    tacticname(5)="Cautious"
+    tacticname(6)="Neutral"
+    tacticname(7)="Bold"
+    tacticname(8)="Very bold"
+    tacticname(9)="Extremly bold"
+    
+    display_ship(0)
+    p(4).win=ace_highlo_eval(p(4).card(),1)
+    for i=1 to 4
+        set__color(11,0)
+        if p(i).in=1 then
+            playerinfo=p(i).name &" (In Pot: "& credits(p(i).pot*r.bet) &" Cr.)"
+            if crew(1).talents(5)>0 and i<4 then playerinfo &= " (Tactic: "& tacticname(p(i).risk) &", "& p(i).money &" Cr.)"
+#if __FB_DEBUG__
+            if debug<>22 then draw string (x,y+pcards.cardheight),playerinfo,,font2,custom,@_col
+#endif
+            if p(i).fold=0 then
+                for j=1 to 5
+                    if p(i).card(j)>0 then 
+                        if (i=4 or j>r.closed or reveal=1) then
+                            pcards.drawCardfront x,y,p(i).card(j)
+                        else
+                            if p(i).card(j) mod 2=0 then
+                                pcards.drawCardback x,y,1
+                            else
+                                pcards.drawCardback x,y,2
+                            endif
+                        endif
+                        set__color(15,0)
+#if __FB_DEBUG__
+                        if debug=22 then draw string(x,y+pcards.cardheight),pcards.csuit(p(i).card(j))&":"&p(i).card(j),,font2,custom,@_col
+#endif
+                        x+=pcards.cardwidth
+                    endif
+                next
+            else
+                for j=1 to 5
+                    if p(i).card(j) mod 2=0 then
+                        pcards.drawCardback x,y,1
+                    else
+                        pcards.drawCardback x,y,2
+                    endif
+                    x+=pcards.cardwidth/2
+                next
+            endif
+            
+            if (reveal=1 and p(i).fold=0) or i=4 then 
+                set__color(15,0)
+                if i=winner then set__color(c_gre,0)
+                if p(i).fold=0 then 
+                    draw string (x,y+pcards.cardheight/2-_fh2/2),space(18),,font2,custom,@_col
+                    draw string (x,y+pcards.cardheight/2-_fh2/2)," ("& handname(p(i).win.rank) &")",,font2,custom,@_col
+                endif
+            endif
+            x=0
+            y=y+pcards.cardheight+_fh2+2
+        endif
+    next
+    set__color(11,0)
+    return 0
+end function
+
+
+function poker_next(i as short,p() as _pokerplayer) as short
+    dim as short fold
+    do
+        i+=1
+        if i>4 then i=1
+        if p(i).fold=1 then fold+=1
+    loop until p(i).in=1 or fold=4
+    if fold=4 then return -1
+    return i
+end function
+
+
+
+function sort_cards(card() as integer,knowall as short=0) as short
+    dim as short i,flag,start
+    if knowall=0 then
+        start=2
+    else
+        start=1
+    endif
+    do
+	    flag=0
+	    for i=start to 4
+	        if pcards.crank(card(i))>pcards.crank(card(i+1)) then
+	            swap  card(i) , card(i+1)
+	            flag=1
+	        endif
+	    next
+    	DbgPrint(".";)
+    loop until flag=0
+    return 0
+end function
+
+function card_shuffle(card() as integer) as short
+    dim as short i,j,last,first
+    last=ubound(card)
+    first=1
+    for i=last to first step -1
+        j=rnd_range(first,i)
+        swap card(i),card(j)
+    next
+    return 0
+end function
+
+
+function player_eval(p() as _pokerplayer,i as short,rules as _pokerrules) as short
+    dim as _handrank ph(4)
+    dim as short pli(4),j,knowall,flag,pir,stillin,price
+
+    for j=1 to 4
+        if p(j).fold=0 then stillin+=1
+        pli(j)=j
+        p(j).win=ace_highlo_eval(p(j).card(),1)
+    next
+    p(i).bet=0
+    if p(i).fold=0 and p(i).win.rank^2/3*p(i).risk>p(i).pot*2 then p(i).bet+=1 'see
+    if p(i).fold=0 and p(i).win.rank^2/3*p(i).risk>p(i).pot*3 then p(i).bet+=1 'raise
+    if p(i).win.rank=1 then p(i).bet=0 'Never with just high card
+    if p(i).money<(p(i).pot+p(i).bet)*rules.bet and p(i).bet>0 then
+        'Sell has, else fold
+        rlprint p(i).name &" is out of money.",c_yel
+        if p(i).qg>0 then
+            if questguy(p(i).qg).has.given=0 and questguy(p(i).qg).has.it.desig<>"" then 'He is a qg and has not given up his has yet
+                price=(p(i).pot+p(i).bet)*rules.bet-p(i).money
+                if askyn(p(i).name &" offers to sell you "&add_a_or_an(questguy(p(i).qg).has.it.desig,0) &" for " &price &" Cr. (y/n)") then
+                    if paystuff(price) then 
+                        p(i).money+=price
+                        questguy(p(i).qg).friendly(0)+=1
+                        questguy(p(i).qg).money+=price
+                        questguy(p(i).qg).has.given+=1
+                        placeitem(questguy(p(i).qg).has.it,,,,,-1)
+                    else
+                        questguy(p(i).qg).friendly(0)-=1
+                        p(i).bet=0
+                    endif
+                else
+                    p(i).bet=0
+                endif
+            else
+                p(i).bet=0
+            endif
+        else
+            p(i).bet=0
+        endif
+    endif
+    return 0
+end function
+
+
+function highest_pot(p() as _pokerplayer) as short
+    dim as short i,h
+    for i=1 to 4
+        if p(i).fold=0 then
+            if p(i).pot>h then h=p(i).pot
+        endif
+    next
+    return h
+end function
+
+
+function poker_winner(p() as _pokerplayer) as short
+    'Check if 3 have folded
+    DimDebug(0)
+    dim as short i,cfold,winner,cbet,stillin(4),cin,flag,tieat,nop
+    dim victory as _handrank
+
+    for i=1 to 4
+        if p(i).name<>"" then nop+=1
+    next
+    for i=1 to nop
+        if p(i).fold=1 then 
+            cfold+=1
+        else
+            cin+=1
+            stillin(cin)=i
+        endif
+    next
+    
+    if cfold=nop-1 then return stillin(1)
+    'Check if betting over
+    for i=2 to cin
+        if p(stillin(1)).pot<>p(stillin(i)).pot then return 0
+    next
+    
+#if __FB_DEBUG__
+    if debug=1 then
+        for i=1 to cin
+            draw string(500,i*12),stillin(i) &":"&p(stillin(i)).win.rank &":"& p(stillin(i)).win.high(1)
+        next
+    endif
+#endif
+    
+    
+    do
+        DbgPrint("Entering loop")
+#if __FB_DEBUG__
+        if debug=1 then
+            for i=1 to cin
+                draw string(500,i*12),stillin(i) &":"&p(stillin(i)).win.rank &":"& p(stillin(i)).win.high(1)
+            next
+            sleep
+        endif
+#endif
+        
+        flag=0
+        for i=1 to cin-1
+            select case better_hand(p(stillin(i)).win,p(stillin(i+1)).win) 
+                case 2
+                    DbgPrint("swapping pos "&i)
+                    flag=1
+                    'swap p(stillin(i)),p(stillin(i+1))
+                    swap stillin(i),stillin(i+1)
+                    exit for
+                case 0
+                    tieat=i
+            end select
+        next
+        
+        if flag=0 then 
+			DbgPrint("Leaving loop")
+        EndIf
+    loop until flag=0
+    
+    for i=1 to cin
+        p(stillin(i)).rank=i
+    next
+
+#if __FB_DEBUG__
+    if debug=1 then
+        for i=1 to cin
+            draw string(500,200+i*12),stillin(i) &":"&p(stillin(i)).win.rank &":"& p(stillin(i)).win.high(1)
+        next
+    endif
+#endif
+    
+    if tieat=0 or tieat>1 then
+        return stillin(1)
+    else
+        return -1
+    endif
+    return 0
+    'Tie....
+end function
+
+    
 function play_poker(st as short) as short
     dim card(52) as integer
     dim as short i,k,x,y,dealer,curcard,j,l,ci,pli,winner,move,speedup,pot,folded
@@ -234,87 +662,11 @@ function play_poker(st as short) as short
 end function
 
 
-function better_hand(h1 as _handrank,h2 as _handrank) as short
-    dim i as short
-    if h1.rank>h2.rank then return 1
-    if h1.rank<h2.rank then return 2
-    for i=1 to 5
-        if h1.high(i)>h2.high(i) then return 1
-        if h1.high(i)<h2.high(i) then return 2
-    next
-    return 0
-end function
 
-
-
-function player_eval(p() as _pokerplayer,i as short,rules as _pokerrules) as short
-    dim as _handrank ph(4)
-    dim as short pli(4),j,knowall,flag,pir,stillin,price
-
-    for j=1 to 4
-        if p(j).fold=0 then stillin+=1
-        pli(j)=j
-        p(j).win=ace_highlo_eval(p(j).card(),1)
-    next
-    p(i).bet=0
-    if p(i).fold=0 and p(i).win.rank^2/3*p(i).risk>p(i).pot*2 then p(i).bet+=1 'see
-    if p(i).fold=0 and p(i).win.rank^2/3*p(i).risk>p(i).pot*3 then p(i).bet+=1 'raise
-    if p(i).win.rank=1 then p(i).bet=0 'Never with just high card
-    if p(i).money<(p(i).pot+p(i).bet)*rules.bet and p(i).bet>0 then
-        'Sell has, else fold
-        rlprint p(i).name &" is out of money.",c_yel
-        if p(i).qg>0 then
-            if questguy(p(i).qg).has.given=0 and questguy(p(i).qg).has.it.desig<>"" then 'He is a qg and has not given up his has yet
-                price=(p(i).pot+p(i).bet)*rules.bet-p(i).money
-                if askyn(p(i).name &" offers to sell you "&add_a_or_an(questguy(p(i).qg).has.it.desig,0) &" for " &price &" Cr. (y/n)") then
-                    if paystuff(price) then 
-                        p(i).money+=price
-                        questguy(p(i).qg).friendly(0)+=1
-                        questguy(p(i).qg).money+=price
-                        questguy(p(i).qg).has.given+=1
-                        placeitem(questguy(p(i).qg).has.it,,,,,-1)
-                    else
-                        questguy(p(i).qg).friendly(0)-=1
-                        p(i).bet=0
-                    endif
-                else
-                    p(i).bet=0
-                endif
-            else
-                p(i).bet=0
-            endif
-        else
-            p(i).bet=0
-        endif
-    endif
-    return 0
-end function
-
-function ace_highlo_eval(c() as integer,knowall as short) as _handrank
-    dim as _handrank h1,h2
-    h1=poker_eval(c(),0,knowall)
-    h2=poker_eval(c(),1,knowall)
-    DbgPrint(h1.rank ;":";h2.rank)
-    if better_hand(h1,h2)=1 then return h1
-    return h2
-end function
-    
 function _pokerplayer.firstempty() as short
     ci+=1
     return ci
 end function
-
-function card_shuffle(card() as integer) as short
-    dim as short i,j,last,first
-    last=ubound(card)
-    first=1
-    for i=last to first step -1
-        j=rnd_range(first,i)
-        swap card(i),card(j)
-    next
-    return 0
-end function
-
 
 function swap_card(cardin() as integer) as short
     dim as short c,i,j,low,l
@@ -354,350 +706,6 @@ function swap_card(cardin() as integer) as short
 end function
 
 
-function sort_cards(card() as integer,knowall as short=0) as short
-    dim as short i,flag,start
-    if knowall=0 then
-        start=2
-    else
-        start=1
-    endif
-    do
-	    flag=0
-	    for i=start to 4
-	        if pcards.crank(card(i))>pcards.crank(card(i+1)) then
-	            swap  card(i) , card(i+1)
-	            flag=1
-	        endif
-	    next
-    	DbgPrint(".";)
-    loop until flag=0
-    return 0
-end function
-
-function poker_eval(cardin() as integer, acehigh as short,knowall as short) as _handrank
-    dim r as _handrank
-    dim card(5) as integer
-    dim cc(5) as _cardcount
-    dim as short i,flag,flush,strait,countpairs,j,start
-
-    'take card 1, count how often others are there. 
-    'Aces are wild would solve the high/lo problem (Just or=1 to every test)
-    
-    for i=1 to 5
-        card(i)=cardin(i)
-    next
-    
-    if acehigh=1 then
-        for i=1 to 5
-            if pcards.crank(card(i))=1 then pcards.crank(card(i))=14
-        next
-    else
-        for i=1 to 5
-            if pcards.crank(card(i))=14 then pcards.crank(card(i))=1
-        next
-    endif
-    
-    if knowall=1 then 
-        start=1
-    else
-        start=2
-    endif
-    do
-        flag=0
-        for i=start to 4
-            if pcards.crank(card(i))>pcards.crank(card(i+1)) then
-                swap  card(i) , card(i+1)
-                flag=1
-            endif
-        next
-        
-    loop until flag=0
-    r.high(1)=pcards.crank(card(5))
-    'Check if flush
-    flush=1
-    for i=start to 4
-        if pcards.csuit(card(i))<>pcards.csuit(card(i+1)) then flush=0
-    next
-    strait=1
-    for i=start to 4
-        if pcards.crank(card(i))<>pcards.crank(card(i+1))-1 then strait=0
-    next
-
-    if strait=1 and flush=1 then r.rank=9
-    if r.rank<>0 then return r
-    
-    for i=start to 5
-        if card(i)<>0 then
-            cc(i).rank=pcards.crank(card(i))
-            cc(i).no=1
-            for j=i+1 to 5
-                if pcards.crank(card(i))=pcards.crank(card(j)) and card(j)<>0 then 
-                    cc(i).no+=1
-                    card(j)=0
-                endif
-            next
-            card(i)=0
-        endif
-    next
-    
-    
-    do
-        flag=0
-        for i=1 to 4
-            if cc(i).no<cc(i+1).no then 
-                swap cc(i),cc(i+1)
-                flag=1
-            endif
-            
-        next
-    loop until flag=0
-    do
-        flag=0
-        for i=1 to 4
-            if cc(i).no=cc(i+1).no and cc(i).rank<cc(i+1).rank then
-                swap cc(i),cc(i+1)
-                flag=1
-            endif
-        next
-    loop until flag=0
-    
-    for i=1 to 5
-        r.high(i)=cc(i).rank
-    next
-    
-    'Check four of a kind
-    if cc(1).no=4 then
-        r.rank=8
-        
-        return r
-    endif
-    
-    if cc(1).no=3 and cc(2).no=2 then
-        r.rank=7
-        return r
-    endif
-    
-    'Flush
-    if flush=1 then 
-        r.rank=6
-        return r
-    endif
-    
-    'Strait
-    if strait=1 then
-        r.rank=5
-        return r
-    endif
-    
-    if cc(1).no=3 then
-        r.rank=4
-        return r
-    endif
-    
-    if cc(1).no=2 and cc(2).no=2 then
-        r.rank=3
-        return r
-    endif
-    
-    if cc(1).no=2 then
-        r.rank=2
-        return r
-    endif
-    
-    r.rank=1
-    
-    return r
-    
-end function
-
-function poker_next(i as short,p() as _pokerplayer) as short
-    dim as short fold
-    do
-        i+=1
-        if i>4 then i=1
-        if p(i).fold=1 then fold+=1
-    loop until p(i).in=1 or fold=4
-    if fold=4 then return -1
-    return i
-end function
 
 
 
-function highest_pot(p() as _pokerplayer) as short
-    dim as short i,h
-    for i=1 to 4
-        if p(i).fold=0 then
-            if p(i).pot>h then h=p(i).pot
-        endif
-    next
-    return h
-end function
-
-
-function poker_winner(p() as _pokerplayer) as short
-    'Check if 3 have folded
-    DimDebug(0)
-    dim as short i,cfold,winner,cbet,stillin(4),cin,flag,tieat,nop
-    dim victory as _handrank
-
-    for i=1 to 4
-        if p(i).name<>"" then nop+=1
-    next
-    for i=1 to nop
-        if p(i).fold=1 then 
-            cfold+=1
-        else
-            cin+=1
-            stillin(cin)=i
-        endif
-    next
-    
-    if cfold=nop-1 then return stillin(1)
-    'Check if betting over
-    for i=2 to cin
-        if p(stillin(1)).pot<>p(stillin(i)).pot then return 0
-    next
-    
-#if __FB_DEBUG__
-    if debug=1 then
-        for i=1 to cin
-            draw string(500,i*12),stillin(i) &":"&p(stillin(i)).win.rank &":"& p(stillin(i)).win.high(1)
-        next
-    endif
-#endif
-    
-    
-    do
-        DbgPrint("Entering loop")
-#if __FB_DEBUG__
-        if debug=1 then
-            for i=1 to cin
-                draw string(500,i*12),stillin(i) &":"&p(stillin(i)).win.rank &":"& p(stillin(i)).win.high(1)
-            next
-            sleep
-        endif
-#endif
-        
-        flag=0
-        for i=1 to cin-1
-            select case better_hand(p(stillin(i)).win,p(stillin(i+1)).win) 
-                case 2
-                    DbgPrint("swapping pos "&i)
-                    flag=1
-                    'swap p(stillin(i)),p(stillin(i+1))
-                    swap stillin(i),stillin(i+1)
-                    exit for
-                case 0
-                    tieat=i
-            end select
-        next
-        
-        if flag=0 then 
-			DbgPrint("Leaving loop")
-        EndIf
-    loop until flag=0
-    
-    for i=1 to cin
-        p(stillin(i)).rank=i
-    next
-
-#if __FB_DEBUG__
-    if debug=1 then
-        for i=1 to cin
-            draw string(500,200+i*12),stillin(i) &":"&p(stillin(i)).win.rank &":"& p(stillin(i)).win.high(1)
-        next
-    endif
-#endif
-    
-    if tieat=0 or tieat>1 then
-        return stillin(1)
-    else
-        return -1
-    endif
-    return 0
-    'Tie....
-end function
-
-    
-    'find best hand
-    
-function draw_poker_table(p() as _pokerplayer,reveal as short=0,winner as short=0,r as _pokerrules) as short
-    DimDebug(0)'22
-    dim as short x,y,i,j    
-    dim as string handname(9),playerinfo,tacticname(9)
-    
-    handname(1)="high card"
-    handname(2)="pair"
-    handname(3)="two pair"
-    handname(4)="three of a kind"
-    handname(5)="strait"
-    handname(6)="flush"
-    handname(7)="full house"
-    handname(8)="four of a kind"
-    handname(9)="strait flush"
-    
-    tacticname(1)="Coward"
-    tacticname(2)="Coward"
-    tacticname(3)="Extremly cautious"
-    tacticname(4)="Very cautious"
-    tacticname(5)="Cautious"
-    tacticname(6)="Neutral"
-    tacticname(7)="Bold"
-    tacticname(8)="Very bold"
-    tacticname(9)="Extremly bold"
-    
-    display_ship(0)
-    p(4).win=ace_highlo_eval(p(4).card(),1)
-    for i=1 to 4
-        set__color(11,0)
-        if p(i).in=1 then
-            playerinfo=p(i).name &" (In Pot: "& credits(p(i).pot*r.bet) &" Cr.)"
-            if crew(1).talents(5)>0 and i<4 then playerinfo &= " (Tactic: "& tacticname(p(i).risk) &", "& p(i).money &" Cr.)"
-#if __FB_DEBUG__
-            if debug<>22 then draw string (x,y+pcards.cardheight),playerinfo,,font2,custom,@_col
-#endif
-            if p(i).fold=0 then
-                for j=1 to 5
-                    if p(i).card(j)>0 then 
-                        if (i=4 or j>r.closed or reveal=1) then
-                            pcards.drawCardfront x,y,p(i).card(j)
-                        else
-                            if p(i).card(j) mod 2=0 then
-                                pcards.drawCardback x,y,1
-                            else
-                                pcards.drawCardback x,y,2
-                            endif
-                        endif
-                        set__color(15,0)
-#if __FB_DEBUG__
-                        if debug=22 then draw string(x,y+pcards.cardheight),pcards.csuit(p(i).card(j))&":"&p(i).card(j),,font2,custom,@_col
-#endif
-                        x+=pcards.cardwidth
-                    endif
-                next
-            else
-                for j=1 to 5
-                    if p(i).card(j) mod 2=0 then
-                        pcards.drawCardback x,y,1
-                    else
-                        pcards.drawCardback x,y,2
-                    endif
-                    x+=pcards.cardwidth/2
-                next
-            endif
-            
-            if (reveal=1 and p(i).fold=0) or i=4 then 
-                set__color(15,0)
-                if i=winner then set__color(c_gre,0)
-                if p(i).fold=0 then 
-                    draw string (x,y+pcards.cardheight/2-_fh2/2),space(18),,font2,custom,@_col
-                    draw string (x,y+pcards.cardheight/2-_fh2/2)," ("& handname(p(i).win.rank) &")",,font2,custom,@_col
-                endif
-            endif
-            x=0
-            y=y+pcards.cardheight+_fh2+2
-        endif
-    next
-    set__color(11,0)
-    return 0
-end function

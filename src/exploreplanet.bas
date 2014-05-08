@@ -11,82 +11,21 @@ function gets_entry(x as short,y as short, slot as short) as short
     return 0
 end function
     
-Function ep_planetmenu(entrycords as _cords,slot As Short,shipfire() As _shipfire,spawnmask() As _cords, lsp As Short,loctemp As Single) As _cords
-    Dim As Short x,y,entry,launch,explore,a
-    Dim As _cords mgcords(24),nextmap
-    Dim As String text,Key
-    'screenset 1,1
-    text="Facilities"
-    For x=0 To 60
-        For y=0 To 20
-            if gets_entry(x,y,slot)=-1 and entry<23 then
-                entry+=1
-                mgcords(entry).x=x
-                mgcords(entry).y=y
-                Select Case tmap(x,y).gives
-                Case 4 To 8
-                    text=text &"/Trading"
-                Case 26
-                    text=text &"/Store"
-                Case 27
-                    text=text &"/Bar"
-                Case 28
-                    text=text &"/Fuel & Ammo"
-                Case 29
-                    text=text &"/Repair ship"
-                Case 30
-                    text=text &"/Ship modules"
-                Case 31
-                    text=text &"/Hulls"
-                Case 34
-                    text=text &"/Shipweapons"
-                Case 35
-                    text=text &"/Shipyard"
-                Case 42
-                    text=text &"/Refits"
-                Case 43
-                    text=text &"/Sickbay"
-                Case 44
-                    text=text &"/Arena"
-                Case 45
-                    text=text &"/Casino"
-                Case 46
-                    text=text &"/Zoo"
-                Case 47
-                    text=text &"/Retirement"
-                Case 48
-                    text=text &"/Titles & Deeds"
-                Case 49
-                    text=text &"/Custom Items"
-                Case 50
-                    text=text &"/Administration"
-                Case 59
-                    text=text &"/Botbin"
-                Case Else
-                    text=text &"/"&tmap(x,y).desc
-                End Select
-            EndIf
-        Next
-    Next
-    If entry>2 Then 'Not if there are only a few giving tiles.
-        explore=entry+1
-        launch=entry+2
-        text=text &"/Explore area/Launch"
-        Do
-            a=Menu(bg_shiptxt,text)
-            Select Case a
-            Case explore
-            Case launch,-1
-                nextmap.m=-1
-            Case Else
-                awayteam.c=mgcords(a)
-                ep_gives(awayteam,nextmap,shipfire(),spawnmask(),lsp,Key,loctemp)
-            End Select
-        Loop Until a=-1 Or a=launch Or a=explore
-        If a=explore Then awayteam.c=entrycords
-    EndIf
-    Return nextmap
-End Function
+
+function earthquake(t as _tile,dam as short)as _tile
+    dim roll as short
+    if t.shootable=1 then
+        t.hp=t.hp-dam
+        if t.hp<=0 then t=tiles(t.turnsinto)
+    endif
+    if t.no<41 and t.no<>1 and t.no<>2 and t.no<>26 and t.no<>20 and t.no<>21 then
+        if t.no=6 or t.no=5 then t=tiles(3)
+        if t.no=7 or t.no=8 and rnd_range(1,100)<33+dam then t=tiles(4)
+        if t.no=20 and rnd_range(1,100)<33+dam then t=tiles(rnd_range(1,2))
+        if rnd_range(1,100)<15 and t.no<>18 then t=tiles(47)
+    endif
+    return t
+end function
 
 
 Function ep_areaeffects(areaeffect() As _ae,ByRef last_ae As Short,lavapoint() As _cords,cloudmap() As Byte) As Short
@@ -239,343 +178,7 @@ Function ep_areaeffects(areaeffect() As _ae,ByRef last_ae As Short,lavapoint() A
     Return 0
 End Function
 
-Function ep_atship() As Short
-    Dim As Short slot,a
-    slot=player.map
-DbgLogExplorePlanet("ep_atship")
-    If awayteam.c.y=player.landed.y And awayteam.c.x=player.landed.x And slot=player.landed.m Then
-        location=lc_onship
-        rlprint "You are at the ship. Press "&key_la &" to launch."
-        If awayteam.oxygen<awayteam.oxymax Then rlprint "Refilling oxygen.",10
-        awayteam.oxygen=awayteam.oxymax
-        If (awayteam.movetype=2 Or awayteam.movetype=3) And awayteam.jpfuel<awayteam.jpfuelmax Then
-            rlprint "Refilling Jetpacks",10
-            awayteam.jpfuel=awayteam.jpfuelmax
-        EndIf
-        For a=1 To 128
-            If crew(a).hp>0 Then
-                If crew(a).disease>0 And crew(a).onship=0 Then
-                    crew(a).oldonship=crew(a).onship
-                    crew(a).onship=1
-                    rlprint crew(a).n &" is sick and stays at the ship."
-                EndIf
-                If crew(a).disease=0 And crew(a).onship=0 Then
-                    crew(a).onship=crew(a).oldonship
-                    crew(a).oldonship=0
-                EndIf
-            EndIf
-        Next
-        if awayteam.leak>0 then 
-            repair_spacesuits()
-        endif
-        check_tasty_pretty_cargo
-        alerts()
-        Return 0
-    Else
-        location=lc_awayteam
-        'rlprint ""&ep_Needs_spacesuit(slot,awayteam.c)
-        If ep_Needs_spacesuit(slot,awayteam.c)>0 Then
-            rlprint dam_awayteam(rnd_range(1,ep_needs_spacesuit(slot,awayteam.c)),5)
-        EndIf
-        Return 0
-    EndIf
-End Function
 
-Function ep_autoexplore(slot As Short) As Short
-    Dim As Short x,y,astarmap(60,20),candidate(60,20),explored,notargets,x1,y1,i
-
-    Dim d As Single
-    Dim As _cords p,target,astarpath(1284)
-    Dim As Byte debug=0
-    For x=0 To 1024
-        apwaypoints(x).x=0
-        apwaypoints(x).y=0
-    Next
-
-    lastapwp=ep_autoexploreroute(astarpath(),awayteam.c,awayteam.movetype,slot)
-    If lastapwp>0 Then
-        For i=1 To lastapwp
-            apwaypoints(i).x=astarpath(i).x
-            apwaypoints(i).y=astarpath(i).y
-        Next
-    EndIf
-    Return lastapwp
-End Function
-
-Function ep_autoexploreroute(astarpath() As _cords,start As _cords,move As Short, slot As Short, rover As Short=0) As Short
-    Dim As Short candidate(60,20)
-    Dim As Short x,y,explored,notargets,last,i,rollover
-    Dim As Single d2,d
-    Dim As _cords target,target2,p,path(1283)
-    For x=0 To 60
-        For y=0 To 20
-            If move<tmap(x,y).walktru Then candidate(x,y)=1
-            If tmap(x,y).onopen<>0 Then candidate(x,y)=0
-        Next
-    Next
-    flood_fill(start.x,start.y,candidate(),3)
-    If planets(slot).depth>0 Then
-        rollover=0
-    Else
-        rollover=1
-    EndIf
-#if __FB_DEBUG__
-    Screenset 1,1
-    For x=0 To 60
-        For y=0 To 20
-            If candidate(x,y)=255 Then Pset(x,y)
-        Next
-    Next
-#endif
-    d2=61*21
-    If rover=0 Then
-        For i=1 To itemindex.vlast'Can't look up location
-            If item(itemindex.value(i)).discovered>0 And candidate(item(itemindex.value(i)).w.x,item(itemindex.value(i)).w.y)=255 Then
-                If item(itemindex.value(i)).w.s=0 And item(itemindex.value(i)).w.p=0 Then
-                    p.x=item(itemindex.value(i)).w.x
-                    p.y=item(itemindex.value(i)).w.y
-                    If distance(p,start,rollover)<d2 And distance(p,start)>0 Then
-                        d2=distance(p,start)
-                        notargets+=1
-                        target2.x=item(itemindex.value(i)).w.x
-                        target2.y=item(itemindex.value(i)).w.y
-                    EndIf
-                EndIf
-            EndIf
-        Next
-    EndIf
-    
-    d=61*21
-    For x=0 To 60
-        For y=0 To 20
-            If x<>start.x Or y<>start.y Then
-                 If candidate(x,y)=255 And planetmap(x,y,slot)<0 Then
-                    p.x=x
-                    p.y=y
-                    If distance(p,start,rollover)<d Then
-                        target.x=p.x
-                        target.y=p.y
-                        d=distance(p,start,rollover)
-                        notargets+=1
-                    EndIf
-                EndIf
-            EndIf
-        Next
-    Next
-    If notargets=0 Then
-        if rover=0 then
-            target.x=player.landed.x
-            target.y=player.landed.y
-        else
-            target.x=start.x
-            target.y=start.y
-            return -1
-        endif
-    Else
-        DbgPrint(d &":"& target.x &":"&target.y &"-"&d2 &":"& target2.x &":"&target2.y)
-        If d2<d Then
-            target.x=target2.x
-            target.y=target2.y
-        EndIf
-    EndIf
-    If target.x=start.x And target.y=start.y Then Return -1
-    last=ep_planetroute(path(),move,start,target,rollover)
-    If last=-1 Then Return -1
-    For i=0 To last
-        astarpath(i+1).x=path(i).x
-        astarpath(i+1).y=path(i).y
-    Next
-    last+=1
-    Return last
-End Function
-
-Function ep_planetroute(route() As _cords,move As Short,start As _cords, target As _cords,rollover As Short) As Short
-    Dim As Short x,y,astarmap(60,20)
-    For x=0 To 60
-        For y=0 To 20
-            astarmap(x,y)=tmap(x,y).walktru+tmap(x,y).gives+tmap(x,y).dam
-            If move<tmap(x,y).walktru Then astarmap(x,y)=1500
-            If tmap(x,y).onopen<>0 Then astarmap(x,y)=0
-            If tmap(x,y).no=45 Then astarmap(x,y)=1500
-        Next
-    Next
-    Return a_star(route(),target,start,astarmap(),60,20,0,rollover)
-End Function
-
-Function ep_checkmove(ByRef old As _cords,Key As String) As Short
-    Dim As Short slot,a,b,c,who(128)
-    slot=player.map
-    If planetmap(awayteam.c.x,awayteam.c.y,slot)=18 Then
-        rlprint "you get zapped by a forcefield:"&dam_awayteam(rnd_range(1,6)),12
-        If awayteam.armor/awayteam.hp<13 Then awayteam.c=old
-        walking=0
-    EndIf
-    If tmap(awayteam.c.x,awayteam.c.y).locked>0 Then
-        b=findbest(12,-1) 'Find best key
-        If b>0 Then
-            c=item(b).v1
-        Else
-            c=0
-        EndIf
-    EndIf
-
-    If tmap(awayteam.c.x,awayteam.c.y).no=45 And tmap(old.x,old.y).no<>45 And configflag(con_warnings)=0 Then
-        If Not(askyn("do you really want to walk into hot lava?(y/n)")) Then awayteam.c=old
-    EndIf
-
-    If vacuum(awayteam.c.x,awayteam.c.y)=1 And vacuum(old.x,old.y)=0 And configflag(con_warnings)=0 Then
-        If no_spacesuit(who())>0 Then
-            If Not(askyn("do you really want to walk out into the vacuum?(y/n)")) Then awayteam.c=old
-        EndIf
-    EndIf
-
-    If tmap(awayteam.c.x,awayteam.c.y).onopen>0 Then
-        planetmap(awayteam.c.x,awayteam.c.y,slot)=tmap(awayteam.c.x,awayteam.c.y).onopen
-        tmap(awayteam.c.x,awayteam.c.y)=tiles(tmap(awayteam.c.x,awayteam.c.y).onopen)
-    EndIf
-
-    If tmap(awayteam.c.x,awayteam.c.y).locked>0 Then
-        If Not(skill_test(player.science(1)+c,7+tmap(awayteam.c.x,awayteam.c.y).locked,"Science")) Then' or (tmap(awayteam.c.x,awayteam.c.y).onopen>0 and tmap(awayteam.c.x,awayteam.c.y).locked=0) then
-            rlprint "Your science officer can't bypass the doorlocks"
-            awayteam.c=old
-            walking=0
-        EndIf
-    Else
-        tmap(awayteam.c.x,awayteam.c.y).locked=0
-        If tmap(awayteam.c.x,awayteam.c.y).onopen>0 Then tmap(awayteam.c.x,awayteam.c.y)=tiles(tmap(awayteam.c.x,awayteam.c.y).onopen)
-        If tmap(awayteam.c.x,awayteam.c.y).no=16 Then planetmap(awayteam.c.x,awayteam.c.y,slot)=144
-        If tmap(awayteam.c.x,awayteam.c.y).no=93 Then planetmap(awayteam.c.x,awayteam.c.y,slot)=90
-        If tmap(awayteam.c.x,awayteam.c.y).no=94 Then planetmap(awayteam.c.x,awayteam.c.y,slot)=91
-        If tmap(awayteam.c.x,awayteam.c.y).no=95 Then planetmap(awayteam.c.x,awayteam.c.y,slot)=92
-    EndIf
-
-    If planetmap(awayteam.c.x,awayteam.c.y,slot)=54 Then
-        If c>0 Then
-            item(b)=item(lastitem)
-            lastitem=lastitem-1
-        EndIf
-        If skill_test(player.science(location)+c,st_average) Then
-            If skill_test(player.science(location)+c,st_average,"Science") Then
-                rlprint "You managed to open the door"
-                planetmap(awayteam.c.x,awayteam.c.y,slot)=55
-                tmap(awayteam.c.x,awayteam.c.y)=tiles(55)
-            Else
-                rlprint "Your science officer cant open the door"
-                If rnd_range(1,6)+ rnd_range(1,6)>6 Then
-                    rlprint "But he sets off an ancient defense mechanism! "&dam_awayteam(rnd_range(1,6))
-                    player.killedby="trapped door"
-                EndIf
-                walking=0
-                awayteam.c=old
-            EndIf
-        Else
-            rlprint "Your fiddling with the ancient lock destroys it. You will never be able to open that door."
-            planetmap(awayteam.c.x,awayteam.c.y,slot)=53
-            walking=0
-            awayteam.c=old
-        EndIf
-    EndIf
-
-
-    If awayteam.movetype<tmap(awayteam.c.x,awayteam.c.y).walktru And configflag(con_diagonals)=0 Then
-        awayteam.c=movepoint(old,bestaltdir(getdirection(Key),0),3)
-        If awayteam.movetype<tmap(awayteam.c.x,awayteam.c.y).walktru Then awayteam.c=movepoint(old,bestaltdir(getdirection(Key),1))
-    EndIf
-    If tmap(awayteam.c.x,awayteam.c.y).walktru>awayteam.movetype Then '1= can swim 2= can fly 3=can swim and fly 4= can teleport
-        awayteam.c=old
-    Else
-        'Terrain needs flying or swimmint
-        If tmap(awayteam.c.x,awayteam.c.y).walktru=1 Then
-            If awayteam.movetype=2 Then
-                If awayteam.hp<=awayteam.nojp Then
-                    If awayteam.jpfuel>=awayteam.jpfueluse Then
-                        awayteam.jpfuel=awayteam.jpfuel-awayteam.jpfueluse
-                        awayteam.e.add_action(awayteam.carried)
-                    Else
-                        rlprint "Jetpacks empty",14
-                        awayteam.c=old
-                    EndIf
-                Else
-                    awayteam.c=old
-                    rlprint "blocked"
-                EndIf
-            EndIf
-        EndIf
-        'Terrain needs flying
-        If tmap(awayteam.c.x,awayteam.c.y).walktru=2 Then
-            If awayteam.movetype<4 Then
-                If awayteam.hp<=awayteam.nojp Then
-                    If awayteam.jpfuel>=awayteam.jpfueluse Then
-                        awayteam.jpfuel=awayteam.jpfuel-awayteam.jpfueluse
-                        awayteam.e.add_action(awayteam.carried)
-                    Else
-                        rlprint "Jetpacks empty",14
-                        awayteam.c=old
-                    EndIf
-                Else
-                    awayteam.c=old
-                    rlprint "blocked"
-                EndIf
-            EndIf
-        EndIf
-        If tmap(awayteam.c.x,awayteam.c.y).walktru=4 Then
-            If Not(askyn("Do you really want to step over the edge?(y/n)")) Then awayteam.c=old
-        EndIf
-    EndIf
-    If old.x=awayteam.c.x And old.y=awayteam.c.y Then
-        If walking>0 And walking<10 Then walking=0
-    Else
-        awayteam.add_move_cost
-        awayteam.e.add_action(tmap(awayteam.c.x,awayteam.c.y).movecost)
-    EndIf
-    Return 0
-End Function
-
-Function ep_communicateoffer(Key As String) As Short
-    Dim As Short a,b,slot,x,y,cm,monster
-    Dim As _cords p2
-    Dim As String dkey
-    slot=player.map
-    b=0
-    For x=awayteam.c.x-1 To awayteam.c.x+1
-        For y=awayteam.c.y-1 To awayteam.c.y+1
-            For a=1 To lastenemy
-                If enemy(a).c.x=x And enemy(a).c.y=y And enemy(a).hp>0 Then
-                    cm+=1
-                    monster=a
-                EndIf
-            Next
-
-        Next
-    Next
-    If cm=1 Then
-        p2.x=enemy(monster).c.x
-        p2.y=enemy(monster).c.y
-    Else
-        rlprint "direction?"
-        Do
-            dkey=keyin
-        Loop Until getdirection(dkey)>0 Or dkey=key__esc
-        p2=movepoint(awayteam.c,getdirection(dkey))
-    EndIf
-    Locate p2.y+1,p2.x+1
-    If Key=key_co And planetmap(p2.x,p2.y,slot)=190 Then
-        rlprint "You hear a voice in your head: 'SUBJUGATE OF BE ANNIHILATED'"
-        b=-1
-    EndIf
-    If Key=key_co And planetmap(p2.x,p2.y,slot)=191 Then do_dialog(1,enemy(lastenemy+1),0)
-    For a=1 To lastenemy
-        If p2.x=enemy(a).c.x And p2.y=enemy(a).c.y And enemy(a).hp>0 And enemy(a).sleeping<=0 Then b=a
-    Next
-    If b=0 Then
-        If Key=key_co Then rlprint "Nobody there to communicate"
-        If Key=key_of Then rlprint "Nobody there to give something to"
-    EndIf
-    If b>0 Then awayteam.e.add_action(10)
-    If b>0 And Key=key_co Then communicate(enemy(b),slot,b)
-    If b>0 And Key=key_of Then giveitem(enemy(b),b)
-    Return 0
-End Function
 
 Function ep_display_clouds(cloudmap() As Byte) As Short
     DimDebug(0)
@@ -613,117 +216,8 @@ End Function
 
 
 
-Function ep_display(osx As Short=555) As Short
-    Dim As Short a,b,x,y,slot,fg,bg,alp,x2
-    Dim As Byte comitem,comdead,comalive,comportal
-    Dim As _cords p,p1,p2
-    slot=player.map
-    If osx=555 Then osx=calcosx(awayteam.c.x,planets(slot).depth)
 
-    If disease(awayteam.disease).bli>0 Then
-        x=awayteam.c.x
-        y=awayteam.c.y
-        vismask(x,y)=1
-        dtile(x,y,tmap(x,y),vismask(x,y))
-        Return 0
-    EndIf
-    ' Stuff on ground
-    make_vismask(awayteam.c,awayteam.sight,slot)
-    
-    For a=1 To itemindex.vlast'Cant use index because unseen grenades burn out too
-        If item(itemindex.value(a)).ty=7 And item(itemindex.value(a)).v2=1 Then 'flash grenade
-            item(itemindex.value(a)).v3-=1
-            p2=item(itemindex.value(a)).w
 
-            If item(itemindex.value(a)).v3>0 Then
-                If vismask(p2.x,p2.y)>0 Then
-                    make_vismask(item(itemindex.value(a)).w,item(itemindex.value(a)).v3/10,slot,1)
-                EndIf
-            Else
-                'Burnt out, destroy
-                destroyitem(itemindex.value(a))
-                itemindex.remove(itemindex.value(a),item(itemindex.value(a)).w)
-            EndIf
-        EndIf
-        If item(itemindex.value(a)).ty=18 And item(itemindex.value(a)).discovered=1 And item(itemindex.value(a)).w.p=0 And item(itemindex.value(a)).w.s>=0  And item(itemindex.value(a)).v5=0 Then 'Rover
-            make_vismask(item(itemindex.value(a)).w,item(itemindex.value(a)).v1+3,slot,1)
-        endif
-    Next
-        
-    For x=0 To _mwx
-        For y=0 To 20
-            p.x=x+osx
-            p.y=y
-            If p.x>60 Then p.x=p.x-61
-            If p.x<0 Then p.x=p.x+61
-
-            'if awayteam.sight>cint(distance(awayteam.c,p)) then
-            If vismask(p.x,y)>0 Then
-                If planetmap(p.x,y,slot)<0 Then
-                    planetmap(p.x,y,slot)=planetmap(p.x,y,slot)*-1
-                    reward(0)=reward(0)+1
-                    reward(7)=reward(7)+planets(slot).mapmod
-                    If tiles(planetmap(p.x,y,slot)).stopwalking>0 And walking<11 Then walking=0
-                    If player.questflag(9)=1 And planetmap(p.x,y,slot)=100 Then player.questflag(9)=2
-                EndIf
-                If rnd_range(1,100)<disease(awayteam.disease).hal Then
-                    dtile(x,y,tiles(rnd_range(1,255)),1)
-                    planetmap(x,y,slot)=planetmap(x+osx,y,slot)*-1
-                Else
-                    dtile(x,y,tmap(p.x,y),vismask(p.x,y))
-                EndIf
-            endif
-            
-            a=0
-            if portalindex.last(p.x,p.y)>0 then 
-                display_portal(portalindex.index(p.x,p.y,1),slot,osx)
-                If portal(a).from.m=slot And portal(a).oneway<2 and awayteam.c.x=portal(a).from.x And awayteam.c.y=portal(a).from.y And comstr.comportal=0 Then
-                    comstr.t=comstr.t &key_portal &" Enter"
-                    comstr.comportal=1
-                endif
-                If portal(a).oneway=0 and portal(a).dest.m=slot and awayteam.c.x=portal(a).dest.x And awayteam.c.y=portal(a).dest.y And comstr.comportal=0 Then
-                    comstr.t=comstr.t &key_portal &" Enter"
-                    comstr.comportal=1
-                EndIf
-            endif
-        
-            if itemindex.last(p.x,p.y)>0 then
-                for b=1 to itemindex.last(p.x,p.y)
-                    display_item(itemindex.index(p.x,p.y,b),osx,slot)
-                next
-            endif
-        Next
-    Next
-    
-    display_monsters(osx)
-    
-    Return 0
-End Function
-
-Function ep_needs_spacesuit(slot As Short,c As _cords,ByRef reason As String="") As Short
-    Dim dam As Short
-    dam=0
-    If planets(slot).atmos=1 Or vacuum(c.x,c.y)=1 Then
-        reason="vacuum, "
-        dam=10
-    EndIf
-    If planets(slot).atmos=2 Or planets(slot).atmos>=7 Then
-        If planets(slot).atmos=2 Then
-            reason &= "not enough oxygen, "
-        Else
-            reason &="no oxygen, "
-        EndIf
-        dam=5
-    EndIf
-    If planets(slot).atmos>12 Then dam+=planets(slot).atmos/2
-    If planets(slot).temp<-60 Or planets(slot).temp>60 Then
-        dam=dam+Abs(planets(slot).temp/60)
-        reason=reason &"extreme temperatures, "
-    EndIf
-    If reason<>"" Then reason=first_uc(Left(reason,Len(reason)-2))
-    If dam>50 Then dam=50
-    Return dam
-End Function
 
 Function ep_dropitem() As Short
     Dim As Short c,d,slot,i,num,j
@@ -1127,6 +621,104 @@ Function ep_inspect(ByRef localturn As Short) As Short
     Return 0
 End Function
 
+
+Function alienbomb(c As Short,slot As Short) As Short
+    Dim As Short a,b,d,e,f,osx,x2
+    Dim As _cords p,p1
+    p1.x=item(c).w.x
+    p1.y=item(c).w.y
+    osx=calcosx(awayteam.c.x,planets(slot).depth)
+
+    For e=0 To item(c).v1*6
+        Screenset 0,1
+        display_planetmap(slot,osx,0)
+        For x=0 To 60
+            For y=0 To 20
+                p.x=x
+                p.y=y
+                f=Int(distance(p,p1,1))
+                set__color( 0,0)
+                If f=e  Then set__color( 0,1)
+                If f=e+7 Then set__color( 236,15)
+                If f=e+6 Then set__color( 236,237)
+                If f=e+5 Then set__color( 237,238)
+                If f=e+4 Then set__color( 238,239)
+                If f=e+3 Then set__color( 239,240)
+                If f=e+2 Then set__color( 240,241)
+                If f=e+1 Then set__color( 241,1)
+                If f=e-1 Then set__color( 0,0)
+                If f=e-2 Then set__color( 0,0)
+                If f>=e-2 And f<=e+7 Then
+                    x2=x-osx
+                    If x2<0 Then x2+=61
+                    If x2>60 Then x2-=61
+                    If configflag(con_tiles)=0 Then
+                        If x2>=0 And x2<=_mwx Then Put ((x2)*_tix,y*_tiy),gtiles(gt_no(76+f-e)),trans
+                    Else
+                        Draw String(x2*_fw1,y*_fh1), Chr(176),,font1,custom,@_col
+                    EndIf
+                EndIf
+                If f<e Then
+                    If tmap(x,y).shootable>0 Then
+                        d=rnd_range(1,item(c).v1*12)
+                        If tmap(p.x,p.y).dr<d Then
+                            tmap(p.x,p.y).hp=tmap(p.x,p.y).hp-d
+                        Else
+                            tmap(p.x,p.y).dr=tmap(p.x,p.y).dr-d
+                        EndIf
+                        If tmap(x,y).hp<=0 Then
+                            If planetmap(x,y,slot)>0 Then planetmap(x,y,slot)=tmap(x,y).turnsinto
+                            If planetmap(x,y,slot)<0 Then planetmap(x,y,slot)=-tmap(x,y).turnsinto
+                            tmap(x,y)=tiles(tmap(x,y).turnsinto)
+                        EndIf
+                    EndIf
+                EndIf
+            Next
+        Next
+        Flip
+        Sleep 50
+    Next
+
+    For e=242 To 249
+        For x=0 To 60
+            For y=0 To 20
+                set__color( e,e)
+                If configflag(con_tiles)=0 Then
+                    'if x-osx>=0 and x-osx<=_mwx then put ((x-osx)*_tix,y*_tiy),gtiles(gt_no(rnd_range(63,66))),pset
+                Else
+                    draw_string(x*_fw1,y*_fh1, Chr(176),font1,_col)
+                EndIf
+            Next
+        Next
+        Sleep 50
+    Next
+
+    For e=0 To lastenemy
+        If distance(enemy(e).c,p1,1)<item(c).v1*5 Then enemy(e).hp=enemy(e).hp-item(c).v1*3
+    Next
+    For e=0 To item(c).v1
+        If planets(slot).atmos>1 And item(c).v1>1 Then
+            planets(slot).atmos-=1
+            item(c).v1-=2
+            If planets(slot).atmos=6 Or planets(slot).atmos=12 Then planets(slot).atmos=1
+        EndIf
+    Next
+    For a=1 To itemindex.vlast
+        p.x=item(itemindex.value(a)).w.x
+        p.y=item(itemindex.value(a)).w.y
+        If a=c Or (rnd_range(1,100)+item(c).v1>item(itemindex.value(a)).res And distance(p,p1,1)<item(c).v1*5) Then
+            destroyitem(itemindex.value(a))
+            itemindex.remove(a,p)
+        EndIf
+    Next
+
+    display_planetmap(slot,osx,0)
+
+
+    Return 0
+End Function
+
+
 Function ep_items(localturn As Short) As Short
     DimDebug(0)
     Dim As Short a,slot,i,x,y,curr,last
@@ -1253,190 +845,6 @@ Function ep_launch(ByRef nextmap As _cords) As Short
     Return 0
 End Function
 
-Function ep_planeteffect(shipfire() As _shipfire, ByRef sf As Single,lavapoint() As _cords,localturn As Short,cloudmap() As Byte) As Short
-    Dim As Short slot,a,b,r,x,y
-    Dim As String text
-    Static lastmet As Short
-    Dim As _cords p1,p2
-    slot=player.map
-    lastmet=lastmet+1
-    If planets(slot).death>0 Then 'Exploding planet
-        If planets(slot).death=8 Then
-            If planets(slot).flags(28)=0 Then
-                If player.science(0)>0 And planets(slot).depth=0 Then rlprint "Science officer: I wouldn't recommend staying much longer.",15
-            Else
-                If player.pilot(0)>0 Then rlprint "Pilot: I am starting to worry. We are getting pretty deep into the gravity well of this planet."
-            EndIf
-            no_key=keyin
-            planets(slot).death=planets(slot).death-1
-        EndIf
-        If planets(slot).death=4 And crew(4).hp>0 Then
-            If planets(slot).flags(28)=0 Then
-                If player.science(0)>0 And planets(slot).depth=0 Then rlprint "Science officer: We really should get back to the ship now!",14
-            Else
-                If player.pilot(0)>0 Then rlprint "Pilot: This thing is falling faster than I thought. Let's get out of here!",c_yel
-            EndIf
-            no_key=keyin
-            planets(slot).death=planets(slot).death-1
-        EndIf
-        If planets(slot).death=2 And crew(4).hp>0 Then
-            If planets(slot).flags(28)=0 Then
-                If player.science(0)>0 And planets(slot).depth=0 Then rlprint "Science officer: This planet is about to fall apart! We must leave! NOW!",12
-            Else
-                If player.pilot(0)>0 Then rlprint "Pilot: We need to get of this icechunk! Now!",c_red
-            EndIf
-            no_key=keyin
-            planets(slot).death=planets(slot).death-1
-        EndIf
-        If planets(slot).depth=0 And rnd_range(1,100)<33 Then
-            sf+=1
-            If sf>15 Then sf=0
-            shipfire(sf).where=rnd_point
-            shipfire(sf).when=1
-            shipfire(sf).what=10+sf
-            player.weapons(shipfire(sf).what)=make_weapon(rnd_range(1,5))
-        EndIf
-
-    EndIf
-
-
-    If slot=specialplanet(8) And rnd_range(1,100)<33 Then
-        set__color( 11,0)
-        rlprint "lightning strikes you "& dam_awayteam(1),12
-        player.killedby="lightning strike"
-    EndIf
-
-
-
-    If planets(slot).flags(25)=1 And awayteam.helmet=0 Then
-        If skill_test(player.science(location),st_hard) And crew(5).hp>0 Then
-            rlprint "Your science officer has figured out that the hallucinations are caused by pollen. You switch to spacesuit air supply."
-            awayteam.helmet=1
-            planets(slot).flags(25)=2
-        Else
-            If rnd_range(1,100)<60 Then
-                a=rnd_range(1,4)
-                If a=1 Then text="Your science officer remarks: "
-                If a=2 Then text="Your pilot remarks: "
-                If a=3 Then text="Your gunner says: "
-                If a=4 Then text="Your doctor finds some "
-                For a=0 To rnd_range(10,20)
-                    text=text &Chr(rnd_range(33,200))
-                Next
-                rlprint text
-            EndIf
-        EndIf
-    EndIf
-
-    If slot=specialplanet(1) And rnd_range(1,100)<33 Then
-        b=0
-        For a=1 To lastenemy
-            If enemy(a).made=5 And enemy(a).hp>0 And enemy(a).aggr=0 And pathblock(awayteam.c,enemy(a).c,slot) Then b=a
-        Next
-        If b>0 Then
-            sf+=1
-            If sf>15 Then sf=0
-            shipfire(sf).when=1
-            shipfire(sf).what=10+sf
-            player.weapons(shipfire(sf).what)=make_weapon(6)
-            player.weapons(shipfire(sf).what).dam=rnd_range(1,4)
-            If rnd_range(1,6)+ rnd_range(1,6)+2>8 Then
-                rlprint "Apollo calls down lightning and strikes you, infidel!"
-                shipfire(sf).where=awayteam.c
-            Else
-                rlprint "Apollo calls down lightning .... and misses"
-                shipfire(sf).where=movepoint(awayteam.c,5)
-                shipfire(sf).where=movepoint(shipfire(sf).where,5)
-                shipfire(sf).where=movepoint(shipfire(sf).where,5)
-            EndIf
-            While distance(shipfire(sf).where,enemy(b).c)<=CInt(player.weapons(shipfire(sf).what).dam/2)
-                shipfire(sf).where=movepoint(shipfire(sf).where,5)
-            Wend
-        EndIf
-    EndIf
-
-    If isgardenworld(slot) And rnd_range(1,100)<5 Then
-        a=rnd_range(1,awayteam.hpmax)
-        If crew(a).hp>0 And crew(a).typ<9 Then
-            b=rnd_range(1,6)
-            If b=1 Then rlprint crew(a).n &" remarks: 'What a beautiful world this is!'"
-            If b=2 Then rlprint crew(a).n &" points out a particularly beautiful part of the landscape"
-            If b=3 Then rlprint crew(a).n &" says: 'I guess I'll settle down here when i retire!'"
-            If b=4 Then rlprint crew(a).n &" asks: 'How about some extended R&R here?"
-            If b=5 Then rlprint crew(a).n &" remarks: 'Wondefull'"
-            If b=6 Then rlprint crew(a).n &" starts picking flowers."
-        EndIf
-    EndIf
-    If sysfrommap(slot)>=0 Then
-        If (planets(slot).dens<4 And planets(slot).depth=0 And rnd_range(1,100)<18-planets(slot).atmos-countgasgiants(sysfrommap(slot))+countasteroidfields(sysfrommap(slot))*2-map(sysfrommap(slot)).spec And rnd_range(1,100)<18-planets(slot).atmos-countgasgiants(sysfrommap(slot))) Or more_mets=1 Then
-            If lastmet>1000 And countgasgiants(sysfrommap(slot))=0 And rnd_range(1,100)<countasteroidfields(sysfrommap(slot)) Then
-                lastmet=-rnd_range(1,6) 'asteroid shower
-                rlprint "Suddenly dozens of meteors illuminate the sky!",14
-            EndIf
-            If lastmet<0 Or (lastmet>1000 And rnd_range(1,100)<30) Or more_mets=1 Then
-                ep_crater(shipfire(),sf)
-                If lastmet<0 Then 
-                    lastmet+=1
-                Else
-                    lastmet=0
-                EndIf
-            Else
-                lastmet+=1
-            EndIf
-            If more_mets=1 Then rlprint ""&lastmet
-            
-        EndIf
-    EndIf
-    If cloudmap(awayteam.c.x,awayteam.c.y)>0 And planets(slot).atmos>6 And rnd_range(1,150)<(planets(slot).dens*planets(slot).weat) And slot<>specialplanet(28) Then
-        If planets(slot).temp<300 Then
-            rlprint "It's raining sulphuric acid! "&dam_awayteam(1),14
-        Else
-            rlprint "It's raining molten lead! "&dam_awayteam(1),14
-        EndIf
-        player.killedby=" hostile environment"
-    EndIf
-
-    If planets(slot).atmos>11 And rnd_range(1,100)<planets(slot).atmos*2 And frac(localturn/20)=0 Then
-        a=getrnditem(-2,0)
-        If a>0 Then
-            If rnd_range(1,100)>item(a).res Then
-                item(a).res=item(a).res-25
-                If item(a).res>=0 Then
-                    rlprint "Your "&item(a).desig &" starts to corrode.",14
-                    if (item(a).ty=3 or item(a).ty=103) and item(a).ti_no<2019 then 
-                        item(a).v4+=1
-                        awayteam.leak+=1
-                    endif
-                Else
-                    rlprint "Your "&item(a).desig &" corrodes and is no longer usable.",14
-                    destroyitem(a)
-                    equip_awayteam(slot)
-                    'displayawayteam(awayteam, slot, lastenemy, deadcounter, ship,nightday(awayteam.c.x,awayteam.c.y))
-                EndIf
-            EndIf
-        EndIf
-        For a=1 To itemindex.vlast 'Corrosion need to go through all
-            If item(itemindex.value(a)).ty<20 Then
-                If item(itemindex.value(a)).w.s=0 And rnd_range(1,100)>item(itemindex.value(a)).res Then item(itemindex.value(a)).res-=25
-                If item(itemindex.value(a)).res<=0 Then item(itemindex.value(a)).w.p=9999
-                If item(itemindex.value(a)).ty=18 And item(itemindex.value(a)).w.p=9999 Then item(itemindex.value(a))=make_item(65) 'Rover debris
-            EndIf
-        Next
-    EndIf
-
-    If specialplanet(5)=slot Or specialplanet(8)=slot Then
-        If awayteam.c.x<>player.landed.x Or awayteam.c.y<>player.landed.y Then
-            If rnd_range(1,250)-(awayteam.movetype)<((planets(slot).atmos-3)*planets(slot).weat) And planets(slot).depth=0 Then
-                'for a=1 to rnd_range(1,3)
-                rlprint "High speed winds set you of course!",14
-                awayteam.c=movepoint(awayteam.c,5)
-                'next
-            EndIf
-        EndIf
-    EndIf
-
-    Return 0
-End Function
 
 Function ep_pickupitem(Key As String) As Short
     Dim a As Short
@@ -1830,455 +1238,25 @@ Function ep_updatemasks(spawnmask() As _cords,mapmask() As Byte,nightday() As By
     Return lsp
 End Function
 
-Function ep_friendfoe(i As Short,j As Short) As Short
-    dim as short fact
-    if enemy(i).allied>0 then
-        fact=enemy(i).allied
-    else
-        fact=enemy(i).faction
-    endif
-    If j=-1 Then Return enemy(i).aggr
-    If enemy(j).attacked=i Then Return 0 'Not my friend!     
-    If fact<>enemy(j).faction then 
-        If fact<=8 And enemy(j).faction<=8 Then
-            if (faction(fact).war(enemy(j).faction)>80 or faction(enemy(j).faction).war(fact)>80) Then return 0
-        endif
-        Select Case enemy(i).diet
-        Case 1  'Herbivour
-            If enemy(j).diet=2 And rnd_range(1,10)<enemy(i).intel Then return 0
-        Case 2  'Carnivour
-            If enemy(i).hp>enemy(j).hp And rnd_range(1,10)<2+enemy(i).intel Then return 0    
-        Case 3  'Scavenger
-            If enemy(i).hp>enemy(j).hp And rnd_range(1,10)<enemy(i).intel Then return 0
-        case 4
-            if enemy(i).hp>enemy(j).hp and rnd_range(1,10)>enemy(i).intel Then Return 0
-        case 5
-            if enemy(j).attacked<>0 then return 0
-        End Select
-    endif
-    return 1 'Dont see you as foe, going to see you as friend
-End Function
 
 
-Function ep_nearest(i As Short) As Short
-    Dim As Single d,dd,d2,dd2,ddd,d3,x,y
-    Dim As Short j,k
-    d=9999       
-    dd=9999
-    ddd=9999
-    For j=1 To lastenemy
-        If j<>i Then
-            If enemy(j).hp>0 Then
-                If ep_friendfoe(i,j)=1 Then
-                    d2=distance(enemy(j).c,enemy(i).c)
-                    If d2<d Then
-                        d=d2
-                        enemy(i).nearestfriend=j
-                    EndIf
-                Else
-                    d3=distance(enemy(j).c,enemy(i).c)
-                    If d3<ddd Then
-                        ddd=d3
-                        enemy(i).nearestenemy=j
-                    EndIf
-                EndIf
-            Else
-                dd2=distance(enemy(j).c,enemy(i).c)
-                If dd2<dd Then
-                    dd=dd2
-                    enemy(i).nearestdead=j
-                EndIf
-            EndIf
-        EndIf
-    Next
-    d2=distance(enemy(i).c,awayteam.c)
-    If ep_friendfoe(i,-1)=1 Then
-        if d2<d then
-            d=d2
-            enemy(i).nearestfriend=-1
-        endif
-    Else
-        if d2<ddd then
-            ddd=d2
-            enemy(i).nearestenemy=-1
-        EndIf
-    endif
-    enemy(i).denemy=ddd
-    enemy(i).dfriend=d
-    enemy(i).ddead=dd
-    dd=9999
-    enemy(i).nearestitem=0
-    for x=enemy(i).c.x-enemy(i).sight to enemy(i).c.x+enemy(i).sight
-        for y=enemy(i).c.y-enemy(i).sight to enemy(i).c.y+enemy(i).sight
-            if x>=0 and y>=0 and x<=60 and y<=20 then
-                if itemindex.last(x,y)>0 then
-                    for k=1 to itemindex.last(x,y)
-                        j=itemindex.index(x,y,k)
-        
-                        If item(j).w.p=0 And item(j).w.s=0 and (item(j).ty<>21 and item(j).ty<>22 and item(j).ty<>29) Then
-                            if enemy(i).diet<>4 or item(j).ty=15 then
-                                d2=distance(enemy(i).c,item(j).w)
-                                If d2<dd Then
-                                    enemy(i).nearestitem=j
-                                    dd=d2
-                                EndIf
-                            endif
-                        endif
-                    next
-                endif
-            endif
-        next
-    Next    
-    
-    enemy(i).ditem=dd
-    if enemy(i).diet=4 and enemy(i).nearestitem=0 then
-        enemy(i).pickup=-1
-        for x=0 to 60
-            for y=0 to 20
-                if tmap(x,y).spawnswhat=enemy(i).made then 
-                    enemy(i).target.y=y
-                    enemy(i).target.x=x
-                endif
-            next
-        next
-    endif
-    Return 0
-End Function
-
-Function ep_changemood(i As Short,message() As Byte) As Short
-    Dim As Short b,cmoodto
-    If distance(awayteam.c,enemy(i).c)<enemy(i).sight Then 
-        If enemy(i).aggr=1 And enemy(i).made<>101 Then
-            If rnd_range(1,100)>(20+enemy(i).diet)*distance(enemy(i).c,awayteam.c) Then
-                If rnd_range(1,6)+rnd_range(1,6)>8+enemy(i).diet+awayteam.invis+enemy(i).cmmod And enemy(i).sleeping<1 Then
-                    Select Case enemy(i).diet
-                    Case Is=1
-                        cmoodto=1
-                    Case Is=2
-                        If rnd_range(1,100)<50-enemy(i).hp Then
-                            cmoodto=2
-                        Else
-                            cmoodto=1
-                        EndIf
-                    Case Is=3
-                        If rnd_range(1,100)<75-enemy(i).hp Then
-                            cmoodto=2
-                        Else
-                            cmoodto=1
-                        EndIf
-                    Case Else
-                        cmoodto=1
-                    End Select
-                    enemy(i).aggr=cmoodto
-                    If vismask(enemy(i).c.x,enemy(i).c.y)>0 And message(0)=0 Then
-                        enemy(i).cmshow=1
-                        message(0)=1
-                        If cmoodto=1 Then rlprint "The "&enemy(i).sdesc &" suddenly seems agressive",14
-                        If cmoodto=2 Then rlprint "The "&enemy(i).sdesc &" suddenly seems afraid",14
-                    EndIf                         
-                    b=enemy(i).nearestfriend
-                    If b>0 Then
-                        message(1)=1
-                        enemy(b).aggr=cmoodto
-                        enemy(b).cmshow=1
-                        rlprint "The "&enemy(b).sdesc &" tries to help its friend!",14
-                    EndIf
-                EndIf
-            EndIf
-            
-        EndIf
-    EndIf
-    Return 0
-End Function
-
-Function ep_monsterupdate(i As Short, spawnmask() as _cords,lsp as short,mapmask() As Byte,nightday() As Byte,message() As Byte) As Short
-    Dim As Short slot,b,j
-    slot=awayteam.slot
-    mapmask(enemy(i).c.x,enemy(i).c.y)=i
-    
-    If enemy(i).made=102 And nightday(enemy(i).c.x)=3 Then
-        If vismask(enemy(i).c.x,enemy(i).c.y)>0 And message(2)=0 Then
-            rlprint "The icetroll slowly stops moving."
-            message(2)=1
-        EndIf
-        changetile(enemy(i).c.x,enemy(i).c.y,slot,304)
-        enemy(i).hp=0
-        enemy(i).hpmax=0
-    EndIf
-    
-
-    If rnd_range(1,100)<enemy(i).breedson And enemy(i).breedson>0 And lastenemy<255 Then
-        If enemy(i).made<>101 Or tmap(enemy(i).c.x,enemy(i).c.y).vege>0 Then
-            If enemy(i).made=101 Then
-                tmap(enemy(i).c.x,enemy(i).c.y).vege-=1 'Tribbles only multiply when they have something to eat
-                If tmap(enemy(i).c.x,enemy(i).c.y).vege<=0 Then changetile(enemy(i).c.x,enemy(i).c.y,slot,4)
-                lastenemy+=1
-                enemy(lastenemy).c=movepoint(enemy(i).c,5)
-                enemy(lastenemy)=setmonster(makemonster(101,slot),slot,spawnmask(),lsp,enemy(lastenemy).c.x,enemy(lastenemy).c.y)
-            Else
-                lastenemy=lastenemy+1
-                enemy(lastenemy)=enemy(0)
-                enemy(lastenemy).c=movepoint(enemy(i).c,5)
-                If tmap(enemy(lastenemy).c.x,enemy(lastenemy).c.y).walktru=0 Or enemy(i).movetype>=tmap(enemy(lastenemy).c.x,enemy(lastenemy).c.y).walktru Then
-                    enemy(lastenemy)=setmonster(planets(slot).mon_template(enemy(i).slot),slot,spawnmask(),lsp,enemy(lastenemy).c.x,enemy(lastenemy).c.y,enemy(i).slot)
-                    If vismask(enemy(i).c.x,enemy(i).c.y)>0 Or vismask(enemy(lastenemy).c.x,enemy(lastenemy).c.y)>0 Then rlprint "the "&enemy(i).sdesc &" multiplies!"
-                Else
-                    lastenemy-=1
-                EndIf
-            EndIf
-        EndIf
-    EndIf
-    
-    If enemy(i).hp<enemy(i).hpmax Then
-        enemy(i).hp=enemy(i).hp+enemy(i).hpreg
-        If enemy(i).hp>enemy(i).hpmax Then
-            enemy(i).hp=enemy(i).hpmax
-            If enemy(i).aggr>0 And rnd_range(1,distance(enemy(i).c,awayteam.c))>enemy(i).intel Then enemy(i).aggr=enemy(i).aggr-1
-        EndIf
-    EndIf    
-    
-    If enemy(i).hasoxy=0 And (planets(slot).atmos=1 Or vacuum(enemy(i).c.x,enemy(i).c.y)=1) Then
-        enemy(i).hp=enemy(i).hp-1
-        If vismask(enemy(i).c.x,enemy(i).c.y)>0 Then rlprint "The "&enemy(i).sdesc &" is struggling for air!"
-    EndIf
-    
-    If enemy(i).sleeping>0 Then enemy(i).sleeping-=(1+enemy(i).reg)
-    
-    If enemy(i).nocturnal=1 Then
-        If nightday(enemy(i).c.x)=3 Then
-            If enemy(i).sleeping<=0 And rnd_range(1,6)+rnd_range(1,6)<enemy(i).intel Then enemy(i).invis=3
-            enemy(i).sleeping=2
-        Else
-            enemy(i).sleeping-=1
-            If enemy(i).sleeping<=0 And enemy(i).invis=3 Then enemy(i).invis=0
-        EndIf
-    EndIf
-    If enemy(i).nocturnal=2 Then
-        If nightday(enemy(i).c.x)=0 Then
-            If enemy(i).sleeping<=0 And rnd_range(1,6)+rnd_range(1,6)<enemy(i).intel Then enemy(i).invis=3
-            enemy(i).sleeping=2
-        Else
-            enemy(i).sleeping-=1
-            If enemy(i).sleeping<=0 And enemy(i).invis=3 Then enemy(i).invis=0
-        EndIf
-    EndIf
-    if itemindex.last(enemy(i).c.x,enemy(i).c.y)>0 then
-        for j=1 to itemindex.last(enemy(i).c.x,enemy(i).c.y)
-            b=itemindex.index(enemy(i).c.x,enemy(i).c.y,j)
-        'if debug=120 then rlprint b &";"& item(li(b)).w.s
-            If item(b).w.x=enemy(i).c.x And item(b).w.y=enemy(i).c.y And enemy(i).hp>0 And item(b).w.s=0 And item(b).w.p<>9999 Then
-                Select Case item(b).ty
-                Case 21 Or 22
-                    item(b).w.p=9999
-                    If item(b).ty=21 Then enemy(i).hp=enemy(i).hp-rnd_range(1,item(b).v1)
-                    If item(b).ty=22 Then enemy(i).sleeping=enemy(i).sleeping+rnd_range(1,item(b).v1)
-                    If vismask(enemy(i).c.x,enemy(i).c.y)>0 Then
-                        set__color( item(b).col,1)
-                        Draw String (item(b).w.x*_fw1,item(b).w.y*_fh1), Chr(176),,font2,custom,@_col
-                        rlprint "The mine explodes under the "&enemy(i).sdesc &"!"
-                    EndIf
-                Case 29 'Monster steps on Trap
-                    If item(b).v1<item(b).v2 Then
-                        If rnd_range(1,6)+rnd_range(1,6)+item(b).v2-enemy(i).hp/2-enemy(i).intel>0 And enemy(i).intel<5 Then
-                            'caught
-                            item(b).v3=50*enemy(i).biomod+CInt(2*enemy(i).biomod*(enemy(i).hpmax^2)/3)'reward
-                            item(b).v1+=1
-                            item(b).ldesc = item(b).ldesc & " | "&enemy(i).sdesc
-                            If vismask(enemy(i).c.x,enemy(i).c.y)>0 Then rlprint "The "&enemy(i).sdesc &" gets caught in the trap."
-                            enemy(i)=enemy(lastenemy)
-                            lastenemy-=1
-                        Else
-                            'evaded
-                            If rnd_range(1,6)+rnd_range(1,6)+item(b).v2-enemy(i).hp/2-enemy(i).intel<0 Then'
-                                'monster destroys trap
-                                If vismask(enemy(i).c.x,enemy(i).c.y)>0 Then rlprint "The "&enemy(i).sdesc &" notices the trap and destroys it."
-                                item(b).w.p=9999
-                            Else
-                                If vismask(enemy(i).c.x,enemy(i).c.y)>0 Then rlprint "The "&enemy(i).sdesc &" notices the trap."
-                            EndIf
-                        EndIf
-                    EndIf
-                end select
-            endif
-        next
-    endif
-    
-    if enemy(i).invis=2 and enemy(i).aggr=0 and distance(enemy(i).c,awayteam.c)<2 then
-        enemy(i).invis=0
-        rlprint "A clever "&enemy(i).sdesc &" has been hiding here, waiting for prey!",c_yel
-    endif
-    
-    
-    if enemy(i).diet=4 and enemy(i).pickup=-1 and enemy(i).target.x=enemy(i).c.x and enemy(i).target.y=enemy(i).c.y then
-        'Launch
-        tmap(enemy(i).c.x,enemy(i).c.y)=tiles(4)
-        If planetmap(enemy(i).c.x,enemy(i).c.y,slot)>0 Then planetmap(enemy(i).c.x,enemy(i).c.y,slot)=4
-        If planetmap(enemy(i).c.x,enemy(i).c.y,slot)<0 Then planetmap(enemy(i).c.x,enemy(i).c.y,slot)=-4
-        If vismask(enemy(i).c.x,enemy(i).c.y)>0 Then
-            If tmap(enemy(i).c.x,enemy(i).c.y).no=86 Then
-                rlprint "The other scoutship launches."
-                companystats(basis(nearest_base(player.c)).company).profit+=1
-            EndIf
-            If tmap(enemy(i).c.x,enemy(i).c.y).no=272 Or tmap(enemy(i).c.x,enemy(i).c.y).no=273 Then rlprint "The alien ship launches."
-        Else
-            If tmap(enemy(i).c.x,enemy(i).c.y).no=86 Then
-                rlprint "You see a scoutship starting in the distance."
-                companystats(basis(nearest_base(player.c)).company).profit+=1
-            EndIf
-            If tmap(enemy(i).c.x,enemy(i).c.y).no=272 Or tmap(enemy(i).c.x,enemy(i).c.y).no=273 Then rlprint "You see an alien ship starting in the distance."
-            companystats(basis(nearest_base(player.c)).company).profit+=1
-        EndIf
-        enemy(i)=enemy(lastenemy)
-        lastenemy=lastenemy-1
-
-    endif
-    
-    Return 0
-End Function
-    
-
-Function ep_monstermove(spawnmask() As _cords, lsp As Short, mapmask() As Byte,nightday() As Byte) As Short
-    Dim As Short deadcounter,i,j,flee,slot
-    Dim As Byte message(8),see1,see2
-    
-    slot=awayteam.slot
-    for i=1 to lastenemy
-        if enemy(i).hp>0 then
-            ep_monsterupdate(i,spawnmask(),lsp,mapmask(),nightday(),message())
-        endif
+function getmonster() as short
+    dim as short d,e,c
+    d=0
+    for c=1 to lastenemy 'find dead that doesnt respawn
+        if enemy(c).respawns=0 and enemy(c).hp<=0 then return d
     next
-    mapmask(awayteam.c.x,awayteam.c.y)=-1
-    
-    For i=1 To lastenemy
-        flee=0
-        If enemy(i).hp>0 Then
-            
-            If enemy(i).e.tick<0 And enemy(i).sleeping=0 Then
-                'Nearest critter, dead, item?
-                ep_nearest(i)
-                'Reaction to critter
-                if enemy(i).nearestitem>0 and enemy(i).c.x=item(enemy(i).nearestitem).w.x and item(enemy(i).nearestitem).w.p=0 and item(enemy(i).nearestitem).w.s=0 and enemy(i).c.y=item(enemy(i).nearestitem).w.y and (rnd_range(1,10)<enemy(i).pumod or enemy(i).pickup=1) then
-                    item(enemy(i).nearestitem).w.p=i
-                    if vismask(enemy(i).c.x,enemy(i).c.y)>0 then rlprint "The "&enemy(i).sdesc &" picks up the "&item(enemy(i).nearestitem).desig &"."
-                    itemindex.remove(enemy(i).nearestitem,enemy(i).c)
-                    enemy(i).pickup=0
-                    enemy(i).nearestitem=0
-                    enemy(i).add_move_cost
-                endif
+    if d=0 then
+        lastenemy=lastenemy+1
+        d=lastenemy
+        if d>255 then
+            lastenemy=255
+            d=255
+        endif
+    endif
+    return d
+end function
 
-                If enemy(i).denemy>enemy(i).sight or enemy(i).nearestenemy=0 Then
-                    'Can't see it
-                    If (enemy(i).aggr=0 Or enemy(i).aggr=2) And enemy(i).diet>0 and rnd_range(1,20)+enemy(i).cmmod<enemy(i).intel And enemy(i).faction>8 Then
-                        enemy(i).aggr=1
-                        If vismask(enemy(i).c.x,enemy(i).c.y)>0 Then rlprint "The "&enemy(i).sdesc &" seems to calm down."
-                    EndIf
-                    
-                    if enemy(i).pickup>=0 then enemy(i).target=rnd_point
-                    
-                    if (enemy(i).nearestitem>0 and enemy(i).diet=4) or (enemy(i).sight<enemy(i).ditem and enemy(i).nearestitem>0 and (rnd_range(1,10)<enemy(i).pumod or enemy(i).pickup=1)) then
-                        enemy(i).pickup=1
-                        enemy(i).target=item(enemy(i).nearestitem).w
-                    endif
-                Else
-                    If enemy(i).nearestenemy=-1 Or enemy(i).nearestfriend=-1 Then
-                        'Nearest is player
-                        
-                        'If its an animal does it change it's mood?
-                        if enemy(i).faction>8 then ep_changemood(i,message())
-                        
-                        If enemy(i).aggr=0 Then 
-                            enemy(i).attacked=-1
-                        Else
-                            enemy(i).attacked=0
-                        EndIf
-                        If enemy(i).aggr=1 Then enemy(i).target=rnd_point
-                        If enemy(i).aggr=2 Then 
-                            enemy(i).target=awayteam.c
-                            flee=1
-                        endif
-                    Else
-                        If enemy(i).denemy>enemy(i).sight Then
-                            enemy(i).target=rnd_point
-                        Else
-                            enemy(i).attacked=enemy(i).nearestenemy
-                        EndIf
-                        if enemy(i).dfriend<enemy(i).sight then
-                            if enemy(i).nearestfriend=-1 then
-                                if awayteam.attacked>0 then
-                                    if vismask(enemy(i).c.x,enemy(i).c.y)>0 then rlprint enemy(i).desc &" decides to help you!"
-                                    enemy(i).attacked=awayteam.attacked
-                                endif
-                            else
-                                if enemy(enemy(i).nearestfriend).attacked<>0 then
-                                    if vismask(enemy(i).c.x,enemy(i).c.y)>0 then rlprint "The "&enemy(i).sdesc &" decides to help the " &enemy(enemy(i).nearestfriend).sdesc &"."
-                                    enemy(i).attacked=enemy(enemy(i).nearestfriend).attacked
-                                endif
-                            endif
-                        endif
-                    EndIf
-                    
-                    
-
-                    
-                EndIf
-                'Move
-                'Monster k�nnen nur 3 dinge tun: Angreifen, auf ein ziel zugehen/weggehen, irgendwohin gehen
-                If enemy(i).attacked<>0 Then
-                    If enemy(i).denemy<=enemy(i).range Then
-                        If enemy(i).attacked=-1 Then
-                            if pathblock(awayteam.c,enemy(i).c,awayteam.slot,1)=-1 or distance(enemy(i).c,awayteam.c)<2 then
-                                awayteam=monsterhit(enemy(i),awayteam,vismask(enemy(i).c.x,enemy(i).c.y))
-                            endif
-                        Else
-                            if pathblock(enemy(i).c,enemy(enemy(i).attacked).c,awayteam.slot,1)=-1 or distance(enemy(i).c,enemy(enemy(i).attacked).c)<2 then
-                                if enemy(enemy(i).attacked).hp>0 then
-                                    enemy(enemy(i).attacked)=monsterhit(enemy(i),enemy(enemy(i).attacked),vismask(enemy(i).c.x,enemy(i).c.y))
-                                    see1=0
-                                    see2=0
-                                    if vismask(enemy(i).c.x,enemy(i).c.y)>0 then see1=1
-                                    if vismask(enemy(enemy(i).attacked).c.x,enemy(enemy(i).attacked).c.y)>0 then see2=1
-                                    if see1=1 and see2=1 then rlprint "The "&enemy(i).sdesc &" attacks the "&enemy(enemy(i).attacked).sdesc &"."
-                                    if see1=0 and see2=1 then rlprint "Something attacks the "&enemy(enemy(i).attacked).sdesc &"."
-                                    if see1=1 and see2=0 then rlprint "The "&enemy(i).sdesc &" attacks something."
-                                    If enemy(enemy(i).attacked).hp<=0 Then enemy(i).attacked=0
-                                else
-                                    enemy(i).attacked=0
-                                endif
-                            endif
-                        EndIf
-                        enemy(i).e.add_action(enemy(i).atcost)
-                    Else
-                        If enemy(i).attacked=-1 Then
-                            enemy(i).target=awayteam.c
-                        Else
-                            enemy(i).target=enemy(enemy(i).attacked).c
-                        EndIf
-                        enemy(i).attacked=0
-                    EndIf
-                EndIf
-                If enemy(i).attacked=0 And enemy(i).e.e<=0 Then
-                    if enemy(i).diet<>2 and enemy(i).ddead=0 and enemy(i).faction<>enemy(enemy(i).nearestdead).faction and enemy(i).nearestdead>0 then
-                        if enemy(i).faction>8 and enemy(enemy(i).nearestdead).faction>8 then
-                            if vismask(enemy(i).c.x,enemy(i).c.y)>0 then rlprint "The "&enemy(i).sdesc &" eats of the "&enemy(enemy(i).nearestdead).sdesc
-                            enemy(enemy(i).nearestdead).hpmax-=1
-                            enemy(i).add_move_cost
-                        endif
-                    elseif enemy(i).diet=1 and tmap(enemy(i).c.x,enemy(i).c.y).vege>0 then
-                        if vismask(enemy(i).c.x,enemy(i).c.y)>0 then rlprint "The "&enemy(i).sdesc &" eats of the plants in this area"
-                        tmap(enemy(i).c.x,enemy(i).c.y).vege-=1
-                        enemy(i).add_move_cost
-                    else
-                        if enemy(i).speed>0 then move_monster(i,enemy(i).target,flee,planets(slot).depth,mapmask())
-                    endif
-                EndIf
-            EndIf 
-        Else
-            deadcounter+=1
-        EndIf
-    Next
-    
-    Return deadcounter
-End Function
 
 Function ep_spawning(spawnmask() As _cords,lsp As Short, diesize As Short,nightday() As Byte) As Short
     Dim As Short a,b,c,x,y,d,slot
@@ -2470,357 +1448,7 @@ Function ep_shipfire(shipfire() As _shipfire) As Short
     Return 0
 End Function
 
-Function ep_radio(ByRef nextlanding As _cords,ByRef ship_landing As Short, shipfire() As _shipfire,lavapoint() As _cords, ByRef sf As Single,nightday() As Byte,localtemp() As Single) As Short
-    Dim As _cords p,p1,p2,pc
-    Dim As String text,mtext
-    Dim As Short a,b,slot,osx,ex,shipweapon,roverlist(128),c
-    Dim As _weap del
-    slot=player.map
-    osx=calcosx(awayteam.c.x,planets(slot).depth)
-    Screenset 1,1
-    p2.x=player.landed.x
-    p2.y=player.landed.y
-    rlprint "Engaging remote control."
-    If (pathblock(awayteam.c,p2,slot,1)=-1 Or awayteam.stuff(8)=1 Or distance(awayteam.c,p2)<2) And player.landed.m=slot Then
-        rlprint "Your command?"
-        text=" "
-        pc=locEOL
-        text=Ucase(gettext(pc.x,pc.y,46,text))
-        If Instr(text,"ROVER")>0 Then
-            DbgPrint("Contacting Rover")
-            b=0
-            mtext="Rovers:/"
-            For a=1 To itemindex.vlast 'Looking for Rover
-                If item(itemindex.value(a)).ty=18 And item(itemindex.value(a)).w.p=0 And item(itemindex.value(a)).w.s=0 Then 
-                    b=itemindex.value(a)
-                    p1.x=item(b).w.x
-                    p1.y=item(b).w.y
-                    If pathblock(p2,p1,slot,1)=-1 Or (awayteam.stuff(8)=1 And player.landed.m=slot) Then
-                        c+=1
-                        roverlist(c)=b
-                        mtext=mtext &item(b).desig &" "&cords(item(b).w) &"/"
-                    endif
-                endif
-            Next
-            DbgPrint(b &" Rover found.")
-            if c>1 then
-                b=menu(bg_awayteamtxt,mtext,"",2,2)
-                if b>0 then b=roverlist(b)
-            endif
-            if c=1 then b=roverlist(1)
-            If b>0 Then
-                If Instr(text,"STOP")>0 Then
-                    rlprint "Sending stop command to rover"
-                    item(b).v5=1
-                EndIf
-                If Instr(text,"START")>0 Then
-                    rlprint "sending start command to rover."
-                    item(b).v5=0
-                EndIf
-                If Instr(text,"TARGET")>0 Then
-                    rlprint "Get target for rover:"
-                    text=get_planet_cords(p1,slot)
-                    If text=key__enter Then 
-                        item(b).v5=0
-                        item(b).vt=p1
-                    endif
-                    text=""
-                EndIf
-                If Instr(text,"POSITI")>0 Or Instr(text,"WHERE")>0 Then
-                    rlprint "Rover is at "& item(b).w.x &":"& item(b).w.y &"."
-                EndIf
-            Else
-                rlprint "No rover to contact"
-            EndIf
-            text=""
-        EndIf
-        If Instr(text,"HELP")>0 Then rlprint "How shall we help you? come to you or fire on something or launch?"
-        If Instr(text,"SELFDESTRUCT")>0 Then rlprint "We don't have a selfdestruct device. Guess we could make the reactor go critical, but why would we want to?"
-        If Instr(text,"SCAN")>0 Or Instr(text,"ORBITAL")>0 Or Instr(text,"SATELLI")>0 Then
-            If awayteam.stuff(8)=0 Then
-                rlprint "We don't have a satellite in orbit"
-            Else
-                If Instr(text,"LIFE")>0 Then
-                    ep_heatmap(lavapoint(),5)
-                Else
-                    a=rnd_range(0,itemindex.vlast)
-                    If item(itemindex.value(a)).ty=15 And item(itemindex.value(a)).w.p=0 And item(itemindex.value(a)).w.s=0 Then
-                        item(itemindex.value(a)).discovered=1
-                        rlprint "We have indications that there is an ore deposit at "& cords(item(itemindex.value(a)).w) &"."
-                    Else
-                        rlprint "No new information from orbital scans."
-                    EndIf
-                EndIf
-            EndIf
-        EndIf
-        If Instr(text,"POSIT")>0 Or Instr(text,"LOCATI")>0 Or Instr(text,"WHERE")>0 Then
-            rlprint "We are at " &player.landed.x &":" &player.landed.y
-        EndIf
-        If Instr(text,"LAUNC")>0 Or Instr(text,"START")>0 Then
-            If (slot=specialplanet(2) And specialflag(2)<2) Or (slot=specialplanet(27) And specialflag(27)=0) Then
-                If slot=specialplanet(2) Then rlprint "We can't start untill we disabled the automatic defense system."
-                If slot=specialplanet(27) Then rlprint "Can't get her up from this surface. She is stuck."
-            Else
-                If askyn("Are you certain? you want to launch on remote and leave you behind? (y/n)") Then
-                    If planets(slot).depth=0 Then
-                        player.dead=4
-                    Else
-                        rlprint "Good luck then."
-                        player.landed.m=0
-                    EndIf
-                EndIf
-            EndIf
-        EndIf
-        If Instr(text,"HELLO")>0 Then rlprint "Yes?"
-        If Instr(text,"STATUS")>0 Or Instr(text,"REPORT")>0 Then
-            screenshot(1)
-            shipstatus()
-            screenshot(2)
-            rlprint "The ship is fine, like you left her"
-            For a=1 To 5
-                If distance(p2,lavapoint(a))<2 And lavapoint(a).x>0 And lavapoint(a).y>0 Then
-                    rlprint "Lava is coming a bit close though"
-                    Exit For
-                EndIf
-            Next
-        EndIf
-        If Instr(text,"GET")>0 Or Instr(text,"COME")>0 Or Instr(text,"LAND")>0 Or Instr(text,"RESCUE")>0 Or Instr(text,"MOVE")>0 Or Instr(text,"FETCH")>0 Then
-            If (slot=specialplanet(2) And specialflag(2)<2) Or (slot=specialplanet(27) And specialflag(27)=0) Or planets(slot).depth>0 Then
-                If slot=specialplanet(2) Then rlprint "We can't start untill we disabled the automatic defense system."
-                If slot=specialplanet(27) Then rlprint "Can't get her up from this surface. She is stuck."
-                If planets(slot).depth>0 Then rlprint "I think you are slightly overestimating the size of the airlock, captain!"
-            Else
-                p.x=player.landed.x
-                p.y=player.landed.y
-                If Instr(text,"HERE")>0 Then
-                    nextlanding.x=awayteam.c.x
-                    nextlanding.y=awayteam.c.y
-                    player.landed.m=0
-                Else
-                    rlprint "Roger. Where do you want me to land?"
-                    nextlanding=awayteam.c
-                    text=get_planet_cords(nextlanding,slot,1)
-                    If text=key__enter Then
-                        player.landed.m=0
-                    Else
-                        nextlanding.x=p.x
-                        nextlanding.y=p.y
-                    EndIf
-                EndIf
-                If nextlanding.x=player.landed.x And nextlanding.y=player.landed.y Then
-                    rlprint "We already are at that position."
-                    player.landed.m=slot
-                Else
-                    ship_landing=20*distance(p,nextlanding,1)/2
-                    If ship_landing<1 Then ship_landing=1
-                    If crew(2).onship=lc_onship Then
-                        rlprint "ETA in "&Int(ship_landing/20) &". See you there."
-                    Else
-                        rlprint "ETA in "&Int(ship_landing/20) &". Putting her down there by remote control."
-                    EndIf
-                EndIf
-            EndIf
-        EndIf
-        If Instr(text,"FIR")>0 Or Instr(text,"NUKE")>0 Or Instr(text,"SHOOT")>0 Then
-            sf=sf+1
-            If sf>15 Then sf=0
-            display_ship(0)
-            shipweapon=com_getweapon
-            If shipweapon>0 Then
-                shipfire(sf).where=awayteam.c
-                rlprint "Choose target"
-                Do
-                    text=planet_cursor(shipfire(sf).where,slot,osx,1)
-                    ep_display(osx)
-                    display_awayteam(,osx)
-                    text=Cursor(shipfire(sf).where,slot,osx)
-                    If text=key__enter Then ex=-1
-                    If text=key_quit Or text=key__esc Then ex=1
-                Loop Until ex<>0
-                If text=key__enter Then
-                    If pathblock(p2,shipfire(sf).where,slot,1)=0 Then
-                        rlprint "No line of sight to that target."
-                        shipfire(sf).where.x=-1
-                        shipfire(sf).where.y=-1
-                    Else
-                        shipfire(sf).when=(distance(awayteam.c,p2)\10)+1
-                        Cls
-                        display_ship
-                        shipfire(sf).what=shipweapon
-                        If shipfire(sf).what<0 Then
-                            shipfire(sf).what=6
-                            shipfire(sf).when=-1
-                        EndIf
-                        If player.weapons(shipfire(sf).what).ammomax=0 And distance(shipfire(sf).where,p2,1)>10 Then shipfire(sf).when=-5
-    
-                        If player.weapons(shipfire(sf).what).desig="" Then shipfire(sf).when=-1
-                        If player.weapons(shipfire(sf).what).ammomax>0 Then
-                            If player.useammo=0 Then shipfire(sf).when=-2
-                        EndIf
-                        If player.weapons(shipfire(sf).what).shutdown<>0 Then shipfire(sf).when=-3
-                        If player.weapons(shipfire(sf).what).reloading<>0 Then shipfire(sf).when=-4
-                        If shipfire(sf).when>0 Then
-                            rlprint player.weapons(shipfire(sf).what).desig &" fired"
-                            player.weapons(shipfire(sf).what).heat+=player.weapons(shipfire(sf).what).heatadd*25
-                            player.weapons(shipfire(sf).what).reloading=player.weapons(shipfire(sf).what).reload
-                            If Not(skill_test(player.gunner(0),player.weapons(shipfire(sf).what).heat/25)) Then
-    
-                                rlprint player.weapons(shipfire(sf).what).desig &" shuts down due to heat."
-                                player.weapons(shipfire(sf).what).shutdown=1
-                                If Not(skill_test(player.gunner(location),player.weapons(shipfire(sf).what).heat/20,"Gunner: Shutdown")) Then
-                                    rlprint player.weapons(shipfire(sf).what).desig &" is irreperably damaged."
-                                    player.weapons(shipfire(sf).what)=del
-                                EndIf
-                            EndIf
-                        EndIf
-                        If shipfire(sf).when=-1 Then rlprint "Fire order canceled"
-                        If shipfire(sf).when=-2 Then rlprint "I am afraid we are out of ammunition"
-                        If shipfire(sf).when=-3 Then rlprint "Can't fire that weapon at this time."
-                        If shipfire(sf).when=-5 Then rlprint "That target is below the horizon."
-                        If shipfire(sf).when=-4 Then
-                            If player.weapons(shipfire(sf).what).ammomax=0 Then
-                                rlprint "That weapon is currently recharging."
-                            Else
-                                rlprint "That weapon is currently reloading."
-                            EndIf
-                        EndIf
-                    EndIf
-                Else
-                    rlprint "Fire order canceled."
-                EndIf
-            EndIf
-        EndIf
-        awayteam.e.add_action(25)
-    Else
-        rlprint "No contact possible"
-    EndIf
-    Return 0
-End Function
 
-Function ep_roverreveal(i As Integer) As Short
-    Dim As Short x,y,slot,j
-    Dim As Single d
-    Dim As _cords p1
-    slot=item(i).w.m
-    make_vismask(item(i).w,item(i).v1+3,slot)
-    For x=0 To 60
-        For y=0 To 20
-            If vismask(x,y)>0 And planetmap(x,y,slot)<0 Then
-                planetmap(x,y,slot)=planetmap(x,y,slot)*-1
-                item(i).v6=item(i).v6+0.5*(item(i).v1/3)*planets(slot).mapmod
-                if itemindex.last(x,y)>0 then
-                    for j=1 to itemindex.last(x,y)
-                        item(itemindex.index(x,y,j)).discovered=1
-                    next
-                endif
-            EndIf
-        Next
-    Next
-    Return 0
-End Function
-
-function ep_rovermove(a as short, slot as short) as short
-    dim as _cords p1,route(1024)
-    dim as short i,cost,last               
-    p1.x=item(a).w.x
-    p1.y=item(a).w.y
-    if item(a).v3<=0 then
-        If item(a).vt.x=-1 Then
-            last=ep_autoexploreroute(route(),p1,item(a).v2,slot,1)
-            DbgPrint("last:"&last)
-            if last=-1 then return 0
-            item(a).vt=route(last)
-        Else
-            If item(a).w.x=item(a).vt.x And item(a).w.y=item(a).vt.y Then 
-                item(a).vt.x=-1
-                return 0
-            else
-                last=ep_planetroute(route(),item(a).v2,p1,item(a).vt,planets(slot).depth)
-            endif
-        EndIf
-        If last>1 Then
-            itemindex.move(a,item(a).w,route(2))
-            item(a).w.x=route(2).x
-            item(a).w.y=route(2).y
-        EndIf
-        if last=1 then
-            itemindex.move(a,item(a).w,route(1))
-            item(a).w.x=route(1).x
-            item(a).w.y=route(1).y
-        endif
-        ep_roverreveal(a)
-        
-        cost=(20-item(a).v4)*planets(slot).grav
-        cost+=tmap(item(a).w.x,item(a).w.y).movecost
-        if cost<=0 then cost=1
-        item(a).v3+=cost
-    else
-        item(a).v3-=1
-        if item(a).v3<0 then item(a).v3=0
-        DbgPrint("V6"&item(a).v3)
-    endif
-    return 0
-end function
-
-Function ep_heatmap(lavapoint() As _cords,lastlavapoint As Short) As Short
-    Dim As Short map(60,20),heatmap(60,20)
-    Dim As Short x,y,x1,y1,a,sensitivity,dis
-    Dim As _cords p1,p2
-    For a=0 To lastenemy
-        If enemy(a).hp>0 Then map(enemy(a).c.x,enemy(a).c.y)+=enemy(a).hp
-    Next
-    For a=0 To lastlavapoint
-        If lavapoint(a).x>0 And lavapoint(a).y>0 Then map(lavapoint(a).x,lavapoint(a).y)+=50-player.sensors*4
-    Next
-    For x=0 To 60
-        For y=0 To 20
-            If map(x,y)>0 Then
-                heatmap(x,y)=map(x,y)
-                For x1=x-1 To x+1
-                    For y1=y-1 To y+1
-                        If x1>=0 And y1>=0 And x1<=60 And y1<=20 Then
-                            heatmap(x,y)=heatmap(x,y)+map(x1,y1)/2
-                        EndIf
-                    Next
-                Next
-            EndIf
-        Next
-    Next
-
-    For x=0 To 60
-        For y=0 To 20
-            If heatmap(x,y)>0 Then
-                For x1=x-1 To x+1
-                    For y1=y-1 To y+1
-                        If x1>=0 And y1>=0 And x1<=60 And y1<=20 And (x1<>x Or y1<>y) Then
-                            If heatmap(x,y)>=heatmap(x1,y1) Then heatmap(x1,y1)=0
-                        EndIf
-                    Next
-                Next
-            EndIf
-        Next
-    Next
-    sensitivity=24-player.sensors*2
-    dis=9999
-    p2.x=-1
-    p2.y=-1
-    For x=0 To 60
-        For y=0 To 20
-            If heatmap(x,y)>sensitivity Then
-                p1.x=x
-                p1.y=y
-                If distance(p1,awayteam.c)<dis Then
-                    p2=p1
-                    dis=distance(p1,awayteam.c)
-                EndIf
-            EndIf
-        Next
-    Next
-    If p2.x>0 Or p2.y>0 Then
-        rlprint "There is a source of heat at "&p2.x &":"&p2.y &". It might be a lifeform."
-    EndIf
-    Return 0
-End Function
 
 Function ep_helmet() As Short
     Dim As Short slot
@@ -2841,6 +1469,112 @@ Function ep_helmet() As Short
     EndIf
     equip_awayteam(slot)
     Return 0
+End Function
+
+
+Function grenade(from As _cords,map As Short) As _cords
+    DimDebug(0)
+    Dim As _cords target,ntarget
+    Dim As Single dx,dy,x,y,launcher
+    Dim As Short a,ex,r,t,osx
+    Dim As String Key
+    Dim As _cords p,pts(60*20)
+
+    target.x=from.x
+    target.y=from.y
+    ntarget.x=from.x
+    ntarget.y=from.y
+    x=from.x
+    y=from.y
+    p=from
+    launcher=findbest(17,-2)
+    DbgPrint(""&launcher)
+    If launcher>0 Then
+        rlprint "Choose target"
+        Do
+            Key=planet_cursor(target,map,osx,1)
+            ep_display(osx)
+            display_awayteam(,osx)
+            Key=Cursor(target,map,osx,,5+item(launcher).v1-planets(map).grav)
+            If Key=key_te Or Ucase(Key)=" " Or Multikey(FB.SC_ENTER) Then ex=-1
+            If Key=key_quit Or Multikey(FB.SC_ESCAPE) Then ex=1
+        Loop Until ex<>0
+    Else
+        rlprint "Choose direction"
+        Key=keyin("12346789"&" "&key__esc)
+        If getdirection(Key)=0 Then
+            ex=1
+        Else
+            r=3-planets(map).grav
+            If getdirection(Key)=1 Then
+                dx=-.7
+                dy=.7
+            EndIf
+            If getdirection(Key)=2 Then
+                dx=0
+                dy=1
+            EndIf
+            If getdirection(Key)=3 Then
+                dx=.7
+                dy=.7
+            EndIf
+            If getdirection(Key)=4 Then
+                dx=-1
+                dy=0
+            EndIf
+            If getdirection(Key)=6 Then
+                dx=1
+                dy=0
+            EndIf
+            If getdirection(Key)=7 Then
+                dx=-.7
+                dy=-.7
+            EndIf
+            If getdirection(Key)=8 Then
+                dx=0
+                dy=-1
+            EndIf
+            If getdirection(Key)=9 Then
+                dx=.7
+                dy=-.7
+            EndIf
+        EndIf
+    EndIf
+    If ex=1 Then
+        target.x=-1
+        target.y=-1
+    Else
+        If launcher>0 Then
+            r=line_in_points(target,from,pts())
+            For a=1 To r
+                If tmap(pts(a).x,pts(a).y).firetru=1 Then
+                    Return pts(a)
+                EndIf
+            Next
+            Return target
+        Else
+
+        For a=1 To r
+            x=x+dx
+            y=y+dy
+            t=Abs(planetmap(x,y,map))
+            If tiles(t).firetru=1 Then Exit For
+        Next
+        If planets(map).depth=0 Then
+            If x<0 Then x=60
+            If x>60 Then x=0
+        Else
+            If x<0 Then x=0
+            If x>60 Then x=60
+        EndIf
+        If y<0 Then y=0
+        If y>20 Then y=20
+        target.x=x
+        target.y=y
+        EndIf
+    EndIf
+    DbgPrint(""&target.x &":"& target.y)
+    Return target
 End Function
 
 
@@ -3154,63 +1888,6 @@ Function ep_fire(mapmask() As Byte,Key As String,ByRef autofire_target As _cords
     Return 0
 End Function
 
-Function ep_fireeffect(p2 As _cords,slot As Short, c As Short, range As Short, mapmask() As Byte, first As Short=0,last As Short=0) As Short
-    Dim As Short d,f,x,y,vacc
-    Dim As Single dam
-    If first=0 And last=0 Then
-        first=1
-        last=awayteam.hpmax
-    EndIf
-    For d=1 To lastenemy
-        If enemy(d).c.x=p2.x And enemy(d).c.y=p2.y And enemy(d).hp>0 Then
-            enemy(d)=hitmonster(enemy(d),awayteam,mapmask(),first,first+last)
-            'e=1
-        EndIf
-    Next
-    If tmap(p2.x,p2.y).shootable=1 Then
-        dam=0
-        For f=first To last
-            If crew(f).hp>0 And crew(f).onship=0 Then dam=dam+awayteam.secweap(f)
-        Next
-        dam=CInt(dam-tmap(p2.x,p2.y).dr)
-        'rlprint "in here with dam "&dam
-        If dam>0 Or (awayteam.stuff(5)>0 And c=1) Then
-            dam=dam+awayteam.stuff(5)
-            If dam<=0 Then dam=awayteam.stuff(5)
-            rlprint tmap(p2.x,p2.y).succt &" ("&dam &" damage)"
-            tmap(p2.x,p2.y).hp=tmap(p2.x,p2.y).hp-dam
-            If tmap(p2.x,p2.y).hp>=1 And tmap(p2.x,p2.y).hp<=tiles(tmap(p2.x,p2.y).no).hp*.25 Then rlprint "The "&tmap(p2.x,p2.y).desc &" is showing signs of serious damage."
-            If tmap(p2.x,p2.y).hp<=0 Then
-                If tmap(p2.x,p2.y).no=243 Then
-                    If vacuum(p2.x,p2.y)=0 Then
-                        For x=p2.x-1 To p2.x+1
-                            For y=p2.y-1 To p2.y+1
-                                If x>=0 And x<=60 And y>=0 And y<=20 Then
-                                    If vacuum(x,y)=1 Then vacc=1
-                                EndIf
-                            Next
-                        Next
-                        If vacc=1 Then
-                            rlprint "The air rushes out of the ship!",14
-                            awayteam.helmet=1
-                        EndIf
-                    EndIf
-                EndIf
-                rlprint tmap(p2.x,p2.y).killt,10
-                tmap(p2.x,p2.y)=tiles(tmap(p2.x,p2.y).turnsinto)
-                If planetmap(p2.x,p2.y,slot)>0 Then planetmap(p2.x,p2.y,slot)=tmap(p2.x,p2.y).no
-                If planetmap(p2.x,p2.y,slot)<0 Then planetmap(p2.x,p2.y,slot)=-tmap(p2.x,p2.y).no
-            EndIf
-        Else
-            rlprint tmap(p2.x,p2.y).failt,14
-        EndIf
-    EndIf
-    If tmap(p2.x,p2.y).firetru=1 Then
-        c=range+1
-    EndIf
-    Return c
-End Function
-
 Function ep_closedoor() As Short
     Dim As Short a,slot
     Dim p1 As _cords
@@ -3229,6 +1906,40 @@ Function ep_closedoor() As Short
     Next
     Return 0
 End Function
+
+
+function mondis(enemy as _monster) as string
+    dim text as string
+    if enemy.hp<=0 then text=text &"A dead "
+    text=text &enemy.ldesc
+    if enemy.hpnonlethal>enemy.hp and enemy.hp>0 then
+        text =text &". immobilized."
+    else
+        if enemy.hpmax=enemy.hp then
+            text=text &". unhurt."
+        else
+            if enemy.hp>0 then
+                if enemy.hp<2 then
+                    text=text &". badly hurt."
+                else
+                    text=text &". hurt."
+                endif
+            endif
+        endif
+    endif
+    if enemy.stuff(9)=0 then
+    if rnd_range(1,6)+rnd_range(1,6)+player.science(1)>9 then enemy.stuff(10)=1
+    if rnd_range(1,6)+rnd_range(1,6)+player.science(1)>10 then enemy.stuff(11)=1
+    if rnd_range(1,6)+rnd_range(1,6)+player.science(1)>11 then enemy.stuff(12)=1
+    enemy.stuff(9)=enemy.stuff(10)+enemy.stuff(11)+enemy.stuff(12)
+    endif
+    if enemy.stuff(10)=1 then text=text &" (" &enemy.hpmax &"/" &enemy.hp &")"
+    if enemy.stuff(11)=1 then text=text &" W:" &enemy.weapon
+    if enemy.stuff(12)=1 then text=text &" A:" &enemy.armor
+    if enemy.hp>0 and enemy.aggr=0 then text=text &" it is attacking!"
+    return text
+end function
+
 
 Function ep_examine() As Short
     DimDebug(0)
@@ -3360,76 +2071,30 @@ Function ep_jumppackjump() As Short
     Return 0
 End Function
 
-Function ep_crater(shipfire() As _shipfire, ByRef sf As Single) As Short
-    Dim As Short b,r,x,y,c
-    Dim As _cords p2,p1
-    Dim m(60,20) As Short
-    b=rnd_range(1,15)-countgasgiants(sysfrommap(player.landed.m))+countasteroidfields(sysfrommap(player.landed.m))
-    b=b-planets(player.landed.m).atmos
-    If b>0 Then
-        c=0
-        rlprint "A meteorite streaks across the sky and slams into the planets surface!",14
-        Do
-            c+=1
-            r=5
-            If rnd_range(1,100)<66 Then r=3
-            If rnd_range(1,100)<66 Then r=2
 
-            p2.x=player.landed.x
-            p2.y=player.landed.y
-            p1=rnd_point
-
-            For x=0 To 60
-                For y=0 To 20
-                    m(x,y)=0
-                    If tmap(x,y).walktru>0 Then m(x,y)=1
-                    p2.x=x
-                    p2.y=y
-                    If CInt(distance(p2,p1))=r+1 Then m(x,y)=0
-                    If CInt(distance(p2,p1))=r Then m(x,y)=1
-                Next
-            Next
-            flood_fill(player.landed.x,player.landed.y,m(),2)
-        Loop Until m(awayteam.c.x,awayteam.c.y)=255 Or c>=25
-        If c=25 Then Return 0
-
-        For x=0 To 60
-            For y=0 To 20
-                p2.x=x
-                p2.y=y
-                If CInt(distance(p2,p1))=r+1 Then
-                    If planetmap(p2.x,p2.y,player.landed.m)<0 Then planetmap(p2.x,p2.y,player.landed.m)=-4
-                    If planetmap(p2.x,p2.y,player.landed.m)>0 Then planetmap(p2.x,p2.y,player.landed.m)=4
-                    tmap(p2.x,p2.y)=tiles(4)
-                EndIf
-                If CInt(distance(p2,p1))=r Then
-                    If planetmap(p2.x,p2.y,player.landed.m)<0 Then planetmap(p2.x,p2.y,player.landed.m)=-8
-                    If planetmap(p2.x,p2.y,player.landed.m)>0 Then planetmap(p2.x,p2.y,player.landed.m)=8
-                    tmap(p2.x,p2.y)=tiles(8)
-                EndIf
-            Next
-        Next
-
-        sf=sf+1
-        If sf>15 Then sf=0
-        shipfire(sf).when=1
-        shipfire(sf).what=10+sf
-        shipfire(sf).where=p1
-        player.weapons(shipfire(sf).what)=make_weapon(6)
-        player.weapons(shipfire(sf).what).ammomax=1 'Sets set__color( to redish
-        player.weapons(shipfire(sf).what).dam=r 'Sets set__color( to redish
-        If rnd_range(1,100)<33+r Then
-            placeitem(make_item(96,-3,b\3),p1.x,p1.y,player.landed.m)
-            itemindex.add(lastitem,item(lastitem).w)
-            If rnd_range(1,100)<=2 Then
-                planetmap(p1.x,p1.y,player.landed.m)=-191
-                tmap(p1.x,p1.y)=tiles(191)
-            EndIf
+Function planetflags_toship(m As Short) As _ship
+    Dim s As _ship
+    Dim As Short f,e
+    e=0
+    For f=6 To 10
+        If planets(m).flags(f)>0 Then
+            e=e+1
+            s.weapons(e)=make_weapon(planets(m).flags(f))
         EndIf
-    Else
-        rlprint "A meteor streaks across the sky"
-    EndIf
-    Return 0
+        If planets(m).flags(f)=-1 Then
+            e=e+1
+            s.weapons(e)=make_weapon(99)
+        EndIf
+        If planets(m).flags(f)=-2 Then
+            e=e+1
+            s.weapons(e)=make_weapon(98)
+        EndIf
+        If planets(m).flags(f)=-3 Then
+            e=e+1
+            s.weapons(e)=make_weapon(97)
+        EndIf
+    Next
+    Return s
 End Function
 
 
@@ -3487,7 +2152,7 @@ Function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _
             EndIf
             trading(tmap(awayteam.c.x,awayteam.c.y).gives+1)
             player.lastvisit.s=tmap(awayteam.c.x,awayteam.c.y).gives+1
-            player.lastvisit.t=player.turn
+            player.lastvisit.t=gameturn
         Else
             rlprint "they dont want to trade with you."
         EndIf
@@ -4725,3 +3390,83 @@ Function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _
     planetmap(awayteam.c.x,awayteam.c.y,slot)=tmap(awayteam.c.x,awayteam.c.y).no
     Return 0
 End Function
+
+
+Function ep_planetmenu(entrycords as _cords,slot As Short,shipfire() As _shipfire,spawnmask() As _cords, lsp As Short,loctemp As Single) As _cords
+    Dim As Short x,y,entry,launch,explore,a
+    Dim As _cords mgcords(24),nextmap
+    Dim As String text,Key
+    'screenset 1,1
+    text="Facilities"
+    For x=0 To 60
+        For y=0 To 20
+            if gets_entry(x,y,slot)=-1 and entry<23 then
+                entry+=1
+                mgcords(entry).x=x
+                mgcords(entry).y=y
+                Select Case tmap(x,y).gives
+                Case 4 To 8
+                    text=text &"/Trading"
+                Case 26
+                    text=text &"/Store"
+                Case 27
+                    text=text &"/Bar"
+                Case 28
+                    text=text &"/Fuel & Ammo"
+                Case 29
+                    text=text &"/Repair ship"
+                Case 30
+                    text=text &"/Ship modules"
+                Case 31
+                    text=text &"/Hulls"
+                Case 34
+                    text=text &"/Shipweapons"
+                Case 35
+                    text=text &"/Shipyard"
+                Case 42
+                    text=text &"/Refits"
+                Case 43
+                    text=text &"/Sickbay"
+                Case 44
+                    text=text &"/Arena"
+                Case 45
+                    text=text &"/Casino"
+                Case 46
+                    text=text &"/Zoo"
+                Case 47
+                    text=text &"/Retirement"
+                Case 48
+                    text=text &"/Titles & Deeds"
+                Case 49
+                    text=text &"/Custom Items"
+                Case 50
+                    text=text &"/Administration"
+                Case 59
+                    text=text &"/Botbin"
+                Case Else
+                    text=text &"/"&tmap(x,y).desc
+                End Select
+            EndIf
+        Next
+    Next
+    If entry>2 Then 'Not if there are only a few giving tiles.
+        explore=entry+1
+        launch=entry+2
+        text=text &"/Explore area/Launch"
+        Do
+            a=Menu(bg_shiptxt,text)
+            Select Case a
+            Case explore
+            Case launch,-1
+                nextmap.m=-1
+            Case Else
+                awayteam.c=mgcords(a)
+                ep_gives(awayteam,nextmap,shipfire(),spawnmask(),lsp,Key,loctemp)
+            End Select
+        Loop Until a=-1 Or a=launch Or a=explore
+        If a=explore Then awayteam.c=entrycords
+    EndIf
+    Return nextmap
+End Function
+
+

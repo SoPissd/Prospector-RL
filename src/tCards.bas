@@ -38,47 +38,6 @@ Const pGray = RGB(128, 128, 128)
 Const pWhite = RGB(255, 255, 255)
 Const cardobjver = "0.1.3"
 
-'' A function that creates an image buffer with the same
-'' dimensions as a BMP image, and loads a file into it.
-'' Code by counting_pine
-Function bmp_load( ByRef filename As String ) As Any Ptr
-	Dim As Integer filenum,bmpwidth,bmpheight
-  	Dim As Any Ptr img
-
-   '' open BMP file
-   filenum = FreeFile()
-   If Open( filename For Binary Access Read As #filenum ) <> 0 Then 
-   	Return NULL
-   Else
-   	'' retrieve BMP dimensions
-      Get #filenum, 19, bmpwidth
-      Get #filenum, 23, bmpheight
-    	Close #filenum
-   	'' create image with BMP dimensions
-    img = ImageCreate( bmpwidth, Abs(bmpheight) )
-   	If img = NULL Then 
-        color rgb(255,255,255),rgb(0,0,0)
-        print "Error imagecreate"
-   		Return NULL
-   	Else
-   		'' load BMP file into image buffer
-   		If BLoad( filename, img ) <> 0 Then 
-    			color rgb(255,255,255),rgb(0,0,0)
-                print BLoad( filename, img )
-                ImageDestroy( img )
-    			print "Error loading image"
-                Return NULL
-    		Else
-    			Return img
-    		EndIf
-   	EndIf
-   EndIf
-End Function
-
-'Returns a random integer range.
-Function Rand(lowerbound As Integer, upperbound As Integer) As Integer
-	Return Int((upperbound - lowerbound + 1) * Rnd + lowerbound)
-End Function
 
 
 'Card back ids.
@@ -624,7 +583,7 @@ Sub cardobj.Shuffle (d() As cardid)
    dlow = 1
    dhigh = UBound(d)
    For i As Integer = dhigh To dlow Step - 1
-      idx = Rand(dlow, i)
+      idx = rnd_range(dlow, i)
       Swap d(idx), d(i)
    Next
    
@@ -839,3 +798,4 @@ End Function
 
 End Namespace
 
+Dim Shared pcards As cards.cardobj

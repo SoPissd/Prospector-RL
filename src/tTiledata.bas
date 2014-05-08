@@ -1,9 +1,5 @@
-'tiles.bas
+'tTiledata
 
-'dim as uinteger a
-for a=1 to 512
-    tiles(a).movecost=1
-next
 
 tiles(1).tile=247
 tiles(1).col=17
@@ -1801,6 +1797,8 @@ tiles(208).col=150
 tiles(208).desc="shields"
 tiles(208).gives=208
 tiles(208).turnsinto=208
+
+dim b as Short
 
 for b=209 to 214
     tiles(b).tile=asc("W")

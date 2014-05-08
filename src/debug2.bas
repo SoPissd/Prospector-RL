@@ -4,19 +4,19 @@
 Function _WeapdumpCSV() as Short
 	dim as Short f,i,j,keep
     DbgPrint("WeapdumpCSV")
-	keep=player.turn
+	keep=gameturn
     f=Freefile
     Open "weapdump.csv" For Output As #f
     For i=0 To 100
-        player.turn=i*1000
-        Print #f,display_time(player.turn)&","&make_item(96).desig
+        gameturn=i*1000
+        Print #f,display_time(gameturn)&","&make_item(96).desig
         For j=0 To 10
             'player.weapons(0)=make_weapon(6)
             'print #f,player.weapons(0).desig
         Next
     Next
     Close #f
-	player.turn=keep
+	gameturn=keep
 	return 0
 End Function
 

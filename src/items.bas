@@ -1,3 +1,9 @@
+'items
+
+declare function skill_test(bonus as short,targetnumber as short,echo as string="") as short
+	
+	
+
 function make_locallist(slot as short) as short
     dim as short i,x,y,r
     dim p as _cords
@@ -144,13 +150,13 @@ function rnd_item(t as short) as _items
     
     
     if t=RI_Transport then i=make_item(rnd_range(1,2)) 'transport
-    if t=RI_RangedWeapon then i=make_item(urn(0,8,2,player.turn/5000)+3) 'ranged weapons
-    if t=RI_CCWeapon then i=make_item(urn(0,7,2,player.turn/5000)+40) 'close weapons
+    if t=RI_RangedWeapon then i=make_item(urn(0,8,2,gameturn/5000)+3) 'ranged weapons
+    if t=RI_CCWeapon then i=make_item(urn(0,7,2,gameturn/5000)+40) 'close weapons
     if t=RI_Armor then 'Space suits 
-        if rnd_range(1,100)<30-player.turn/5000 then
+        if rnd_range(1,100)<30-gameturn/5000 then
             i=make_item(320)
         else
-            i=make_item(urn(0,8,2,player.turn/5000)+12) 'Armor
+            i=make_item(urn(0,8,2,gameturn/5000)+12) 'Armor
         endif
     endif
     if t=RI_ShopAliens then 
@@ -620,24 +626,6 @@ function destroy_all_items_at(ty as short, wh as short) as short
     return d
 end function
 
-function calc_resrev() as short
-    dim as short i
-    static v as integer
-    static called as byte
-    if called=0 or called mod 10=0 then
-        v=0
-        for i=0 to lastitem
-            if item(i).ty=15 and item(i).w.s<0 then v=v+item(i).v5
-        next
-    endif
-    if called=10 then called=0
-    called+=1
-    if v>reward(0) then 
-        reward(0)=v
-    endif
-    return 0
-end function
-
 function placeitem(i as _items,x as short=0,y as short=0, m as short=0, p as short=0, s as short=0) as short
     if m>0 and s<0 then rlprint "m:"&m &"s:"&s &"lp:"&lastplanet
     i.w.x=x
@@ -664,6 +652,7 @@ function placeitem(i as _items,x as short=0,y as short=0, m as short=0, p as sho
     rlprint "ITEM PLACEMENT ERROR!(lastitem="&lastitem &")",14
 end function
 
+
 function item_filter() as short
     dim a as short
     a=menu(bg_parent,"Item type:/Transport/Ranged weapons/Armor/Close combat weapons/Medical supplies/Grenades/Artwork/Resources/Equipment/Ship equipment/All Other/None/Exit","",20,2)
@@ -672,52 +661,299 @@ function item_filter() as short
     return a
 end function
 
-function check_item_filter(t as short,f as short) as short
-    dim as short r,reverse
-    reverse=11
-    if f=0 then return 1
-    if f<=4 or f=reverse then
-        if t=f or (f=reverse and t<=4) then
-            r=1
-        endif
-    endif
-    if f=3 and t=103 then r=1 'Squidsuit
-    if f=5 or f=reverse then
-        if t=11 or t=19 or t=13 then
-            r=1
-        endif
-    endif
-    if f=6 or f=reverse then
-        if t=7 then
-            r=1
-        endif
-    endif
-    if f=7 or f=reverse then
-        if t=23 then
-            r=1
-        endif
-    endif
-    if f=8 or f=reverse then
-        if t=15 then
-            r=1
-        endif
-    endif
-    if f=11 or f=reverse then
-        if t=51 or t=52 or t=53 or t=21 or t=36 or t=40 or t=41 or t=25 then r=1
-    endif
-    if f=9 or f=reverse then
-        if t=77 or t=50 or t=49 or t=48 or t=42 or t=41 or t=27 or t=18 or t=17 or t=16 or t=14 or t=12 or t=10 or t=9 or t=8 or t=5 then r=1
-    endif
-    if f=reverse then
-        if r=0 then
-            r=1
+
+function modify_item(i as _items,nomod as byte) as _items
+    dim as short a,rate
+    rate=500-disnbase(player.c)
+    if rate<100 then rate=100
+    a=i.id
+    if i.id>=13 and i.id<=19 and nomod=0 then
+        if rnd_range(1,100)<10+gameturn/rate then
+        if rnd_range(1,100)<50+gameturn/rate then
+            i.desig="thick "&i.desig
+            i.desigp="thick "&i.desigp
+            i.id=i.id+1000
+            i.v1=i.v1+1
+            i.price=i.price*1.2
         else
-            r=0
+            if i.v1>1 then
+                i.desig="old "&i.desig
+                i.desigp="old "&i.desigp
+                i.id=i.id+1100
+                i.v1=i.v1-1
+                i.price=i.price*0.8
+            endif
+        endif
         endif
     endif
     
-    return r
+    if i.id>=13 and i.id<=21 then
+        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)+gameturn/rate<66 then
+                i.desig="camo "&i.desig
+                i.desigp="camo "&i.desigp
+                i.v2=1
+                i.id=i.id+1200
+                i.price=i.price*1.1
+            else
+                i.desig="imp. camo "&i.desig
+                i.desigp="imp. camo "&i.desigp
+                i.id=i.id+1300
+                i.v2=3
+                i.price=i.price*1.25
+            endif
+        endif
+        if rnd_range(1,100)<15+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)+gameturn/rate<75 then
+                i.desig="sturdy "&i.desig
+                i.desigp="sturdy "&i.desigp
+                i.res=i.res+50
+                i.id=i.id+1400
+                i.price=i.price*1.1
+            else
+                i.desig="acidproof "&i.desig
+                i.desigp="acidproof "&i.desigp
+                i.res=i.res+100
+                i.id=i.id+1500
+                i.price=i.price*1.25
+            endif
+        endif
+    endif
+    
+    if i.ty=3 or i.ty=103 then
+        if rnd_range(1,100)<15+gameturn/rate and nomod=0 then
+            i.v3=i.v3*1.1
+            i.price=i.price*1.1
+        endif
+    endif
+    
+    if i.id>=3 and i.id<=11 then
+        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50 then
+                if rnd_range(1,100)+gameturn/rate<75 then
+                    i.desig="balanced "&i.desig
+                    i.desigp="balanced "&i.desigp
+                    i.id=i.id+1000
+                    i.v3=i.v3+1
+                    i.price=i.price*1.2
+                else
+                    i.desig="well balanced "&i.desig
+                    i.desigp="well balanced "&i.desigp
+                    i.id=i.id+1100
+                    i.v3=i.v3+2
+                    i.price=i.price*1.5
+                endif
+            else
+                if rnd_range(1,100)+gameturn/rate<75 then
+                    i.desig="powerful "&i.desig
+                    i.desigp="powerful "&i.desigp
+                    i.id=i.id+1200
+                    i.v1=i.v1+.1
+                    i.price=i.price*1.2
+                else
+                    i.desig="very powerful "&i.desig
+                    i.desigp="very powerful "&i.desigp
+                    i.id=i.id+1300
+                    i.v1=i.v1+.2
+                    i.price=i.price*1.5
+                endif
+            endif
+        endif
+        if rnd_range(1,100)<15+gameturn/rate then
+            if rnd_range(1,100)+gameturn/rate<75 then
+                i.desig="sturdy "&i.desig
+                i.desigp="sturdy "&i.desigp
+                i.res=i.res+50
+                i.id=i.id+1400
+                i.price=i.price*1.1
+            else
+                i.desig="acidproof "&i.desig
+                i.desigp="acidproof "&i.desigp
+                i.res=i.res+100
+                i.id=i.id+1500
+                i.price=i.price*1.25
+            endif
+        endif
+    endif
+    
+    if i.id=1 then
+        if rnd_range(1,100)<20+gameturn/rate  and nomod=0 then
+            if rnd_range(1,100)+gameturn/rate<50 then
+                i.desig="small "&i.desig
+                i.desigp="small "&i.desigp
+                i.v2=4
+                i.price=i.v2*115
+                i.id=101
+            else
+                i.desig="large "&i.desig
+                i.desigp="large "&i.desigp
+                i.v2=6
+                i.price=i.v2*85
+                i.id=102
+            endif
+        endif
+        i.ldesc="A platform held aloft by aircushions. It can transport up to "&i.v2 &" persons and cross water. Going up mountains is impossible though"
+    endif
+    
+    
+    if i.id=2 then
+        if rnd_range(1,100)<20+gameturn/rate  and nomod=0 then
+            if rnd_range(1,100)+gameturn/rate<50 then
+                i.id=211
+                i.desig="efficient "&i.desig
+                i.desigp="efficient "&i.desigp
+                i.price=i.price*1.2
+                i.v3=.8
+                i.ldesc=i.ldesc &" This particular one has a very efficient fuel system."
+            else
+                i.id=212
+                i.desig="inefficient "&i.desig
+                i.desigp="inefficient "&i.desigp
+                i.price=i.price*0.8
+                i.v3=1.2
+                i.ldesc=i.ldesc &" This particular one needs more fuel."
+            endif
+        endif
+    endif
+    if i.id>=40 and i.id<=47 then
+        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50 then
+                if rnd_range(1,100)+gameturn/rate<75 then
+                    i.desig="balanced "&i.desig
+                    i.desigp="balanced "&i.desigp
+                    i.id=i.id+100
+                    i.v3=i.v3+1
+                    i.price=i.price*1.2
+                else
+                    i.desig="well balanced "&i.desig
+                    i.desigp="well balanced "&i.desigp
+                    i.id=i.id+110
+                    i.v3=i.v3+2
+                    i.price=i.price*1.5
+                endif
+            else
+                if rnd_range(1,100)+gameturn/rate<75 then
+                    i.desig="sharp "&i.desig
+                    i.desigp="sharp "&i.desigp
+                    i.id=i.id+120
+                    i.v1=i.v1+.1
+                    i.price=i.price*1.2
+                else
+                    i.desig="very sharp "&i.desig
+                    i.desigp="very sharp "&i.desigp
+                    i.id=i.id+130
+                    i.v1=i.v1+.2
+                    i.price=i.price*1.5
+                endif
+            endif
+        endif
+        if rnd_range(1,100)<15+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)+gameturn/rate<75 then
+                i.desig="sturdy "&i.desig
+                i.desigp="sturdy "&i.desigp
+                i.res=i.res+50
+                i.price=i.price*1.1
+            else
+                i.desig="acidproof "&i.desig
+                i.desigp="acidproof "&i.desigp
+                i.res=i.res+100
+                i.price=i.price*1.25
+            endif
+        endif
+    endif
+    
+    if i.id=49 then 'tanks
+        if rnd_range(1,100)<30+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+gameturn/rate then
+                i.id=i.id+100
+                i.desig="big "&i.desig
+                i.desigp="big "&i.desigp
+                i.v1=30
+                i.price=12
+            else
+                i.id=i.id+110
+                i.desig="small "&i.desig
+                i.desigp="small "&i.desigp
+                i.v1=20
+                i.price=8
+            endif
+        endif
+    endif
+    if i.id=97 then
+        if rnd_range(1,100)<33+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50 then
+                if rnd_range(1,100)+gameturn/rate<50 then
+                    i.desig="balanced "&i.desig
+                    i.desigp="balanced "&i.desigp
+                    i.id=i.id+100
+                    i.v3=i.v3+1
+                    i.price=i.price*1.2
+                else
+                    i.desig="well balanced "&i.desig
+                    i.desigp="well balanced "&i.desigp
+                    i.id=i.id+101
+                    i.v3=i.v3+2
+                    i.price=i.price*1.5
+                endif
+            else
+                if rnd_range(1,100)+gameturn/rate<50 then
+                    i.desig="powerful "&i.desig
+                    i.desigp="powerful "&i.desigp
+                    i.id=i.id+102
+                    i.v1=i.v1+.1
+                    i.price=i.price*1.2
+                else
+                    i.desig="very powerful "&i.desig
+                    i.desigp="very powerful "&i.desigp
+                    i.id=i.id+103
+                    i.v1=i.v1+.2
+                    i.price=i.price*1.5
+                endif
+            endif
+        endif
+    
+    endif
+    if i.id=98 or i.id=523 then 
+        if rnd_range(1,100)<30+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<5+gameturn/rate then
+                if rnd_range(1,100)<50+gameturn/rate then
+                    i.desig="thick "&i.desig
+                    i.desigp="thick "&i.desigp
+                    i.id=i.id+200
+                    i.v1=i.v1+1
+                    i.price=i.price*1.5
+                else
+                    i.desig="tattered "&i.desig
+                    i.desigp="tattered "&i.desigp
+                    i.id=i.id+201
+                    i.v1=i.v1-1
+                    i.price=i.price*0.75
+                endif
+            endif
+        endif
+    endif
+    
+    if i.ty=18 then
+        if rnd_range(1,100)<30+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+gameturn/rate then
+                i.desig="fast "&i.desig
+                i.desigp="fast "&i.desigp
+                i.v4+=1
+                i.id+=600
+                i.price=i.price*1.2
+            else
+                i.desig="slow "&i.desig
+                i.desigp="slow "&i.desigp
+                i.v4-=1
+                i.id+=610
+                i.price=i.price*0.8
+            endif
+        endif
+    endif
+    
+    return i
 end function
+
 
 function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=0,nomod as byte=0) as _items
     dim i as _items
@@ -1093,8 +1329,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.bgcol=0
         i.price=20
         i.res=25
-        if rnd_range(1,100)<30+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)<50+player.turn/rate then
+        if rnd_range(1,100)<30+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+gameturn/rate then
                 i.id=i.id+1000
                 i.desig="good "&i.desig
                 i.desigp="good "&i.desigp
@@ -1123,8 +1359,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.bgcol=0
         i.price=1500
         i.res=35
-        if rnd_range(1,100)<20+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)<50+player.turn/rate then
+        if rnd_range(1,100)<20+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+gameturn/rate then
                 i.id=122
                 i.desig="powerful "&i.desig
                 i.desigp="powerful "&i.desigp
@@ -1153,8 +1389,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.bgcol=0
         i.price=2500
         i.res=55
-        if rnd_range(1,100)<10+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)<50+player.turn/rate then
+        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+gameturn/rate then
                 i.id=123
                 i.desig="powerful "&i.desig
                 i.desigp="powerful "&i.desigp
@@ -1210,8 +1446,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.v1=2
         i.price=90
         i.res=15
-        if rnd_range(1,100)<10+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)<50+player.turn/rate then
+        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+gameturn/rate then
                 i.id=i.id+100
                 i.desig="good "&i.desig
                 i.desigp="good "&i.desigp
@@ -1239,8 +1475,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.v1=4
         i.price=500
         i.res=25
-        if rnd_range(1,100)<10+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)<50+player.turn/rate then
+        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+gameturn/rate then
                 i.id=i.id+100
                 i.desig="good "&i.desig
                 i.desigp="good "&i.desigp
@@ -1268,8 +1504,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.v1=3
         i.price=40
         i.res=35
-        if rnd_range(1,100)<30+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)<50+player.turn/rate then
+        if rnd_range(1,100)<30+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+gameturn/rate then
                 i.id=i.id+1000
                 i.desig="strong "&i.desig
                 i.desigp="strong "&i.desigp
@@ -1298,8 +1534,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.v1=6
         i.price=90
         i.res=55
-        if rnd_range(1,100)<30+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)<50+player.turn/rate then
+        if rnd_range(1,100)<30+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+gameturn/rate then
                 i.id=i.id+1000
                 i.desig="strong "&i.desig
                 i.desigp="strong "&i.desigp
@@ -1445,8 +1681,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.v1=50
         i.price=45
         i.res=65
-        if rnd_range(1,100)<30+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)<50+player.turn/rate then
+        if rnd_range(1,100)<30+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+gameturn/rate then
                 i.id=i.id+100
                 i.desig="big "&i.desig
                 i.desigp="big "&i.desigp
@@ -1609,8 +1845,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.price=500
         i.ldesc="A device to increase the range and improve the aim of grenades."
         i.res=55
-        if rnd_range(1,100)<10+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)<50+player.turn/rate then
+        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+gameturn/rate then
                 i.v1=3
                 i.id+=1000
                 i.price=800
@@ -1622,7 +1858,7 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
                 i.desig="weak grenade launcher"
             endif
         endif
-        if rnd_range(1,100)<10+player.turn/rate and nomod=0 then
+        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
             i.v2=1
             i.id+=1002
             i.price=i.price*2
@@ -2063,9 +2299,9 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.ldesc="A modified portable sensor set. Enables the user to see through walls"
         
         i.v1=2
-        if rnd_range(1,100)<10+player.turn/rate and nomod=0 then
+        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
             
-            if rnd_range(1,100)+player.turn/rate<60 then
+            if rnd_range(1,100)+gameturn/rate<60 then
                 i.v1=3
                 i.id+=222
                 i.desig="Good ground penetrating radar"
@@ -2157,8 +2393,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.bgcol=15
         i.icon="+"
         i.price=25
-        if rnd_range(1,100)<10+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)+player.turn/rate<50 then
+        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)+gameturn/rate<50 then
                 i.desig="Small autopsy kit"
                 i.desigp="Small autopsy kits"
                 i.v1=15
@@ -2186,8 +2422,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.bgcol=15
         i.icon="+"
         i.price=25
-        if rnd_range(1,100)<10+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)+player.turn/rate<50 then
+        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)+gameturn/rate<50 then
                 i.desig="Small botany kit"
                 i.desigp="Small botany kits"
                 i.v1=15
@@ -2216,8 +2452,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.bgcol=15
         i.icon="+"
         i.price=50
-        if rnd_range(1,100)<10+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)+player.turn/rate<50 then
+        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)+gameturn/rate<50 then
                 i.desig="Small ship repair kit"
                 i.desigp="Small ship repair kits"
                 i.id+=100
@@ -2264,7 +2500,7 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.price=200
     endif
     
-    if rnd_range(1,100)<10+player.turn/rate and a=104 or a=105 then
+    if rnd_range(1,100)<10+gameturn/rate and a=104 or a=105 then
         if rnd_range(1,100)<50 then
             i.desig="Big "&i.desig
             i.v3=i.v3*1.5
@@ -2363,7 +2599,7 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.price=150
     endif
     
-    if rnd_range(1,100)<10+player.turn/rate and (a=100 or a=101 or a=102) then
+    if rnd_range(1,100)<10+gameturn/rate and (a=100 or a=101 or a=102) then
         i.desig="Fast "&i.desig
         i.desigp="Fast "&i.desigp
         i.price=i.price*1.1
@@ -2433,7 +2669,7 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.ldesc="An autonomous drone for space combat. It has " &i.v1 &" Hullpoints and is armed with a " &i.v2 &"0 GJ plasma cannon"
     endif
     
-    if rnd_range(1,100)<10+player.turn/rate and (a=110 or a=111 or a=112) then
+    if rnd_range(1,100)<10+gameturn/rate and (a=110 or a=111 or a=112) then
         select case rnd_range(1,100)
         case 1 to 30
             i.desig="Fast "&i.desig
@@ -2485,7 +2721,7 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
             
     endif
     
-    if rnd_range(1,100)<5+player.turn/rate and (a=110 or a=111 or a=112) then
+    if rnd_range(1,100)<5+gameturn/rate and (a=110 or a=111 or a=112) then
         i.desig=i.desig &"-S"
         i.id+=100
         i.v6=1
@@ -2505,8 +2741,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.v1=10
         i.price=25
         i.res=90
-        if rnd_range(1,100)<10+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)+player.turn/rate<66 then
+        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
+            if rnd_range(1,100)+gameturn/rate<66 then
                 i.v1=7
                 i.price=20
                 i.desig="weak "&i.desig
@@ -2817,7 +3053,7 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.desigp=i.desig
         i.icon="*"
         i.bgcol=0  
-        roll=rnd_range(1,100+player.turn/10000+mod1+mod2)
+        roll=rnd_range(1,100+gameturn/10000+mod1+mod2)
         if roll>125 and mod1>0 and mod2>0 then i=make_item(99,0,0)
         if make_files=1 then
             f=freefile
@@ -3142,363 +3378,6 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
     
 end function
 
-function modify_item(i as _items,nomod as byte) as _items
-    dim as short a,rate
-    rate=500-disnbase(player.c)
-    if rate<100 then rate=100
-    a=i.id
-    if i.id>=13 and i.id<=19 and nomod=0 then
-        if rnd_range(1,100)<10+player.turn/rate then
-        if rnd_range(1,100)<50+player.turn/rate then
-            i.desig="thick "&i.desig
-            i.desigp="thick "&i.desigp
-            i.id=i.id+1000
-            i.v1=i.v1+1
-            i.price=i.price*1.2
-        else
-            if i.v1>1 then
-                i.desig="old "&i.desig
-                i.desigp="old "&i.desigp
-                i.id=i.id+1100
-                i.v1=i.v1-1
-                i.price=i.price*0.8
-            endif
-        endif
-        endif
-    endif
-    
-    if i.id>=13 and i.id<=21 then
-        if rnd_range(1,100)<10+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)+player.turn/rate<66 then
-                i.desig="camo "&i.desig
-                i.desigp="camo "&i.desigp
-                i.v2=1
-                i.id=i.id+1200
-                i.price=i.price*1.1
-            else
-                i.desig="imp. camo "&i.desig
-                i.desigp="imp. camo "&i.desigp
-                i.id=i.id+1300
-                i.v2=3
-                i.price=i.price*1.25
-            endif
-        endif
-        if rnd_range(1,100)<15+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)+player.turn/rate<75 then
-                i.desig="sturdy "&i.desig
-                i.desigp="sturdy "&i.desigp
-                i.res=i.res+50
-                i.id=i.id+1400
-                i.price=i.price*1.1
-            else
-                i.desig="acidproof "&i.desig
-                i.desigp="acidproof "&i.desigp
-                i.res=i.res+100
-                i.id=i.id+1500
-                i.price=i.price*1.25
-            endif
-        endif
-    endif
-    
-    if i.ty=3 or i.ty=103 then
-        if rnd_range(1,100)<15+player.turn/rate and nomod=0 then
-            i.v3=i.v3*1.1
-            i.price=i.price*1.1
-        endif
-    endif
-    
-    if i.id>=3 and i.id<=11 then
-        if rnd_range(1,100)<10+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)<50 then
-                if rnd_range(1,100)+player.turn/rate<75 then
-                    i.desig="balanced "&i.desig
-                    i.desigp="balanced "&i.desigp
-                    i.id=i.id+1000
-                    i.v3=i.v3+1
-                    i.price=i.price*1.2
-                else
-                    i.desig="well balanced "&i.desig
-                    i.desigp="well balanced "&i.desigp
-                    i.id=i.id+1100
-                    i.v3=i.v3+2
-                    i.price=i.price*1.5
-                endif
-            else
-                if rnd_range(1,100)+player.turn/rate<75 then
-                    i.desig="powerful "&i.desig
-                    i.desigp="powerful "&i.desigp
-                    i.id=i.id+1200
-                    i.v1=i.v1+.1
-                    i.price=i.price*1.2
-                else
-                    i.desig="very powerful "&i.desig
-                    i.desigp="very powerful "&i.desigp
-                    i.id=i.id+1300
-                    i.v1=i.v1+.2
-                    i.price=i.price*1.5
-                endif
-            endif
-        endif
-        if rnd_range(1,100)<15+player.turn/rate then
-            if rnd_range(1,100)+player.turn/rate<75 then
-                i.desig="sturdy "&i.desig
-                i.desigp="sturdy "&i.desigp
-                i.res=i.res+50
-                i.id=i.id+1400
-                i.price=i.price*1.1
-            else
-                i.desig="acidproof "&i.desig
-                i.desigp="acidproof "&i.desigp
-                i.res=i.res+100
-                i.id=i.id+1500
-                i.price=i.price*1.25
-            endif
-        endif
-    endif
-    
-    if i.id=1 then
-        if rnd_range(1,100)<20+player.turn/rate  and nomod=0 then
-            if rnd_range(1,100)+player.turn/rate<50 then
-                i.desig="small "&i.desig
-                i.desigp="small "&i.desigp
-                i.v2=4
-                i.price=i.v2*115
-                i.id=101
-            else
-                i.desig="large "&i.desig
-                i.desigp="large "&i.desigp
-                i.v2=6
-                i.price=i.v2*85
-                i.id=102
-            endif
-        endif
-        i.ldesc="A platform held aloft by aircushions. It can transport up to "&i.v2 &" persons and cross water. Going up mountains is impossible though"
-    endif
-    
-    
-    if i.id=2 then
-        if rnd_range(1,100)<20+player.turn/rate  and nomod=0 then
-            if rnd_range(1,100)+player.turn/rate<50 then
-                i.id=211
-                i.desig="efficient "&i.desig
-                i.desigp="efficient "&i.desigp
-                i.price=i.price*1.2
-                i.v3=.8
-                i.ldesc=i.ldesc &" This particular one has a very efficient fuel system."
-            else
-                i.id=212
-                i.desig="inefficient "&i.desig
-                i.desigp="inefficient "&i.desigp
-                i.price=i.price*0.8
-                i.v3=1.2
-                i.ldesc=i.ldesc &" This particular one needs more fuel."
-            endif
-        endif
-    endif
-    if i.id>=40 and i.id<=47 then
-        if rnd_range(1,100)<10+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)<50 then
-                if rnd_range(1,100)+player.turn/rate<75 then
-                    i.desig="balanced "&i.desig
-                    i.desigp="balanced "&i.desigp
-                    i.id=i.id+100
-                    i.v3=i.v3+1
-                    i.price=i.price*1.2
-                else
-                    i.desig="well balanced "&i.desig
-                    i.desigp="well balanced "&i.desigp
-                    i.id=i.id+110
-                    i.v3=i.v3+2
-                    i.price=i.price*1.5
-                endif
-            else
-                if rnd_range(1,100)+player.turn/rate<75 then
-                    i.desig="sharp "&i.desig
-                    i.desigp="sharp "&i.desigp
-                    i.id=i.id+120
-                    i.v1=i.v1+.1
-                    i.price=i.price*1.2
-                else
-                    i.desig="very sharp "&i.desig
-                    i.desigp="very sharp "&i.desigp
-                    i.id=i.id+130
-                    i.v1=i.v1+.2
-                    i.price=i.price*1.5
-                endif
-            endif
-        endif
-        if rnd_range(1,100)<15+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)+player.turn/rate<75 then
-                i.desig="sturdy "&i.desig
-                i.desigp="sturdy "&i.desigp
-                i.res=i.res+50
-                i.price=i.price*1.1
-            else
-                i.desig="acidproof "&i.desig
-                i.desigp="acidproof "&i.desigp
-                i.res=i.res+100
-                i.price=i.price*1.25
-            endif
-        endif
-    endif
-    
-    if i.id=49 then 'tanks
-        if rnd_range(1,100)<30+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)<50+player.turn/rate then
-                i.id=i.id+100
-                i.desig="big "&i.desig
-                i.desigp="big "&i.desigp
-                i.v1=30
-                i.price=12
-            else
-                i.id=i.id+110
-                i.desig="small "&i.desig
-                i.desigp="small "&i.desigp
-                i.v1=20
-                i.price=8
-            endif
-        endif
-    endif
-    if i.id=97 then
-        if rnd_range(1,100)<33+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)<50 then
-                if rnd_range(1,100)+player.turn/rate<50 then
-                    i.desig="balanced "&i.desig
-                    i.desigp="balanced "&i.desigp
-                    i.id=i.id+100
-                    i.v3=i.v3+1
-                    i.price=i.price*1.2
-                else
-                    i.desig="well balanced "&i.desig
-                    i.desigp="well balanced "&i.desigp
-                    i.id=i.id+101
-                    i.v3=i.v3+2
-                    i.price=i.price*1.5
-                endif
-            else
-                if rnd_range(1,100)+player.turn/rate<50 then
-                    i.desig="powerful "&i.desig
-                    i.desigp="powerful "&i.desigp
-                    i.id=i.id+102
-                    i.v1=i.v1+.1
-                    i.price=i.price*1.2
-                else
-                    i.desig="very powerful "&i.desig
-                    i.desigp="very powerful "&i.desigp
-                    i.id=i.id+103
-                    i.v1=i.v1+.2
-                    i.price=i.price*1.5
-                endif
-            endif
-        endif
-    
-    endif
-    if i.id=98 or i.id=523 then 
-        if rnd_range(1,100)<30+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)<5+player.turn/rate then
-                if rnd_range(1,100)<50+player.turn/rate then
-                    i.desig="thick "&i.desig
-                    i.desigp="thick "&i.desigp
-                    i.id=i.id+200
-                    i.v1=i.v1+1
-                    i.price=i.price*1.5
-                else
-                    i.desig="tattered "&i.desig
-                    i.desigp="tattered "&i.desigp
-                    i.id=i.id+201
-                    i.v1=i.v1-1
-                    i.price=i.price*0.75
-                endif
-            endif
-        endif
-    endif
-    
-    if i.ty=18 then
-        if rnd_range(1,100)<30+player.turn/rate and nomod=0 then
-            if rnd_range(1,100)<50+player.turn/rate then
-                i.desig="fast "&i.desig
-                i.desigp="fast "&i.desigp
-                i.v4+=1
-                i.id+=600
-                i.price=i.price*1.2
-            else
-                i.desig="slow "&i.desig
-                i.desigp="slow "&i.desigp
-                i.v4-=1
-                i.id+=610
-                i.price=i.price*0.8
-            endif
-        endif
-    endif
-    
-    return i
-end function
-
-function make_weapon(a as short) as _weap
-    'w.made &";"&w.desig &";" &w.range &";"& w.ammo &";"&w.ammomax &";"& w.ecmmod &";"& w.p &";"
-    '& w.col &";"& w.heat &";"& w.heatsink &";"& w.heatadd
-
-    dim as _weap w,w2
-    dim as string l
-    dim as string word(15)
-    dim as short f,i,t,j,dam
-    f=freefile
-    open "data/weapons.csv" for input as #f
-    do
-        w=w2
-        line input #f,l
-        j=0
-        for t=0 to len(l)
-            if mid(l,t,1)=";" then
-                j+=1
-            else
-                word(j)=word(j) &mid(l,t,1)
-            endif
-        next
-        w.made=val(word(0))
-        w.desig=trim(word(1))
-        dam=val(word(2))
-        w.range=val(word(3))
-        w.ammo=val(word(4))
-        w.ammomax=val(word(5))
-        w.ROF=val(word(6))
-        w.ecmmod=val(word(7))
-        w.p=val(word(8))
-        w.col=val(word(9))
-        w.heat=val(word(10))
-        w.heatsink=val(word(11))
-        w.heatadd=val(word(12))
-        w.reload=val(word(13))
-        for t=0 to 13
-            word(t)=""
-        next
-    loop until w.made=a or eof(f)
-    close #f
-    if a=w.made then
-        if a>=6 and a<=10 then
-            w.dam=urn(dam+2,dam-1,1,2-(player.turn/50000))
-            if w.dam<1 then w.dam=1
-            if w.dam>5 then w.dam=5
-            w.desig=w.dam &"0 GJ "&w.desig
-            w.p=(w.dam*250+((w.dam-1)*250))*(1+w.range/5)
-        else
-            w.dam=dam
-        endif
-        if rnd_range(1,100)-(w.dam-dam)*3<minimum(25,player.turn/50000) and w.reload>0 then '10 % have lower reload rate
-            w.desig="IR "&w.desig
-            w.reload=w.reload/2
-            w.p=w.p*1.2
-        endif
-        if rnd_range(1,100)-(w.dam-dam)*3<minimum(25,player.turn/50000) and w.reload>0 then
-            w.desig="IC "&w.desig
-            w.heatsink=w.heatsink+2
-        endif
-        w.p=w.p+w.heatsink*250
-        return w
-    else 
-        return w2 'return empty weapon instead of last if not found
-    endif
-end function
 
 function removeequip() as short
     dim a as short
@@ -3507,6 +3386,7 @@ function removeequip() as short
     next
     return 0
 end function
+
 
 function display_item_list(inv() as _items, invn() as short, marked as short, l as short,x as short,y as short) as short
     dim as short last,i,longest,ll,wh
@@ -3557,6 +3437,7 @@ function display_item_list(inv() as _items, invn() as short, marked as short, l 
     return 0
 end function
 
+
 function next_item(c as integer) as integer
     dim i as short
     for i=0 to lastitem
@@ -3567,210 +3448,6 @@ function next_item(c as integer) as integer
         endif
     next
     return -1
-end function
-
-function uid_pos(uid as uinteger) as integer
-    dim i as integer
-    for i=0 to lastitem
-        if item(i).uid=uid then return i
-    next
-    return 0
-end function
-
-function get_item_list(invit() as _items, invnit()as short,ty as short=0,ty2 as short=0,ty3 as short=0,ty4 as short=0,noequip as short=0) as short
-    DimDebug(0)
-    dim as short b,a,set,lastinv,lastinv2,swapflag,tylabel,c,f,equipnum(1024),isequipment
-    dim as _items inv(ubound(invit))
-    dim as Short invn(ubound(invit))
-
-    if noequip=1 then
-        noequip=0
-        for a=0 to 128
-            if crew(a).blad>0 then
-                noequip+=1
-                equipnum(noequip)=crew(a).blad
-            endif
-            if crew(a).weap>0 then
-                noequip+=1
-                equipnum(noequip)=crew(a).weap
-            endif
-            if crew(a).armo>0 then
-                noequip+=1
-                equipnum(noequip)=crew(a).armo
-            endif
-            if crew(a).pref_lrweap>0 then
-                noequip+=1
-                equipnum(noequip)=uid_pos(crew(a).pref_lrweap)
-            endif
-            if crew(a).pref_ccweap>0 then
-                noequip+=1
-                equipnum(noequip)=uid_pos(crew(a).pref_ccweap)
-            endif
-            if crew(a).pref_armor>0 then
-                noequip+=1
-                equipnum(noequip)=uid_pos(crew(a).pref_armor)
-            endif
-        next
-        for a=0 to lastitem
-            if item(a).w.s=-2 then 
-                noequip+=1
-                equipnum(noequip)=a
-            endif
-        next
-    endif
-        
-    for a=0 to lastitem
-        
-        if item(a).w.s<0 and ((ty=0 and ty2=0 and ty3=0 and ty4=0) or (item(a).ty=ty or item(a).ty=ty2 or item(a).ty=ty3 or item(a).ty=ty4)) then 'Item on ship
-            
-            if noequip>0 then
-                for b=1 to noequip
-                    if equipnum(b)=a then isequipment=1
-                next
-            endif
-            if not(isequipment=1 and noequip=1) then 
-                set=0
-                if lastinv>0 then
-                    for b=1 to lastinv
-                        if a<>inv(b).w.s then
-                            
-                            if inv(b).id=item(a).id and inv(b).ty=item(a).ty and item(a).ty<>15 then
-								invn(b)+=1
-                               	set=1
-#if __FB_DEBUG__
-                                if debug=22 then inv(b).desigp &=a
-                                if debug=22 then
-                                	f=freefile
-                                    open "itemadded.txt" for append as #f
-                                    print #f,a &";"& b &";"& item(a).desig  &";"& item(a).id &"invn"&invn(b)&"�"& inv(b).desig
-                                    close #f
-                                endif
-#endif
-                            endif
-                            if item(a).ty=15 then
-                                if inv(b).ty=15 and inv(b).v2=item(a).v2 and inv(b).v1=item(a).v1 then
-                                    
-                                    invn(b)+=1
-                                    set=1
-                                endif
-                            endif
-                        endif
-                    next
-                endif
-                if set=0 then                                   
-                    lastinv+=1
-                    inv(lastinv)=item(a)
-                    inv(lastinv).w.s=a
-                    invn(lastinv)=1                   
-                endif
-            endif
-        endif
-#if __FB_DEBUG__
-        if debug=22 then
-            f=freefile
-            open "GILitems.txt" for append as #f
-            print #f,"Turn "&a
-            for c=1 to lastinv
-                print #f,c &";"& inv(c).desig &";"&invn(c)
-            next
-            close #f
-        endif
-#endif
-    next
-#if __FB_DEBUG__
-    if debug=22 then
-		f=freefile
-        open "itemadded.txt" for append as #f
-        print #f,"####"
-        for a=1 to lastinv
-            print #f,a &";"& inv(a).desig  &";"& inv(a).id &"invn"&invn(a)
-        next
-        print #f,"####"
-        close #f
-    endif
-#endif
-        
-    for a=1 to lastinv
-        if inv(a).ty=2 then 
-            inv(a).desig &=" [A:"&inv(a).v3 &" D:"&inv(a).v1 &" R:"&inv(a).v2 &"]"
-            inv(a).desigp &=" [A:"&inv(a).v3 &" D:"&inv(a).v1 &" R:"&inv(a).v2 &"]"
-        endif
-        if inv(a).ty=4 then
-            inv(a).desig &=" [A:"&inv(a).v3 &" D:"&inv(a).v1  &"]"
-            inv(a).desigp &=" [A:"&inv(a).v3 &" D:"&inv(a).v1  &"]"
-        endif
-        if inv(a).ty=3 or inv(a).ty=103 then 
-            inv(a).desig &=" [PV:"&inv(a).v1 &"]"
-            inv(a).desigp &=" [PV:"&inv(a).v1 &"]"
-        endif
-        if inv(a).ty=15 then 
-            inv(a).desig &=" ["&inv(a).v2*3 &" kg]"
-            inv(a).desigp &=" ["&inv(a).v2*3 &" kg]"
-        endif
-    next
-    
-    for b=1 to 11
-        swapflag=0
-        for a=1 to lastinv
-            if check_item_filter(inv(a).ty,b) then
-                swapflag=1
-            endif
-        next
-        if swapflag=1 then
-            c+=1
-            invit(c).desig=itemcat(b)
-            invnit(c)=-1
-            for a=1 to lastinv
-                if check_item_filter(inv(a).ty,b) then
-                    c+=1
-                    invit(c)=inv(a)
-                    invnit(c)=invn(a)
-#if __FB_DEBUG__
-                    if debug=22 then
-                       f=freefile
-                       open "itemadded.txt" for append as #f
-                       print #f,c &";"& invit(c).desig  &"; invn"&invnit(c)
-                       close #f
-                    endif
-#endif
-                endif
-            next
-        endif
-    next
-    
-'    do
-'        swapflag=0
-'        for b=0 to lastinv-1
-'            if inv(b).ty>inv(b+1).ty or (inv(b).ty=inv(b+1).ty and better_item(inv(b),inv(b+1))=1) then 
-'                swap inv(b),inv(b+1)
-'                swap invn(b),invn(b+1)
-'                if inv(b).ty<>inv(b+1).ty then swapflag=1
-'            endif
-'        next
-'    loop until swapflag=0
-'    do
-'        tylabel+=1
-'        for a=0 to lastinv
-'            if check_item_filter(inv(a).ty,tylabel) then
-'                'Push down one
-'                lastinv+=1
-'                for b=lastinv to a+1 step -1
-'                    invn(b)=invn(b-1)
-'                    inv(b)=inv(b-1)
-'                next
-'                invn(a)=-1
-'                'insert label
-'                if tylabel<11 then
-'                    inv(a).desig=itemcat(tylabel)
-'                    tylabel+=1
-'                else
-'                    tylabel=126
-'                    inv(a).desig=itemcat(5)
-'                endif
-'            endif
-'        next
-'    loop until tylabel>125
-    return c
 end function
 
 function getrnditem(fr as short,ty as short) as short
@@ -3794,386 +3471,7 @@ function getrnditem(fr as short,ty as short) as short
     return i
 end function
 
-function get_item(ty as short=0,ty2 as short=0,byref num as short=0,noequ as short=0) as short
-    dim as short last,i,c,j
-    dim as _items inv(1024)
-    dim as short invn(1024)
-    dim as string key,helptext
-    static as short marked=0
-    
-    i=1
-    DbgPrint("Getting itemlist:ty:"&ty &"ty2"&ty2)
-    last=get_item_list(inv(),invn(),,,,,noequ)
-    if ty<>0 or ty2<>0 then
-        marked=1
-        do
-            if invn(i)<0 then
-                for j=i to last
-                    invn(j)=invn(j+1)
-                    inv(j)=inv(j+1)
-                next
-                c+=1
-            endif
-            if inv(i).ty<>ty and inv(i).ty<>ty2 and inv(i).ty<>0 then
-                DbgPrint("Removing "&inv(i).desig)
-                for j=i to last
-                    invn(j)=invn(j+1)
-                    inv(j)=inv(j+1)
-                next
-                c+=1
-            else
-                i+=1
-            endif
-        loop until i>last
-        DbgPrint("removed "&c &" items" &last-c)
-        last-=c
-        if last=1 then return inv(last).w.s
-        if last<=0 then return -1
-    endif
-    if marked=0 then
-        do
-            marked+=1
-            if marked>last then marked=0
-        loop until invn(marked)>0
-    endif
-    do
-        display_item_list(inv(),invn(),marked,last,2,2)
-        helptext=inv(marked).describe
-        if inv(marked).ty=26 then helptext=helptext & caged_monster_text
-        'helptext = ""&marked &" " &last
-        c=textbox(helptext,22,2,25,11,1)
-        key=keyin(key_north &key_south)
-        for i=0 to c
-            draw string (22*_fw1,2*_fh1+i*_fh2),space(25),,font2,custom,@_col
-        next
-        if key=key_north then
-            do
-                marked-=1
-                if marked<1 then marked=last
-            loop until invn(marked)>0
-        endif
-        if key=key_south then
-            do
-                marked+=1
-                if marked>last then marked=1
-            loop until invn(marked)>0
-        endif
-    loop until key=key__enter or key=key__esc
-    if key=key__enter then
-        
-        num=invn(marked)
-        return inv(marked).w.s
-    else
-        return -1
-    endif
-end function
-'    dim as short i,offset,a,b,c,li,cu,set,k,filter,l,c2,lasttb
-'    dim i_fs(11) as string
-'    dim mls(255) as string 'needed to append name
-'    dim mdesc(255) as string 'Needed to append desc
-'    dim mno(255) as short
-'    dim mit(255) as short
-'    dim lin(20) as string
-'    dim it(20) as short
-'    dim as string key,mstr
-'    i_fs(0)="None"
-'    i_fs(1)="Transport"
-'    i_fs(2)="Ranged Weapons"
-'    i_fs(3)="Armor"
-'    i_fs(4)="Close combat weapons"
-'    i_fs(5)="Medical supplies"
-'    i_fs(6)="Grenades"
-'    i_fs(7)="Artwork"
-'    i_fs(8)="Resources"
-'    i_fs(9)="Equipment"
-'    i_fs(10)="Space ship equipment"
-'    i_fs(11)="All other"
-'    for a=0 to lastitem
-'        if (((fr=999 and item(a).w.s<0) or item(a).w.s=fr) and (item(a).ty=ty or (ty2>0 and item(a).ty=ty2) or ty=999)) then 'fr=999 means 
-'            set=0
-'            for c=0 to li
-'                if item(a).desig=item(mit(c)).desig and item(a).v1=item(mit(c)).v1 and item(a).v2=item(mit(c)).v2 and item(a).v3=item(mit(c)).v3 then
-'                    set=1
-'                    mno(c)=mno(c)+1
-'                endif
-'            next
-'            if set=0 and b<256 then
-'                b=b+1
-'                li=li+1
-''                mls(b)=item(a).desig
-''                mdesc(b)=item(a).ldesc
-''                mls(b)=mls(b)
-'                mit(b)=a
-'                mno(b)=mno(b)+1
-'            endif
-'        endif
-'    next
-'    
-'    
-'    
-'    if li=0 then return -1
-'    if li=1 and (fr=999 or ty=999) and forceselect=0 then return mit(1)
-'    
-'    cu=1
-'    a=0
-'    'Sort by value
-'    rlprint "Sorting by value"
-'    do
-'        a+=1
-'        set=0
-'        for b=1 to li-1
-'            if item(mit(b)).ty>item(mit(b+1)).ty or _
-'            (item(mit(b)).ty=item(mit(b+1)).ty and better_item(item(mit(b)),item(mit(b+1)))=1) then
-'                swap mno(b),mno(b+1)
-'                swap mit(b),mit(b+1)
-'                set=1
-'            endif
-'        next
-'    loop until set=0
-'    
-'    rlprint "Sorting by filter"
-'    
-''    do
-''        tylabel+=1
-''        for a=0 to lastinv
-''            if inv(a).ty=tylabel then
-''                'Push down one
-''                lastinv+=1
-''                for b=lastinv to a+1 step -1
-''                    invn(b)=invn(b-1)
-''                    inv(b)=inv(b-1)
-''                next
-''                invn(a)=-1
-''                'insert label
-''                if tylabel<5 then
-''                    inv(a).desig=itemcat(tylabel)
-''                    tylabel+=1
-''                else
-''                    tylabel=126
-''                    inv(a).desig=itemcat(5)
-''                endif
-''            endif
-''        next
-''    loop until tylabel>125
-''    
-'    'Sort by filter and add headlines
-'    filter=0
-'    do
-'        filter+=1
-'        for a=1 to li
-'            if check_item_filter(item(mit(a)).ty,filter) then
-'                'Push down
-'                li+=1
-'                for b=li+1 to a+1 step -1
-'                    mno(b)=mno(b-1)
-'                    mit(b)=mit(b-1)
-'                next
-'                if filter<=11 then
-'                    mno(a)=-1
-'                    mit(a)=filter
-'                    filter+=1
-'                else 
-'                    filter=128
-'                endif
-'            endif
-'        next
-'    loop until filter>=128
-'    
-'    filter=0
-'    
-'    for a=1 to li
-'        if mno(a)>1 then
-'            mls(a)=" "&item(mit(a)).sdesc
-'            mdesc(a)=item(mit(a)).ldesc
-'        endif
-'    next
-'    
-'    for a=1 to li
-'        if item(mit(a)).ty=2 then mls(a)=" "&mls(a) &"[A:"&item(mit(a)).v3 &" D:"&item(mit(a)).v1 &" R:"&item(mit(a)).v2 &"]"
-'        if item(mit(a)).ty=4 then mls(a)=" "&mls(a) &"[A:"&item(mit(a)).v3 &" D:"&item(mit(a)).v1  &"]"
-'        if item(mit(a)).ty=3 then mls(a)=" "&mls(a) &"[PV:"&item(mit(a)).v1 &"]"
-'        if item(mit(a)).w.m>0 and sysfrommap(item(mit(a)).w.m)>=0 then 
-'            mls(a) =mls(a) &map(sysfrommap(item(mit(a)).w.m)).c.x &":"& map(sysfrommap(item(mit(a)).w.m)).c.y   
-'        endif
-'    next
-'    
-'    do
-'        if k=8 then cu=cu-1
-'        if k=2 then cu=cu+1
-'        if mno(cu+offset)<0 then
-'            if k=8 then cu=cu-1
-'            if k=2 then cu=cu+1
-'        endif    
-'        if key=key_pageup then cu=cu-14
-'        if key=key_pagedown then cu=cu+14
-'        if cu<1 then 
-'            if offset>0 then
-'                offset=offset-1
-'                cu=1
-'            else 
-'                cu=15
-'                offset=li-15
-'            endif
-'        endif
-'        if cu>15 and li>15 then 
-'            if cu+offset>li then
-'                cu=1
-'                offset=0
-'            else
-'                offset=offset+1
-'                cu=15
-'            endif
-'        endif
-'        if filter<>0 then
-'            if check_item_filter(item(mit(cu+offset)).ty,filter)<>1 then
-'                if k<>2 and k<>8 then k=2
-'                c2=cu+offset
-'                do
-'                    if k=8 or key=key_pageup then c2-=1
-'                    if k=2 or key=key_pagedown then c2+=1
-'                loop until check_item_filter(item(mit(c2)).ty,filter)=1 or c2<1 or c2>li
-'                if c2>=1 and c2<=li then
-'                    cu=c2-offset
-'                    if cu>15 then 
-'                        offset=c2-15
-'                        cu=15
-'                    endif
-'                    if cu<1 then 
-'                        offset=c2
-'                        cu=1
-'                    endif
-'                else 'No item found, one step back to old position
-'                    if k=8 then cu+=1
-'                    if k=2 then cu-=1
-'                endif
-'            endif
-'        endif
-'        screenset 0,1
-'        set__color( 15,0)
-'        draw string (3*_fw1,3*_fh1), "Select item:",,font2,custom,@_col 
-'        for l=0 to lasttb
-'            set__color(0,0)
-'            draw string (3*_fw1+41*_fw2,3*_fh1+l*_fh2),space(25),,font2,custom,@_col
-'        next
-'        if offset<0 then offset=0
-'        if li>15 and offset>li-cu then offset=li-cu
-'        if cu>li then 
-'            cu=1
-'            offset=0
-'        endif
-'        if cu<0 then cu=0
-'        l=1
-'        a=1
-'        do
-'            if mno(a+offset)<0 then
-'                set__color(15,0)
-'                draw string (3*_fw1,3*_fh1+l*_fh2),i_fs(mit(a+offset)),,font2,custom,@_col
-'                l+=1
-'                a+=1
-'                set__color(11,0)
-'            endif
-'            if mls(a+offset)<>"" then
-'                if check_item_filter(item(mit(a+offset)).ty,filter)=1 then
-'                    set__color( 0,0)
-'                    draw string (3*_fw1,3*_fh1+l*_fh2),space(35),,font2,custom,@_col
-'                    
-'                    if cu=a then
-'                        lasttb=textbox(mdesc(a+offset),3+40*_fw2/_fw1,3,25,15,1)
-'                        set__color( 15,5)
-'                    else
-'                        set__color( 11,0)
-'                    endif
-'                    if mno(a+offset)>1 then
-'                        if item(mit(a+offset)).ty=15 then
-'                            draw string (3*_fw1,3*_fh1+l*_fh2),mno(a+offset) & " " &item(mit(a+offset)).desigp &" ("& item(mit(a+offset)).desig &")",,font2,custom,@_col
-'                        else
-'                            draw string (3*_fw1,3*_fh1+l*_fh2),mno(a+offset) & " " &item(mit(a+offset)).desigp,,font2,custom,@_col
-'                        endif
-'                    else
-'                        draw string (3*_fw1,3*_fh1+l*_fh2), trim(item(mit(a+offset)).desig),,font2,custom,@_col
-'                    endif
-'                    l+=1
-'                endif
-'                a+=1
-'            endif
-'        loop until l>15 or mls(a+offset)=""
-'        set__color( 15,0)
-'        if li>15 then 
-'            draw string (3*_fw1,3*_fh1+20*_fh2), "[MORE]",,font2,custom,@_col 
-'        endif
-'        draw string (3*_fw1,3*_fh1+20*_fh2), "Return to select item, ESC to quit, " &key_filter & " to filter items ("&i_fs(filter) &")",,font2,custom,@_col
-'        flip
-'        key=keyin(key_filter)
-'        k=getdirection(key)
-'        if key=key_filter then 
-'            filter=item_filter()
-'            if filter<>0 then
-'                if check_item_filter(item(mit(cu+offset)).ty,filter)=0 then
-'                    for a=1 to li
-'                        if check_item_filter(item(mit(a)).ty,filter)=1 then
-'                            cu=a
-'                            if cu>15 then
-'                                offset=cu-15
-'                                cu=15
-'                            endif
-'                            exit for
-'                        endif
-'                    next
-'                endif
-'            endif
-'        endif
-'        if cu>li then cu=li
-'        if key=key__enter then i=cu+offset
-'        if key=key__esc then i=-1
-'        if player.dead<>0 then return -1
-'        
-'        
-'    loop until i<>0
-'    if i>0 then 
-'        if mno(i)<2 then
-'            i=mit(i)
-'        else
-'            i=first_unused(mit(i))
-'        endif
-'    endif
-'    return i
 
-function first_unused(i as short) as short
-    DimDebugL(0)
-    dim as short a
-    
-    if item_assigned(i)=0 then return i
-    DbgPrint("Item "&i &"assigned, looking for alternative")
-    for a=0 to lastitem
-        if item(a).w.s<0 and a<>i then
-            if item(a).desig=item(i).desig and item(a).v1=item(i).v1 and item(a).v2=item(i).v2 and item(a).v3=item(i).v3 then
-#if __FB_DEBUG__
-                if debug=1 and item_assigned(a)=0 then
-					DbgPrint("Item " &a & "is alternative")
-                EndIf
-                if debug=1 and item_assigned(a)>0 then
-                	DbgPrint("Item " &a & "is used by"&item_assigned(a)-1)
-                EndIf 
-#endif
-                if item_assigned(a)=0 then return a
-            endif
-        endif
-    next
-    DbgPrint("No alt found")
-    return i
-end function
-
-function item_assigned(i as short) as short
-    dim as short j
-    for j=0 to 128
-        if crew(j).hp>0 then
-            if item(i).ty=2 and crew(j).pref_lrweap=item(i).uid then return j+1
-            if item(i).ty=4 and crew(j).pref_ccweap=item(i).uid then return j+1
-            if item(i).ty=3 and crew(j).pref_armor=item(i).uid then return j+1
-        endif
-    next
-    return 0
-end function
 
 function findbest_jetpack() as short
     dim as short r,i
@@ -4188,54 +3486,6 @@ function findbest_jetpack() as short
             endif
         endif
     next
-    return r
-end function
-
-
-function findbest(t as short,p as short=0, m as short=0,id as short=0) as short
-    dim as single a,b,r,v
-    r=-1
-    if awayteam.optoxy=1 and t=3 then b=999
-    for a=1 to lastitem
-        if p<>0 then
-            if (item(a).w.s=p and item(a).ty=t) then
-                if t<>3 or awayteam.optoxy=0 then
-                    if item(a).v1>b then
-                        r=a
-                        b=item(a).v1
-                    endif
-                endif
-                if id<>0 and item(a).ty=id then return a
-                if t=3 then 
-                    if awayteam.optoxy=1 then
-                        v=item(a).v3*0.9*item(a).v1^2*2+item(a).v1/2
-                        if v<b then
-                            r=a
-                            b=v
-                        endif
-                    endif
-                    if awayteam.optoxy=2 then
-                        if item(a).v3>b then
-                            r=a
-                            b=item(a).v3
-                        endif
-                    endif
-                endif
-            endif
-        endif
-        
-        if m<>0 then
-            if item(a).w.m=m and item(a).w.s=0 and item(a).w.p=0 and item(a).ty=t then
-                if item(a).v1>b then
-                    r=a
-                    b=item(a).v1
-                endif
-            endif
-        endif
-    next
-    if id<>0 and r>0 then
-        if item(r).id<>id then r=-1
-    endif
     return r
 end function
 
@@ -4281,15 +3531,6 @@ function lowest_by_id(id as short) as short
         endif
     next
     return best
-end function
-
-function equipment_value() as integer
-    dim i as short
-    dim as integer m
-    for i=0 to lastitem
-        if item(i).w.s<0 then m+=item(i).price
-    next
-    return m
 end function
 
 function count_items(i as _items) as short
@@ -4338,179 +3579,5 @@ function count_and_make_weapons(st as short) as short
     return b
 end function
 
-function findartifact(v5 as short) as short
-            dim c as short
-            rlprint "After examining closely, your science officer has found an alien artifact."
-            
-            if all_resources_are=0 then
-                if v5=0 then
-                    c=rnd_range(1,25)
-                    if c=2 or c=5 then
-                        c=rnd_range(1,10)
-                        if c=2 or c=5 then artflag(c)=1
-                    endif
-                else
-                    c=v5
-                endif
-            else
-                c=all_resources_are
-            endif
-            if c<0 or c>22 then c=rnd_range(1,25)
-            if (skill_test(player.science(1),st_veryhard,"Examining artifact") and artflag(c)=0 and c<>2 and c<>5) or all_resources_are>0 then
-                artflag(c)=1                
-                artifact(c)
-            else
-                rlprint "Science officer can't figure out what it is.",14
-                reward(4)=reward(4)+1
-            endif
-            return 0
-end function
 
-function artifact(c as short) as short
-    dim as short a,b,d,e,f
-    dim text as string
-    if c=1 then
-        rlprint "It is an improved fuel system!"
-        player.equipment(se_fuelsystem)=5
-        player.fueluse=0.5
-    endif
-    
-    
-    if c=3 then
-        rlprint "It is a very powerful portable scanner!"
-        player.stuff(3)=2
-    endif
-    
-    if c=4 then
-        rlprint "It is a disintegrator cannon!"
-        artflag(4)=0                
-        d=player.h_maxweaponslot
-        text="Weapon Slots:/"
-        for e=1 to d
-            if player.weapons(e).desig="" then
-                text=text & "-Empty-/"
-            else
-                text=text & player.weapons(e).desig & "/"
-            endif
-        next
-        text=text+"exit"
-        d=d+1
-        do 
-        f=menu(bg_awayteam,text)
-            if player.weapons(f).desig<>"" then 
-                if askyn("do you want to replace that weapon? (y/n)") then 
-                    player.weapons(f)=make_weapon(66)
-                    f=d
-                endif
-            else
-                player.weapons(f)=make_weapon(66)
-                f=d
-            endif
-        loop until f=d
-        recalcshipsbays
-        cls
-    endif
-    
-    if c=6 then 
-        rlprint "It is an Improved ships engine!"
-        player.engine=6
-    endif
-    if c=7 then 
-        rlprint "It is a powerful ships sensor array!"
-        player.sensors=6
-    endif
-    if c=8 then
-        rlprint "These are cryogenic chambers. They are empty, but still working. You can easily install them on your ship."
-        player.cryo=player.cryo+rnd_range(1,6)
-        artflag(8)=0
-    endif
-    if c=9 then
-        rlprint "This is a portable Teleportation Device!"
-        reward(5)=5
-    endif
-    if c=10 then
-        rlprint "It is a portable air recycling system!"
-        player.stuff(4)=2
-    endif
-    if c=11 then
-        artflag(11)=0
-        rlprint "its a data crystal containing info on one of the systems in this sector"
-        d=rnd_range(1,laststar)
-        for e=1 to 9
-            if map(d).planets(e)>0 then f=f+1
-        next
-        if map(d).discovered>=1 then
-            rlprint "But you have already discovered that that system."
-        else
-            rlprint "It is at "&cords(map(d).c) &". It is "&add_a_or_an(spectralname(map(d).spec),0)&" with " & f & " planets."  
-            map(d).discovered=1
-        endif
-    endif 
-    if c=12 then
-        rlprint "It's a ships cloaking device!"
-        placeitem(make_item(87),0,0,0,-1)
-        
-    endif
-    
-    if c=13 then
-        rlprint "It's a special shield to protect ships from wormholes!"
-    endif
-    
-    if c=14 then
-        rlprint "It's a powerful ancient bomb!"
-        placeitem(make_item(301),0,0,0,0,-1)
-        artflag(14)=0
-    endif
-    
-    if c=15 then
-        rlprint "It's a portable cloaking device!"
-        placeitem(make_item(302),0,0,0,0,-1)
-    endif
-    
-    if c=16 then
-        rlprint "It's a device that allows to navigate wormholes!"
-    endif
-    
-    if c=17 then
-        rlprint "It's a sophisticated piloting AI"
-        player.pipilot=7
-    endif
-    
-    if c=18 then
-        rlprint "It's a sophisticated gunner AI"
-        player.pigunner=7
-    endif
-    
-    if c=19 then
-        rlprint "It's a sophisticated science AI"
-        player.piscience=7
-    endif
-    
-    if c=20 then
-        rlprint "It's a sophisticated medical AI"
-        player.pidoctor=8
-    endif
-    
-    if c=21 then
-        rlprint "It's technical specifications on neutronium-production!"
-    endif
-    if c=22 then
-        rlprint "It's technical specifications how to build quantum-warheads!"
-    endif
-    
-    if c=23 then
-        rlprint "It's a batch of hull repairing nanobots!"
-    endif
-    
-    if c=24 then
-        rlprint "It's an ammo teleportation system!"
-        player.reloading=1
-    endif
-    
-    if c=25 then
-        rlprint "It's a wormhole generator!"
-    endif
-    
-    return 0
-end function
 
