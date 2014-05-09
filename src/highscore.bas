@@ -274,7 +274,7 @@ function death_text() as string
     if player.dead=34 then text="Too late you realize that your ride on the icechunk has brought you too deep into the gas giants atmosphere. Rising pressure squashes you, as the iceblock disintegrates around you."
     if player.dead=35 then text="The dangers of spacecombat are manifold. Flying into your own engine exhaust is one of them."
     if player.dead=98 then
-        endstory=es_part1
+        endstory=retire.es_part1
         textbox (endstory,2,2,_screenx/_fw2-5)
         text=endstory
     endif
@@ -501,22 +501,22 @@ function score() as integer
     for a=0 to lastitem
         if item(a).w.s<0 then s=s+item(a).price\100
     next
-    if retirementassets(1)>0 then s+=1000
-    if retirementassets(2)>0 then s+=2000
-    if retirementassets(3)>0 then s+=5000
-    if retirementassets(4)>0 then s+=10000
-    if retirementassets(5)>0 then s+=100000
-    if retirementassets(6)>0 then s+=200000
-    if retirementassets(7)>0 then s+=500000
-    if retirementassets(8)>0 then s+=1000000
-    if retirementassets(9)>0 then s+=2000000
+    if retire.assets(1)>0 then s+=1000
+    if retire.assets(2)>0 then s+=2000
+    if retire.assets(3)>0 then s+=5000
+    if retire.assets(4)>0 then s+=10000
+    if retire.assets(5)>0 then s+=100000
+    if retire.assets(6)>0 then s+=200000
+    if retire.assets(7)>0 then s+=500000
+    if retire.assets(8)>0 then s+=1000000
+    if retire.assets(9)>0 then s+=2000000
     
-    if retirementassets(10)>0 then s+=2000
-    if retirementassets(11)>0 then s+=10000
-    if retirementassets(12)>0 then s+=20000
-    if retirementassets(13)>0 then s+=50000
-    if retirementassets(14)>0 then s+=100000
-    if retirementassets(15)>0 then s+=200000
+    if retire.assets(10)>0 then s+=2000
+    if retire.assets(11)>0 then s+=10000
+    if retire.assets(12)>0 then s+=20000
+    if retire.assets(13)>0 then s+=50000
+    if retire.assets(14)>0 then s+=100000
+    if retire.assets(15)>0 then s+=200000
     
     s=s-player.deadredshirts*100
     return s

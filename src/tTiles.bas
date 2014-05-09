@@ -63,6 +63,11 @@ Dim Shared tmap(60,20) As _tile
 
 function load_tiles() as short
     dim as short x,y,a,n,sx,sy,showtiles
+    '
+   	If (configflag(con_tiles)<>0) and (configflag(con_sysmaptiles)<>0) then
+		return 0
+	EndIf
+    '
     showtiles=0
     screenset 1,1
     locate 1,1

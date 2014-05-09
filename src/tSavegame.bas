@@ -191,7 +191,7 @@ function savegame(crash as short=0) as short
     put #f,,wage
 
     for a=0 to 16
-        put #f,,retirementassets(a)
+        put #f,,retire.assets(a)
     next
 
     print ".";
@@ -361,6 +361,7 @@ function savegame(crash as short=0) as short
     put #f,,foundsomething
 
     put #f,,civ()
+    put #f,,rng.Seed
 
     close f
 
@@ -519,7 +520,7 @@ function load_game(filename as string) as short
         get #f,,captainskill
         get #f,,wage
         for a=0 to 16
-            get #f,,retirementassets(a)
+            get #f,,retire.assets(a)
         next
 
         print ".";
@@ -689,6 +690,7 @@ function load_game(filename as string) as short
         get #f,,foundsomething
 
         get #f,,civ()
+	    get #f,,rng.Seed
 
         close f
         if fname<>"savegames/empty.sav" and configflag(con_savescumming)=1 then

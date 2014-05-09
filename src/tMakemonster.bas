@@ -3781,9 +3781,9 @@ dim as short c,b
     p.loadout=urn(0,3,12,0)
     if a=1 then
         'players ship    
-        'retirementassets(9)=1
-        'retirementassets(6)=1
-        'retirementassets(11)=1
+        'retire.assets(9)=1
+        'retire.assets(6)=1
+        'retire.assets(11)=1
         'p.questflag(3)=1
         'artflag(5)=1
         'artflag(7)=1

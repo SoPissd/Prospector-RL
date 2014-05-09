@@ -16,6 +16,7 @@ Dim as String ErrText=""
 #EndMacro
 
 '
+#undef main
 inc("main",	"debug.bas",				"")
 inc("main",	"version.bas",				"")
 '
@@ -86,9 +87,13 @@ Print
 DbgScreeninfo
 chdir exepath
 '
+'core
+'
 inc("main",	"tRng.bas",					"")
 inc("main",	"tCoords.bas",				"")
 inc("main",	"tAstar.bas",				"")
+inc("main",	"tMath.bas",				"")
+inc("main",	"tTime.bas",				"")
 '
 inc("main",	"tConsts.bas",				"")
 inc("main",	"tTypes.bas",				"")
@@ -98,10 +103,13 @@ inc("main",	"tVars.bas",				"")
 inc("main",	"tUtils.bas",				"")
 inc("main",	"tGraphics.bas",			"")
 inc("main",	"kbinput.bas",				"")
+inc("main",	"tError.bas",				"")
 inc("main",	"fileIO.bas",				"")
+inc("main",	"tPng.bas",					"")
 '
 On Error Goto errormessage
-inc("main",	"tError.bas",				"")
+'
+'app
 '
 inc("main",	"tKeys.bas",				"")
 inc("main",	"tPrint.bas",				"")
@@ -110,17 +118,14 @@ inc("main",	"tConfig.bas",				"")
 inc("main",	"tInput.bas",				"")
 inc("main",	"tSound.bas",				"")
 '
-inc("main",	"tMath.bas",				"")
-inc("main",	"tTime.bas",				"")
-inc("main",	"tTexts.bas",				"")
 inc("main",	"tCommandstring.bas",		"")
-inc("main",	"tPng.bas",					"")
 inc("main",	"tFonts.bas",				"")
-inc("main",	"tCards.bas",				"")
 inc("main",	"tTiles.bas",				"")
 inc("main",	"tTiledata.bas",			"")
 '
+'game
 '
+inc("main",	"tTexts.bas",				"")
 inc("main",	"tEnergycounter.bas",		"")
 inc("main",	"tWeapon.bas",				"")
 inc("main",	"tShip.bas",				"")
@@ -168,6 +173,7 @@ inc("main",	"tWorldgen.bas",			"")
 inc("main",	"tShipyard.bas",			"")
 inc("main",	"cargotrade.bas",			"")
 '
+inc("main",	"tCards.bas",				"")
 inc("main",	"tSlotmachine.bas",			"")
 inc("main",	"tPoker.bas",				"")
 inc("main",	"tCasino.bas",				"")
@@ -184,7 +190,6 @@ inc("main",	"tStockmarket.bas",			"")
 inc("main",	"tRadio.bas",				"")
 inc("main",	"tPlanetmenu.bas",			"")
 inc("main",	"tDialog.bas",				"")
-inc("main",	"highscore.bas",			"")
 '
 inc("main",	"tAutoexplore.bas",			"")
 inc("main",	"tRover.bas",				"")
@@ -199,19 +204,25 @@ inc("main",	"tLanding.bas",				"")
 inc("main",	"tFuel.bas",				"")
 inc("main",	"tExplorespace.bas",		"")
 '
+'game-menu
+'
+inc("main",	"highscore.bas",			"")
 inc("main",	"tPalette.bas",				"")
 inc("main",	"tMenu.bas",				"")
 inc("main",	"tSavegame.bas",			"")
 inc("main",	"globals.bas",				"")
-inc("main",	"tGameInit.bas",			"")
+inc("main",	"tGameinit.bas",			"")
+inc("main",	"tGamekeys.bas",			"")
 inc("main",	"tGame.bas",				"")
 '
-#undef main
-function main() as Short
+'main
+'
+
+function Initgame() as integer
 	check_filestructure()
 	load_config()
 	load_fonts()
-	If configflag(con_tiles)=0 Or configflag(con_sysmaptiles)=0 Then load_tiles()
+	load_tiles()
 	load_keyset()
 	load_sounds()
 	load_palette()
@@ -223,14 +234,17 @@ function main() as Short
     return 0   
 End Function
 
-if main()=0 then
-	ErrorNr= Prospector()
-else
-	ErrorNr= -1 	
-endif
-goto done
-'
+#undef main
+function main() as integer
+	return Initgame()<> 0 or Prospector()
+End Function
 
+'
+'run
+'
+RUNGAME:
+	ErrorNr= main() 	
+	goto done
 ERRORMESSAGE:
 	On Error goto 0
 	ErrorNr= Err
@@ -250,3 +264,6 @@ DONE:
 	DbgLogExplorePlanetEnd
 	DbgEnd
 	End ErrorNr
+'
+'#
+'

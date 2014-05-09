@@ -500,9 +500,9 @@ Function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _
         sell_alien(slse_zoo)
     EndIf
 
-    If tmap(awayteam.c.x,awayteam.c.y).gives=47 Then retirement()
+    If tmap(awayteam.c.x,awayteam.c.y).gives=47 Then retire.retirement()
 
-    If tmap(awayteam.c.x,awayteam.c.y).gives=48 Then buytitle()
+    If tmap(awayteam.c.x,awayteam.c.y).gives=48 Then retire.buytitle()
 
     If tmap(awayteam.c.x,awayteam.c.y).gives=49 Then customize_item()
 

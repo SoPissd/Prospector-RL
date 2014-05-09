@@ -20,8 +20,8 @@
 	#endif
 	#endif
 
-	#define _DbgPrintCSVs 0				'print csv's?
-	#define _DbgLogExplorePlanet 1
+	#define _DbgPrintCSVs 1				'print csv's?
+	#define _DbgLogExplorePlanet 0
 	'
 	#define _DbgPrintMode 0
 	'				

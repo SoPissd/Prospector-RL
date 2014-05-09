@@ -1,9 +1,10 @@
 'retirement
 
-Dim Shared retirementassets(16) As UByte
+namespace retire
+	
+Dim Shared assets(16) As UByte
 
-
-function buytitle() as short
+public function buytitle() as short
     dim as short a,b
     dim as integer price
     dim as string title
@@ -35,11 +36,11 @@ function buytitle() as short
             price=100000
         endif
         for b=1 to 6
-            if retirementassets(b+8)=1 and a<b then sameorbetter=1
+            if assets(b+8)=1 and a<b then sameorbetter=1
         next
-        if retirementassets(a+8)=0 and sameorbetter=0 then
+        if assets(a+8)=0 and sameorbetter=0 then
             if paystuff(price) then
-                retirementassets(a+8)=1
+                assets(a+8)=1
             endif
         else
             rlprint "You already have a better title."
@@ -51,7 +52,7 @@ end function
 
 
 
-function retirement() as short
+public function retirement() as short
     dim as short a,b
     dim price(9) as integer
     dim asset(9) as string
@@ -106,11 +107,11 @@ function retirement() as short
                 b=menu(bg_parent,mtext,htext)
                 
                 if b>0 and b<10 then
-                    if retirementassets(b-1)=0 or b=2 or b=1 then
+                    if assets(b-1)=0 or b=2 or b=1 then
                         if paystuff(price(b)) then
                             rlprint "You buy "&add_a_or_an(asset(b),0) &"." 
                 
-                            if retirementassets(b-1)<255 then retirementassets(b-1)+=1
+                            if assets(b-1)<255 then assets(b-1)+=1
                         endif
                     else
                         rlprint "You already have that"
@@ -127,52 +128,52 @@ end function
 function hasassets() as short
     dim a as short
     for a=2 to 8
-        if retirementassets(a)>0 then return 1
+        if assets(a)>0 then return 1
     next
     return 0
 end function
 
 function sellassetts () as string
     dim t as string
-    if retirementassets(2)>0 then
+    if assets(2)>0 then
         player.money+=500
-        retirementassets(2)=0
+        assets(2)=0
         return "You have to sell your country manor"
     endif
 
-    if retirementassets(3)>0 then
+    if assets(3)>0 then
         player.money+=1000
-        retirementassets(4)=0
+        assets(4)=0
         return "You have to sell your small asteroid base"
     endif
 
-    if retirementassets(4)>0 then
+    if assets(4)>0 then
         player.money+=2500
-        retirementassets(4)=0
+        assets(4)=0
         return "You have to sell your asteroid base"
     endif
 
-    if retirementassets(5)>0 then
+    if assets(5)>0 then
         player.money+=5000
-        retirementassets(5)=0
+        assets(5)=0
         return "You have to sell your terraformed asteroid"
     endif
 
-    if retirementassets(6)>0 then
+    if assets(6)>0 then
         player.money+=125000
-        retirementassets(6)=0
+        assets(6)=0
         return "You have to sell your small planet"
     endif
 
-    if retirementassets(7)>0 then
+    if assets(7)>0 then
         player.money+=250000
-        retirementassets(7)=0
+        assets(7)=0
         return "You have to sell your planet"
     endif
 
-    if retirementassets(2)>0 then
+    if assets(2)>0 then
         player.money+=500000
-        retirementassets(2)=0
+        assets(2)=0
         return "You have to sell your earthlike planet"
     endif
     return t
@@ -181,7 +182,7 @@ end function
 
 function es_living(byref pmoney as single) as string
     dim as string t
-    if retirementassets(9)>0 then
+    if assets(9)>0 then
         t=t &" |You finally settle down on your very own planet!"
         if pmoney<100 then t=t &" You have to sell some ground to Settlers make ends meet."
         if pmoney>500 then t=t &" Soon you build a nice house on it."
@@ -191,7 +192,7 @@ function es_living(byref pmoney as single) as string
         return t
     endif
 
-    if retirementassets(8)>0 then
+    if assets(8)>0 then
         t=t &" |You finally settle down on your very own planet! It's a bit barren, but it's yours!"
         if pmoney<100 then t=t &" You have to sell some ground to Settlers make ends meet."
         if pmoney>500 then t=t &" Soon you build a nice house on it."
@@ -200,7 +201,7 @@ function es_living(byref pmoney as single) as string
         if pmoney>=2500 then t=t &" The place gets a lot nicer after some minor terraforming!"
         return t
     endif
-    if retirementassets(7)>0 then
+    if assets(7)>0 then
         t=t &" |You finally settle down on your very own - well, dessert, but still - planet!"
         if pmoney<100 then t=t &" You have to sell some ground to Settlers make ends meet."
         if pmoney>500 then t=t &" Soon you build a nice house on it."
@@ -210,7 +211,7 @@ function es_living(byref pmoney as single) as string
         if pmoney>=5000 then t=t &" The place gets a lot nicer after the terraforming company has done their job!"
         return t
     endif
-    if retirementassets(6)>0 then
+    if assets(6)>0 then
         t=t &" |You finally settle down on your little planet"
         if pmoney<100 then t=t &" You have to sell some ground to Settlers make ends meet."
         if pmoney>500 then t=t &" Soon you build a nice house on it."
@@ -220,7 +221,7 @@ function es_living(byref pmoney as single) as string
         if pmoney>=5000 then t=t &" The place gets a lot nicer after the terraforming company has done their job!"
         return t
     endif
-    if retirementassets(5)>0 then
+    if assets(5)>0 then
         t=t &" |You retire to your terraformed asteroid"
         if pmoney<100 then t=t &" You have to sell some ground to asteroid miners to make ends meet."
         if pmoney>500 then t=t &" Soon you build a nice house on it."
@@ -228,19 +229,19 @@ function es_living(byref pmoney as single) as string
         if pmoney>1200 then t=t &" You also can hire servants for whatever task you do not want to do yourself."
         return t
     endif
-    if retirementassets(4)>0 then
+    if assets(4)>0 then
         t=t &" |The asteroid base you bought serves you well as a home."
         if pmoney<100 then t=t &" You have to rent some space to asteroid miners to make ends meet."
         if pmoney>1000 then t=t &" You are able to equip it with every luxury you could ever dream of."
         return t'
     endif
-    if retirementassets(3)>0 then
+    if assets(3)>0 then
         t=t &" |The small asteroid you bought serves as your home." 'Small Asteroid
         if pmoney<100 then t=t &" You have to rent some space to asteroid miners to make ends meet."
         if pmoney>1000 then t=t &" You are able to equip it with every luxury you could ever dream of."
         return t
     endif
-    if retirementassets(2)>0 then
+    if assets(2)>0 then
         t=t &" |You spend the autumn years of your life in your Country Manor"
         if pmoney<50 then t=t &" You have to rent some rooms to students to make ends meet."
         if pmoney>1000 then t=t &" You are able to equip it with every luxury you could ever dream of."
@@ -254,9 +255,9 @@ function es_title(byref pmoney as single) as string
     dim landless as short
     dim as short a
     for a=2 to 8
-        if retirementassets(a)>0 then landless=landless+a
+        if assets(a)>0 then landless=landless+a
     next
-    if retirementassets(14)>0 then
+    if assets(14)>0 then
         t=t &""
         if landless=0 then t=t &" |You soon find out the title of a Duke is worth quite a bit even without any assets to go with it. People pay you to show up at their events and give speeches, and want to elect you to high local government positions. "
         if landless>0 and landless<5 then t=t &"|You have power, you have prestige. You are a bit poor for a duke, but few can oppose you."
@@ -264,21 +265,21 @@ function es_title(byref pmoney as single) as string
         pmoney=pmoney+5000*(landless+1)
         return t
     endif
-    if retirementassets(13)>0 then
+    if assets(13)>0 then
         t=t &""
         if landless=0 then t=t &" |You soon find out the title of a Marquese is worth quite a bit even without any assets to go with it. People pay you to show up at their events and give speeches. "
         if landless>0 and landless<5 then t=t &"|Your title of Marquese offers a lot of prestige and power. You cant always back it up with economic might, but you are a political heavyweight in your community"
         if landless>=5 then t=t &"|Only few in your communitiy are more powerfull than you are. You demand taxes, run a policeforce, and have influence on the legeslative process"
         pmoney=pmoney+2500*(landless+1)
     endif
-    if retirementassets(12)>0 then
+    if assets(12)>0 then
         t=t &""
         if landless=0 then t=t &" |You soon find out the title of a Count is worth a bit even without any assets to go with it. It opens doors in politics"
         if landless>0 and landless<5 then t=t &"|You aren't exactly rich for a Count, but still can demand tax money from quite a few people and add your voice to policy making."
         if landless>=5 then t=t &"|You are an important person with considerable fame and wealth. Not a lot goes past you concerning local politics or business."
         pmoney=pmoney+1000*landless+100
     endif
-    if retirementassets(11)>0 then
+    if assets(11)>0 then
         t=t &""
         if landless=0 then t=t &" |You soon find out the title of a viscount isn't worth much without any assets to go with it. But it opens doors in politics"
         if landless>0 and landless<5 then t=t &"|Your title of viscount opens doors, and your considerable land keeps them open. You make quite a bit of money with taxes"
@@ -287,14 +288,14 @@ function es_title(byref pmoney as single) as string
         return t
     endif
 
-    if retirementassets(10)>0 then
+    if assets(10)>0 then
         t=t &""
         if landless=0 then t=t &" |You soon find out the title of a Baron isn't worth much without any assets to go with it."
         if landless>0 and landless<5 then t=t &"|Your title of Baron combined with your meager holdings of real estate allows for a nice additional tax and tarif income."
         if landless>=5 then t=t &"| You are a Baron, you have impressive holdings. You can add tax income to your already impressive assets!"
         pmoney=pmoney+250*landless
     endif
-    if retirementassets(9)>0 then
+    if assets(9)>0 then
         t=t &""'adel
         if landless=0 then t=t &" |You soon find out the title of a Lord isn't worth much without any assets to go with it."
         if landless>0 and landless<5 then t=t &"|Your title of Lord and meager holdings allow a tiny tax income."
@@ -325,14 +326,14 @@ function es_part1() as string
     if player.money<500 then
         t=t & " To get a flight back to civilization you sell your ship."
         player.money=player.money+player.h_price/5
-        if player.money<500 and retirementassets(0)<>0 then
+        if player.money<500 and assets(0)<>0 then
             t=t &" You sell your Mudds store Franchise License."
-            retirementassets(0)=0
+            assets(0)=0
             player.money=player.money+250
         endif
-        if player.money<500 and retirementassets(1)<>0 then
+        if player.money<500 and assets(1)<>0 then
             t=t &" You even sell your life insurance!"
-            retirementassets(1)-=1
+            assets(1)-=1
             player.money=player.money+250
         endif
     endif
@@ -421,8 +422,8 @@ function es_part1() as string
     t=t &"||"
 
     mpy=player.money/(20+rnd_range(1,6))
-    if mpy<120 and retirementassets(6)=0 and retirementassets(7)=0 and retirementassets(8)=0  then
-        if retirementassets(0)>0 then
+    if mpy<120 and assets(6)=0 and assets(7)=0 and assets(8)=0  then
+        if assets(0)>0 then
             t=t &"|You soon realize that you need to open a shop with your mud's store license to make a comfortable living."
             mpy=mpy+rnd_range(200,1000)
         else
@@ -473,20 +474,20 @@ function es_part1() as string
     t=t & "|"
     t=t &"|After several years of work it's finally time to retire!|"
     if hasassets>0 then
-        pmoney=(player.money+retirementassets(0)*500)/rnd_range(33,44)+retirementassets(1)*250
-        if retirementassets(0)>0 then
-            if retirementassets(0)=1 then t=t &" |You sell your well going Mud's store and franchise." 'Muds Store
-            if retirementassets(0)>1 then t=t &" |You sell your well going Mud's store and franchises." 'Muds Store
+        pmoney=(player.money+assets(0)*500)/rnd_range(33,44)+assets(1)*250
+        if assets(0)>0 then
+            if assets(0)=1 then t=t &" |You sell your well going Mud's store and franchise." 'Muds Store
+            if assets(0)>1 then t=t &" |You sell your well going Mud's store and franchises." 'Muds Store
         endif
-        if retirementassets(1)>0 then
-            if retirementassets(1)=1 then t=t &" |Your life insurance finally pays out." 'Life insurance
-            if retirementassets(1)>1 then t=t &" |Your life insurances finally pays out." 'Life insurance
+        if assets(1)>0 then
+            if assets(1)=1 then t=t &" |Your life insurance finally pays out." 'Life insurance
+            if assets(1)>1 then t=t &" |Your life insurances finally pays out." 'Life insurance
         endif
 
         t=t &es_living(pmoney)
         t=t &es_title(pmoney)
 
-        if retirementassets(8)>0 then pmoney=pmoney+1000 'Taxing your planet
+        if assets(8)>0 then pmoney=pmoney+1000 'Taxing your planet
         mpy=(mpy+pmoney)/2
     endif
 
@@ -558,3 +559,4 @@ function es_part1() as string
     return t
 end function
 
+End Namespace

@@ -4,13 +4,11 @@ Type vector
         Declare Constructor(x As Integer, y As Integer)
 End Type
 
-Constructor vector (x As Integer, y As Integer)
-        this.x = x
-        this.y = y
-End Constructor
+Dim Shared As UByte sm_x=75
+Dim Shared As UByte sm_y=50
+
 
 Type _sym_matrix
-
         xm As Integer
         vmax As Integer
         vmin As Integer
@@ -25,6 +23,15 @@ Type _sym_matrix
         Declare Constructor (ByVal size As Integer)
         Declare Destructor ()
 End Type
+
+'
+
+Constructor vector (x As Integer, y As Integer)
+        this.x = x
+        this.y = y
+End Constructor
+
+'
 
 Constructor _sym_matrix (ByVal size As Integer)
         xm = size

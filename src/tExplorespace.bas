@@ -943,7 +943,7 @@ Function spacestation(st As Short) As _ship
                 rlprint "you are under quarantine and not allowed to enter there"
             EndIf
         EndIf
-        If a=9 Then retirement()
+        If a=9 Then retire.retirement()
         If a=10 Or a=-1 Then
             text=""
             If player.pilot(0)<0 Then text=text &"You dont have a pilot. "

@@ -57,7 +57,6 @@ End Function
 
 '
 
-
 Function error_handler(text as string) As Short
 	dim as string logfile
 	log_error(text)

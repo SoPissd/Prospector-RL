@@ -9,8 +9,6 @@ Declare function menu(bg as byte,te as string, he as string="", x as short=2, y 
 Dim Shared As UByte _fohi1, _fohi2
 Dim Shared As Byte _volume=2
 
-Dim Shared As UByte sm_x=75
-Dim Shared As UByte sm_y=50
 
 Dim Shared vismask(sm_x,sm_y) As Byte
 Dim Shared spacemap(sm_x,sm_y) As Short
