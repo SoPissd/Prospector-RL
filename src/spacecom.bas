@@ -2,6 +2,26 @@
 
 declare function com_remove(attacker() as _ship, t as short,flag as short=0) as short
 
+
+function count_gas_giants_area(c as _cords,r as short) as short
+    dim as short cc,i,j
+    for i=0 to laststar
+        if distance(c,map(i).c)<r then
+            for j=1 to 9
+                if isgasgiant(map(i).planets(j)) then cc+=1
+                if map(i).planets(j)=specialplanet(21) then cc+=5
+                if map(i).planets(j)=specialplanet(22) then cc+=5
+                if map(i).planets(j)=specialplanet(23) then cc+=5
+                if map(i).planets(j)=specialplanet(24) then cc+=5
+                if map(i).planets(j)=specialplanet(25) then cc+=5
+            next
+        endif
+    next
+    
+    return cc
+end function
+
+
 function display_station(a as short) as short
     dim as short x,y,t
 

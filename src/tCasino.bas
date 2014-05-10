@@ -2,6 +2,78 @@
 declare function add_passenger(n as string,typ as short, price as short, bonus as short, target as short, ttime as short, gender as short) as short
 declare function questguy_dialog(i as short) as short
 
+
+function drawroulettetable() as short
+    dim as short x,y,z
+    dim coltable(36) as short
+    coltable(0)=10
+    coltable(1)=12
+    coltable(2)=15
+    coltable(3)=12
+    coltable(4)=15
+    coltable(5)=12
+    coltable(6)=15
+    coltable(7)=12
+    coltable(8)=15
+    coltable(9)=12
+    coltable(10)=15
+    coltable(11)=15
+    coltable(12)=12
+    coltable(13)=15
+    coltable(14)=12
+    coltable(15)=15
+    coltable(16)=12
+    coltable(17)=15
+    coltable(18)=12
+    coltable(19)=12
+    coltable(20)=15
+    coltable(21)=12
+    coltable(22)=15
+    coltable(23)=12
+    coltable(24)=15
+    coltable(25)=12
+    coltable(26)=15
+    coltable(27)=12
+    coltable(28)=15
+    coltable(29)=15
+    coltable(30)=12
+    coltable(31)=15
+    coltable(32)=12
+    coltable(33)=15
+    coltable(34)=12
+    coltable(35)=15
+    coltable(36)=12
+
+    z=0
+    for y=1 to 12
+        for x=1 to 3
+            z=z+1
+            locate y+2,x*3+45,0
+            if coltable(z)=12 then
+                set__color( 12,2)
+            else
+                set__color( 0,2)
+            endif
+            if z<10 then
+                if x<3 then
+                    draw string ((x*3+45)*_fw2,(y+2)*_fh2)," "&z &" ",,font2,custom,@_col
+                else
+                    draw string ((x*3+45)*_fw2,(y+2)*_fh2)," "&z,,font2,custom,@_col
+                endif
+            else
+                if x<3 then
+                    draw string ((x*3+45)*_fw2,(y+2)*_fh2),z &" ",,font2,custom,@_col
+                else
+                    draw string ((x*3+45)*_fw2,(y+2)*_fh2),""&z ,,font2,custom,@_col
+                endif
+            endif
+        next
+    next
+    set__color( 15,0)
+    return 0
+end function
+
+
 function casino(staked as short=0, st as short=-1) as short
     DimDebugL(0)
     dim as short a,b,c,d,e,f,pr,bet,num,fi,col,times,mbet,gpld,asst,x,y,z,t,price,bonus,passenger,i

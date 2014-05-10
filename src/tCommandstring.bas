@@ -8,9 +8,9 @@ Type _commandstring
     comitem As Byte
     page As Byte
     lastpage As Byte
-    Declare Function Reset() As Short
-    Declare Function display(wl As Short) As Short
-    Declare Function nextpage() As Short
+    Declare function Reset() As Short
+    Declare function display(wl As Short) As Short
+    Declare function nextpage() As Short
 End Type
 
 
@@ -18,13 +18,13 @@ Dim Shared comstr As _commandstring
 
 
 
-Function _commandstring.nextpage() As Short
+function _commandstring.nextpage() As Short
     page+=1
     If page>lastpage Then page=0
     Return 0
-End Function
+End function
 
-Function _commandstring.Reset() As Short
+function _commandstring.Reset() As Short
     t=""
     comdead=0
     comalive=0
@@ -32,9 +32,9 @@ Function _commandstring.Reset() As Short
     comitem=0
     page=0
     Return 0
-End Function
+End function
 
-Function _commandstring.display(wl As Short) As Short
+function _commandstring.display(wl As Short) As Short
     Dim As String ws(40)
     Dim As Short last,b,start,room,needed
     If comstr.t="" Then Return 0
@@ -54,5 +54,5 @@ Function _commandstring.display(wl As Short) As Short
         Draw String(sidebar,(b+wl-start)*_fh2),ws(b),,Font2,custom,@_col
     Next
     Return 0
-End Function
+End function
 

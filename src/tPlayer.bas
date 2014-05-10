@@ -140,7 +140,7 @@ function weapon_string() as string
 end function
 
 
-Function _monster.add_move_cost() As Short
+function _monster.add_move_cost() As Short
     Dim As Short cost
     cost=(20-speed)*planets(player.map).grav
     cost+=tmap(c.x,c.y).movecost
@@ -148,6 +148,6 @@ Function _monster.add_move_cost() As Short
     If cost<=0 Then cost=1
     e.add_action(cost)
     Return 0
-End Function
+End function
 
 

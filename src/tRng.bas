@@ -80,13 +80,13 @@ Property tRNG.dValue as double
 	return uValue/cast(uinteger, &hffffffff) '2^33-1
 End Property
 
-Function tRng.uRange(ByVal uLow As UInteger, ByVal uHigh As UInteger) as UInteger
+function tRng.uRange(ByVal uLow As UInteger, ByVal uHigh As UInteger) as UInteger
 	if uLow>uHigh then
 		return uRange(uHigh,uLow)
 	else
 		return fix(dValue * (uHigh - uLow +1 )) + uLow   
 	endif
-End Function
+End function
 
 
 #ifdef main
@@ -96,9 +96,9 @@ dim shared seed as tRngSeed
 seed = rng.Seed
 
 'Returns a random short
-Function rnd_range(first As Integer, last As Integer) As Integer
+function rnd_range(first As Integer, last As Integer) As Integer
     return rng.uRange(first, last)
-End Function
+End function
 
 
 #else 'rng_test

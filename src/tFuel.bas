@@ -1,7 +1,7 @@
 'tFuel
 
 
-Function rg_icechunk() As Short
+function rg_icechunk() As Short
     DimDebug(0)
     Dim As Short x,y,b
     Dim gc As _cords
@@ -51,10 +51,10 @@ Function rg_icechunk() As Short
         rlprint "You climb back up into free space while the icechunk disintegrates"
     EndIf
     Return 0
-End Function
+End function
 
 
-Function gasgiant_fueling(p As Short, orbit As Short, sys As Short) As Short
+function gasgiant_fueling(p As Short, orbit As Short, sys As Short) As Short
     Dim As Short fuel,roll,noa,a,mo,m,probe,probeflag,hydrogenscoop,freebay
     Dim en As _fleet    
     Static restfuel As Byte
@@ -177,7 +177,7 @@ Function gasgiant_fueling(p As Short, orbit As Short, sys As Short) As Short
 
 
     Return 0
-End Function
+End function
 
 
 

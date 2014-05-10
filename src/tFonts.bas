@@ -176,7 +176,7 @@ function load_fonts() as short
 end function
 
 
-'Function font_load_bmp(ByRef _filename As String) As UByte Ptr
+'function font_load_bmp(ByRef _filename As String) As UByte Ptr
 '    Dim As UInteger w,h,f=FreeFile
 '    Dim As UShort bpp
 '    If (Open(_filename, For Binary, Access Read, As #f)<>0)Then
@@ -216,7 +216,7 @@ end function
 '    End Select
 '
 '    Return font
-'End Function
+'End function
 
 
 

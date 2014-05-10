@@ -7,7 +7,7 @@ Type _monster
     speed As Byte
     movetype As Byte
     atcost As Byte
-    Declare Function add_move_cost() As Short
+    Declare function add_move_cost() As Short
     c As _cords
     made As UByte
     slot As Byte

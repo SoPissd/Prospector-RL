@@ -1,6 +1,6 @@
 'tTime
 
-Function display_time(t As UInteger,form As Byte=0) As String
+function display_time(t As UInteger,form As Byte=0) As String
     Dim As UInteger d,h,m
     Dim As String ms,hs
     h=Fix(t/60)
@@ -33,7 +33,7 @@ Function display_time(t As UInteger,form As Byte=0) As String
             Return  hs &":"&ms
         EndIf
     End Select
-End Function
+End function
 
 
 function date_string() as string

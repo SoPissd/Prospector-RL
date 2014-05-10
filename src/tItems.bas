@@ -33,9 +33,9 @@ Dim Shared item(25000) As _items
 Dim Shared lastitem As Integer=-1
 Dim Shared shopitem(20,30) As _items
 
-Declare Function placeitem(i As _items,x As Short=0,y As Short=0,m As Short=0,p As Short=0,s As Short=0) As Short
-Declare Function make_item(a As Short,mod1 As Short=0,mod2 As Short=0,prefmin As Short=0,nomod As Byte=0) As _items
-Declare Function rnd_item(t As Short) As _items
+Declare function placeitem(i As _items,x As Short=0,y As Short=0,m As Short=0,p As Short=0,s As Short=0) As Short
+Declare function make_item(a As Short,mod1 As Short=0,mod2 As Short=0,prefmin As Short=0,nomod As Byte=0) As _items
+Declare function rnd_item(t As Short) As _items
 
 '
 

@@ -23,11 +23,11 @@ Type _patrolquest
     End Enum
     cord(12) As _cords
     lastcord As Byte
-    Declare Function generate(p As Short,maxdis As Short,danger As Short) As Short
-    Declare Function check() As Short
-    Declare Function reward() As Short
-    Declare Function show() As String
-    Declare Function pay() As Short
+    Declare function generate(p As Short,maxdis As Short,danger As Short) As Short
+    Declare function check() As Short
+    Declare function reward() As Short
+    Declare function show() As String
+    Declare function pay() As Short
 End Type
 
 Dim Shared patrolquest(16) As _patrolquest

@@ -618,8 +618,8 @@ function move_fleets() as short
                             merctrade(fleet(a))
                         endif
                         if fleet(a).c.x=civ(fleet(a).ty-6).home.x and fleet(a).c.y=civ(fleet(a).ty-6).home.y then
-                            fleet(a)=unload_f(fleet(a),11)
-                            fleet(a)=load_f(fleet(a),11)
+                            fleet(a)=comp.unload_f(fleet(a),11)
+                            fleet(a)=comp.load_f(fleet(a),11)
                         endif
                     endif
                     if fleet(a).con(1)=0 then

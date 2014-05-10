@@ -34,12 +34,12 @@ Dim Shared pwa(1024) As _cords 'Points working array
 Dim Shared drifting(128) As _driftingship
 
 
-Function cords(c As _cords) As String
+function cords(c As _cords) As String
     Return "("&c.x &":"& c.y &")"
-End Function
+End function
 
 
-'declare function _cords.set(x as short=0,y as short=0,z as short=0,m as short=0, p as short=0, s as short=0) as short
+'function _cords.set(x as short=0,y as short=0,z as short=0,m as short=0, p as short=0, s as short=0) as short
 '    if x<>0 then this.x=x
 '    if y<>0 then this.y=y
 '    if z<>0 then this.z=z

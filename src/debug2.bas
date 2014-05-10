@@ -1,7 +1,7 @@
 
 #if __FB_DEBUG__
 
-Function _WeapdumpCSV() as Short
+function _WeapdumpCSV() as Short
 	dim as Short f,i,j,keep
     DbgPrint("WeapdumpCSV")
 	keep=gameturn
@@ -18,9 +18,9 @@ Function _WeapdumpCSV() as Short
     Close #f
 	gameturn=keep
 	return 0
-End Function
+End function
 
-Function _PlanetTempCSV() as Short
+function _PlanetTempCSV() as Short
 	dim as Short f,i,j
 	dim as string text
     DbgPrint("PlanetTempCSV")
@@ -40,9 +40,9 @@ Function _PlanetTempCSV() as Short
     Next
     Close #f
 	return 0
-End Function
+End function
     
-Function _TilesCSV() as Short
+function _TilesCSV() as Short
 	dim as Short f,i,j
     DbgPrint("TilesCSV")
 	f=Freefile
@@ -52,11 +52,11 @@ Function _TilesCSV() as Short
 	Next
 	Close #f
 	return 0
-End Function
+End function
 
 declare function change_prices(st as short,etime as short) as short
 
-Function _PricesCSV() as Short
+function _PricesCSV() as Short
 	dim as Short f,a,b
 	dim as string Key
     DbgPrint("PricesCSV")
@@ -76,9 +76,9 @@ Function _PricesCSV() as Short
 	Next
 	Close #f
 	return 0
-End Function
+End function
 
-Function _MonsterCSV() as Short
+function _MonsterCSV() as Short
 	dim as Short f,a,b
     DbgPrint("MonsterCSV")
     f=Freefile
@@ -90,9 +90,9 @@ Function _MonsterCSV() as Short
     Next
     Close #f
 	return 0
-End Function
+End function
 
-Function _ItemsCSV() as Short
+function _ItemsCSV() as Short
 	dim as Short f,a
     dim i as _items
     DbgPrint("ItemsCSV")
@@ -106,9 +106,9 @@ Function _ItemsCSV() as Short
     next
     close #f
 	return 0
-End Function
+End function
 
-Function _Items2CSV() as Short
+function _Items2CSV() as Short
 	dim as Short f,a
     DbgPrint("Items2CSV")
     f=freefile
@@ -118,9 +118,9 @@ Function _Items2CSV() as Short
     next
     close #f
 	return 0
-End Function
+End function
 
-Function _ItemDump() as Short
+function _ItemDump() as Short
 	dim as Short f,i
     DbgPrint("Itemdump")
     f=freefile
@@ -130,10 +130,10 @@ Function _ItemDump() as Short
     next
     close #f
 	return 0
-End Function
+End function
 
 
-Function _PortalsCSV() as Short
+function _PortalsCSV() as Short
 	dim as Short f,a
     DbgPrint("PortalsCSV")
     f=freefile
@@ -144,9 +144,9 @@ Function _PortalsCSV() as Short
     print #f,player.map
     close #f
 	return 0
-End Function
+End function
 
-Function _FactionsCSV() as Short
+function _FactionsCSV() as Short
 	dim as Short f,a,b
 	dim as string text
     f=freefile
@@ -160,9 +160,9 @@ Function _FactionsCSV() as Short
     next
     close #f
 	return 0
-End Function
+End function
 
-Function _FleetsCSV() as Short
+function _FleetsCSV() as Short
 	dim as Short f,a,b
     DbgPrint("FleetsCSV")
     f=freefile
@@ -180,9 +180,9 @@ Function _FleetsCSV() as Short
     close #f
     DbgPrint("Randombase:"&random_pirate_system)
 	return 0
-End Function
+End function
 
-Function _FleetsDump() as Short
+function _FleetsDump() as Short
 	dim as Short f,i
     DbgPrint("Fleetdump")
     f=freefile
@@ -192,18 +192,18 @@ Function _FleetsDump() as Short
     next
     close #f
 	return 0
-End Function
+End function
 
 '
 
-Function _DbgLogMQI(text as string) as Short	' not really a csv.. but anyway
+function _DbgLogMQI(text as string) as Short	' not really a csv.. but anyway
 	dim as Short f,a,b
     f=freefile
     open "MQI.txt" for append as #f
     print #f, text
     close #f
 	return 0
-End Function
+End function
 
 
 ' refine the previously declared debug helpers

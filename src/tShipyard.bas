@@ -1,6 +1,17 @@
 'tShipyard
 
-Function poolandtransferweapons(s1 As _ship,s2 As _ship) As Short
+Enum ShipYards
+    sy_civil
+    sy_military
+    sy_pirates
+    sy_blackmarket
+End Enum
+
+Dim Shared shipyardname(sy_blackmarket) As String
+
+'
+
+function poolandtransferweapons(s1 As _ship,s2 As _ship) As Short
     Dim As Short e,f,c,g,d,x,y,bg
     Dim As String text,help,desc,Key
     Dim As _cords crs,h1,h2
@@ -82,7 +93,7 @@ Function poolandtransferweapons(s1 As _ship,s2 As _ship) As Short
     Next
     recalcshipsbays()
     Return 0
-End Function
+End function
 
 
 function upgradehull(t as short,byref s as _ship,forced as short=0) as short

@@ -1,6 +1,6 @@
 'tPlaneteffect
 
-Function ep_crater(shipfire() As _shipfire, ByRef sf As Single) As Short
+function ep_crater(shipfire() As _shipfire, ByRef sf As Single) As Short
     Dim As Short b,r,x,y,c
     Dim As _cords p2,p1
     Dim m(60,20) As Short
@@ -70,10 +70,10 @@ Function ep_crater(shipfire() As _shipfire, ByRef sf As Single) As Short
         rlprint "A meteor streaks across the sky"
     EndIf
     Return 0
-End Function
+End function
 
 
-Function ep_planeteffect(shipfire() As _shipfire, ByRef sf As Single,lavapoint() As _cords,localturn As Short,cloudmap() As Byte) As Short
+function ep_planeteffect(shipfire() As _shipfire, ByRef sf As Single,lavapoint() As _cords,localturn As Short,cloudmap() As Byte) As Short
     Dim As Short slot,a,b,r,x,y
     Dim As String text
     Static lastmet As Short
@@ -256,5 +256,5 @@ Function ep_planeteffect(shipfire() As _shipfire, ByRef sf As Single,lavapoint()
     EndIf
 
     Return 0
-End Function
+End function
 

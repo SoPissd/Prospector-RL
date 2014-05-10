@@ -1,6 +1,6 @@
 'tRadio
 
-Function ep_heatmap(lavapoint() As _cords,lastlavapoint As Short) As Short
+function ep_heatmap(lavapoint() As _cords,lastlavapoint As Short) As Short
     Dim As Short map(60,20),heatmap(60,20)
     Dim As Short x,y,x1,y1,a,sensitivity,dis
     Dim As _cords p1,p2
@@ -58,7 +58,7 @@ Function ep_heatmap(lavapoint() As _cords,lastlavapoint As Short) As Short
         rlprint "There is a source of heat at "&p2.x &":"&p2.y &". It might be a lifeform."
     EndIf
     Return 0
-End Function
+End function
 
 
 function shipstatus(heading as short=0) as short
@@ -171,7 +171,7 @@ function display_monsters(osx as short) as short
 end function
 
 
-Function ep_display(osx As Short=555) As Short
+function ep_display(osx As Short=555) As Short
     Dim As Short a,b,x,y,slot,fg,bg,alp,x2
     Dim As Byte comitem,comdead,comalive,comportal
     Dim As _cords p,p1,p2
@@ -256,10 +256,10 @@ Function ep_display(osx As Short=555) As Short
     display_monsters(osx)
     
     Return 0
-End Function
+End function
 
 
-Function ep_radio(ByRef nextlanding As _cords,ByRef ship_landing As Short, shipfire() As _shipfire,lavapoint() As _cords, ByRef sf As Single,nightday() As Byte,localtemp() As Single) As Short
+function ep_radio(ByRef nextlanding As _cords,ByRef ship_landing As Short, shipfire() As _shipfire,lavapoint() As _cords, ByRef sf As Single,nightday() As Byte,localtemp() As Single) As Short
     Dim As _cords p,p1,p2,pc
     Dim As String text,mtext
     Dim As Short a,b,slot,osx,ex,shipweapon,roverlist(128),c
@@ -484,10 +484,10 @@ Function ep_radio(ByRef nextlanding As _cords,ByRef ship_landing As Short, shipf
         rlprint "No contact possible"
     EndIf
     Return 0
-End Function
+End function
 
 
-Function space_radio() As Short
+function space_radio() As Short
     DimDebug(0)
     Dim As Short i,closestfleet,closestdrifter,lc,j,disnum,dis,y
     Dim As _cords p
@@ -610,6 +610,6 @@ Function space_radio() As Short
 
     End Select
     Return 0
-End Function
+End function
 
 

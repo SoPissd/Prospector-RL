@@ -1,6 +1,6 @@
 'tRover
 
-Function ep_roverreveal(i As Integer) As Short
+function ep_roverreveal(i As Integer) As Short
     Dim As Short x,y,slot,j
     Dim As Single d
     Dim As _cords p1
@@ -20,7 +20,7 @@ Function ep_roverreveal(i As Integer) As Short
         Next
     Next
     Return 0
-End Function
+End function
 
 
 function ep_rovermove(a as short, slot as short) as short
@@ -99,7 +99,7 @@ function update_tmap(slot as short) as short
 end function
 
 
-Function move_rover(pl As Short)  As Short
+function move_rover(pl As Short)  As Short
     Dim As Integer a,b,c,i,t,ti,x,y
     Dim As Integer carn,herb,mins,oxy,food,energy,curr,last
     Dim As Single minebase
@@ -155,5 +155,5 @@ Function move_rover(pl As Short)  As Short
     EndIf
     planets(pl).visited=gameturn
     Return 0
-End Function
+End function
 

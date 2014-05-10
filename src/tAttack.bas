@@ -1,6 +1,6 @@
 'tAttack
 
-Function hitmonster(defender As _monster,attacker As _monster,mapmask() As Byte, first As Short=-1, last As Short=-1) As _monster
+function hitmonster(defender As _monster,attacker As _monster,mapmask() As Byte, first As Short=-1, last As Short=-1) As _monster
     Dim a As Short
     Dim b As Single
     Dim As Single nonlet
@@ -138,10 +138,10 @@ Function hitmonster(defender As _monster,attacker As _monster,mapmask() As Byte,
     EndIf
     rlprint text,col
     Return defender
-End Function
+End function
 
 
-Function ep_fireeffect(p2 As _cords,slot As Short, c As Short, range As Short, mapmask() As Byte, first As Short=0,last As Short=0) As Short
+function ep_fireeffect(p2 As _cords,slot As Short, c As Short, range As Short, mapmask() As Byte, first As Short=0,last As Short=0) As Short
     Dim As Short d,f,x,y,vacc
     Dim As Single dam
     If first=0 And last=0 Then
@@ -196,5 +196,5 @@ Function ep_fireeffect(p2 As _cords,slot As Short, c As Short, range As Short, m
         c=range+1
     EndIf
     Return c
-End Function
+End function
 

@@ -10,7 +10,6 @@ Dim Shared farthestexpedition As Integer
 Dim Shared lastenemy As Short
 
 
-Dim Shared As UInteger _fgcolor_,_bgcolor_
 
 Dim Shared As Byte someonemoved
 
@@ -62,7 +61,6 @@ Dim Shared adislastenemy As Short, adisdeadcounter As Short,adisloctime As Short
 Dim Shared standardphrase(sp_last-1,2) As String
 Dim Shared talent_desc(29) As String
 
-Dim Shared palette_(255) As UInteger
 Dim Shared _swidth As Byte=35'Length of line in a shop
 Dim Shared lastapwp As Short
 Dim Shared currapwp As Short
@@ -92,8 +90,6 @@ Dim Shared zeit As Integer
 Dim Shared stationroll As Short
 Dim Shared companyname(5) As String
 Dim Shared companynameshort(5) As String
-Dim Shared shares(2048) As _share
-Dim Shared lastshare As Short
 Dim Shared combatmap(60,20) As Byte
 
 
@@ -139,8 +135,6 @@ Dim Shared lastprobe As Short
 
 Dim Shared endstory As String
 Dim Shared crew_desig(16) As String
-Dim Shared combon(9) As _company_bonus
-
 Dim Shared ammotypename(4) As String
 
 Dim Shared As String bountyquestreason(6)

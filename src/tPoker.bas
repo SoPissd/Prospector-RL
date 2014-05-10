@@ -22,7 +22,7 @@ Type _pokerplayer
     card(5) As Integer
     ci As Byte
     in As Byte
-    Declare Function firstempty() As Short
+    Declare function firstempty() As Short
     win As _handrank
     qg As Short 'Which questguy is this?
 End Type

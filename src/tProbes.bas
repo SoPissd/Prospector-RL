@@ -1,6 +1,6 @@
 'tProbes
 
-Function launch_probe() As Short
+function launch_probe() As Short
     Dim As Short i,d
     i=get_item(55)
     If i>0 Then
@@ -30,10 +30,10 @@ Function launch_probe() As Short
         rlprint "You have no probes."
     EndIf
     Return 0
-End Function
+End function
 
 
-Function move_probes() As Short
+function move_probes() As Short
     Dim As Short i,x,y,j,navcom,t,d
     DbgPrint("Move probes")
     If lastprobe>0 Then
@@ -126,6 +126,6 @@ Function move_probes() As Short
         Next
     EndIf
     Return 0
-End Function
+End function
 
 

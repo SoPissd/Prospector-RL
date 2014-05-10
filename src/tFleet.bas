@@ -11,9 +11,9 @@ type _fleet
     del As Short
     flag As Short
     fighting As Short
-    Declare Function speed() As Short
-    Declare Function count() As Short
-    Declare Function add_move_cost() As Short
+    Declare function speed() As Short
+    Declare function count() As Short
+    Declare function add_move_cost() As Short
     con(15) As Short ' Old ship storage con(0)=Nicety of pirates con(1)=Escorting,con(2)=lastbattle
     mem(15) As _ship 'Actual ship storage
 End Type
@@ -25,12 +25,12 @@ empty_fleet.del=1
 
 
 
-Function _fleet.add_move_cost() As Short
+function _fleet.add_move_cost() As Short
     e.add_action(10-speed)
     Return 0
-End Function
+End function
 
-Function _fleet.speed() As Short
+function _fleet.speed() As Short
     Dim As Short i,v
     v=9
     For i=1 To 15
@@ -38,16 +38,16 @@ Function _fleet.speed() As Short
     Next
     If v<=0 Then v=1
     Return v
-End Function
+End function
 
 
-Function _fleet.count() As Short
+function _fleet.count() As Short
     Dim As Short i,c
     For i=1 To 15
         If mem(i).hull>0 Then c+=1
     Next
     Return c
-End Function
+End function
 
 '
 '

@@ -1,10 +1,5 @@
 'main.bas
 
-Dim as Short ErrorNr=0
-Dim as Short ErrorLn=0
-Dim as String ErrText=""
-'
-
 #Macro inc(section,file,comments)
 '#print #file "---" #comments
 #undef head
@@ -18,6 +13,7 @@ Dim as String ErrText=""
 '
 #undef main
 inc("main",	"debug.bas",				"")
+inc("main",	"tColor.bas",				"")
 inc("main",	"version.bas",				"")
 '
 ' sound support
@@ -40,6 +36,11 @@ inc("main",	"version.bas",				"")
 		#print (No sound)
 	#EndIf
 #EndIf
+'
+inc("main",	"fbGfx.bi",					"")
+inc("main",	"file.bi",					"")
+inc("main",	"zlib.bi",					"")
+'
 '
 #if _DbgOptLoadWin = 1			
 	#print loading windows headers			
@@ -73,11 +74,7 @@ inc("main",	"version.bas",				"")
 #endif							
 '
 '
-inc("main",	"fbGfx.bi",					"")
-inc("main",	"file.bi",					"")
-inc("main",	"zlib.bi",					"")
-'
-'
+On Error Goto errormessage
 Cls
 Print
 Print "Prospector "&__VERSION__
@@ -89,34 +86,37 @@ chdir exepath
 '
 'core
 '
+inc("main",	"kbinput.bas",				"")
+inc("main",	"fileIO.bas",				"")
+inc("main",	"tUtils.bas",				"")
+inc("main",	"tError.bas",				"")
+'
+inc("main",	"tPng.bas",					"")
+inc("main",	"tGraphics.bas",			"")
+
 inc("main",	"tRng.bas",					"")
 inc("main",	"tCoords.bas",				"")
 inc("main",	"tAstar.bas",				"")
 inc("main",	"tMath.bas",				"")
 inc("main",	"tTime.bas",				"")
 '
+inc("main",	"tKeys.bas",				"")
+inc("main",	"tPrint.bas",				"")
+inc("main",	"tTextbox.bas",				"")
+'
+inc("main",	"tConfig.bas",				"")
+inc("main",	"tInput.bas",				"")
+inc("main",	"tSound.bas",				"")
+'
 inc("main",	"tConsts.bas",				"")
 inc("main",	"tTypes.bas",				"")
 inc("main",	"tEnums.bas",				"")
 inc("main",	"tVars.bas",				"")
 '
-inc("main",	"tUtils.bas",				"")
-inc("main",	"tGraphics.bas",			"")
-inc("main",	"kbinput.bas",				"")
-inc("main",	"tError.bas",				"")
-inc("main",	"fileIO.bas",				"")
-inc("main",	"tPng.bas",					"")
 '
-On Error Goto errormessage
 '
 'app
 '
-inc("main",	"tKeys.bas",				"")
-inc("main",	"tPrint.bas",				"")
-inc("main",	"tTextbox.bas",				"")
-inc("main",	"tConfig.bas",				"")
-inc("main",	"tInput.bas",				"")
-inc("main",	"tSound.bas",				"")
 '
 inc("main",	"tCommandstring.bas",		"")
 inc("main",	"tFonts.bas",				"")
@@ -171,7 +171,6 @@ inc("main",	"tSpecialPlanet.bas",		"")
 inc("main",	"tBones.bas",				"")
 inc("main",	"tWorldgen.bas",			"")
 inc("main",	"tShipyard.bas",			"")
-inc("main",	"cargotrade.bas",			"")
 '
 inc("main",	"tCards.bas",				"")
 inc("main",	"tSlotmachine.bas",			"")
@@ -186,6 +185,7 @@ inc("main",	"tSpacecombat.bas",			"")
 inc("main",	"quests.bas",				"")
 inc("main",	"pirates.bas",				"")
 inc("main",	"tCompany.bas",				"")
+inc("main",	"cargotrade.bas",			"")
 inc("main",	"tStockmarket.bas",			"")
 inc("main",	"tRadio.bas",				"")
 inc("main",	"tPlanetmenu.bas",			"")
@@ -210,48 +210,25 @@ inc("main",	"highscore.bas",			"")
 inc("main",	"tPalette.bas",				"")
 inc("main",	"tMenu.bas",				"")
 inc("main",	"tSavegame.bas",			"")
-inc("main",	"globals.bas",				"")
 inc("main",	"tGameinit.bas",			"")
 inc("main",	"tGamekeys.bas",			"")
 inc("main",	"tGame.bas",				"")
 '
 'main
 '
+Print "Switching"
+Print
 
-function Initgame() as integer
-	check_filestructure()
-	load_config()
-	load_fonts()
-	load_tiles()
-	load_keyset()
-	load_sounds()
-	load_palette()
-	DbgScreeninfo
-	register()
-	'DbgWeapdumpCSV   
-    setglobals
-    DbgTilesCSV
-    return 0   
-End Function
-
-#undef main
-function main() as integer
-	return Initgame()<> 0 or Prospector()
-End Function
-
-'
-'run
-'
-RUNGAME:
-	ErrorNr= main() 	
+LETSGO:
+	ErrorNr= (Initgame()<> 0) or Prospector() 	
 	goto done
 ERRORMESSAGE:
 	On Error goto 0
-	ErrorNr= Err
-	ErrorLn= Erl
-	ErrText= ucase(stripFileExtension(lastword(*ERMN(),"\")))
-	ErrText= ErrText &":" &*ERFN() &" reporting Error #" &ErrorNr &" at line " &ErrorLn &"!"  
-	Error_Handler(ErrText)
+	tError.ErrorNr= Err
+	tError.ErrorLn= Erl
+	tError.ErrText= ucase(stripFileExtension(lastword(*ERMN(),"\")))
+	tError.ErrText= tError.ErrText &":" &*ERFN() &" reporting Error #" &tError.ErrorNr &" at line " &tError.ErrorLn &"!"  
+	tError.ErrorHandler
 WAITANDEXIT:
 	Print
 	Print

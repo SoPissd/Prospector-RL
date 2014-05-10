@@ -1,7 +1,7 @@
 ' tMonstermove
 
 
-Function monsterhit(attacker As _monster, defender As _monster,vis As Byte) As _monster
+function monsterhit(attacker As _monster, defender As _monster,vis As Byte) As _monster
     DimDebug(0)
     Dim mname As String
     Dim text As String
@@ -50,10 +50,10 @@ Function monsterhit(attacker As _monster, defender As _monster,vis As Byte) As _
     attacker.e.add_action(attacker.atcost)
     DbgPrint("dam:"& b)
     Return defender
-End Function
+End function
 
 
-Function ep_changemood(i As Short,message() As Byte) As Short
+function ep_changemood(i As Short,message() As Byte) As Short
     Dim As Short b,cmoodto
     If distance(awayteam.c,enemy(i).c)<enemy(i).sight Then 
         If enemy(i).aggr=1 And enemy(i).made<>101 Then
@@ -97,10 +97,10 @@ Function ep_changemood(i As Short,message() As Byte) As Short
         EndIf
     EndIf
     Return 0
-End Function
+End function
 
 
-Function move_monster(i As short, target As _cords,flee as byte,rollover as byte,mapmask() As Byte) As short
+function move_monster(i As short, target As _cords,flee as byte,rollover as byte,mapmask() As Byte) As short
     dim as short x,y,x1,y1,ti,j,addp,k,t
     dim as _cords p(8)
     dim as single pd(8)
@@ -170,10 +170,10 @@ Function move_monster(i As short, target As _cords,flee as byte,rollover as byte
         
 '    
     Return 0
-End Function
+End function
 
 
-Function ep_monsterupdate(i As Short, spawnmask() as _cords,lsp as short,mapmask() As Byte,nightday() As Byte,message() As Byte) As Short
+function ep_monsterupdate(i As Short, spawnmask() as _cords,lsp as short,mapmask() As Byte,nightday() As Byte,message() As Byte) As Short
     Dim As Short slot,b,j
     slot=awayteam.slot
     mapmask(enemy(i).c.x,enemy(i).c.y)=i
@@ -299,16 +299,16 @@ Function ep_monsterupdate(i As Short, spawnmask() as _cords,lsp as short,mapmask
         If vismask(enemy(i).c.x,enemy(i).c.y)>0 Then
             If tmap(enemy(i).c.x,enemy(i).c.y).no=86 Then
                 rlprint "The other scoutship launches."
-                companystats(basis(nearest_base(player.c)).company).profit+=1
+                stock.companystats(basis(nearest_base(player.c)).company).profit+=1
             EndIf
             If tmap(enemy(i).c.x,enemy(i).c.y).no=272 Or tmap(enemy(i).c.x,enemy(i).c.y).no=273 Then rlprint "The alien ship launches."
         Else
             If tmap(enemy(i).c.x,enemy(i).c.y).no=86 Then
                 rlprint "You see a scoutship starting in the distance."
-                companystats(basis(nearest_base(player.c)).company).profit+=1
+                stock.companystats(basis(nearest_base(player.c)).company).profit+=1
             EndIf
             If tmap(enemy(i).c.x,enemy(i).c.y).no=272 Or tmap(enemy(i).c.x,enemy(i).c.y).no=273 Then rlprint "You see an alien ship starting in the distance."
-            companystats(basis(nearest_base(player.c)).company).profit+=1
+            stock.companystats(basis(nearest_base(player.c)).company).profit+=1
         EndIf
         enemy(i)=enemy(lastenemy)
         lastenemy=lastenemy-1
@@ -316,10 +316,10 @@ Function ep_monsterupdate(i As Short, spawnmask() as _cords,lsp as short,mapmask
     endif
     
     Return 0
-End Function
+End function
     
 
-Function ep_friendfoe(i As Short,j As Short) As Short
+function ep_friendfoe(i As Short,j As Short) As Short
     dim as short fact
     if enemy(i).allied>0 then
         fact=enemy(i).allied
@@ -346,10 +346,10 @@ Function ep_friendfoe(i As Short,j As Short) As Short
         End Select
     endif
     return 1 'Dont see you as foe, going to see you as friend
-End Function
+End function
 
 
-Function ep_nearest(i As Short) As Short
+function ep_nearest(i As Short) As Short
     Dim As Single d,dd,d2,dd2,ddd,d3,x,y
     Dim As Short j,k
     d=9999       
@@ -432,10 +432,10 @@ Function ep_nearest(i As Short) As Short
         next
     endif
     Return 0
-End Function
+End function
 
 
-Function ep_monstermove(spawnmask() As _cords, lsp As Short, mapmask() As Byte,nightday() As Byte) As Short
+function ep_monstermove(spawnmask() As _cords, lsp As Short, mapmask() As Byte,nightday() As Byte) As Short
     Dim As Short deadcounter,i,j,flee,slot
     Dim As Byte message(8),see1,see2
     
@@ -576,6 +576,6 @@ Function ep_monstermove(spawnmask() As _cords, lsp As Short, mapmask() As Byte,n
     Next
     
     Return deadcounter
-End Function
+End function
 
 

@@ -1,6 +1,6 @@
 'tExplorespace
 
-Function wormhole_navigation() As Short
+function wormhole_navigation() As Short
     Dim As Short c,d,pl,b,i,wi(wormhole)
     Dim As _cords wp(wormhole)
     Dim As String Key
@@ -51,10 +51,10 @@ Function wormhole_navigation() As Short
         b=wi(pl)
     EndIf
     Return b
-End Function
+End function
 
 
-Function wormhole_ani(target As _cords) As Short
+function wormhole_ani(target As _cords) As Short
     Dim p(sm_x*sm_y) As _cords
     Dim As Short last,a,c
     last=Line_in_points(target,player.c,p())
@@ -104,10 +104,10 @@ Function wormhole_ani(target As _cords) As Short
     Next
     player.c=target
     Return 0
-End Function
+End function
 
 
-Function wormhole_travel() As Short
+function wormhole_travel() As Short
     Dim As Short pl,a,near,b,natural
     Dim As Single d
     d=9999
@@ -178,10 +178,10 @@ Function wormhole_travel() As Short
         EndIf
     EndIf
     Return 0
-End Function
+End function
 
 
-Function move_ship(Key As String) As _ship
+function move_ship(Key As String) As _ship
     Dim As Short a,dam,hydrogenscoop
     Dim scoop As Single
     Static fuelcollect As Byte
@@ -398,10 +398,10 @@ Function move_ship(Key As String) As _ship
         walking=0
     EndIf
     Return player
-End Function
+End function
 
 
-Function target_landing(mapslot As Short,Test As Short=0) As Short
+function target_landing(mapslot As Short,Test As Short=0) As Short
     Dim As _cords p
     Dim As String Key
     Dim As Short c,osx
@@ -426,10 +426,10 @@ Function target_landing(mapslot As Short,Test As Short=0) As Short
         EndIf
     EndIf
     Return 0
-End Function
+End function
 
 
-Function asteroid_mining(slot As Short) As Short
+function asteroid_mining(slot As Short) As Short
     Dim it As _items
     Dim en As _fleet
     Dim As Short f,q,m,roll
@@ -487,7 +487,7 @@ Function asteroid_mining(slot As Short) As Short
                             Else
                                 q=0
                                 player.dead=19
-                                Exit Function
+                                Exit function
                             EndIf
                         EndIf
                     EndIf
@@ -550,10 +550,10 @@ Function asteroid_mining(slot As Short) As Short
         display_stars(1)
     EndIf
     Return slot
-End Function
+End function
 
 
-Function scanning() As Short
+function scanning() As Short
     Dim mapslot As Short
     Dim As Short slot
     Dim sys As Short
@@ -697,10 +697,10 @@ Function scanning() As Short
     'show_stars(1,0)
     'displayship
     Return 0
-End Function
+End function
 
 
-Function spacestation(st As Short) As _ship
+function spacestation(st As Short) As _ship
     Dim As Integer a,b,c,d,e,wchance,inspectionchance
     Static As Short hiringpool,last,muddsshop,botsshop,usedshop
     Static inv(lstcomit) As _items
@@ -826,8 +826,8 @@ Function spacestation(st As Short) As _ship
         rlprint gainxp(1),c_gre
         check_questcargo(st)
         
-        If companystats(basis(st).company).capital<3000 Then rlprint "The spacestation is abuzz with rumors that "&companyname(basis(st).company) &" is in financial difficulties."
-        If companystats(basis(st).company).capital<1000 Then
+        If stock.companystats(basis(st).company).capital<3000 Then rlprint "The spacestation is abuzz with rumors that "&companyname(basis(st).company) &" is in financial difficulties."
+        If stock.companystats(basis(st).company).capital<1000 Then
             rlprint companyname(basis(st).company) &" has closed their office in this station."
             dum=makecorp(-basis(st).company)
             basis(st).company=dum.company
@@ -862,7 +862,7 @@ Function spacestation(st As Short) As _ship
         a=Menu(bg_shiptxt,mtext,,,,,1)
         If a=1 Then
             If quarantine<8 Then
-                company(st)
+                stock.company(st)
             Else
                 rlprint "You are under quarantine and not allowed to enter there"
             EndIf
@@ -973,10 +973,10 @@ Function spacestation(st As Short) As _ship
     player.lastvisit.s=st
     player.lastvisit.t=gameturn
     Return player
-End Function
+End function
 
 
-Function dock_drifting_ship(a As Short)  As Short
+function dock_drifting_ship(a As Short)  As Short
     Dim As Short m,b,c,x,y
     Dim p(1024) As _cords
     Dim land As _cords
@@ -1002,10 +1002,10 @@ Function dock_drifting_ship(a As Short)  As Short
     DbgPrint("Got through dock_drifting_ship")
     landing(m,p(c).x,p(c).y,1)
     Return 0
-End Function
+End function
 
 
-Function rescue() As Short
+function rescue() As Short
     Dim As Short a,c,dis,beacon,cargo,closest_fleet,dis2
     Dim As Single b,d
     Dim fname(10) As String
@@ -1114,10 +1114,10 @@ Function rescue() As Short
         Cls
     EndIf
     Return 0
-End Function
+End function
 
 
-Function explore_space() As Short
+function explore_space() As Short
     DimDebug(0)'11
     Dim As Short a,b,d,c,f,fl,pl,x1,y1,x2,y2,lturn,osx,osy
     Dim As String Key,text,allowed
@@ -1653,5 +1653,5 @@ Function explore_space() As Short
     Loop Until player.dead>0
 
     Return 0
-End Function
+End function
 

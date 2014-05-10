@@ -1,6 +1,6 @@
 'tPlanetmenu
 
-Function planetflags_toship(m As Short) As _ship
+function planetflags_toship(m As Short) As _ship
     Dim s As _ship
     Dim As Short f,e
     e=0
@@ -23,10 +23,10 @@ Function planetflags_toship(m As Short) As _ship
         EndIf
     Next
     Return s
-End Function
+End function
 
 
-Function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _shipfire, spawnmask() As _cords,lsp As Short,Key As String, loctemp As Single) As Short
+function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _shipfire, spawnmask() As _cords,lsp As Short,Key As String, loctemp As Single) As Short
     Dim As Short a,b,c,d,e,r,sf,slot,st
     Dim As Single fuelsell,fuelprice,minprice
     Dim towed As _ship
@@ -807,7 +807,7 @@ Function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _
                 basis(10).biomod=basis(10).biomod*0.75
                 basis(10).resmod=basis(10).resmod*0.75
                 basis(10).pirmod=basis(10).pirmod*0.75
-                company(10)
+                stock.company(10)
             EndIf
 
             If tmap(awayteam.c.x,awayteam.c.y).gives=74 Then sell_alien(slse_slaves)
@@ -1317,7 +1317,7 @@ Function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _
     tmap(awayteam.c.x,awayteam.c.y)=tiles(tmap(awayteam.c.x,awayteam.c.y).turnsinto)
     planetmap(awayteam.c.x,awayteam.c.y,slot)=tmap(awayteam.c.x,awayteam.c.y).no
     Return 0
-End Function
+End function
 
 
 function gets_entry(x as short,y as short, slot as short) as short
@@ -1334,7 +1334,7 @@ function gets_entry(x as short,y as short, slot as short) as short
 end function
     
 
-Function ep_planetmenu(entrycords as _cords,slot As Short,shipfire() As _shipfire,spawnmask() As _cords, lsp As Short,loctemp As Single) As _cords
+function ep_planetmenu(entrycords as _cords,slot As Short,shipfire() As _shipfire,spawnmask() As _cords, lsp As Short,loctemp As Single) As _cords
     Dim As Short x,y,entry,launch,explore,a
     Dim As _cords mgcords(24),nextmap
     Dim As String text,Key
@@ -1409,6 +1409,6 @@ Function ep_planetmenu(entrycords as _cords,slot As Short,shipfire() As _shipfir
         If a=explore Then awayteam.c=entrycords
     EndIf
     Return nextmap
-End Function
+End function
 
 

@@ -31,7 +31,7 @@ end function
 function UpdateMapSize(size as short) as Short
     redim map(laststar+wormhole+1)
     return 0
-End Function    
+End function    
 
 
 function sysfrommap(a as short)as short

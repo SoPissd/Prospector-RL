@@ -105,25 +105,6 @@ End Type
 Dim Shared disease(17) As _disease
 
 
-Type _share
-    company As Byte
-    bought As UInteger
-    lastpayed As UInteger
-End Type
-
-Type _company
-    profit As Integer
-    capital As Integer
-    rate As Integer
-    shares As Short
-End Type
-
-Type _company_bonus
-    Base As UInteger
-    Value As UInteger
-    rank As UInteger
-End Type
-
 Type _shipfire
     what As Short
     when As Short

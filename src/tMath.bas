@@ -14,9 +14,9 @@ Type _sym_matrix
         vmin As Integer
         item As Integer Ptr
 
-        Declare Function get_ind(x As Integer,y As Integer) As Integer
-        Declare Function set_val(x As Integer,y As Integer, v As Integer) As Integer
-        Declare Function get_val(x As Integer,y As Integer) As Integer
+        Declare function get_ind(x As Integer,y As Integer) As Integer
+        Declare function set_val(x As Integer,y As Integer, v As Integer) As Integer
+        Declare function get_val(x As Integer,y As Integer) As Integer
         Declare Property Val(xy As vector) As Integer
         Declare Property Val(xy As vector,v As Integer)
 
@@ -42,7 +42,7 @@ Destructor _sym_matrix
         Delete[] item
 End Destructor
 
-Function _sym_matrix.get_ind(x As Integer, y As Integer) As Integer
+function _sym_matrix.get_ind(x As Integer, y As Integer) As Integer
         Dim i As Integer
         With This
                 x+=1
@@ -55,22 +55,22 @@ Function _sym_matrix.get_ind(x As Integer, y As Integer) As Integer
                 i=x+y*(y-1)/2
         End With
         Return i
-End Function
+End function
 
-Function _sym_matrix.set_val(x As Integer,y As Integer,v As Integer) As Integer
+function _sym_matrix.set_val(x As Integer,y As Integer,v As Integer) As Integer
         Dim i As Integer
         i=this.get_ind(x,y)
         If v>this.vmax And this.vmax<>0 Then v=this.vmax
         If v<this.vmin Then v=this.vmin
         this.item[i]=v
         Return 0
-End Function
+End function
 
-Function _sym_matrix.get_val(x As Integer,y As Integer) As Integer
+function _sym_matrix.get_val(x As Integer,y As Integer) As Integer
         Dim i As Integer
         i=this.get_ind(x,y)
         Return this.item[i]
-End Function
+End function
 
 Property _sym_matrix.Val(xy As vector) As Integer
         Return this.get_val(xy.x,xy.y)
@@ -114,7 +114,7 @@ function C_to_F(c as single) as single
     return round_nr(c*1.8+32,1)
 end function
 
-Function round_str(i As Double,c As Short) As String
+function round_str(i As Double,c As Short) As String
     Dim As String t
     Dim As Single j
     Dim As Short digits
@@ -126,7 +126,7 @@ Function round_str(i As Double,c As Short) As String
     EndIf
     If digits<c Then t= t &String(c-digits,"0")
     Return t
-End Function
+End function
 
 '
 

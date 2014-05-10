@@ -1,6 +1,6 @@
 'tGameInit
 
-Function clear_gamestate() As Short
+function clear_gamestate() As Short
     Dim As Short a,x,y
     Dim d_crew As _crewmember
     Dim d_planet As _planet
@@ -92,7 +92,7 @@ Function clear_gamestate() As Short
         avgprice(a)=0
     Next
     For a=0 To 4
-        companystats(a)=d_company
+        stock.companystats(a)=d_company
     Next
     For a=0 To 2047
         shares(a)=d_share
@@ -115,7 +115,7 @@ Function clear_gamestate() As Short
 
 
     Return 0
-End Function
+End function
 
 
 function setglobals() as short
@@ -127,11 +127,13 @@ function setglobals() as short
     
     wage=10
     
+    dim c as stock._company
     for a=0 to 5
-        companystats(a).capital=25000
-        companystats(a).profit=0
-        companystats(a).rate=0
-        companystats(a).shares=50
+        c=stock.companystats(a)
+        c.capital=25000
+        c.profit=0
+        c.rate=0
+        c.shares=50
     next
     
     bountyquestreason(1)="for repeated acts of piracy."
@@ -853,3 +855,18 @@ function setglobals() as short
 end function
 
 
+function Initgame() as integer
+	check_filestructure()
+	load_config()
+	load_fonts()
+	load_tiles()
+	load_keyset()
+	load_sounds()
+	load_palette()
+	DbgScreeninfo
+	register()
+	'DbgWeapdumpCSV   
+    setglobals
+    DbgTilesCSV
+    return 0   
+End function

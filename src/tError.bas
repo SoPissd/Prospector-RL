@@ -1,55 +1,48 @@
 ' error handling
 
-Declare Function savegame(crash as short=0)As Short
+namespace tError
+	
+Dim as integer ErrorNr=0
+Dim as integer ErrorLn=0
+Dim as String ErrText
 
-Dim Shared gamerunning as byte =0
-Dim Shared gamedesig as string 
-gamedesig=""
-Dim Shared gameturn As UInteger =0
+'
+
+function init() As integer
+	ErrorNr=0
+	ErrorLn=0
+	ErrText=""
+	return 0
+End function
 
 
-
-Function log_error(text as string) As Short
+function log_error(text as string) As integer
 	Dim As integer f
 	dim as string logfile
-	if gamerunning then 
-		logfile= "savegames/" & gamedesig & "-" 'gamedesig=player.desig
-	else 
-		logfile= ""
-	EndIf
 	
-	f=Freefile
-	if Open(logfile & "error.log", For Append, As #f)=0 then
-		if LOF(f)>32*1024 then
-			Close #f	' its getting stupidly large
-			f=Freefile	' get a new handle and rewrite it
-			if Open(logfile & "error.log", For Output, As #f)<>0 then
-				return -1
-			EndIf
-	 	EndIf
+	if tFile.OpenLogfile(tVersion.ErrorlogFilename(),f,32)=0 then
 		Print #f, date + " " + time + " " + __VERSION__  + " " + text
-		Close #f
+		tFile.Closefile(f)
 		return 0
-	Endif
-	
+	Endif	
 	return -1
-End Function
+End function
 
 #if __FB_DEBUG__
 ' use LogWarning(text) defined in types.bas to output warnings to the error log.
 ' this code is in this awkward place here only because i dont want to think about placing the helper functions into better places.
-Function log_warning(aFile as string, aFunct as string, iLine as short, text as string) as Short
+function log_warning(aFile as string, aFunct as string, iLine as integer, text as string) as integer
 	aFile= ucase(stripFileExtension(lastword(aFile,"\")))
 	return not log_error( "Warning! "+aFile+":"+aFunct +" line " & iLine & ": "+text)
-End Function
+End function
 #endif
 
-'Declare Function log_error(text as string) As Short					' writes to error log
-'Declare Function error_message() As String							' builds error message
-'Declare Function error_handler(text as string) As Short				' system error handler
+'Declare function log_error(text as string) As Short					' writes to error log
+'Declare function error_message() As String							' builds error message
+'Declare function error_handler(text as string) As Short				' system error handler
 '
 #if __FB_DEBUG__
-'Declare Function log_warning(aFile as string, aFunct as string, iLine as short, text as string) as Short ' use LogWarning(text)
+'Declare function log_warning(aFile as string, aFunct as string, iLine as short, text as string) as Short ' use LogWarning(text)
 #else
 #endif
 
@@ -57,37 +50,14 @@ End Function
 
 '
 
-Function error_handler(text as string) As Short
+function Errorhandler() As integer
 	dim as string logfile
-	log_error(text)
-	'
-	Screenset 1,1
-	Cls
-	Locate 10,10
-	set__color( 14,0)
-	Print text
-	Locate 12,10
-	set__color( 12,0)
-	If gamerunning=1 Then
-		logfile= "savegames/" & gamedesig 'player.desig 
-		Print "Please send " & logfile & "-crash.sav and " & logfile & "-error.log to matthias mennel."
-	else
-		Print "Please send error.log to matthias mennel."
-	endif
-	Locate 13,10
-	Print "The email address is: matthias.mennel@gmail.com"
-	set__color( 14,0)
-	'
-	If gamerunning=1 Then
-		Locate 15,0
-     	if savegame(1)<0 then
-			text= "Failed to save the crashed game."
-			log_error(text)
-      	Print text
-	   EndIf
-	EndIf
-	'
+	log_error(ErrText)
+	tVersion.Errorscreen(ErrText)
 	return 0
-End Function
+End function
 
 
+End Namespace
+
+tError.init()

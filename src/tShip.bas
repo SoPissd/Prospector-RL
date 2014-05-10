@@ -33,15 +33,15 @@ Type _ship
     senac As Byte
     shieldshut As Byte
     cursed As Byte
-    Declare Function diop() As Byte
+    Declare function diop() As Byte
     sensors As Short
     engine As Short
-    Declare Function add_move_cost(mjs As Short) As Short
-    Declare Function movepoints(mjs As Short) As Short
-    Declare Function pilot(onship As Short) As Short
-    Declare Function gunner(onship As Short) As Short
-    Declare Function science(onship As Short) As Short
-    Declare Function doctor(onship As Short) As Short
+    Declare function add_move_cost(mjs As Short) As Short
+    Declare function movepoints(mjs As Short) As Short
+    Declare function pilot(onship As Short) As Short
+    Declare function gunner(onship As Short) As Short
+    Declare function science(onship As Short) As Short
+    Declare function doctor(onship As Short) As Short
     declare function ammo() as short
 
     pipilot As Short
@@ -53,7 +53,7 @@ Type _ship
 
     manjets As Short
     weapons(25) As _weap
-    Declare Function useammo() As Short
+    Declare function useammo() As Short
     hull As Short
     hulltype As Short
 
@@ -104,7 +104,7 @@ Type _ship
     questflag(31) As Short
     discovered(10) As Byte
     towed As Byte
-    Declare Function tractor() As Byte
+    Declare function tractor() As Byte
     teleportload As Byte
     col As Short
     bcol As Short
@@ -114,15 +114,15 @@ End Type
 Dim Shared player As _ship
 Dim Shared empty_ship As _ship
 
-Function _ship.tractor() As Byte
+function _ship.tractor() As Byte
     Dim As Byte i,t
     For i=0 To 25
         If weapons(i).rof<0 And weapons(i).rof<t Then t=weapons(i).rof
     Next
     Return Abs(t)
-End Function
+End function
 
-Function _ship.useammo() As Short
+function _ship.useammo() As Short
     Dim As Short i,most,where
     For i=0 To 25
         If weapons(i).ammo>most Then
@@ -136,7 +136,7 @@ Function _ship.useammo() As Short
     Else
         Return 0
     EndIf
-End Function
+End function
 
 function _ship.ammo() as short
     dim as short i,a
@@ -146,47 +146,47 @@ function _ship.ammo() as short
     return a
 end function
 
-Function _ship.diop() As Byte
+function _ship.diop() As Byte
     If this.di>=1 and this.di<=9 then 
 		return 10-this.di
 	else
 	    return 0
     EndIf
-End Function
+End function
 
-Function _ship.pilot(onship As Short) As Short
+function _ship.pilot(onship As Short) As Short
     If pipilot<>0 Then Return pipilot
     Return best_crew(0,1)
-End Function
+End function
 
-Function _ship.gunner(onship As Short) As Short
+function _ship.gunner(onship As Short) As Short
     If pigunner<>0 Then Return pigunner
     Return best_crew(1,h_maxweaponslot)
-End Function
+End function
 
-Function _ship.science(onship As Short) As Short
+function _ship.science(onship As Short) As Short
     If piscience<>0 Then Return piscience
     Return best_crew(2,h_maxsensors)
-End Function
+End function
 
-Function _ship.doctor(onship As Short) As Short
+function _ship.doctor(onship As Short) As Short
     If pidoctor<>0 Then Return pidoctor
     Return best_crew(3,12)
-End Function
+End function
 
-Function _ship.movepoints(mjs As Short) As Short
+function _ship.movepoints(mjs As Short) As Short
     Dim mps As Short
     mps=CInt(this.engine*2-this.hull*0.15)
     If engine>0 Then mps=mps+1+mjs*3
     If mps<=0 Then mps=1
     If mps>9 Then mps=9
     Return mps
-End Function
+End function
 
-Function _ship.add_move_cost(mjs As Short) As Short
+function _ship.add_move_cost(mjs As Short) As Short
     e.add_action(10-movepoints(mjs))
     Return 0
-End Function
+End function
 
 
 function gethullspecs(t as short,file as string) as _ship

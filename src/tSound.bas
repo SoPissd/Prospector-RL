@@ -18,7 +18,7 @@ function set_volume(volume as Integer) as short
 		fbs_Set_MasterVolume(volume/2.0)
 	#endif   	
 	return 0
-End Function
+End function
 
 
 function load_sounds() as short
@@ -78,7 +78,7 @@ function load_sounds() as short
 end function
    
    
-Function play_sound(iSound As Short,iRepeats As Short=1,iDelay As Short=0) as short
+function play_sound(iSound As Short,iRepeats As Short=1,iDelay As Short=0) as short
 	#IfNDef _sound
 		return 0
 	#else
@@ -99,6 +99,6 @@ Function play_sound(iSound As Short,iRepeats As Short=1,iDelay As Short=0) as sh
 	next
 	return 1
 	#EndIf
-End Function
+End function
 
 ' /sound support

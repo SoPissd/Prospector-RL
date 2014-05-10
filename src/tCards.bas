@@ -159,19 +159,19 @@ Type cardobj
 	Declare Sub DrawPlaceholder (x As Integer, y As Integer, pl As cardplace)
 	Declare Sub ClearCards ()
 	Declare Sub Shuffle (d() As cardid)
-	Declare Function Version () As String
-	Declare Function LoadCards (cardfront As String) As Integer
-	Declare Function CSuit (cid As integer) As integer
-	Declare Function CFace (cid As cardid) As cardface
-	Declare Function CRank (cid As cardid) As Integer
-	Declare Function CValue (cid As cardid) As Integer
-	Declare Function FacesEqual(c1 As cardid, c2 As cardid) As Integer
-	Declare Function SuitsEqual(c1 As cardid, c2 As cardid) As Integer
-	Declare Function RankEqual(c1 As cardid, c2 As cardid) As Integer
-	Declare Function FaceofCard (cid As cardid) As String
-	Declare Function FaceString (cf As cardface) As String
-	Declare Function SuitofCard (cid As cardid) As String
-	Declare Function SuitString (cs As cardsuit) As String
+	Declare function Version () As String
+	Declare function LoadCards (cardfront As String) As Integer
+	Declare function CSuit (cid As integer) As integer
+	Declare function CFace (cid As cardid) As cardface
+	Declare function CRank (cid As cardid) As Integer
+	Declare function CValue (cid As cardid) As Integer
+	Declare function FacesEqual(c1 As cardid, c2 As cardid) As Integer
+	Declare function SuitsEqual(c1 As cardid, c2 As cardid) As Integer
+	Declare function RankEqual(c1 As cardid, c2 As cardid) As Integer
+	Declare function FaceofCard (cid As cardid) As String
+	Declare function FaceString (cf As cardface) As String
+	Declare function SuitofCard (cid As cardid) As String
+	Declare function SuitString (cs As cardsuit) As String
 End Type
 
 'Clear card images.
@@ -215,9 +215,9 @@ Property cardobj.SetCardValue (cid As cardid, cv As Integer)
 End Property
 
 'Returns the version number.
-Function cardobj.Version () As String
+function cardobj.Version () As String
    Return cardobjver
-End Function
+End function
 
 'Draws the card backs.
 Sub cardobj.DrawCardBack (x As Integer, y As Integer, cb As cardback)
@@ -590,7 +590,7 @@ Sub cardobj.Shuffle (d() As cardid)
 End Sub
 
 'Load the card images.
-Function cardobj.LoadCards (cards As String) As Integer
+function cardobj.LoadCards (cards As String) As Integer
 	Dim ret As Integer = TRUE
 	
    If Len(cards) > 0 Then
@@ -601,10 +601,10 @@ Function cardobj.LoadCards (cards As String) As Integer
    End If
    
 	Return ret
-End Function
+End function
 
 'Returns the suit of the card based on the card id.
-Function cardobj.CSuit (cid As integer) As integer
+function cardobj.CSuit (cid As integer) As integer
    Dim ret As cardsuit = sNone
 
    Select Case cid
@@ -619,10 +619,10 @@ Function cardobj.CSuit (cid As integer) As integer
    End Select
    
    Return ret
-End Function
+End function
 	
 'Returns the face of the card based on the card id.
-Function cardobj.CFace (cid As cardid) As cardface
+function cardobj.CFace (cid As cardid) As cardface
    Dim ret As cardface = fNone
    
    Select Case cid
@@ -655,10 +655,10 @@ Function cardobj.CFace (cid As cardid) As cardface
    End Select
    
    Return ret
-End Function
+End function
 
 'Returns the rank value of the card based on the card id.
-Function cardobj.CRank (cid As cardid) As Integer
+function cardobj.CRank (cid As cardid) As Integer
    Dim ret As Integer = 0
    
    Select Case As Const cid
@@ -691,10 +691,10 @@ Function cardobj.CRank (cid As cardid) As Integer
    End Select
    
    Return ret
-End Function
+End function
 
 'Returns the point valie of a card.
-Function cardobj.CValue (cid As cardid) As Integer
+function cardobj.CValue (cid As cardid) As Integer
    Dim ret As Integer = cNone
    
    If cid >= LBound(_cardval) And cid <= UBound(_cardval) Then
@@ -702,25 +702,25 @@ Function cardobj.CValue (cid As cardid) As Integer
    EndIf
    
    Return ret
-End Function
+End function
 
 'Returns true if card1 has the same face value as card2.
-Function cardobj.FacesEqual(c1 As cardid, c2 As cardid) As Integer
+function cardobj.FacesEqual(c1 As cardid, c2 As cardid) As Integer
    Return (cFace(c1) = cFace(c2))
-End Function
+End function
 
 'Returns true if card1 has the same suit as card2.
-Function cardobj.SuitsEqual(c1 As cardid, c2 As cardid) As Integer
+function cardobj.SuitsEqual(c1 As cardid, c2 As cardid) As Integer
    Return (cSuit(c1) = cSuit(c2))
-End Function
+End function
 
 'Returns true if card1 has the same suit as card2.
-Function cardobj.RankEqual(c1 As cardid, c2 As cardid) As Integer
+function cardobj.RankEqual(c1 As cardid, c2 As cardid) As Integer
    Return (cRank(c1) = cRank(c2))
-End Function
+End function
 
 'Returns the face name if the face id.
-Function cardobj.FaceString (cf As cardface) As String
+function cardobj.FaceString (cf As cardface) As String
    Dim ret As String = ""
 
    Select Case cf
@@ -753,10 +753,10 @@ Function cardobj.FaceString (cf As cardface) As String
     End Select
    
    Return ret
-End Function
+End function
 
 'Returns the face of a card as s string.
-Function cardobj.FaceofCard (cid As cardid) As String
+function cardobj.FaceofCard (cid As cardid) As String
    Dim ret As String = ""
    Dim fid As cardface
 
@@ -764,10 +764,10 @@ Function cardobj.FaceofCard (cid As cardid) As String
    ret = FaceString(fid)
    
    Return ret
-End Function
+End function
 
 'Returns the suit as a string.
-Function cardobj.SuitString (cs As cardsuit) As String
+function cardobj.SuitString (cs As cardsuit) As String
    Dim ret As String = ""
    
    Select Case cs
@@ -782,10 +782,10 @@ Function cardobj.SuitString (cs As cardsuit) As String
    End Select
    
    Return ret
-End Function
+End function
 
 'Returns the suit of a card as a string.
-Function cardobj.SuitofCard (cid As cardid) As String
+function cardobj.SuitofCard (cid As cardid) As String
    Dim ret As String = ""
    Dim sid As cardsuit
 
@@ -793,7 +793,7 @@ Function cardobj.SuitofCard (cid As cardid) As String
    ret = SuitString(sid)
    
    Return ret
-End Function
+End function
 
 
 End Namespace

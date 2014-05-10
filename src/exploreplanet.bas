@@ -15,7 +15,7 @@ function earthquake(t as _tile,dam as short)as _tile
 end function
 
 
-Function ep_areaeffects(areaeffect() As _ae,ByRef last_ae As Short,lavapoint() As _cords,cloudmap() As Byte) As Short
+function ep_areaeffects(areaeffect() As _ae,ByRef last_ae As Short,lavapoint() As _cords,cloudmap() As Byte) As Short
     Dim As Short a,b,c,x,y,slot
     Dim As _cords p1
     slot=player.map
@@ -163,11 +163,11 @@ Function ep_areaeffects(areaeffect() As _ae,ByRef last_ae As Short,lavapoint() A
         EndIf
     Next
     Return 0
-End Function
+End function
 
 
 
-Function ep_display_clouds(cloudmap() As Byte) As Short
+function ep_display_clouds(cloudmap() As Byte) As Short
     DimDebug(0)
     Dim As Short x,y,slot,osx,i
     Dim p As _cords
@@ -199,14 +199,14 @@ Function ep_display_clouds(cloudmap() As Byte) As Short
         Next
     Next
     Return 0
-End Function
+End function
 
 
 
 
 
 
-Function ep_dropitem() As Short
+function ep_dropitem() As Short
     Dim As Short c,d,slot,i,num,j
     Dim As String text
     Dim As _cords ship
@@ -338,10 +338,10 @@ Function ep_dropitem() As Short
         EndIf
     EndIf
     Return 0
-End Function
+End function
 
 
-Function ep_inspect(ByRef localturn As Short) As Short
+function ep_inspect(ByRef localturn As Short) As Short
     Dim As Short a,b,c,slot,skill,js,kit,rep,freebay
     Dim As _cords p
     Dim As _driftingship addship
@@ -606,10 +606,10 @@ Function ep_inspect(ByRef localturn As Short) As Short
         rlprint "Nothing of interest here."
     EndIf
     Return 0
-End Function
+End function
 
 
-Function alienbomb(c As Short,slot As Short) As Short
+function alienbomb(c As Short,slot As Short) As Short
     Dim As Short a,b,d,e,f,osx,x2
     Dim As _cords p,p1
     p1.x=item(c).w.x
@@ -703,10 +703,10 @@ Function alienbomb(c As Short,slot As Short) As Short
 
 
     Return 0
-End Function
+End function
 
 
-Function ep_items(localturn As Short) As Short
+function ep_items(localturn As Short) As Short
     DimDebug(0)
     Dim As Short a,slot,i,x,y,curr,last
     Dim As _cords p1,p2,route(1284)
@@ -752,9 +752,9 @@ Function ep_items(localturn As Short) As Short
 
         Next
         Return 0
-End Function
+End function
 
-Function ep_landship(ByRef ship_landing As Short,nextlanding As _cords,nextmap As _cords) As Short
+function ep_landship(ByRef ship_landing As Short,nextlanding As _cords,nextmap As _cords) As Short
     Dim As Short r,slot,a,d
     slot=player.map
     ship_landing=ship_landing-1
@@ -799,9 +799,9 @@ Function ep_landship(ByRef ship_landing As Short,nextlanding As _cords,nextmap A
         Next
     EndIf
     Return 0
-End Function
+End function
 
-Function ep_launch(ByRef nextmap As _cords) As Short
+function ep_launch(ByRef nextmap As _cords) As Short
     Dim slot As Short
     slot=player.map
     If awayteam.c.y=player.landed.y And awayteam.c.x=player.landed.x And slot=player.landed.m Then
@@ -830,10 +830,10 @@ Function ep_launch(ByRef nextmap As _cords) As Short
         EndIf
     EndIf
     Return 0
-End Function
+End function
 
 
-Function ep_pickupitem(Key As String) As Short
+function ep_pickupitem(Key As String) As Short
     Dim a As Short
     Dim text As String
     For a=1 to itemindex.last(awayteam.c.x,awayteam.c.y) 
@@ -902,9 +902,9 @@ Function ep_pickupitem(Key As String) As Short
         rlprint Trim(text),15
     EndIf
     Return 0
-End Function
+End function
 
-Function ep_portal() As _cords
+function ep_portal() As _cords
     Dim As Short a,ti,slot
     Dim As _cords nextmap
     Dim As _cords p
@@ -1003,9 +1003,9 @@ Function ep_portal() As _cords
         EndIf
     
     Return nextmap
-End Function
+End function
 
-Function ep_tileeffects(areaeffect() As _ae, ByRef last_ae As Short,lavapoint() As _cords, nightday() As Byte, localtemp() As Single,cloudmap() As Byte) As Short
+function ep_tileeffects(areaeffect() As _ae, ByRef last_ae As Short,lavapoint() As _cords, nightday() As Byte, localtemp() As Single,cloudmap() As Byte) As Short
     Dim As Short a,x,y,dam,slot,orbit
     Dim As _cords p,p2
     Dim As Single tempchange
@@ -1138,9 +1138,9 @@ Function ep_tileeffects(areaeffect() As _ae, ByRef last_ae As Short,lavapoint() 
     EndIf
 
     Return 0
-End Function
+End function
 
-Function ep_lava(lavapoint() As _cords) As Short
+function ep_lava(lavapoint() As _cords) As Short
     Dim As Short a,slot
     slot=player.map
     If planets(slot).temp+rnd_range(0,10)>350 Then 'lava
@@ -1180,10 +1180,10 @@ Function ep_lava(lavapoint() As _cords) As Short
         EndIf
     EndIf
     Return 0
-End Function
+End function
 
 
-Function ep_updatemasks(spawnmask() As _cords,mapmask() As Byte,nightday() As Byte, ByRef dawn As Single, ByRef dawn2 As Single) As Short
+function ep_updatemasks(spawnmask() As _cords,mapmask() As Byte,nightday() As Byte, ByRef dawn As Single, ByRef dawn2 As Single) As Short
     Dim As Short lsp,x,y,slot,sys,hasnosun
     slot=player.map
     sys=sysfrommap(slot)
@@ -1223,7 +1223,7 @@ Function ep_updatemasks(spawnmask() As _cords,mapmask() As Byte,nightday() As By
         Next
     Next
     Return lsp
-End Function
+End function
 
 
 
@@ -1245,7 +1245,7 @@ function getmonster() as short
 end function
 
 
-Function ep_spawning(spawnmask() As _cords,lsp As Short, diesize As Short,nightday() As Byte) As Short
+function ep_spawning(spawnmask() As _cords,lsp As Short, diesize As Short,nightday() As Byte) As Short
     Dim As Short a,b,c,x,y,d,slot
     If _spawnoff=1 Then Return 0
     slot=player.map
@@ -1282,9 +1282,9 @@ Function ep_spawning(spawnmask() As _cords,lsp As Short, diesize As Short,nightd
         EndIf
     Next
     Return lastenemy
-End Function
+End function
 
-Function ep_shipfire(shipfire() As _shipfire) As Short
+function ep_shipfire(shipfire() As _shipfire) As Short
     DimDebug(0)
     Dim As Short sf2,a,b,c,x,y,dam,slot,osx,ani,f,icechunkhole,dambonus
     Dim As Short dammap(60,20)
@@ -1433,11 +1433,11 @@ Function ep_shipfire(shipfire() As _shipfire) As Short
         EndIf
     Next
     Return 0
-End Function
+End function
 
 
 
-Function ep_helmet() As Short
+function ep_helmet() As Short
     Dim As Short slot
     slot=player.map
     If awayteam.helmet=0 Then
@@ -1456,10 +1456,10 @@ Function ep_helmet() As Short
     EndIf
     equip_awayteam(slot)
     Return 0
-End Function
+End function
 
 
-Function grenade(from As _cords,map As Short) As _cords
+function grenade(from As _cords,map As Short) As _cords
     DimDebug(0)
     Dim As _cords target,ntarget
     Dim As Single dx,dy,x,y,launcher
@@ -1562,10 +1562,10 @@ Function grenade(from As _cords,map As Short) As _cords
     EndIf
     DbgPrint(""&target.x &":"& target.y)
     Return target
-End Function
+End function
 
 
-Function ep_grenade(shipfire() As _shipfire, ByRef sf As Single) As Short
+function ep_grenade(shipfire() As _shipfire, ByRef sf As Single) As Short
     Dim As Short c,slot,i,launcher,rof
     slot=player.map
     Dim As _cords p
@@ -1621,9 +1621,9 @@ Function ep_grenade(shipfire() As _shipfire, ByRef sf As Single) As Short
         rlprint"You dont have any grenades"
     EndIf
     Return 0
-End Function
+End function
 
-Function ep_playerhitmonster(old As _cords, mapmask() As Byte) As Short
+function ep_playerhitmonster(old As _cords, mapmask() As Byte) As Short
     Dim As Short a,b,slot,hitflag
     slot=player.map
     For a=1 To lastenemy
@@ -1691,9 +1691,9 @@ Function ep_playerhitmonster(old As _cords, mapmask() As Byte) As Short
     Next
     if hitflag=0 then awayteam.attacked=0
     Return 0
-End Function
+End function
 
-Function ep_fire(mapmask() As Byte,Key As String,ByRef autofire_target As _cords) As Short
+function ep_fire(mapmask() As Byte,Key As String,ByRef autofire_target As _cords) As Short
     Static autofire_dir As Short
     Dim enlist(128) As Short
     Dim shortlist As Short
@@ -1873,9 +1873,9 @@ Function ep_fire(mapmask() As Byte,Key As String,ByRef autofire_target As _cords
 
     EndIf
     Return 0
-End Function
+End function
 
-Function ep_closedoor() As Short
+function ep_closedoor() As Short
     Dim As Short a,slot
     Dim p1 As _cords
     slot=player.map
@@ -1892,7 +1892,7 @@ Function ep_closedoor() As Short
         EndIf
     Next
     Return 0
-End Function
+End function
 
 
 function mondis(enemy as _monster) as string
@@ -1928,7 +1928,7 @@ function mondis(enemy as _monster) as string
 end function
 
 
-Function ep_examine() As Short
+function ep_examine() As Short
     DimDebug(0)
     Dim As _cords p2,p3
     Dim As String Key,text
@@ -2020,9 +2020,9 @@ Function ep_examine() As Short
         EndIf
     Loop Until Key=key__enter Or Key=key__esc Or Ucase(Key)="Q"
     Return 0
-End Function
+End function
 
-Function ep_jumppackjump() As Short
+function ep_jumppackjump() As Short
     Dim As Short a,b,d,slot
     slot=player.map
     awayteam.e.add_action(10)
@@ -2056,6 +2056,6 @@ Function ep_jumppackjump() As Short
         rlprint "Not enough jetpack fuel"
     EndIf
     Return 0
-End Function
+End function
 
 

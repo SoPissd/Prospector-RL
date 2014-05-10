@@ -1,69 +1,4 @@
 'tUtils
-
-Function _tcol( ByVal src As UInteger, ByVal dest As UInteger, ByVal param As Any Ptr ) As UInteger
-    Dim c As UInteger
-    c=Color
-    If src=0 Then
-        Return dest
-    Else
-        Return _fgcolor_
-    EndIf
-End Function
-
-Declare Function _col( ByVal src As UInteger, ByVal dest As UInteger, ByVal param As Any Ptr ) As UInteger
-
-Function _col( ByVal src As UInteger, ByVal dest As UInteger, ByVal param As Any Ptr ) As UInteger
-    If src=0 Then
-        Return _bgcolor_
-    Else
-        Return _fgcolor_
-    EndIf
-End Function
-
-Declare Function _icol( ByVal src As UInteger, ByVal dest As UInteger, ByVal param As Any Ptr ) As UInteger
-
-Function _icol( ByVal src As UInteger, ByVal dest As UInteger, ByVal param As Any Ptr ) As UInteger
-    'Itemcolor
-    If src=0 Then
-        Return Hiword(Color)
-    Else
-        Return Loword(Color)
-    EndIf
-End Function
-
-Declare Function factionadd(a As Short,b As Short, add As Short) As Short
-
-#Define RGBA_R( c ) ( CUInt( c ) Shr 16 And 255 )
-#Define RGBA_G( c ) ( CUInt( c ) Shr  8 And 255 )
-#Define RGBA_B( c ) ( CUInt( c )        And 255 )
-
-Function set__color(fg As Short,bg As Short,visible As Byte=1) As Short
-    Dim As UInteger r,g,b
-    If fg>255 Or bg>255 Or fg<0 Or bg<0 Then Return 0
-    If visible=1 Then
-        Color palette_(fg),palette_(bg)
-    Else
-        Color palette_(fg)/2,palette_(bg)/2
-    EndIf
-    _fgcolor_=palette_(fg)
-    _bgcolor_=palette_(bg)
-    If visible=0 Then
-        r=RGBA_R(_fgcolor_)
-        g=RGBA_G(_fgcolor_)
-        b=RGBA_B(_fgcolor_)
-        _fgcolor_=Rgb(r/2,g/2,b/2)
-
-        r=RGBA_R(_bgcolor_)
-        g=RGBA_G(_bgcolor_)
-        b=RGBA_B(_bgcolor_)
-        _bgcolor_=Rgb(r/2,g/2,b/2)
-    EndIf
-    Return 0
-End Function
-
-
-
-'
 '
 
 function string_towords(word() as string, s as string, break as string, punct as short=0) as short
@@ -77,7 +12,7 @@ function string_towords(word() as string, s as string, break as string, punct as
             redim word(i)
         endif
         if mid(s,a,1)=break then
-            DbgPrint(word(i))
+'            DbgPrint(word(i))
             i+=1
         else
             if punct=1 and (mid(s,a,1)="." or mid(s,a,1)=",") then
@@ -91,7 +26,6 @@ function string_towords(word() as string, s as string, break as string, punct as
     return i
 end function
 
-
 '
 
 function numfromstr(t as string) as short
@@ -103,20 +37,19 @@ function numfromstr(t as string) as short
     return val(t2)
 end function
 
+
 function lastword(text as string, delim as string, capacity as short=29) As String
 	Dim As String w(capacity)
 	return w(string_towords(w(),text,delim))
-End Function
+End function
 
 function stripFileExtension(text as string, delim as string=".") As String 
 	dim as Integer i = Instrrev(text,delim)
 	if i=0 then return text
 	return left(text,i-1)
-End Function
+End function
 
 '
-
-
 
 function first_lc(t as string) as string
     return lcase(left(t,1))&right(t,len(t)-1)
@@ -150,8 +83,7 @@ function add_a_or_an(t as string,beginning as short) as string
 end function
 
 
-
-Function credits(cr As Integer) As String
+function credits(cr As Integer) As String
     Dim As String t,r,z(12)
     Dim As Single fra,tenmillion
     Dim  As Integer b=1000000
@@ -174,17 +106,17 @@ Function credits(cr As Integer) As String
     Next
     If cr<0 Then t="-"&t
     Return t
-End Function
+End function
 
 
-Function lev_minimum( a As Integer, b As Integer, c As Integer ) As Integer
-	var min = a
-	If (b<min) Then min = b
-	If (c<min) Then min = c
-	Return min
-End Function
+function lev_minimum( a As Integer, b As Integer, c As Integer ) As Integer
+	var i = a
+	If (b<i) Then i = b
+	If (c<i) Then i = c
+	Return i
+End function
 
-Function fuzzymatch( s As String, t As String ) As single
+function fuzzymatch( s As String, t As String ) As single
 	dim as string dic
 	Dim As Integer k, i, j, n, m, cost
 	dim as single dis
@@ -249,7 +181,7 @@ Function fuzzymatch( s As String, t As String ) As single
 	Else
    Return -1
 End If
-End Function
+End function
 
 
 function roman(i as integer) as string
@@ -269,4 +201,56 @@ function roman(i as integer) as string
     end select
 end function
 
+
+public function Texttofile(text as string) as string
+	
+    dim a as short
+    dim head as short
+    dim outtext as string
+    outtext="<p>"
+    for a=0 to len(text)
+        if mid(text,a,1)="|" or mid(text,a,1)="{" then
+            if mid(text,a,1)="|" then
+                if head=1 then
+                    outtext=outtext &"</b>"
+                    head=2
+                endif
+                if head=0 then
+                    outtext=outtext &"<b>"
+                    head=1
+                endif
+                outtext=outtext &"<br>"'chr(13)& chr(10)
+            endif
+            if mid(text,a,1)="{" then a=a+3
+        else
+            outtext=outtext &mid(text,a,1)
+        endif
+    next
+    outtext=outtext &"</p>"
+    return outtext
+end function
+
+
+'
+
+function screenshot_nextfilename(fname as String, ext as String, force as short) as String
+	' use numbered screenshots after the first one
+	if force or not fileexists(fname+ext) then return fname+ext
+	dim as short i=0
+	dim as String a,b
+	b="000"
+	do
+		i +=1
+		a = ""&i
+		a = left(b,len(b)-len(a))+a
+		a = fname + "-" + a + ext
+	Loop until not fileexists(a)
+	return a
+End function
+
+
+function screenshot(a as short) as short
+    savepng( screenshot_nextfilename("summary/" + tVersion.Gamedesig, ".png", 0), 0, 1) 'player.desig
+    return 0
+end function
 

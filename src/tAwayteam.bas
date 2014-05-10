@@ -1069,7 +1069,7 @@ function pathblock(byval c as _cords,byval b as _cords,mapslot as short,blocktyp
 end function
 
 
-Function ep_checkmove(ByRef old As _cords,Key As String) As Short
+function ep_checkmove(ByRef old As _cords,Key As String) As Short
     Dim As Short slot,a,b,c,who(128)
     slot=player.map
     If planetmap(awayteam.c.x,awayteam.c.y,slot)=18 Then
@@ -1196,7 +1196,7 @@ Function ep_checkmove(ByRef old As _cords,Key As String) As Short
         awayteam.e.add_action(tmap(awayteam.c.x,awayteam.c.y).movecost)
     EndIf
     Return 0
-End Function
+End function
 
 
 function giveitem(e as _monster,nr as short) as short
@@ -1293,7 +1293,7 @@ function giveitem(e as _monster,nr as short) as short
 end function
 
 
-Function ep_communicateoffer(Key As String) As Short
+function ep_communicateoffer(Key As String) As Short
     Dim As Short a,b,slot,x,y,cm,monster
     Dim As _cords p2
     Dim As String dkey
@@ -1337,7 +1337,7 @@ Function ep_communicateoffer(Key As String) As Short
     If b>0 And Key=key_co Then communicate(enemy(b),slot,b)
     If b>0 And Key=key_of Then giveitem(enemy(b),b)
     Return 0
-End Function
+End function
 
 
 function crew_menu(crew() as _crewmember, from as short, r as short=0,text as string="") as short

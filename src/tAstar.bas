@@ -5,7 +5,7 @@
 '    y as short
 'end type
 '
-'declare Function rnd_range (first As short, last As short) As short
+'declare function rnd_range (first As short, last As short) As short
 'declare function distance(first as _cords, last as _cords,rollover as byte=0) as single
 '
 'function distance(first as _cords, last as _cords,rollover as byte=0) as single
@@ -24,9 +24,9 @@
 '    return dis
 'end function
 '
-'Function rnd_range (first As short, last As short) As short
+'function rnd_range (first As short, last As short) As short
 '        return cint(Rnd * (last - first) + first)
-'End Function
+'End function
 
 type _node
     opclo as byte

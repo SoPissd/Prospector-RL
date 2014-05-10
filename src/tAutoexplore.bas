@@ -1,7 +1,7 @@
 'tAutoexplore
 
 
-Function ep_needs_spacesuit(slot As Short,c As _cords,ByRef reason As String="") As Short
+function ep_needs_spacesuit(slot As Short,c As _cords,ByRef reason As String="") As Short
     Dim dam As Short
     dam=0
     If planets(slot).atmos=1 Or vacuum(c.x,c.y)=1 Then
@@ -24,11 +24,11 @@ Function ep_needs_spacesuit(slot As Short,c As _cords,ByRef reason As String="")
     If reason<>"" Then reason=first_uc(Left(reason,Len(reason)-2))
     If dam>50 Then dam=50
     Return dam
-End Function
+End function
 
 
 
-Function ep_atship() As Short
+function ep_atship() As Short
     Dim As Short slot,a
     slot=player.map
 DbgLogExplorePlanet("ep_atship")
@@ -68,9 +68,9 @@ DbgLogExplorePlanet("ep_atship")
         EndIf
         Return 0
     EndIf
-End Function
+End function
 
-Function ep_planetroute(route() As _cords,move As Short,start As _cords, target As _cords,rollover As Short) As Short
+function ep_planetroute(route() As _cords,move As Short,start As _cords, target As _cords,rollover As Short) As Short
     Dim As Short x,y,astarmap(60,20)
     For x=0 To 60
         For y=0 To 20
@@ -81,9 +81,9 @@ Function ep_planetroute(route() As _cords,move As Short,start As _cords, target 
         Next
     Next
     Return a_star(route(),target,start,astarmap(),60,20,0,rollover)
-End Function
+End function
 
-Function ep_autoexploreroute(astarpath() As _cords,start As _cords,move As Short, slot As Short, rover As Short=0) As Short
+function ep_autoexploreroute(astarpath() As _cords,start As _cords,move As Short, slot As Short, rover As Short=0) As Short
     Dim As Short candidate(60,20)
     Dim As Short x,y,explored,notargets,last,i,rollover
     Dim As Single d2,d
@@ -168,9 +168,9 @@ Function ep_autoexploreroute(astarpath() As _cords,start As _cords,move As Short
     Next
     last+=1
     Return last
-End Function
+End function
 
-Function ep_autoexplore(slot As Short) As Short
+function ep_autoexplore(slot As Short) As Short
     Dim As Short x,y,astarmap(60,20),candidate(60,20),explored,notargets,x1,y1,i
 
     Dim d As Single
@@ -189,4 +189,4 @@ Function ep_autoexplore(slot As Short) As Short
         Next
     EndIf
     Return lastapwp
-End Function
+End function

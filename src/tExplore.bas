@@ -103,18 +103,18 @@ function update_world(location as short) as short
         next
         for b=0 to 2
             a=basis(b).company
-            companystats(a).profit=companystats(a).profit+(rnd_range(1,6)+rnd_range(1,6)-rnd_range(1,6)-rnd_range(1,6))
-            if companystats(a).profit>0 then 
-                companystats(a).profit=(companystats(a).profit+rnd_range(0,1))*(companystats(a).capital/50)
+            stock.companystats(a).profit=stock.companystats(a).profit+(rnd_range(1,6)+rnd_range(1,6)-rnd_range(1,6)-rnd_range(1,6))
+            if stock.companystats(a).profit>0 then 
+                stock.companystats(a).profit=(stock.companystats(a).profit+rnd_range(0,1))*(stock.companystats(a).capital/50)
             else
-                companystats(a).profit=companystats(a).profit*(companystats(a).capital/50)
+                stock.companystats(a).profit=stock.companystats(a).profit*(stock.companystats(a).capital/50)
             endif
-            companystats(a).capital=companystats(a).capital+companystats(a).profit
-            companystats(a).rate=companystats(a).capital/companystats(a).shares
-            if companystats(a).profit>0 then companystats(a).rate+=1'rnd_range(1,6)
-            if companystats(a).profit<=0 then companystats(a).rate-=1'rnd_range(1,6)
-            companystats(a).profit=0
-            if companystats(a).capital>50000 then companystats(a).capital=50000
+            stock.companystats(a).capital=stock.companystats(a).capital+stock.companystats(a).profit
+            stock.companystats(a).rate=stock.companystats(a).capital/stock.companystats(a).shares
+            if stock.companystats(a).profit>0 then stock.companystats(a).rate+=1'rnd_range(1,6)
+            if stock.companystats(a).profit<=0 then stock.companystats(a).rate-=1'rnd_range(1,6)
+            stock.companystats(a).profit=0
+            if stock.companystats(a).capital>50000 then stock.companystats(a).capital=50000
         next
         
     endif
@@ -123,7 +123,7 @@ function update_world(location as short) as short
 end function
 
 
-Function teleport(from As _cords,map As Short) As _cords
+function teleport(from As _cords,map As Short) As _cords
     Dim target As _cords
     Dim ex As Short
     Dim Key As String
@@ -151,10 +151,10 @@ Function teleport(from As _cords,map As Short) As _cords
             player.teleportload=0
     EndIf
     Return from
-End Function
+End function
 
 
-Function explore_planet(from As _cords, orbit As Short) As _cords
+function explore_planet(from As _cords, orbit As Short) As _cords
     DimDebug(0)
     Dim As Single a,b,c,d,e,f,g,x,y,sf,sf2,vismod
     Dim As Short slot,r,deadcounter,ship_landing,loadmonsters,allroll(8),osx
@@ -1305,6 +1305,6 @@ EndIf
     
     DbgLogExplorePlanet("exit" & nextmap.m)
     Return nextmap
-End Function
+End function
 
 

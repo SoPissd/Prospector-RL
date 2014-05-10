@@ -46,15 +46,15 @@ function getfilename() as string
 				crashnr=val(mid(n(c),crashfile+len("crash"),1))
 			EndIf
 
-            f=freefile
-            open "savegames/"&n(c) for binary as #f
-            get #f,,b
-            get #f,,d
-            get #f,,datestring
-            get #f,,unflags()
-            get #f,,artflags()
-            close #f
-            
+            if tFile.OpenBinary("savegames/"&n(c),f) then
+				get #f,,b
+	            get #f,,d
+	            get #f,,datestring
+	            get #f,,unflags()
+	            get #f,,artflags()
+		        tFile.Closefile(f)
+            EndIf
+
             text=text &"/" & b &d &"("&datestring &")"
 
 	        if crashfile>0 then
@@ -114,7 +114,7 @@ function savegame_crashfilename(fname as String, ext as String) as String
 		kill(fname & j+1 & ext)
 	EndIf
     return fname & j & ext		
-End Function
+End function
 
 function savegame(crash as short=0) as short
     dim back as short
@@ -229,7 +229,7 @@ function savegame(crash as short=0) as short
     endif
 
     for a=1 to 4
-        put #f,,companystats(a)
+        put #f,,stock.companystats(a)
     next
 
     put #f,,alienattacks
@@ -362,39 +362,45 @@ function savegame(crash as short=0) as short
 
     put #f,,civ()
     put #f,,rng.Seed
+    tFile.Closefile(f)
 
-    close f
 
     'Overwrites large save file with compressed save file. but skills if file is empty
     if fname<>"savegames/empty.sav" then
-        f=freefile
-        open fname for binary as #f
-        filedata_string = space(LOF(f))
-        get #f,, filedata_string
-        close f
+        if tFile.Openbinary(fname,f)=0 then
+	        filedata_string = space(LOF(f))
+	        get #f,, filedata_string
+	        tFile.Closefile(f)
+        EndIf
 
         dim as Integer src_len = len(filedata_string) + 1
         dest_len = compressBound(src_len)
         dest = Allocate(dest_len)
         kill(fname)
 
-        f=freefile
-        open fname for binary as #f
-        compress(dest , @dest_len, StrPtr(filedata_string), src_len)
-        put #f,,names           '36 bytes
-        put #f,,desig           '36 bytes
-        put #f,,datestring      '12 bytes + 1 overhead
-        put #f,,unflags()       'lastspecial + 1 overhead
-        put #f,,artflag()       'lastartifact + 1 overhead
-        put #f,, src_len 'we can use this to know the amount of memory needed when we load - should be 4 bytes long
-        'Putting in the short info the the load game menu
-
-        header_len =  36 + 36 + 12 + lastspecial + lastartifact*2 + 4 + 4 + 3 ' bytelengths of names, desig, datestring,
-        'unflags, artflag, src_len, header_len, and 3 bytes of over head for the 3 arrays datestring, unflags, artflag
-        put #f,, header_len
-        put #f,, *dest, dest_len
-        close f
+        if tFile.Openbinary(fname,f)=0 then        	    
+	        compress(dest , @dest_len, StrPtr(filedata_string), src_len)
+	        put #f,,names           '36 bytes
+	        put #f,,desig           '36 bytes
+	        put #f,,datestring      '12 bytes + 1 overhead
+	        put #f,,unflags()       'lastspecial + 1 overhead
+	        put #f,,artflag()       'lastartifact + 1 overhead
+	        put #f,, src_len 'we can use this to know the amount of memory needed when we load - should be 4 bytes long
+   		    'Putting in the short info the the load game menu
+        	header_len =  36 + 36 + 12 + lastspecial + lastartifact*2 + 4 + 4 + 3 ' bytelengths of names, desig, datestring,
+	        'unflags, artflag, src_len, header_len, and 3 bytes of over head for the 3 arrays datestring, unflags, artflag
+	        put #f,, header_len
+	        put #f,, *dest, dest_len
+	        tFile.Closefile(f)
+        EndIf
         Deallocate(dest)
+        
+'     	if <0 then
+'			text= "Failed to save the crashed game."
+'			tError.log_error(text)
+'      	Print text
+'     	EndIf
+        
     endif
     'Done with compressed file stuff
 
@@ -439,14 +445,11 @@ function load_game(filename as string) as short
 
 
     if filename<>"" then
-        f=freefile
         fname="savegames/"&filename
         print "loading"&fname;
 
-        if filename <> "savegames/empty.sav" then 'makes sure we dont load the uncompressed empty
-            'Starting the uncompress
-
-        open fname for binary as #f
+        if (filename <> "savegames/empty.sav") _	'makes sure we dont load the uncompressed empty
+        and (tFile.OpenBinary(fname,f)=0) then		'Starting the uncompress
 
             get #f,,names           '36 bytes
             get #f,,dat             '36 bytes
@@ -455,33 +458,36 @@ function load_game(filename as string) as short
             get #f,,artflag()       'lastartifact + 1 overhead
 
             get #f,,dest_len
-            get #f,,header_len
+            dest = Allocate(dest_len)
 
+            get #f,,header_len
             src_len = LOF(f)-header_len
             src = Allocate(src_len)
-            dest = Allocate(dest_len)
+            
             get #f,,*src, src_len
             uncompress(dest, @dest_len, src, src_len)
-            close f
 
-            open fname for binary as #f
-            compressed_data = space(LOF(f))
-            get #f,, compressed_data
-            close f
+            tFile.Closefile(f)
+			if (tFile.OpenBinary(fname,f)=0) then
+	            compressed_data = space(LOF(f))
+	            get #f,, compressed_data
+	            tFile.Closefile(f)
+	        endif
 
             kill(fname)
 
-            f=freefile
-            open fname for binary as #f
-            put #f,, *dest, dest_len
-            close f
-        endif
+			if (tFile.OpenBinary(fname,f)=0) then
+	            put #f,, *dest, dest_len
+	            tFile.Closefile(f)
+			endif
+    	endif
 
         'Ending uncompress
 
 
-        f=freefile
-        open fname for binary as #f
+		if (tFile.OpenBinary(fname,f)=0) then
+		endif
+			
         get #f,,names
         get #f,,dat
         get #f,,datestring
@@ -559,7 +565,7 @@ function load_game(filename as string) as short
         endif
 
         for a=1 to 4
-            get #f,,companystats(a)
+            get #f,,stock.companystats(a)
         next
 
         get #f,,alienattacks
@@ -690,17 +696,20 @@ function load_game(filename as string) as short
         get #f,,foundsomething
 
         get #f,,civ()
-	    get #f,,rng.Seed
-
-        close f
+        dim seed as tRngSeed
+	    get #f,,seed
+	    rng.Seed=seed
+	    
+        tFile.Closefile(f)
         if fname<>"savegames/empty.sav" and configflag(con_savescumming)=1 then
             kill(fname)
         elseif fname<>"savegames/empty.sav" then
             'need to rewrite our compressed data back
             kill(fname)
-            open fname for binary as #f
+			if (tFile.OpenBinary(fname,f)=0) then
+			endif
             put #f,, compressed_data
-            close f
+	        tFile.Closefile(f)
         endif
         player.lastvisit.s=-1
     else
@@ -714,3 +723,4 @@ function load_game(filename as string) as short
 	DbgFleetsCSV
     return 0
 end function
+

@@ -1,6 +1,6 @@
 'tLanding
 
-Function landing(mapslot As Short,lx As Short=0,ly As Short=0,Test As Short=0) As Short
+function landing(mapslot As Short,lx As Short=0,ly As Short=0,Test As Short=0) As Short
     DimDebug(0)'510
     Dim As Short l,m,a,b,c,d,dis,alive,dead,roll,target,xx,yy,slot,sys,landingpad,landinggear,who(128),last2,alle
     Dim light As Single
@@ -278,6 +278,6 @@ Function landing(mapslot As Short,lx As Short=0,ly As Short=0,Test As Short=0) A
             rlprint ""
         EndIf
     Return 0
-End Function
+End function
 
 

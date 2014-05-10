@@ -1,7 +1,7 @@
 'tKeys
 
-Declare Function askyn(q As String,col As Short=11,sure As Short=0) As Short
-Declare Function gettext(x As Short, y As Short, ml As Short, text As String,pixel As Short=0) As String
+Declare function askyn(q As String,col As Short=11,sure As Short=0) As Short
+Declare function gettext(x As Short, y As Short, ml As Short, text As String,pixel As Short=0) As String
 
 
 'dim shared as FB.image ptr TITLEFONT

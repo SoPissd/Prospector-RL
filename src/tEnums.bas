@@ -1,14 +1,5 @@
 'tEnums
 
-Enum ShipYards
-    sy_civil
-    sy_military
-    sy_pirates
-    sy_blackmarket
-End Enum
-
-Dim Shared shipyardname(sy_blackmarket) As String
-
 Enum moduleshops
     ms_energy
     ms_projectile

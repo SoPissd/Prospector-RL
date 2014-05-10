@@ -39,14 +39,14 @@ Dim Shared crew(255) As _crewmember
 
 Dim Shared As Byte startingweapon
 
-'Declare Function best_crew(skill As Short,no As Short) As Short
+'Declare function best_crew(skill As Short,no As Short) As Short
 
 
 
 function SetCaptainsprite(nr as Byte) as short
 	crew(1).story(3)=nr
 	return 0
-End Function
+End function
     	
 
 function character_name(byref gender as byte) as string

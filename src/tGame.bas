@@ -1,7 +1,7 @@
 'tGame
 
 
-Private Function start_new_game() As Short
+Private function start_new_game() As Short
     DimDebugL(0)'1'127
     Dim _debug As Byte	' needs renaming/removing still    
 
@@ -257,12 +257,12 @@ Private Function start_new_game() As Short
     EndIf
     Cls
     Return 0
-End Function
+End function
 
 
 
 
-Private Function from_savegame(Key As String) As String
+Private function from_savegame(Key As String) As String
     Dim As Short c
     c=count_savegames
     set__color(11,0)
@@ -287,7 +287,7 @@ Private Function from_savegame(Key As String) As String
     set__color(11,0)
     Cls
     Return Key
-End Function
+End function
 
 
 

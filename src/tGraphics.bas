@@ -21,6 +21,26 @@ Enum backgrounds
 End Enum
 
 
+'function locEOL() as _cords
+'    'puts cursor at end of last displayline
+'    dim as short y,x,a,winh,firstline
+'    dim as _cords p
+'    winh=fix((_screeny-_fh1*22)/_fh2)-1
+'    do
+'        firstline+=1
+'    loop until firstline*_fh2>=22*_fh1
+'
+'    y=firstline+winh
+'    for a=firstline+winh to firstline step -1
+'        if displaytext(a+1)="" then y=a
+'    next
+'    x=len(displaytext(y))+1
+'    p.x=x
+'    p.y=y
+'    return p
+'end function
+'
+
 function background(fn as string) as short
     static last as string
     static firstcall as byte
@@ -60,7 +80,7 @@ end function
 '' A function that creates an image buffer with the same
 '' dimensions as a BMP image, and loads a file into it.
 '' Code by counting_pine
-Function bmp_load( ByRef filename As String ) As Any Ptr
+function bmp_load( ByRef filename As String ) As Any Ptr
 	Dim As Integer filenum,bmpwidth,bmpheight
   	Dim As Any Ptr img
 
@@ -92,7 +112,7 @@ Function bmp_load( ByRef filename As String ) As Any Ptr
     		EndIf
    	EndIf
    EndIf
-End Function
+End function
 
 
 '
