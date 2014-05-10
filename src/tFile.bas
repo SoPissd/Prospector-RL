@@ -1,11 +1,11 @@
-'tFile
+'tFile.
 
 '
 ' File Input/output routines
 '
 '
 
-namespace tFile	'tFile.
+namespace tFile	
 	
 Enum tFileOpenMode
 	fmInput
@@ -189,7 +189,8 @@ public function Countlines(filename as string,nonblank as integer=1) as integer
 end function
 
 '
-
 End Namespace
 
-tFile.init()
+#ifdef main
+	tModule.Register("tFile",@tFile.Init())
+#endif		

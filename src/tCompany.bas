@@ -897,5 +897,24 @@ end function
 End Namespace
 
 #ifdef main
-	tCompany.init()
+
+	'satisfy forward declarations
+	function com_remove(attacker() as _ship, t as short,flag as short=0) as short
+		return tCompany.com_remove(attacker(),t,flag)
+	End Function
+
+	function trading(st as short) as short
+		return tCompany.trading(st)
+	End Function
+	
+	function merctrade(byref f as _fleet) as short
+		return tCompany.merctrade(f)
+	End Function
+	
+	function unload_f(f as _fleet, st as short) as _fleet
+		return tCompany.unload_f(f,st)
+	End Function
+
+	tModule.Register("tCompany",@tCompany.Init())
+'	tModule.Register("tCompany",@tCompany.Init(),@tCompany.Load(),@tCompany.Save())
 #endif		

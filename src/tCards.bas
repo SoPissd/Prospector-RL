@@ -21,7 +21,7 @@
 * ANY KIND. See http://www.dspguru.com/wol.htm for more information.
 *
 *****************************************************************************'/
-Namespace cards
+namespace cards
 
 'Define True/False values.
 #Ifndef FALSE

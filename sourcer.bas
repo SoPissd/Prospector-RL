@@ -7,6 +7,7 @@
 #include "windows.bi"
 
 '
+#include "src/tModule.bas"
 #include "src/tPng.bas"
 #include "src/tGraphics.bas"
 
@@ -31,6 +32,7 @@ namespace tMain
 	dim as Integer fin, fout
 
 	type tSource
+		token as String
 		namespc as String
 		defines as String		'comma list of function names
 		publics as String		'crlf list of implementation first-lines 
@@ -88,6 +90,9 @@ function functiondefinitions overload (ByRef aSource as tSource) as tSource
 		while (k>1) and (mid(aSource.Source,k-1,1)>=" ") 
 			k -= 1			
 		Wend
+		while (k<n) and (mid(aSource.Source,k,1)=chr(9) or mid(aSource.Source,k,1)=" ") 
+			k += 1			
+		Wend
 		while (j<n) and (mid(aSource.Source,j+1,1)>=" ") 
 			j += 1			
 		Wend
@@ -113,7 +118,7 @@ function functiondefinitions overload (ByRef aSource as tSource) as tSource
 				if instr(c,"=")=0 then
 					j=instr(c,"overload")-1
 					if j>0 then c=mid(c,1,j-1)
-					if instr(d,c)=0 then d=d+c+", "
+					if instr(d,c+",")=0 then d=d+c+", "
 				EndIf
 			EndIf
 		EndIf
@@ -139,9 +144,10 @@ function add(text as string="") as string
 	return "'" + text
 End Function
 
-function line(text as string="",iwidth as integer=60,itries as integer=7) as string
+function line(ByVal aText as string="",iwidth as integer=60,itries as integer=7) as string
 	dim aline as String
-	aline= add(text) '+ chr(13) + chr(10)
+	dim text as String
+	aline= add(aText) '+ chr(13) + chr(10)
 	text= ""
 	while (len(aline) > iwidth) or instr(aline,chr(13)) 
 		dim as Integer i,j,k
@@ -213,55 +219,242 @@ End Function
 '
 '
 '
-function documentsorce(ByRef aSource as tSource) as tSource
-	? line(finput) 
+function documentsorce(ByRef aSource as tSource) as String
+	dim as String a
+	dim as integer i, j
+	a= finput
+	i= instr(a,"/")
+	if i>0 then a=mid(a,i+1)   
+	i= instr(a,".")
+	if i>0 then a=mid(a,1,i) else a=a+"."   
+	a= line(a)	
+	a=mid(a,1,len(a)-3)
+	a=mid(a,2)
+	aSource.token= a
+	a=line(a+".")
+	'if len(aSource.namespc)>0 then
+	'endif
 	if len(aSource.namespc)>0 then
-		 ? line()+line("namespace: " + aSource.namespc)+line() 
+		a += line()+line("namespace: " + aSource.namespc)+line() 
 	endif
 	if len(aSource.defines)>0 then
-		 ? line()+line("defines:")+line(aSource.defines,60,15)+line() 
+		 a += line()+line("defines:")+line(aSource.defines,60,15)+line() 
 	endif
 	if len(aSource.publics)>0 then
-		 ? line()+line("publics:")+line(aSource.publics,120)+line() 
+		 a += line()+line("publics:")+line(aSource.publics,120)+line() 
 	endif
 	if len(aSource.definitions)>0 then
-		 ? line()+line("definitions:")+line(aSource.definitions,120)+line() 
+		 a += line()+line("definitions:")+line(aSource.definitions,120)+line() 
 	endif
-	return aSource	
+	return a	
 End Function
 
 
+function prunesource(ByRef aSource as tSource) as Integer
+	dim a as String
+	dim ch as String
+	dim adoc as String
+	dim as integer i,li,j,n
+	n=len(aSource.source)
+	i=1
+	li=i
+	while (i<n)
+		li=i
+		j= instr(i,aSource.source,chr(13))
+		a= mid(aSource.source,i,j-1)
+		i+=j
+		while i<n and mid(aSource.source,i,1)<" "
+			i+=1
+		Wend
+'		j=1
+'		while j<len(a) and mid(a,j,1)<" "
+'			j+=1
+'		Wend
+'		a=mid(a,j)
+'? ">"+a+"<"		
+		if mid(a,1,1)="'" then a=""
+		if a<>"" then exit while
+		'i += 1
+	Wend
+	aSource.source=mid(aSource.source,li)
+	return 0
+End Function
 
-function go() as Integer
+function newsource(ByRef aSource as tSource) as string
+	dim adoc as String
+	dim afun as String
+	dim aend as String
+	dim crlf as String = chr(13)+chr(10)
+	afun=""	
+	aend=""	
+	if len(aSource.namespc)=0 then
+		afun += crlf
+		afun += "namespace "+aSource.token +crlf
+		afun += crlf
+		'
+		aend += "end namespace'"+aSource.token +crlf
+	EndIf
+	'
+	afun += "#ifdef head" +crlf
+	afun += "#print -=-=-=-=-=-=-=-HEAD" +crlf
+	afun += crlf
+	afun += crlf
+	afun += "#endif'head" +crlf
+	afun += "#ifdef main" +crlf
+	afun += "#print -=-=-=-=-=-=-=-MAIN" +crlf
+	afun += crlf
+	afun += "public function init()" +crlf
+	afun += chr(9) +"return 0" +crlf
+	afun += "end function" +crlf
+	afun += crlf
+	afun += "public function load(fileno as Integer) As Integer" +crlf
+	afun += chr(9) +"return 0" +crlf
+	afun += "end function" +crlf
+	afun += crlf
+	afun += "public function save(fileno as Integer) As Integer" +crlf
+	afun += chr(9) +"return 0" +crlf
+	afun += "end function" +crlf
+	afun += crlf
+	afun += "'code" +crlf
+	afun += crlf
+	'
+	aend = "#endif'main" +crlf + aend
+	aend += crlf
+	aend += "#ifdef main" +crlf
+	aend += chr(9) +"tModule.register("
+	aend += """"+aSource.token+""""+","
+	aend += "@"+aSource.token+".init(),"
+	aend += "@"+aSource.token+".load(),"
+	aend += "@"+aSource.token+".save())"
+	aend += crlf
+	aend += "#endif'main" +crlf
+	'		
+	return documentsorce(aSource) + afun + aSource.source + aend 
+End Function
+
+
+function listdefines(ByRef aSource as tSource) as string
+	dim crlf as String = chr(13)+chr(10)
+	dim as string a,a1,a2
+	dim as Integer i,j
+	a2=aSource.defines+","
+'? ":"+a2+":"	
+	do
+		i=instr(a2,",")
+		if i=0 then 
+			a1=a2
+			a2=""
+		else
+			a1=mid(a2,1,i-1)
+			a2=trim(mid(a2,i+1))
+		EndIf
+		a=a+a1+crlf
+	Loop until i=0
+	return a
+End Function
+
+dim sources(128) as tSource
+dim lastsource as integer
+
+function initsource overload (fileno as Integer) as tSource
 	dim aSource as tSource
-	aSource=functiondefinitions(fin)
-	aSource=documentsorce(aSource)	
+	aSource=functiondefinitions(fileno)
+	prunesource(aSource)
+'	cls
+	? documentsorce(sources(lastsource))
+	? listdefines(sources(lastsource))
+	?
+	return aSource
+End Function
+
+function initsource overload (filename as string) as tSource
+	dim as integer fin
+	if (tFile.Openbinary(filename,fin)>0) then
+		return initsource(fin)
+	endif
+	write "io error",fin
+	dim aSource as tSource
+	return aSource
+End Function
+
+function loadsource overload (fileno as Integer) as Integer
+	dim aSource as tSource
+	lastsource +=1
+	sources(lastsource)=initsource(fileno)
+	return 0	
+End Function
+	
+function loadsource overload (filename as string) as Integer
+	dim as integer fin
+	if (tFile.Openbinary("D:\dev\prospector\base\"+filename,fin)>0) then
+		return loadsource(fin)
+	endif
+	return -1	
+End Function
+	
+function loadline(fileno as Integer) as string
+	dim as string aline
+	dim ch as byte
+	dim as integer i=fileno
+	while not eof(fileno)
+		get #i,,ch
+		'if ch=10 then continue while
+		if ch=10 then exit while
+		if ch=13 then exit while
+		aline &= chr(ch)	
+	Wend
+	print len(aline)
+	return aline
+End Function
+
+function loadsourcefiles(fileno as Integer) as Integer
+	dim as string filename
+	dim as integer i
+	while not eof(fileno)
+		'sleep
+		filename=loadline(fileno) 
+		i=instr(filename,"=") ' = "1=src\cargotrade.bas"
+		if i>0 then filename=mid(filename,i+1)
+?filename
+		loadsource(filename)
+	Wend	
+	return 0
+End Function
+
+function loadsources(aProject as String) as Integer
+	dim as integer fin,fprj
+	dim as string finput
+	dim as string a
+	if (tFile.Openinput(aProject,fprj)>0) then
+		a=""		
+		while not eof(fprj) 
+			a=loadline(fprj) 
+			if a= "[File]" then
+				loadsourcefiles(fprj)
+				exit while
+			EndIf
+		Wend 
+		tFile.Closefile(fprj)		
+	else
+		write "io error",fprj
+	EndIf
+	
+	return 0	
+	
+	finput= "tCoords" 'tFile,tSavegame	
+	finput= "src/"+finput+".bas"	
+	if (tFile.Openbinary(finput,fin)>0) then
+		loadsource(fin)
+	else
+		write "io error",fin
+	EndIf
 	return 0	
 End Function
 	
 
-
 function main() as Integer
-'#include "src/tColor.bas"
-'#include "src/Version.bas"
-'#include "src/kbinput.bas"
-'#include "file.bi"
-'#include "src/tFile.bas"
-'#include "src/tUtils.bas"
-'#include "src/tError.bas"
-	finput= "tCoords" 'tFile,tSavegame
-	
-	finput= "src/"+finput+".bas"	
-	foutput= left(finput,len(finput)-1)
-	'? finput," -> ",foutput
-
-	if (tFile.Openbinary(finput,fin)>0) then
-	'and (tFile.Openoutput(foutput,fout)>0)
-	
-		go()
-	else
-		write "io error",fin,fout
-	EndIf
+	chdir exepath
+	loadsources("prospector.fbp")
 	return 0
 End Function
 
@@ -270,16 +463,15 @@ End Namespace
 
 LETSGO:
 	'On Error goto Errormessage
-	cls
 	tError.ErrorNr= tMain.main() 
 	'Pressanykey()
 	goto done
 ERRORMESSAGE:
-?"ERRORMESSAGE"
-debugbreak
 	On Error goto 0
 	tError.ErrorNr= Err
 	tError.ErrorLn= Erl
+?"ERRORMESSAGE"
+debugbreak
 	tError.ErrText= ucase(stripFileExtension(lastword(*ERMN(),"\")))
 	tError.ErrText= tError.ErrText &":" &*ERFN() &" reporting Error #" &tError.ErrorNr &" at line " &tError.ErrorLn &"!"  
 	tError.ErrorHandler()

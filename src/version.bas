@@ -19,9 +19,18 @@ Dim Shared Gamedesig as string
 public function Init() as integer
 	Gamedesig	=""
 	Gamerunning	=0
-	tVersion.gameturn	=0
+	gameturn	=0
 	return 0
 End function
+
+public function Load(fileno as Integer) As Integer
+	return 0
+End Function
+
+public function Save(fileno as Integer) As Integer
+	return 0
+End Function
+
 
 public function ErrorlogFilename() as String
 	dim a as string
@@ -68,7 +77,9 @@ public function DisplayError(text as string) as integer
 	return 0
 End function
 
-
+'
 end namespace
 
-tVersion.Init()
+#ifdef main
+	tModule.Register("tVersion",@tVersion.Init(),@tVersion.Load(),@tVersion.Save())
+#endif		

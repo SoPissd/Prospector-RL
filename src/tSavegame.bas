@@ -361,7 +361,11 @@ function savegame(crash as short=0) as short
     put #f,,foundsomething
 
     put #f,,civ()
-    put #f,,rng.Seed
+
+    dim seed as tRngSeed
+	seed=rng.seed
+    put #f,,seed
+    
     tFile.Closefile(f)
 
 

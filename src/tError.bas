@@ -54,8 +54,8 @@ End function
 
 End Namespace
 
-#Define LogWarning(Text) Assert(tError.log_warning(__FILE__,__FUNCTION__,__LINE__,Text))						' disappears from release
-
-tError.init()
-
-? tError.log_warning("ok.log","fun",10,"txt")
+#ifdef main
+	#Define LogWarning(Text) Assert(tError.log_warning(__FILE__,__FUNCTION__,__LINE__,Text))						' disappears from release
+	tModule.Register("tError",@tError.Init())
+	? tError.log_warning("ok.log","fun",10,"txt")
+#endif		

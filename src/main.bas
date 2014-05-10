@@ -14,6 +14,7 @@
 #undef main
 inc("main",	"debug.bas",				"")
 inc("main",	"tColor.bas",				"")
+inc("main",	"tModule.bas",				"")
 inc("main",	"version.bas",				"")
 '
 ' sound support
