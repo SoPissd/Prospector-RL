@@ -235,10 +235,10 @@ function makepiratefleet(modifier as short=0) as _fleet
     dim as short b,c
     b=random_pirate_system
     f.ty=2
-    f.con(15)=rnd_range(1,15)-rnd_range(1,10)-gameturn/10000 'Friendlyness
+    f.con(15)=rnd_range(1,15)-rnd_range(1,10)-tVersion.gameturn/10000 'Friendlyness
     f.t=0 'All pirates start with target 9 (random point)
     f.c=map(b).c
-    maxroll=gameturn/15000'!
+    maxroll=tVersion.gameturn/15000'!
     if maxroll>60 then maxroll=60
     for a=1 to rnd_range(0,1)+cint(maxroll/20)    
         r=rnd_range(1,maxroll)+modifier
@@ -346,8 +346,8 @@ function makepatrol() as _fleet
     f.mem(1)=make_ship(9)
     f.mem(2)=make_ship(7)
     f.mem(3)=make_ship(7)'one company battleship
-    if rnd_range(1,100+gameturn/10000)>75 then f.mem(4)=make_ship(9)
-    if rnd_range(1,100+gameturn/10000)>45 then f.mem(5)=make_ship(7)
+    if rnd_range(1,100+tVersion.gameturn/10000)>75 then f.mem(4)=make_ship(9)
+    if rnd_range(1,100+tVersion.gameturn/10000)>45 then f.mem(5)=make_ship(7)
     f.c=targetlist(firstwaypoint)
     f.t=firstwaypoint+1
     return f
@@ -407,7 +407,7 @@ function make_fleet() as _fleet
     if (countfleet(1)<countfleet(2) or faction(0).war(1)>faction(0).war(2)) or (debug=1) then 
         f=makemerchantfleet
     else
-        if configflag(con_easy)=1 or gameturn>25000 then 
+        if configflag(con_easy)=1 or tVersion.gameturn>25000 then 
             if random_pirate_system>0 then f=makepiratefleet
         else
             f=makepatrol

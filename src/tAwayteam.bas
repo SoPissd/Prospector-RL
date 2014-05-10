@@ -219,7 +219,7 @@ function display_awayteam(showshipandteam as byte=1,osx as short=555) as short
             endif
         endif
 
-        if gameturn mod 15=0 then low_morale_message
+        if tVersion.gameturn mod 15=0 then low_morale_message
 
         set__color( 11,0)
         l+=1
@@ -246,7 +246,7 @@ function display_awayteam(showshipandteam as byte=1,osx as short=555) as short
         l+=2
         draw string(sidebar,l*_fh2),"Credits: " &credits(player.money),,Font2,custom,@_col
         l+=1
-        draw string(sidebar,l*_fh2),display_time(gameturn),,Font2,custom,@_col
+        draw string(sidebar,l*_fh2),display_time(tVersion.gameturn),,Font2,custom,@_col
 #if __FB_DEBUG__
         draw string(sidebar,26*_fh2),"life:" &planets(map).life,,Font2,custom,@_col
 #endif

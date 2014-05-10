@@ -1,5 +1,7 @@
 'tInput
 
+Dim Shared evkey As FB.Event
+
 function gettext(x as short, y as short, ml as short, text as string,pixel as short=0) as string
     dim as short l,lasttimer
     dim key as string

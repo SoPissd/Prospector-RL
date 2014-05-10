@@ -3707,7 +3707,7 @@ function makemonster(a as short, map as short, forcearms as byte=0) as _monster
     
     
     if configflag(con_easy)=0 and enemy.hp>0 then
-        easy=gameturn/50000'!
+        easy=tVersion.gameturn/50000'!
         if easy<.5 then easy=.5
         if easy>1 then easy=1
         enemy.hp=enemy.hp*easy

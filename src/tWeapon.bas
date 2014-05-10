@@ -75,7 +75,7 @@ function make_weapon(a as short) as _weap
     close #f
     if a=w.made then
         if a>=6 and a<=10 then
-            w.dam=urn(dam+2,dam-1,1,2-(gameturn/50000))
+            w.dam=urn(dam+2,dam-1,1,2-(tVersion.gameturn/50000))
             if w.dam<1 then w.dam=1
             if w.dam>5 then w.dam=5
             w.desig=w.dam &"0 GJ "&w.desig
@@ -83,12 +83,12 @@ function make_weapon(a as short) as _weap
         else
             w.dam=dam
         endif
-        if rnd_range(1,100)-(w.dam-dam)*3<minimum(25,gameturn/50000) and w.reload>0 then '10 % have lower reload rate
+        if rnd_range(1,100)-(w.dam-dam)*3<minimum(25,tVersion.gameturn/50000) and w.reload>0 then '10 % have lower reload rate
             w.desig="IR "&w.desig
             w.reload=w.reload/2
             w.p=w.p*1.2
         endif
-        if rnd_range(1,100)-(w.dam-dam)*3<minimum(25,gameturn/50000) and w.reload>0 then
+        if rnd_range(1,100)-(w.dam-dam)*3<minimum(25,tVersion.gameturn/50000) and w.reload>0 then
             w.desig="IC "&w.desig
             w.heatsink=w.heatsink+2
         endif

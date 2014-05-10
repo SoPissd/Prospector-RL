@@ -1,5 +1,7 @@
 'tPrint
 
+Dim Shared As Byte _lines=25
+Dim Shared As Byte _textlines
 
 function scrollup(b as short) as short
     dim as short a,c
@@ -12,6 +14,26 @@ function scrollup(b as short) as short
         dtextcol(255)=11
     next
     return 0
+end function
+
+
+function locEOL() as _cords
+    'puts cursor at end of last displayline
+    dim as short y,x,a,winh,firstline
+    dim as _cords p
+    winh=fix((_screeny-_fh1*22)/_fh2)-1
+    do
+        firstline+=1
+    loop until firstline*_fh2>=22*_fh1
+
+    y=firstline+winh
+    for a=firstline+winh to firstline step -1
+        if displaytext(a+1)="" then y=a
+    next
+    x=len(displaytext(y))+1
+    p.x=x
+    p.y=y
+    return p
 end function
 
 

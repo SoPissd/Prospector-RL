@@ -19,6 +19,11 @@ dim shared as ubyte laststar=90
 Dim Shared As Byte _tix=24
 Dim Shared As Byte _tiy=24
 
+Dim Shared As Byte gt_mwx=40
+
+Dim Shared As Byte _teamcolor=15
+Dim Shared As Byte _shipcolor=14
+
 Enum config
     con_empty
     con_res
@@ -372,7 +377,7 @@ function configuration() as short
         end select
 
     loop until c=con_end or c=-1
-    if gamerunning=1 then SetCaptainsprite(configflag(con_captainsprite))
+    if tVersion.gamerunning=1 then SetCaptainsprite(configflag(con_captainsprite))
 '    screenshot(2)
     return save_config(oldtiles)
 end function

@@ -6,8 +6,8 @@ function modify_item(i as _items,nomod as byte) as _items
     if rate<100 then rate=100
     a=i.id
     if i.id>=13 and i.id<=19 and nomod=0 then
-        if rnd_range(1,100)<10+gameturn/rate then
-        if rnd_range(1,100)<50+gameturn/rate then
+        if rnd_range(1,100)<10+tVersion.gameturn/rate then
+        if rnd_range(1,100)<50+tVersion.gameturn/rate then
             i.desig="thick "&i.desig
             i.desigp="thick "&i.desigp
             i.id=i.id+1000
@@ -26,8 +26,8 @@ function modify_item(i as _items,nomod as byte) as _items
     endif
     
     if i.id>=13 and i.id<=21 then
-        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)+gameturn/rate<66 then
+        if rnd_range(1,100)<10+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)+tVersion.gameturn/rate<66 then
                 i.desig="camo "&i.desig
                 i.desigp="camo "&i.desigp
                 i.v2=1
@@ -41,8 +41,8 @@ function modify_item(i as _items,nomod as byte) as _items
                 i.price=i.price*1.25
             endif
         endif
-        if rnd_range(1,100)<15+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)+gameturn/rate<75 then
+        if rnd_range(1,100)<15+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)+tVersion.gameturn/rate<75 then
                 i.desig="sturdy "&i.desig
                 i.desigp="sturdy "&i.desigp
                 i.res=i.res+50
@@ -59,16 +59,16 @@ function modify_item(i as _items,nomod as byte) as _items
     endif
     
     if i.ty=3 or i.ty=103 then
-        if rnd_range(1,100)<15+gameturn/rate and nomod=0 then
+        if rnd_range(1,100)<15+tVersion.gameturn/rate and nomod=0 then
             i.v3=i.v3*1.1
             i.price=i.price*1.1
         endif
     endif
     
     if i.id>=3 and i.id<=11 then
-        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
+        if rnd_range(1,100)<10+tVersion.gameturn/rate and nomod=0 then
             if rnd_range(1,100)<50 then
-                if rnd_range(1,100)+gameturn/rate<75 then
+                if rnd_range(1,100)+tVersion.gameturn/rate<75 then
                     i.desig="balanced "&i.desig
                     i.desigp="balanced "&i.desigp
                     i.id=i.id+1000
@@ -82,7 +82,7 @@ function modify_item(i as _items,nomod as byte) as _items
                     i.price=i.price*1.5
                 endif
             else
-                if rnd_range(1,100)+gameturn/rate<75 then
+                if rnd_range(1,100)+tVersion.gameturn/rate<75 then
                     i.desig="powerful "&i.desig
                     i.desigp="powerful "&i.desigp
                     i.id=i.id+1200
@@ -97,8 +97,8 @@ function modify_item(i as _items,nomod as byte) as _items
                 endif
             endif
         endif
-        if rnd_range(1,100)<15+gameturn/rate then
-            if rnd_range(1,100)+gameturn/rate<75 then
+        if rnd_range(1,100)<15+tVersion.gameturn/rate then
+            if rnd_range(1,100)+tVersion.gameturn/rate<75 then
                 i.desig="sturdy "&i.desig
                 i.desigp="sturdy "&i.desigp
                 i.res=i.res+50
@@ -115,8 +115,8 @@ function modify_item(i as _items,nomod as byte) as _items
     endif
     
     if i.id=1 then
-        if rnd_range(1,100)<20+gameturn/rate  and nomod=0 then
-            if rnd_range(1,100)+gameturn/rate<50 then
+        if rnd_range(1,100)<20+tVersion.gameturn/rate  and nomod=0 then
+            if rnd_range(1,100)+tVersion.gameturn/rate<50 then
                 i.desig="small "&i.desig
                 i.desigp="small "&i.desigp
                 i.v2=4
@@ -135,8 +135,8 @@ function modify_item(i as _items,nomod as byte) as _items
     
     
     if i.id=2 then
-        if rnd_range(1,100)<20+gameturn/rate  and nomod=0 then
-            if rnd_range(1,100)+gameturn/rate<50 then
+        if rnd_range(1,100)<20+tVersion.gameturn/rate  and nomod=0 then
+            if rnd_range(1,100)+tVersion.gameturn/rate<50 then
                 i.id=211
                 i.desig="efficient "&i.desig
                 i.desigp="efficient "&i.desigp
@@ -154,9 +154,9 @@ function modify_item(i as _items,nomod as byte) as _items
         endif
     endif
     if i.id>=40 and i.id<=47 then
-        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
+        if rnd_range(1,100)<10+tVersion.gameturn/rate and nomod=0 then
             if rnd_range(1,100)<50 then
-                if rnd_range(1,100)+gameturn/rate<75 then
+                if rnd_range(1,100)+tVersion.gameturn/rate<75 then
                     i.desig="balanced "&i.desig
                     i.desigp="balanced "&i.desigp
                     i.id=i.id+100
@@ -170,7 +170,7 @@ function modify_item(i as _items,nomod as byte) as _items
                     i.price=i.price*1.5
                 endif
             else
-                if rnd_range(1,100)+gameturn/rate<75 then
+                if rnd_range(1,100)+tVersion.gameturn/rate<75 then
                     i.desig="sharp "&i.desig
                     i.desigp="sharp "&i.desigp
                     i.id=i.id+120
@@ -185,8 +185,8 @@ function modify_item(i as _items,nomod as byte) as _items
                 endif
             endif
         endif
-        if rnd_range(1,100)<15+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)+gameturn/rate<75 then
+        if rnd_range(1,100)<15+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)+tVersion.gameturn/rate<75 then
                 i.desig="sturdy "&i.desig
                 i.desigp="sturdy "&i.desigp
                 i.res=i.res+50
@@ -201,8 +201,8 @@ function modify_item(i as _items,nomod as byte) as _items
     endif
     
     if i.id=49 then 'tanks
-        if rnd_range(1,100)<30+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)<50+gameturn/rate then
+        if rnd_range(1,100)<30+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+tVersion.gameturn/rate then
                 i.id=i.id+100
                 i.desig="big "&i.desig
                 i.desigp="big "&i.desigp
@@ -218,9 +218,9 @@ function modify_item(i as _items,nomod as byte) as _items
         endif
     endif
     if i.id=97 then
-        if rnd_range(1,100)<33+gameturn/rate and nomod=0 then
+        if rnd_range(1,100)<33+tVersion.gameturn/rate and nomod=0 then
             if rnd_range(1,100)<50 then
-                if rnd_range(1,100)+gameturn/rate<50 then
+                if rnd_range(1,100)+tVersion.gameturn/rate<50 then
                     i.desig="balanced "&i.desig
                     i.desigp="balanced "&i.desigp
                     i.id=i.id+100
@@ -234,7 +234,7 @@ function modify_item(i as _items,nomod as byte) as _items
                     i.price=i.price*1.5
                 endif
             else
-                if rnd_range(1,100)+gameturn/rate<50 then
+                if rnd_range(1,100)+tVersion.gameturn/rate<50 then
                     i.desig="powerful "&i.desig
                     i.desigp="powerful "&i.desigp
                     i.id=i.id+102
@@ -252,9 +252,9 @@ function modify_item(i as _items,nomod as byte) as _items
     
     endif
     if i.id=98 or i.id=523 then 
-        if rnd_range(1,100)<30+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)<5+gameturn/rate then
-                if rnd_range(1,100)<50+gameturn/rate then
+        if rnd_range(1,100)<30+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<5+tVersion.gameturn/rate then
+                if rnd_range(1,100)<50+tVersion.gameturn/rate then
                     i.desig="thick "&i.desig
                     i.desigp="thick "&i.desigp
                     i.id=i.id+200
@@ -272,8 +272,8 @@ function modify_item(i as _items,nomod as byte) as _items
     endif
     
     if i.ty=18 then
-        if rnd_range(1,100)<30+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)<50+gameturn/rate then
+        if rnd_range(1,100)<30+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+tVersion.gameturn/rate then
                 i.desig="fast "&i.desig
                 i.desigp="fast "&i.desigp
                 i.v4+=1

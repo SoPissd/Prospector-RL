@@ -300,7 +300,7 @@ function ship_design(where as byte) as short
     dim value(10) as short
     dim incr(10) as short
     dim h as _ship
-    if count_lines("data/customs.csv")>20 then 
+    if tFile.Countlines("data/customs.csv")>20 then 
         rlprint "Too many designs in custom.csv. You need to delete one before you can add new ones"
         return 0
     endif

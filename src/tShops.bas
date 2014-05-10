@@ -87,7 +87,7 @@ function reroll_shops() as short
     
     'Engine Sensors Shieldshop
     a=0
-    roll=rnd_range(1,90)+gameturn/2500
+    roll=rnd_range(1,90)+tVersion.gameturn/2500
     if roll>0 then 
         a+=1
         shopitem(a,20)=make_shipequip(1)
@@ -109,7 +109,7 @@ function reroll_shops() as short
         shopitem(a,20)=make_shipequip(5)
     endif
     
-    roll=rnd_range(1,90)+gameturn/2500
+    roll=rnd_range(1,90)+tVersion.gameturn/2500
     if roll>0 then 
         a+=1
         shopitem(a,20)=make_shipequip(6)
@@ -131,7 +131,7 @@ function reroll_shops() as short
         shopitem(a,20)=make_shipequip(10)
     endif
     
-    roll=rnd_range(1,90)+gameturn/2500
+    roll=rnd_range(1,90)+tVersion.gameturn/2500
     if roll>10 then 
         a+=1
         shopitem(a,20)=make_shipequip(11)
@@ -212,7 +212,7 @@ function reroll_shops() as short
         next
         c=16
         for i=16 to 19
-            if rnd_range(1,100)<20+gameturn/1000 then
+            if rnd_range(1,100)<20+tVersion.gameturn/1000 then
                 select case rnd_range(1,100)
                 case 1 to 33
                     makew(c,b)=rnd_range(4,5)

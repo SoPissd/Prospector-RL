@@ -86,15 +86,15 @@ chdir exepath
 '
 'core
 '
+inc("main",	"tRng.bas",					"")
+inc("main",	"tPng.bas",					"")
+inc("main",	"tGraphics.bas",			"")
+'
 inc("main",	"kbinput.bas",				"")
-inc("main",	"fileIO.bas",				"")
+inc("main",	"tFile.bas",				"")
 inc("main",	"tUtils.bas",				"")
 inc("main",	"tError.bas",				"")
 '
-inc("main",	"tPng.bas",					"")
-inc("main",	"tGraphics.bas",			"")
-
-inc("main",	"tRng.bas",					"")
 inc("main",	"tCoords.bas",				"")
 inc("main",	"tAstar.bas",				"")
 inc("main",	"tMath.bas",				"")
@@ -112,7 +112,6 @@ inc("main",	"tConsts.bas",				"")
 inc("main",	"tTypes.bas",				"")
 inc("main",	"tEnums.bas",				"")
 inc("main",	"tVars.bas",				"")
-'
 '
 '
 'app
@@ -185,7 +184,7 @@ inc("main",	"tSpacecombat.bas",			"")
 inc("main",	"quests.bas",				"")
 inc("main",	"pirates.bas",				"")
 inc("main",	"tCompany.bas",				"")
-inc("main",	"cargotrade.bas",			"")
+'inc("main",	"cargotrade.bas",			"")
 inc("main",	"tStockmarket.bas",			"")
 inc("main",	"tRadio.bas",				"")
 inc("main",	"tPlanetmenu.bas",			"")

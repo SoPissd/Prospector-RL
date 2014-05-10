@@ -374,8 +374,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.bgcol=0
         i.price=20
         i.res=25
-        if rnd_range(1,100)<30+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)<50+gameturn/rate then
+        if rnd_range(1,100)<30+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+tVersion.gameturn/rate then
                 i.id=i.id+1000
                 i.desig="good "&i.desig
                 i.desigp="good "&i.desigp
@@ -404,8 +404,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.bgcol=0
         i.price=1500
         i.res=35
-        if rnd_range(1,100)<20+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)<50+gameturn/rate then
+        if rnd_range(1,100)<20+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+tVersion.gameturn/rate then
                 i.id=122
                 i.desig="powerful "&i.desig
                 i.desigp="powerful "&i.desigp
@@ -434,8 +434,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.bgcol=0
         i.price=2500
         i.res=55
-        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)<50+gameturn/rate then
+        if rnd_range(1,100)<10+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+tVersion.gameturn/rate then
                 i.id=123
                 i.desig="powerful "&i.desig
                 i.desigp="powerful "&i.desigp
@@ -491,8 +491,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.v1=2
         i.price=90
         i.res=15
-        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)<50+gameturn/rate then
+        if rnd_range(1,100)<10+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+tVersion.gameturn/rate then
                 i.id=i.id+100
                 i.desig="good "&i.desig
                 i.desigp="good "&i.desigp
@@ -520,8 +520,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.v1=4
         i.price=500
         i.res=25
-        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)<50+gameturn/rate then
+        if rnd_range(1,100)<10+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+tVersion.gameturn/rate then
                 i.id=i.id+100
                 i.desig="good "&i.desig
                 i.desigp="good "&i.desigp
@@ -549,8 +549,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.v1=3
         i.price=40
         i.res=35
-        if rnd_range(1,100)<30+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)<50+gameturn/rate then
+        if rnd_range(1,100)<30+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+tVersion.gameturn/rate then
                 i.id=i.id+1000
                 i.desig="strong "&i.desig
                 i.desigp="strong "&i.desigp
@@ -579,8 +579,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.v1=6
         i.price=90
         i.res=55
-        if rnd_range(1,100)<30+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)<50+gameturn/rate then
+        if rnd_range(1,100)<30+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+tVersion.gameturn/rate then
                 i.id=i.id+1000
                 i.desig="strong "&i.desig
                 i.desigp="strong "&i.desigp
@@ -726,8 +726,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.v1=50
         i.price=45
         i.res=65
-        if rnd_range(1,100)<30+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)<50+gameturn/rate then
+        if rnd_range(1,100)<30+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+tVersion.gameturn/rate then
                 i.id=i.id+100
                 i.desig="big "&i.desig
                 i.desigp="big "&i.desigp
@@ -890,8 +890,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.price=500
         i.ldesc="A device to increase the range and improve the aim of grenades."
         i.res=55
-        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)<50+gameturn/rate then
+        if rnd_range(1,100)<10+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)<50+tVersion.gameturn/rate then
                 i.v1=3
                 i.id+=1000
                 i.price=800
@@ -903,7 +903,7 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
                 i.desig="weak grenade launcher"
             endif
         endif
-        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
+        if rnd_range(1,100)<10+tVersion.gameturn/rate and nomod=0 then
             i.v2=1
             i.id+=1002
             i.price=i.price*2
@@ -1344,9 +1344,9 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.ldesc="A modified portable sensor set. Enables the user to see through walls"
         
         i.v1=2
-        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
+        if rnd_range(1,100)<10+tVersion.gameturn/rate and nomod=0 then
             
-            if rnd_range(1,100)+gameturn/rate<60 then
+            if rnd_range(1,100)+tVersion.gameturn/rate<60 then
                 i.v1=3
                 i.id+=222
                 i.desig="Good ground penetrating radar"
@@ -1438,8 +1438,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.bgcol=15
         i.icon="+"
         i.price=25
-        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)+gameturn/rate<50 then
+        if rnd_range(1,100)<10+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)+tVersion.gameturn/rate<50 then
                 i.desig="Small autopsy kit"
                 i.desigp="Small autopsy kits"
                 i.v1=15
@@ -1467,8 +1467,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.bgcol=15
         i.icon="+"
         i.price=25
-        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)+gameturn/rate<50 then
+        if rnd_range(1,100)<10+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)+tVersion.gameturn/rate<50 then
                 i.desig="Small botany kit"
                 i.desigp="Small botany kits"
                 i.v1=15
@@ -1497,8 +1497,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.bgcol=15
         i.icon="+"
         i.price=50
-        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)+gameturn/rate<50 then
+        if rnd_range(1,100)<10+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)+tVersion.gameturn/rate<50 then
                 i.desig="Small ship repair kit"
                 i.desigp="Small ship repair kits"
                 i.id+=100
@@ -1545,7 +1545,7 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.price=200
     endif
     
-    if rnd_range(1,100)<10+gameturn/rate and a=104 or a=105 then
+    if rnd_range(1,100)<10+tVersion.gameturn/rate and a=104 or a=105 then
         if rnd_range(1,100)<50 then
             i.desig="Big "&i.desig
             i.v3=i.v3*1.5
@@ -1644,7 +1644,7 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.price=150
     endif
     
-    if rnd_range(1,100)<10+gameturn/rate and (a=100 or a=101 or a=102) then
+    if rnd_range(1,100)<10+tVersion.gameturn/rate and (a=100 or a=101 or a=102) then
         i.desig="Fast "&i.desig
         i.desigp="Fast "&i.desigp
         i.price=i.price*1.1
@@ -1714,7 +1714,7 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.ldesc="An autonomous drone for space combat. It has " &i.v1 &" Hullpoints and is armed with a " &i.v2 &"0 GJ plasma cannon"
     endif
     
-    if rnd_range(1,100)<10+gameturn/rate and (a=110 or a=111 or a=112) then
+    if rnd_range(1,100)<10+tVersion.gameturn/rate and (a=110 or a=111 or a=112) then
         select case rnd_range(1,100)
         case 1 to 30
             i.desig="Fast "&i.desig
@@ -1766,7 +1766,7 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
             
     endif
     
-    if rnd_range(1,100)<5+gameturn/rate and (a=110 or a=111 or a=112) then
+    if rnd_range(1,100)<5+tVersion.gameturn/rate and (a=110 or a=111 or a=112) then
         i.desig=i.desig &"-S"
         i.id+=100
         i.v6=1
@@ -1786,8 +1786,8 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.v1=10
         i.price=25
         i.res=90
-        if rnd_range(1,100)<10+gameturn/rate and nomod=0 then
-            if rnd_range(1,100)+gameturn/rate<66 then
+        if rnd_range(1,100)<10+tVersion.gameturn/rate and nomod=0 then
+            if rnd_range(1,100)+tVersion.gameturn/rate<66 then
                 i.v1=7
                 i.price=20
                 i.desig="weak "&i.desig
@@ -2098,7 +2098,7 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
         i.desigp=i.desig
         i.icon="*"
         i.bgcol=0  
-        roll=rnd_range(1,100+gameturn/10000+mod1+mod2)
+        roll=rnd_range(1,100+tVersion.gameturn/10000+mod1+mod2)
         if roll>125 and mod1>0 and mod2>0 then i=make_item(99,0,0)
         if make_files=1 then
             f=freefile

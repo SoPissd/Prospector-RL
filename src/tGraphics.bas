@@ -21,26 +21,6 @@ Enum backgrounds
 End Enum
 
 
-'function locEOL() as _cords
-'    'puts cursor at end of last displayline
-'    dim as short y,x,a,winh,firstline
-'    dim as _cords p
-'    winh=fix((_screeny-_fh1*22)/_fh2)-1
-'    do
-'        firstline+=1
-'    loop until firstline*_fh2>=22*_fh1
-'
-'    y=firstline+winh
-'    for a=firstline+winh to firstline step -1
-'        if displaytext(a+1)="" then y=a
-'    next
-'    x=len(displaytext(y))+1
-'    p.x=x
-'    p.y=y
-'    return p
-'end function
-'
-
 function background(fn as string) as short
     static last as string
     static firstcall as byte
@@ -135,4 +115,5 @@ function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for window
     if _mwx=60 then osx=0
     return osx
 end function
+
 

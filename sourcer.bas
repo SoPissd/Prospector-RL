@@ -255,8 +255,9 @@ function main() as Integer
 	foutput= left(finput,len(finput)-1)
 	'? finput," -> ",foutput
 
-	if ( (tFile.Openbinary(finput,fin)>0) _
-	and (tFile.Openoutput(foutput,fout)>0) ) then
+	if (tFile.Openbinary(finput,fin)>0) then
+	'and (tFile.Openoutput(foutput,fout)>0)
+	
 		go()
 	else
 		write "io error",fin,fout

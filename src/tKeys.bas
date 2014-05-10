@@ -1,5 +1,6 @@
 'tKeys
 
+declare function keyin(byref allowed as string="" , blocked as short=0) as string
 Declare function askyn(q As String,col As Short=11,sure As Short=0) As Short
 Declare function gettext(x As Short, y As Short, ml As Short, text As String,pixel As Short=0) As String
 
@@ -8,6 +9,8 @@ Declare function gettext(x As Short, y As Short, ml As Short, text As String,pix
 Dim Shared As Any Ptr TITLEFONT
 Dim Shared As Any Ptr FONT1,FONT2
 
+Dim Shared displaytext(255) As String
+Dim Shared dtextcol(255) As Short
 
 Dim Shared As String*3 key_testspacecombat="\Cy"
 Dim Shared As String*3 key_manual="?"

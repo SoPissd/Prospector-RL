@@ -157,7 +157,7 @@ function check_passenger(st as short) as short
                     if questguy(crew(b).typ-30).has.type=qt_travel then questguy(crew(b).typ-30).has.given=1 
                     if questguy(crew(b).typ-30).want.type=qt_travel then questguy(crew(b).typ-30).want.given=1 
                 endif
-                t=(crew(b).time-gameturn)/(60*24)
+                t=(crew(b).time-tVersion.gameturn)/(60*24)
                 price=crew(b).price+crew(b).bonus*t
                 if price<0 then price=10
                 if t>0 then rlprint crew(b).n &" is very happy that " &lcase(heshe(crew(b).story(10)))& " arrived early.",c_gre
@@ -168,7 +168,7 @@ function check_passenger(st as short) as short
                 crew(b)=cr
             else
                 crew(b).morale-=10
-                t=crew(b).time-gameturn
+                t=crew(b).time-tVersion.gameturn
                 if t<0 then crew(b).morale+=t
                 if rnd_range(1,100)<10 then
                     if t<0 then rlprint crew(b).n &" reminds you that " &lcase(heshe(crew(b).story(10)))& " should have been at station "&crew(b).target & " by "&display_time(crew(b).time) &"."
@@ -1344,5 +1344,6 @@ function hiring(st as short,byref hiringpool as short,hp as short) as short
 '        loop until (neodog=0 and robots=0 and b=12) or (neodog=1 and b=14) or (robots=1 and b=13)
     return 0
 end function
+
 
 

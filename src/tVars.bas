@@ -17,8 +17,6 @@ Dim Shared As Byte someonemoved
 Dim Shared As Byte _NoPB=2
 Dim Shared As Short countpatrol,makepat,unattendedtribbles
 
-Dim Shared As Byte _teamcolor=15
-Dim Shared As Byte _shipcolor=14
 Dim Shared As Byte _showspacemap=1
 
 Dim Shared As Byte _hpdisplay=1
@@ -27,10 +25,7 @@ Dim Shared As Byte _hpdisplay=1
 Dim Shared As Byte _autoinspect=1
 
 Dim Shared As Byte _resolution=2
-Dim Shared As Byte _lines=25
-Dim Shared As Byte _textlines
 Dim Shared As Byte _narrowscreen=0
-Dim Shared As Byte gt_mwx=40
 Dim Shared As Byte _showrolls=0
 Dim Shared As Byte captainskill=-5
 Dim Shared As Byte wage=10
@@ -67,7 +62,6 @@ Dim Shared currapwp As Short
 Dim Shared apdiff As Short
 
 Dim Shared talent_desig(29) As String
-Dim Shared evkey As FB.Event
 'dim shared video as SDL_Surface ptr
 Dim Shared ano_money As Short
 
@@ -107,8 +101,7 @@ Dim Shared rlprintline As Byte
 Dim Shared bestaltdir(9,1) As Byte
 Dim Shared piratebase(_NoPB) As Short 'Mapnumber of piratebase
 Dim Shared atmdes(16) As String
-Dim Shared displaytext(255) As String
-Dim Shared dtextcol(255) As Short
+
 
 Dim Shared patrolmod As Short
 

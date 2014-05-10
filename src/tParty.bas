@@ -100,11 +100,11 @@ function display_ship(show as byte=0) as short
 	    endif
     endif
 
-    if gameturn mod 20=0 then low_morale_message
+    if tVersion.gameturn mod 20=0 then low_morale_message
 
     set__color( 11,0)
     draw string(sidebar,(wl+2)*_fh2),"Credits: "&space(12-len(Credits(player.money)))&Credits(player.money),,Font2,custom,@_col
-    draw string(sidebar,(wl+3)*_fh2),display_time(gameturn),,Font2,custom,@_col
+    draw string(sidebar,(wl+3)*_fh2),display_time(tVersion.gameturn),,Font2,custom,@_col
     set__color( 15,0)
     draw string(sidebar,wl*_fh2), "Cargo",,font2,custom,@_col
     for a=1 to 10

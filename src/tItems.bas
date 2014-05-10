@@ -287,13 +287,13 @@ function rnd_item(t as short) as _items
     
     
     if t=RI_Transport then i=make_item(rnd_range(1,2)) 'transport
-    if t=RI_RangedWeapon then i=make_item(urn(0,8,2,gameturn/5000)+3) 'ranged weapons
-    if t=RI_CCWeapon then i=make_item(urn(0,7,2,gameturn/5000)+40) 'close weapons
+    if t=RI_RangedWeapon then i=make_item(urn(0,8,2,tVersion.gameturn/5000)+3) 'ranged weapons
+    if t=RI_CCWeapon then i=make_item(urn(0,7,2,tVersion.gameturn/5000)+40) 'close weapons
     if t=RI_Armor then 'Space suits 
-        if rnd_range(1,100)<30-gameturn/5000 then
+        if rnd_range(1,100)<30-tVersion.gameturn/5000 then
             i=make_item(320)
         else
-            i=make_item(urn(0,8,2,gameturn/5000)+12) 'Armor
+            i=make_item(urn(0,8,2,tVersion.gameturn/5000)+12) 'Armor
         endif
     endif
     if t=RI_ShopAliens then 

@@ -6,7 +6,7 @@ function delete_custom(pir as short) as short
     dim as string lines(22),men,des
     do
         last=0
-        n=count_lines("data/customs.csv")-1
+        n=tFile.Countlines("data/customs.csv")-1
         f=freefile
         open "data/customs.csv" for input as #f
         for i=0 to n
