@@ -36,7 +36,7 @@ function update_world(location as short) as short
     diseaserun(1)
     clearfleetlist
     
-    if gameturn mod 60=0 then
+    if tVersion.gameturn mod 60=0 then
         if artflag(23)>0 and player.hull<player.h_maxhull then player.hull+=1
         move_fleets()
         collide_fleets()
@@ -56,7 +56,7 @@ function update_world(location as short) as short
         
     endif
     
-    if gameturn mod (24*60)=0 or location=2 then 'Daily,loc2=forced
+    if tVersion.gameturn mod (24*60)=0 or location=2 then 'Daily,loc2=forced
         for a=0 to 12
             change_prices(a,10)
         next
@@ -69,14 +69,14 @@ function update_world(location as short) as short
         questroll=rnd_range(1,100)-10*(crew(1).talents(3))
     endif
     
-    if gameturn mod (24*60*7)=0 then 'Weekly
+    if tVersion.gameturn mod (24*60*7)=0 then 'Weekly
         set_fleet(make_fleet)
         if rnd_range(1,100)<50 then
             set_fleet(makecivfleet(0))
         else
             set_fleet(makecivfleet(1))
         endif
-        if gameturn>2*30*24*60 and player.questflag(3)=0 then
+        if tVersion.gameturn>2*30*24*60 and player.questflag(3)=0 then
             set_fleet(makealienfleet)
         endif
         reroll_shops
@@ -86,7 +86,7 @@ function update_world(location as short) as short
         next
         grow_colonies
         
-        if gameturn>2*30*24*60 and rnd_range(1,100)<1+cint(gameturn/10000) then robot_invasion
+        if tVersion.gameturn>2*30*24*60 and rnd_range(1,100)<1+cint(tVersion.gameturn/10000) then robot_invasion
             
         for a=1 to lastquestguy
             if rnd_range(1,100)<25 and questguy(a).job=9 then questguy_newloc(a)
@@ -103,18 +103,18 @@ function update_world(location as short) as short
         next
         for b=0 to 2
             a=basis(b).company
-            stock.companystats(a).profit=stock.companystats(a).profit+(rnd_range(1,6)+rnd_range(1,6)-rnd_range(1,6)-rnd_range(1,6))
-            if stock.companystats(a).profit>0 then 
-                stock.companystats(a).profit=(stock.companystats(a).profit+rnd_range(0,1))*(stock.companystats(a).capital/50)
+            tCompany.companystats(a).profit=tCompany.companystats(a).profit+(rnd_range(1,6)+rnd_range(1,6)-rnd_range(1,6)-rnd_range(1,6))
+            if tCompany.companystats(a).profit>0 then 
+                tCompany.companystats(a).profit=(tCompany.companystats(a).profit+rnd_range(0,1))*(tCompany.companystats(a).capital/50)
             else
-                stock.companystats(a).profit=stock.companystats(a).profit*(stock.companystats(a).capital/50)
+                tCompany.companystats(a).profit=tCompany.companystats(a).profit*(tCompany.companystats(a).capital/50)
             endif
-            stock.companystats(a).capital=stock.companystats(a).capital+stock.companystats(a).profit
-            stock.companystats(a).rate=stock.companystats(a).capital/stock.companystats(a).shares
-            if stock.companystats(a).profit>0 then stock.companystats(a).rate+=1'rnd_range(1,6)
-            if stock.companystats(a).profit<=0 then stock.companystats(a).rate-=1'rnd_range(1,6)
-            stock.companystats(a).profit=0
-            if stock.companystats(a).capital>50000 then stock.companystats(a).capital=50000
+            tCompany.companystats(a).capital=tCompany.companystats(a).capital+tCompany.companystats(a).profit
+            tCompany.companystats(a).rate=tCompany.companystats(a).capital/tCompany.companystats(a).shares
+            if tCompany.companystats(a).profit>0 then tCompany.companystats(a).rate+=1'rnd_range(1,6)
+            if tCompany.companystats(a).profit<=0 then tCompany.companystats(a).rate-=1'rnd_range(1,6)
+            tCompany.companystats(a).profit=0
+            if tCompany.companystats(a).capital>50000 then tCompany.companystats(a).capital=50000
         next
         
     endif
@@ -265,7 +265,7 @@ function explore_planet(from As _cords, orbit As Short) As _cords
             EndIf
             If rnd_range(1,100)<planets(slot).atmos And planets(slot).atmos>1 And planets(slot).depth=0 Then cloudmap(x,y)=1
             If planetmap(x,y,slot)=0 Then
-            	log_error("Tile at "&x &":"&y &":"&slot &"=0")
+            	tError.log_error("Tile at "&x &":"&y &":"&slot &"=0")
                 planetmap(x,y,slot)=-4
             EndIf
         Next
@@ -346,7 +346,7 @@ function explore_planet(from As _cords, orbit As Short) As _cords
         Next
 
         If planets(slot).visited=0 And planets(slot).depth=0 And x=0 Then
-            combon(0).Value+=1
+            tCompany.combon(0).Value+=1
             adaptmap(slot)
             lsp=0
             For x=0 To 60
@@ -515,8 +515,8 @@ EndIf
     move_rover(slot)
     'if planets(slot).colony<>0 then growcolony(slot)
 
-    If planets(slot).visited>0 And planets(slot).visited<gameturn Then
-        b=planets(slot).visited-gameturn
+    If planets(slot).visited>0 And planets(slot).visited<tVersion.gameturn Then
+        b=planets(slot).visited-tVersion.gameturn
         For e=1 To lastenemy
             If enemy(e).made=101 And enemy(e).hp>0 Then
                 For a=1 To b
@@ -533,7 +533,7 @@ EndIf
     EndIf
 
     planets(slot).discovered=3
-    planets(slot).visited=gameturn
+    planets(slot).visited=tVersion.gameturn
     If planets(slot).flags(27)=1 Then planets(slot).flags(27)=2
 
     If slot=specialplanet(0) And player.towed=4 Then
@@ -809,9 +809,9 @@ EndIf
 
         If localturn Mod 10=0 Then
             If planets(slot).depth=0 Then
-                gameturn+=2
+                tVersion.gameturn+=2
             Else
-                gameturn+=1
+                tVersion.gameturn+=1
             EndIf
             
             DbgLogExplorePlanet("2")

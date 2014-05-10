@@ -6,12 +6,10 @@ function clear_gamestate() As Short
     Dim d_planet As _planet
     Dim d_ship As _ship
     Dim d_map As _stars
+    Dim d_item As _items
     Dim d_fleet As _fleet
     Dim d_basis As _basis
     Dim d_drifter As _driftingship
-    Dim d_item As _items
-    Dim d_share As _share
-    Dim d_company As _company
     Dim d_portal As _transfer
     set__color(15,0)
     Draw String(_screenx/2-7*_fw1,_screeny/2),"Resetting game",,font2,custom,@_col
@@ -91,15 +89,6 @@ function clear_gamestate() As Short
     For a=0 To 5
         avgprice(a)=0
     Next
-    For a=0 To 4
-        stock.companystats(a)=d_company
-    Next
-    For a=0 To 2047
-        shares(a)=d_share
-    Next
-    lastshare=0
-
-
     For a=0 To 20
         flag(a)=0
     Next
@@ -124,17 +113,9 @@ function setglobals() as short
     '
     ' Variables
     '
-    
+    tCompany.init
     wage=10
     
-    dim c as stock._company
-    for a=0 to 5
-        c=stock.companystats(a)
-        c.capital=25000
-        c.profit=0
-        c.rate=0
-        c.shares=50
-    next
     
     bountyquestreason(1)="for repeated acts of piracy."
     bountyquestreason(2)="for damaging company property."
@@ -556,16 +537,6 @@ function setglobals() as short
     basis(3).c.y=-1
     basis(3).discovered=0
     
-    combon(0).base=10 'Planets Landed on
-    combon(1).base=5 'Aliens scanned
-    combon(2).base=150 'Minerals turned in
-    combon(3).base=5 'Only sells to Smith
-    combon(4).base=5 'Only sells to Erdidani
-    combon(5).base=5 'Only sells to Triax
-    combon(6).base=5 'Only sells to omega
-    combon(7).base=100 'Turns survived
-    combon(8).base=5 'Pirate Ships destroyed
-    
     baseprice(1)=100
     baseprice(2)=250
     baseprice(3)=500
@@ -849,10 +820,61 @@ function setglobals() as short
     next
     
     player.desig=""
-    gamedesig=player.desig
+    tVersion.gamedesig=player.desig
     
     return 0
 end function
+
+
+function check_filestructure() as short
+	if chdir("data")=-1 then
+		set__color(c_yel,0)
+		print "Can't find folder 'data'. Try reinstalling the game."
+		sleep
+		end
+	else
+		chdir("..")
+	endif
+
+	if (tFile.assertpath("bones")=-1) _
+	or (tFile.assertpath("savegames")=-1) _
+	or (tFile.assertpath("summary")=-1) _
+	then
+		set__color(c_yel,0)
+		print "Can not create folder. Try reinstalling the game."
+		sleep
+		end
+	endif
+
+	if fileexists("savegames/empty.sav") _ 
+	and (tFile.Filesize("savegames/empty.sav")>0) then return 0
+	' not there or was empty for some reason yet to be eradicated
+	player.desig="empty"
+	tVersion.Gamedesig="empty"
+	savegame()
+	return 0
+end function
+
+
+sub register()
+	dim f as integer
+	If Not fileexists("register") Then
+    	Cls
+	    If askyn("This is the first time you start prospector. Do you want to see the keybindings before you start?(Y/N)") Then
+    	   keybindings()
+	    EndIf
+	    Cls
+	    f=Freefile
+	    Open "register" For Output As f
+	    Print #f,"0"
+	    Print #f,""
+	    If Menu(bg_randompic,"Autonaming:/Standard/Babylon 5 Shipnames")=2 Then
+	        Print #f,"b5shipnames.txt"
+	    EndIf
+	    Close #f
+	    set__color(11,0)
+	EndIf
+end sub
 
 
 function Initgame() as integer

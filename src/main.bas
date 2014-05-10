@@ -148,7 +148,7 @@ inc("main",	"tParty.bas",				"")
 inc("main",	"tRumors.bas",				"")
 inc("main",	"tWaypoints.bas",			"")
 '
-inc("head",	"tPlanetmap.bas",			"")
+inc("head",	"tPlanetmap.bas",			"headers")
 inc("main",	"tMakeplanet.bas",			"")
 inc("main",	"tPlanetmap.bas",			"")
 '
@@ -180,11 +180,12 @@ inc("main",	"tCockpit.bas",				"")
 inc("main",	"tAutopilot.bas",			"")
 inc("main",	"tLogbook.bas",				"")
 inc("main",	"spacecom.bas",				"")
+inc("head",	"tCompany.bas",				"headers")
 inc("main",	"tSpacecombat.bas",			"")
 inc("main",	"quests.bas",				"")
+inc("main",	"cargotrade.bas",			"")
 inc("main",	"pirates.bas",				"")
 inc("main",	"tCompany.bas",				"")
-'inc("main",	"cargotrade.bas",			"")
 inc("main",	"tStockmarket.bas",			"")
 inc("main",	"tRadio.bas",				"")
 inc("main",	"tPlanetmenu.bas",			"")
@@ -210,6 +211,7 @@ inc("main",	"tPalette.bas",				"")
 inc("main",	"tMenu.bas",				"")
 inc("main",	"tSavegame.bas",			"")
 inc("main",	"tGameinit.bas",			"")
+inc("main",	"tViewfile.bas",			"")
 inc("main",	"tGamekeys.bas",			"")
 inc("main",	"tGame.bas",				"")
 '
@@ -219,7 +221,7 @@ Print "Switching"
 Print
 
 LETSGO:
-	ErrorNr= (Initgame()<> 0) or Prospector() 	
+	tError.ErrorNr= (Initgame()<> 0) or Prospector() 	
 	goto done
 ERRORMESSAGE:
 	On Error goto 0
@@ -232,14 +234,12 @@ WAITANDEXIT:
 	Print
 	Print
 	set__color( 12,0)
-	Print "Press any key to exit"
-	do while inkey<>"": loop
-	Sleep
+	Pressanykey
 DONE:
 	set_volume(-1)
 	DbgLogExplorePlanetEnd
 	DbgEnd
-	End ErrorNr
+	End tError.ErrorNr
 '
 '#
 '

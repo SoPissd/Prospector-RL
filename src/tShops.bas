@@ -430,7 +430,7 @@ function shop(sh as short,pmod as single,shopn as string) as short
         order=b
         b+=1
         t=t &"/Order Item"
-        desc=desc &"/Order an item not in stock for double the price"
+        desc=desc &"/Order an item not in tCompany for double the price"
     endif
     ex=b
     t=t & "/Exit"

@@ -80,7 +80,7 @@ function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _
             EndIf
             trading(tmap(awayteam.c.x,awayteam.c.y).gives+1)
             player.lastvisit.s=tmap(awayteam.c.x,awayteam.c.y).gives+1
-            player.lastvisit.t=gameturn
+            player.lastvisit.t=tVersion.gameturn
         Else
             rlprint "they dont want to trade with you."
         EndIf
@@ -500,9 +500,9 @@ function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _
         sell_alien(slse_zoo)
     EndIf
 
-    If tmap(awayteam.c.x,awayteam.c.y).gives=47 Then retire.retirement()
+    If tmap(awayteam.c.x,awayteam.c.y).gives=47 Then tRetirement.retirement()
 
-    If tmap(awayteam.c.x,awayteam.c.y).gives=48 Then retire.buytitle()
+    If tmap(awayteam.c.x,awayteam.c.y).gives=48 Then tRetirement.buytitle()
 
     If tmap(awayteam.c.x,awayteam.c.y).gives=49 Then customize_item()
 
@@ -807,7 +807,7 @@ function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _
                 basis(10).biomod=basis(10).biomod*0.75
                 basis(10).resmod=basis(10).resmod*0.75
                 basis(10).pirmod=basis(10).pirmod*0.75
-                stock.company(10)
+                tCompany.company(10)
             EndIf
 
             If tmap(awayteam.c.x,awayteam.c.y).gives=74 Then sell_alien(slse_slaves)

@@ -13,13 +13,13 @@ Declare function savegame(crash as short=0)As Short
 namespace tVersion
 	
 Dim Shared Gamerunning as byte =0
-Dim Shared Gameturn As UInteger =0
+Dim Shared gameturn As UInteger =0
 Dim Shared Gamedesig as string 
 
 public function Init() as integer
 	Gamedesig	=""
 	Gamerunning	=0
-	Gameturn	=0
+	tVersion.gameturn	=0
 	return 0
 End function
 

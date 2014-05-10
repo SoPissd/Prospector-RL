@@ -9,7 +9,7 @@ public function Viewfile(filename as string) as short
     'screenshot(1)
     set__color( 15,0)
     cls
-    if OpenInput(filename,f)=0 then
+    if tFile.OpenInput(filename,f)=0 then
         do
             line input #f,lines(c)
             while len(lines(c))>80
@@ -25,7 +25,7 @@ public function Viewfile(filename as string) as short
             c=c+1
 
         loop until eof(f) or c>512
-        Closefile(f)
+        tFile.Closefile(f)
         for a=1 to c
             col(a)=11
             if left(lines(a),2)="==" then

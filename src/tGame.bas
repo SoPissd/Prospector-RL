@@ -149,7 +149,7 @@ Private function start_new_game() As Short
         player.c.y=drifting(1).y
 #endif
     EndIf
-    gameturn=0
+    tVersion.gameturn=0
     If start_teleport=1 Then artflag(9)=1
     set__color(11,0)
     Cls
@@ -183,7 +183,7 @@ Private function start_new_game() As Short
 
     player.desig=gettext((5*_fw1+44*_fw2),(5*_fh1+c*_fh2),32,"",1)
     If player.desig="" Then player.desig=randomname()
-    gamedesig=player.desig
+    tVersion.gamedesig=player.desig
     
     a=Freefile
     If Open ("savegames/"&player.desig &".sav" For Input As a)=0 Then
@@ -193,7 +193,7 @@ Private function start_new_game() As Short
             draw_string(50,9*_fh2, "You christen the beauty:" &Space(25),font2,_col)
             player.desig=gettext((5*_fw1+25*_fw2)/_fw2,(5*_fh1+c*_fh2)/_fh2,13,"")
             If player.desig="" Then player.desig=randomname()
-            gamedesig=player.desig
+            tVersion.gamedesig=player.desig
         Loop Until fileexists("savegames/"&player.desig &".sav")=0
     EndIf
     If (debug=3 Or debug=99) And _debug=1 Then
@@ -247,7 +247,7 @@ Private function start_new_game() As Short
         player.c=map(sysfrommap(specialplanet(show_specials))).c
     EndIf
     set__color(11,0)
-    If _debug=2411 Then gameturn=500000
+    If _debug=2411 Then tVersion.gameturn=500000
     If debug=125 And _debug>0 Then player.money=3000
     update_world(2)
     If _debug=1501 Then
@@ -357,55 +357,6 @@ Private function mainmenu() as string
 End function
 
 
-function check_filestructure() as short
-	if chdir("data")=-1 then
-		set__color(c_yel,0)
-		print "Can't find folder 'data'. Try reinstalling the game."
-		sleep
-		end
-	else
-		chdir("..")
-	endif
-
-	if (assertpath("bones")=-1) _
-	or (assertpath("savegames")=-1) _
-	or (assertpath("summary")=-1) _
-	then
-		set__color(c_yel,0)
-		print "Can not create folder. Try reinstalling the game."
-		sleep
-		end
-	endif
-
-	if fileexists("savegames/empty.sav") _ 
-	and (file_size("savegames/empty.sav")>0) then return 0
-	' not there or was empty for some reason yet to be eradicated
-	player.desig="empty"
-	savegame()
-	return 0
-end function
-
-
-sub register()
-	dim f as integer
-	If Not fileexists("register") Then
-    	Cls
-	    If askyn("This is the first time you start prospector. Do you want to see the keybindings before you start?(Y/N)") Then
-    	   keybindings()
-	    EndIf
-	    Cls
-	    f=Freefile
-	    Open "register" For Output As f
-	    Print #f,"0"
-	    Print #f,""
-	    If Menu(bg_randompic,"Autonaming:/Standard/Babylon 5 Shipnames")=2 Then
-	        Print #f,"b5shipnames.txt"
-	    EndIf
-	    Close #f
-	    set__color(11,0)
-	EndIf
-end sub
-
 
 Public function Prospector() as Integer
 	Do
@@ -416,7 +367,7 @@ Public function Prospector() as Integer
 	    If Key="1" Then start_new_game
 	    If Key="1" Or Key="2" Or Key="a" Or Key="b" And player.dead=0 Then
 	        Key=""
-	        gamerunning=1
+	        tVersion.gamerunning=1
 	        display_stars(1)
 	        display_ship(1)
 	        explore_space
@@ -429,7 +380,7 @@ Public function Prospector() as Integer
     	If configflag(con_restart)=0 Then
 	        load_game("empty.sav")
 	        clear_gamestate
-	        gamerunning=0
+	        tVersion.gamerunning=0
 	    EndIf
 	Loop Until configflag(con_restart)=1
 	return 0

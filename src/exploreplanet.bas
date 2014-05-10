@@ -308,7 +308,7 @@ function ep_dropitem() As Short
                             item(c).w.p=0
                             If item(c).ty=15 Then
                                 reward(2)=reward(2)-item(c).v5
-                                combon(2).Value-=item(c).v5
+                                tCompany.combon(2).Value-=item(c).v5
                             EndIf
                             If item(c).ty=24 And tmap(item(c).w.x,item(c).w.y).no=162 Then
                                 rlprint("you reconnect the machine to the pipes. you notice the humming sound.")
@@ -479,7 +479,7 @@ function ep_inspect(ByRef localturn As Short) As Short
                     rlprint "This creature is infected with "&disease(enemy(a).disease).desig,14
                 EndIf
                 If (player.science(1)>0) Or (player.doctor(1)>0) Then
-                    combon(1).Value+=1
+                    tCompany.combon(1).Value+=1
                     kit=findbest(48,-1)
                     If kit>0 Then
                         kit=item(kit).v1
@@ -850,7 +850,7 @@ function ep_pickupitem(Key As String) As Short
                         text=text &" You pick up the "&item(itemindex.index(awayteam.c.x,awayteam.c.y,a)).desig &". "
                     EndIf
                     reward(2)=reward(2)+item(itemindex.index(awayteam.c.x,awayteam.c.y,a)).v5
-                    combon(2).Value+=item(itemindex.index(awayteam.c.x,awayteam.c.y,a)).v5
+                    tCompany.combon(2).Value+=item(itemindex.index(awayteam.c.x,awayteam.c.y,a)).v5
                     item(itemindex.index(awayteam.c.x,awayteam.c.y,a)).w.s=-1
                     item(itemindex.index(awayteam.c.x,awayteam.c.y,a)).w.m=-0
                     item(itemindex.index(awayteam.c.x,awayteam.c.y,a)).w.p=-0
@@ -865,7 +865,7 @@ function ep_pickupitem(Key As String) As Short
                 If item(itemindex.index(awayteam.c.x,awayteam.c.y,a)).ty=27 Then
                     text=text &" You gather the resources from the mining robot ("&Fix(item(itemindex.index(awayteam.c.x,awayteam.c.y,a)).v1) &"). "
                     reward(2)=reward(2)+item(itemindex.index(awayteam.c.x,awayteam.c.y,a)).v1
-                    combon(2).Value+=item(itemindex.index(awayteam.c.x,awayteam.c.y,a)).v1
+                    tCompany.combon(2).Value+=item(itemindex.index(awayteam.c.x,awayteam.c.y,a)).v1
 
                     item(itemindex.index(awayteam.c.x,awayteam.c.y,a)).v1=0
                 EndIf

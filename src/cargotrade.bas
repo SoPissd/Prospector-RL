@@ -1,5 +1,5 @@
-Declare function reward_bountyquest(employer as short) as short
-Declare function give_quest(st as short) as short
+'Declare function reward_bountyquest(employer as short) as short
+'Declare function give_quest(st as short) as short
 
 '
 
@@ -646,7 +646,7 @@ private function change_prices(st as short,etime as short) as short
     for c=12 to 1 step -1
         goods_prices(0,c,st)=goods_prices(0,c-1,st)
     next
-    goods_prices(0,c,st)=gameturn
+    goods_prices(0,c,st)=tVersion.gameturn
     for b=1 to 8
         for c=12 to 1 step -1
             goods_prices(b,c,st)=goods_prices(b,c-1,st)

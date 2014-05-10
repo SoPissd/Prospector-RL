@@ -476,7 +476,7 @@ function spacecombat(byref atts as _fleet,ter as short) as short
     endif
     if victory=2 then
         player.dead=0
-        if atts.ty=ft_pirate or atts.ty=ft_pirate2 then stock.combon(8).value+=noenemies
+        if atts.ty=ft_pirate or atts.ty=ft_pirate2 then tCompany.combon(8).value+=noenemies
         if atts.ty<8 then battleslost(atts.ty,0)+=1
         rlprint "All enemy ships fled or destroyed.",c_gre
     endif

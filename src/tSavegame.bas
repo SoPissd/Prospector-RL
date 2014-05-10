@@ -138,7 +138,7 @@ function savegame(crash as short=0) as short
     make_unflags(unflags())
     cl=player.h_sdesc
     names=player.desig
-    desig="("&cl &", "&credits(player.money) &" Cr, T:" &display_time(gameturn,2) &")"
+    desig="("&cl &", "&credits(player.money) &" Cr, T:" &display_time(tVersion.gameturn,2) &")"
     datestring=date_string
     'cls
     back=99
@@ -184,14 +184,14 @@ function savegame(crash as short=0) as short
     next
 
     for a=0 to 9
-        put #f,,combon(a)
+        put #f,,tCompany.combon(a)
     next
 
     put #f,,captainskill
     put #f,,wage
 
     for a=0 to 16
-        put #f,,retire.assets(a)
+        put #f,,tRetirement.assets(a)
     next
 
     print ".";
@@ -229,14 +229,14 @@ function savegame(crash as short=0) as short
     endif
 
     for a=1 to 4
-        put #f,,stock.companystats(a)
+        put #f,,tCompany.companystats(a)
     next
 
     put #f,,alienattacks
 
-    put #f,,lastshare
-    for a=0 to lastshare
-        put #f,,shares(a)
+    put #f,,tCompany.lastshare
+    for a=0 to tCompany.lastshare
+        put #f,,tCompany.shares(a)
     next
 
     for a=0 to 2
@@ -520,13 +520,13 @@ function load_game(filename as string) as short
         next
 
         for a=0 to 9
-            get #f,,combon(a)
+            get #f,,tCompany.combon(a)
         next
 
         get #f,,captainskill
         get #f,,wage
         for a=0 to 16
-            get #f,,retire.assets(a)
+            get #f,,tRetirement.assets(a)
         next
 
         print ".";
@@ -565,14 +565,14 @@ function load_game(filename as string) as short
         endif
 
         for a=1 to 4
-            get #f,,stock.companystats(a)
+            get #f,,tCompany.companystats(a)
         next
 
         get #f,,alienattacks
 
-        get #f,,lastshare
-        for a=0 to lastshare
-            Get #f,,shares(a)
+        get #f,,tCompany.lastshare
+        for a=0 to tCompany.lastshare
+            Get #f,,tCompany.shares(a)
         next
 
         for a=0 to 2

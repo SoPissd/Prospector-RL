@@ -435,7 +435,7 @@ function custom_ships(where as byte) as short
     dim as _ship s
     do
         nos=-1
-        nos=count_lines("data/customs.csv")-1
+        nos=tFile.Countlines("data/customs.csv")-1
         men="Custom hulls/Build custom hull/Delete custom hull/"
         des="Nil///"
         a=3

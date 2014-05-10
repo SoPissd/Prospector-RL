@@ -223,11 +223,11 @@ function meet_fleet(f as short)as short
     gen_fname(fname())
     if findbest(25,-1)>0 then cloak=5
     if fleet(f).ty=10 then 
-        lastturncalled=gameturn 
+        lastturncalled=tVersion.gameturn 
         eris_does
         return 0
     endif
-    if gameturn>lastturncalled+50 and fleet(f).ty>0 and player.dead=0 and just_run=0 then
+    if tVersion.gameturn>lastturncalled+50 and fleet(f).ty>0 and player.dead=0 and just_run=0 then
         if fleet(f).fighting=0 then
             if faction(0).war(fleet(f).ty)+rnd_range(1,10)>90 and fleet(f).ty<>1 then 'Merchants never attack 
                 q=1
@@ -239,7 +239,7 @@ function meet_fleet(f as short)as short
                 if fleet(f).ty=2 and fleet(f).con(15)<rnd_range(1,20) then
                     'Friendly pirates
                     q=friendly_pirates(f)
-                    lastturncalled=gameturn
+                    lastturncalled=tVersion.gameturn
                     display_stars(1)
                     display_ship
                     if q=0 then return 0
@@ -273,7 +273,7 @@ function meet_fleet(f as short)as short
         endif
     endif
     
-    lastturncalled=gameturn
+    lastturncalled=tVersion.gameturn
     display_stars(1)
     display_ship
     return 0
@@ -383,7 +383,7 @@ function decide_if_fight(f1 as short,f2 as short) as short
     'Ancient aliens attack everything
     if fleet(f1).ty=5 or fleet(f2).ty=5 then fighting=1
     
-    if f1<=5 or f2<=5 and gameturn<5000 then fighting=0 'Spacestations aren't attcked before turn 5000
+    if f1<=5 or f2<=5 and tVersion.gameturn<5000 then fighting=0 'Spacestations aren't attcked before turn 5000
     
     if fighting=1 then
         DbgPrint("fight initiated between " &fleet(f1).ty &" and "&fleet(f2).ty)
@@ -433,11 +433,11 @@ function ss_sighting(i as short) as short
     DbgPrint(fn &":"&fn2)
     c=11
     
-    if rnd_range(1,100)>basis(i).lastsightingturn-gameturn then
-        if basis(i).lastsightingturn-gameturn<25 then
+    if rnd_range(1,100)>basis(i).lastsightingturn-tVersion.gameturn then
+        if basis(i).lastsightingturn-tVersion.gameturn<25 then
             text ="There are some rumors about"
-            if basis(i).lastsightingturn-gameturn<10 then text="You hear a lot of people talking about"
-            if basis(i).lastsightingturn-gameturn<5 then text="The station is abuzz with talk about"
+            if basis(i).lastsightingturn-tVersion.gameturn<10 then text="You hear a lot of people talking about"
+            if basis(i).lastsightingturn-tVersion.gameturn<5 then text="The station is abuzz with talk about"
         else
             return 0
         endif
@@ -618,8 +618,8 @@ function move_fleets() as short
                             merctrade(fleet(a))
                         endif
                         if fleet(a).c.x=civ(fleet(a).ty-6).home.x and fleet(a).c.y=civ(fleet(a).ty-6).home.y then
-                            fleet(a)=comp.unload_f(fleet(a),11)
-                            fleet(a)=comp.load_f(fleet(a),11)
+                            fleet(a)=unload_f(fleet(a),11)
+                            fleet(a)=load_f(fleet(a),11)
                         endif
                     endif
                     if fleet(a).con(1)=0 then
@@ -642,7 +642,7 @@ function move_fleets() as short
                         if distance(fleet(a).c,basis(s).c)<12 then
                             basis(s).lastsighting=a
                             basis(s).lastsightingdis=fix(distance(fleet(a).c,basis(s).c))
-                            basis(s).lastsightingturn=gameturn
+                            basis(s).lastsightingturn=tVersion.gameturn
                         endif
                     endif
                     if fleet(a).ty>5 and fleet(a).ty<8 then

@@ -299,16 +299,16 @@ function ep_monsterupdate(i As Short, spawnmask() as _cords,lsp as short,mapmask
         If vismask(enemy(i).c.x,enemy(i).c.y)>0 Then
             If tmap(enemy(i).c.x,enemy(i).c.y).no=86 Then
                 rlprint "The other scoutship launches."
-                stock.companystats(basis(nearest_base(player.c)).company).profit+=1
+                tCompany.companystats(basis(nearest_base(player.c)).company).profit+=1
             EndIf
             If tmap(enemy(i).c.x,enemy(i).c.y).no=272 Or tmap(enemy(i).c.x,enemy(i).c.y).no=273 Then rlprint "The alien ship launches."
         Else
             If tmap(enemy(i).c.x,enemy(i).c.y).no=86 Then
                 rlprint "You see a scoutship starting in the distance."
-                stock.companystats(basis(nearest_base(player.c)).company).profit+=1
+                tCompany.companystats(basis(nearest_base(player.c)).company).profit+=1
             EndIf
             If tmap(enemy(i).c.x,enemy(i).c.y).no=272 Or tmap(enemy(i).c.x,enemy(i).c.y).no=273 Then rlprint "You see an alien ship starting in the distance."
-            stock.companystats(basis(nearest_base(player.c)).company).profit+=1
+            tCompany.companystats(basis(nearest_base(player.c)).company).profit+=1
         EndIf
         enemy(i)=enemy(lastenemy)
         lastenemy=lastenemy-1

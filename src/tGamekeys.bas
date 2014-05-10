@@ -14,7 +14,7 @@ Private function keyin(byref allowed as string="" , blocked as short=0)as string
     if walking<>0 then sleep 50
     flip
     if _test_disease=1 and allowed<>"" then allowed="#"&allowed
-    if gamerunning and allowed<>"" then allowed=allowed &" " ' gamerunning == player.dead>0
+    if tVersion.gamerunning and allowed<>"" then allowed=allowed &" " ' gamerunning == player.dead>0
     do 
         control=""
         do        
@@ -76,7 +76,7 @@ Private function keyin(byref allowed as string="" , blocked as short=0)as string
                     end select
                 endif            
             sleep 1
-        loop until key<>"" or walking<>0 or (allowed="" and gamerunning) or just_run<>0 'gamerunning==player.dead<>0
+        loop until key<>"" or walking<>0 or (allowed="" and tVersion.gamerunning) or just_run<>0 'gamerunning==player.dead<>0
         lastkey=key    
         comstr.nextpage
         if key<>"" then walking=0 

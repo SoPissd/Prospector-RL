@@ -303,7 +303,7 @@ function casino(staked as short=0, st as short=-1) as short
                 b=rnd_range(0,2)
                 passenger+=rnd_range(5,25)
                 if b<>st then
-                    t=gameturn+(rnd_range(15,25)/10)*distance(player.c,basis(b).c)
+                    t=tVersion.gameturn+(rnd_range(15,25)/10)*distance(player.c,basis(b).c)
                     price=distance(player.c,basis(b).c)*rnd_range(1,20)
                     bonus=rnd_range(1,15)
                     if askyn("A passenger needs to get to space station "& b+1 &" by "& display_time(t) &". He offers you "&price &" Cr, and a "& bonus &" Cr. Bonus for every day you arrive there earlier. Do you want to take him with you?(y/n)") then

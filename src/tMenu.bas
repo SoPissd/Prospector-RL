@@ -123,8 +123,8 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
                 rlprint ""
             case bg_stock
                 display_ship
-                display_stock
-                portfolio(17,2)
+                tCompany.display_stock
+                tCompany.portfolio(17,2)
                 rlprint ""
             case bg_roulette
                 drawroulettetable

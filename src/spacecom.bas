@@ -48,7 +48,7 @@ function display_station(a as short) as short
         if fleet(a).fighting<>0 then
             set__color( c_red,0,vismask(basis(a).c.x,basis(a).c.y))
             draw string (x*_fw1,y*_fh1),"x",,Font2,custom,@_col
-            if gameturn mod 10=0 then rlprint "Station "&a+1 &" is sending a distress signal! They are under attack!",c_red
+            if tVersion.gameturn mod 10=0 then rlprint "Station "&a+1 &" is sending a distress signal! They are under attack!",c_red
         endif
     endif
     

@@ -303,7 +303,7 @@ function move_ship(Key As String) As _ship
                         player.c=movepoint(player.c,5,,1)
                     Case Is=5
                         rlprint "Something strange is happening with the ships chronometer"
-                        gameturn=gameturn+rnd_range(1,6)-rnd_range(1,8)
+                        tVersion.gameturn=tVersion.gameturn+rnd_range(1,6)-rnd_range(1,8)
                     Case Is=6
                         rlprint "Your sensors are damaged."
                         player.sensors-=1
@@ -393,7 +393,7 @@ function move_ship(Key As String) As _ship
         For a=0 To 12
             If patrolquest(a).status=1 Then patrolquest(a).check
         Next
-        If player.cursed>0 And rnd_range(1,100)<3+player.cursed+spacemap(player.c.x,player.c.y) And gameturn Mod(50-player.cursed)=0 Then player=com_criticalhit(player,rnd_range(1,6)+6-player.armortype)
+        If player.cursed>0 And rnd_range(1,100)<3+player.cursed+spacemap(player.c.x,player.c.y) And tVersion.gameturn Mod(50-player.cursed)=0 Then player=com_criticalhit(player,rnd_range(1,6)+6-player.armortype)
     Else
         walking=0
     EndIf
@@ -714,7 +714,7 @@ function spacestation(st As Short) As _ship
     comstr.Reset
     display_ship
     'If _debug=1111 Then questroll=14
-    If gameturn>0 Then
+    If tVersion.gameturn>0 Then
         If basis(st).company=3 Then
             inspectionchance=5+faction(0).war(1)+foundsomething
         Else
@@ -813,7 +813,7 @@ function spacestation(st As Short) As _ship
         EndIf
     Next
     
-    If st<>player.lastvisit.s Or gameturn-player.lastvisit.t>600 Then
+    If st<>player.lastvisit.s Or tVersion.gameturn-player.lastvisit.t>600 Then
         b=count_and_make_weapons(st)
 
         If b<5 And rnd_range(1,100)<15 Then
@@ -822,12 +822,12 @@ function spacestation(st As Short) As _ship
         EndIf
     EndIf
     
-    If st<>player.lastvisit.s Or gameturn-player.lastvisit.t>100 Then
+    If st<>player.lastvisit.s Or tVersion.gameturn-player.lastvisit.t>100 Then
         rlprint gainxp(1),c_gre
         check_questcargo(st)
         
-        If stock.companystats(basis(st).company).capital<3000 Then rlprint "The spacestation is abuzz with rumors that "&companyname(basis(st).company) &" is in financial difficulties."
-        If stock.companystats(basis(st).company).capital<1000 Then
+        If tCompany.companystats(basis(st).company).capital<3000 Then rlprint "The spacestation is abuzz with rumors that "&companyname(basis(st).company) &" is in financial difficulties."
+        If tCompany.companystats(basis(st).company).capital<1000 Then
             rlprint companyname(basis(st).company) &" has closed their office in this station."
             dum=makecorp(-basis(st).company)
             basis(st).company=dum.company
@@ -838,7 +838,7 @@ function spacestation(st As Short) As _ship
             basis(st).pirmod=dum.pirmod
             rlprint companyname(basis(st).company) &" has taken their place."
         EndIf
-        dividend()
+        tCompany.dividend()
     EndIf
     
     girlfriends(st)
@@ -862,7 +862,7 @@ function spacestation(st As Short) As _ship
         a=Menu(bg_shiptxt,mtext,,,,,1)
         If a=1 Then
             If quarantine<8 Then
-                stock.company(st)
+                tCompany.company(st)
             Else
                 rlprint "You are under quarantine and not allowed to enter there"
             EndIf
@@ -943,7 +943,7 @@ function spacestation(st As Short) As _ship
                 rlprint "you are under quarantine and not allowed to enter there"
             EndIf
         EndIf
-        If a=9 Then retire.retirement()
+        If a=9 Then tRetirement.retirement()
         If a=10 Or a=-1 Then
             text=""
             If player.pilot(0)<0 Then text=text &"You dont have a pilot. "
@@ -971,7 +971,7 @@ function spacestation(st As Short) As _ship
     set__color(11,0)
     Cls
     player.lastvisit.s=st
-    player.lastvisit.t=gameturn
+    player.lastvisit.t=tVersion.gameturn
     Return player
 End function
 
@@ -983,7 +983,7 @@ function dock_drifting_ship(a As Short)  As Short
     Dim As Short Test=0
 
     m=drifting(a).m
-    If a<=3 And rnd_range(1,100)<10+Test And gameturn>5 Then
+    If a<=3 And rnd_range(1,100)<10+Test And tVersion.gameturn>5 Then
         station_event(m)
     EndIf
     For x=0 To 60
@@ -1165,10 +1165,10 @@ function explore_space() As Short
 		DbgPrint(spdescr(7))
     EndIf
 #endif
-    gameturn=fix(gameturn/10)*10 'Needs to be multiple of 10 for events to trigger
+    tVersion.gameturn=fix(tVersion.gameturn/10)*10 'Needs to be multiple of 10 for events to trigger
     Do
         DbgPrint("Lastfleet:"&lastfleet)
-        gameturn+=10
+        tVersion.gameturn+=10
         If show_specials<>0 Then rlprint "Planet is at " &map(sysfrommap(specialplanet(show_specials))).c.x &":"&map(sysfrommap(specialplanet(show_specials))).c.y
         If player.e.tick=-1 And player.dead=0 Then
             fl=0
@@ -1226,7 +1226,7 @@ function explore_space() As Short
             Next
             If fl>0 Or _testspacecombat=1 Then
                 If fleet(fl).ty=1 And fl>5 Then
-                    If gameturn Mod 10=0 Then
+                    If tVersion.gameturn Mod 10=0 Then
                         If fleet(fl).con(1)=0 Then
                             rlprint "There is a merchant convoy in sensor range, hailing us. press "&key_fi &" to attack," &key_ra & " to call by radio."
                         Else
@@ -1544,8 +1544,8 @@ function explore_space() As Short
                 Key=gettext(sidebar+(1+Len(Trim(player.h_sdesc)))*_fw2,1,32,"",1)
                 If Key<>"" Then player.desig=Key
                 set__color( 11,0)
-                gameturn=gameturn-1
-                gamedesig=player.desig
+                tVersion.gameturn=tVersion.gameturn-1
+                tVersion.gamedesig=player.desig
             EndIf
         EndIf
 

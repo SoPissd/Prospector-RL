@@ -1,8 +1,11 @@
-'tCompany
+'tCompany.
 
 
-namespace stock
+namespace tCompany
 	
+#ifdef head
+'#print -=-=-=-=-=-=-=-HEAD
+
 Type _share
     company As Byte
     bought As UInteger
@@ -24,12 +27,106 @@ End Type
 
 '
 
+Dim Shared combon(9) As _company_bonus
+
 Dim Shared shares(2048) As _share
 Dim Shared lastshare As Short
 
 Dim Shared companystats(5) As _company
 
-Dim Shared combon(9) As _company_bonus
+
+#endif'head
+#ifdef main
+'#print -=-=-=-=-=-=-=-MAIN
+	
+public function init() as integer
+	dim a as Integer
+    '
+    combon(0).base=10 'Planets Landed on
+    combon(1).base=5 'Aliens scanned
+    combon(2).base=150 'Minerals turned in
+    combon(3).base=5 'Only sells to Smith
+    combon(4).base=5 'Only sells to Erdidani
+    combon(5).base=5 'Only sells to Triax
+    combon(6).base=5 'Only sells to omega
+    combon(7).base=100 'Turns survived
+    combon(8).base=5 'Pirate Ships destroyed
+    '
+    Dim d_company As _company
+    For a=0 To 4
+        tCompany.companystats(a)=d_company
+    Next
+    '
+    Dim d_share As _share
+    For a=0 To 2047
+        shares(a)=d_share
+    Next
+    '
+    lastshare=0
+    '
+    dim c as _company
+    for a=0 to 5
+        c=companystats(a)
+        c.capital=25000
+        c.profit=0
+        c.rate=0
+        c.shares=50
+    next
+    '
+	return 0
+End Function
+
+private function pay_bonuses(st as short) as short
+    DimDebug(0)
+    dim as uinteger a,tarval,c
+    dim as single factor
+    for a=0 to 3
+        if reward(a)>0 then c=1
+    next
+    if ano_money>0 then c=1
+    DbgPrint(c &":"& basis(st).company+2)
+    if c=1 then combon(basis(st).company+2).value+=1
+    combon(7).value=tVersion.gameturn/(7*24*60)
+    for a=0 to 8
+        if a<3 or a>6 then
+            tarval=combon(a).base*(combon(a).rank+1)^2
+            DbgPrint(tarval &":"& combon(a).value)
+            if combon(a).value>=tarval and combon(c).rank<6 then
+                combon(a).rank+=1
+                factor=(combon(a).rank^2/2)*100
+                If a=0 then rlprint "For exploring "&(combon(a).value) &" planets you receive a bonus of "&credits(int(combon(a).rank*factor)) &" Cr.",11
+                If a=1 then rlprint "For recording biodata of "&credits(combon(a).value) &" aliens you receive a bonus of "&credits(int(combon(a).rank*factor)) &" Cr.",11
+                If a=2 then rlprint "For delivering "&credits(cint(reward(2)*basis(st).resmod*haggle_("up"))) &" Cr. worth of resources you receive a bonus of "&int(combon(a).rank*factor) &" Cr.",11
+                If a=7 and combon(a).rank>1 then rlprint "For continued exclusive business over "&(combon(a).value) &" weeks you receive a bonus of "&credits(int(combon(a).rank*factor)) &" Cr.",11
+                If a=8 then rlprint "For destroying "&credits(combon(a).value) &" pirate ships you receive a bonus of "&int(combon(a).rank*factor) &" Cr.",11
+                combon(a).value=0
+                addmoney(int(combon(a).rank*factor),mt_bonus)
+            endif
+        endif
+    next
+    for a=3 to 6
+        tarval=combon(a).base*(combon(a).rank+1)^2
+        DbgPrint(tarval &":"& combon(a).value)
+    next
+    
+    if combon(3).value>1 and combon(4).value=0 and combon(5).value=0 and combon(6).value=0 then c=3
+    if combon(3).value=0 and combon(4).value>1 and combon(5).value=0 and combon(6).value=0 then c=4
+    if combon(3).value=0 and combon(4).value=0 and combon(5).value>1 and combon(6).value=0 then c=5
+    if combon(3).value=0 and combon(4).value=0 and combon(5).value=0 and combon(6).value>1 then c=6
+    if c>0 then
+        if c=basis(st).company+2 then
+            tarval=combon(c).base*(combon(c).rank+1)^2
+            if combon(c).value>=tarval and combon(c).rank<6 then
+                 combon(c).rank+=1
+                 factor=(combon(a).rank^2/2)*100
+                 rlprint "For exclusively selling to " & companyname(basis(st).company) & " you receive a bonus of "& credits(int(combon(c).rank*100)) & "Cr.",15
+                 addmoney(int(combon(c).rank*factor),mt_bonus)
+           endif
+        endif
+    endif
+
+    return 0
+end function
 
 
 function company(st as short) as short
@@ -520,59 +617,6 @@ function com_remove(attacker() as _ship, t as short,flag as short=0) as short
 end function
 
 
-private function pay_bonuses(st as short) as short
-    DimDebug(0)
-    dim as uinteger a,tarval,c
-    dim as single factor
-    for a=0 to 3
-        if reward(a)>0 then c=1
-    next
-    if ano_money>0 then c=1
-    DbgPrint(c &":"& basis(st).company+2)
-    if c=1 then combon(basis(st).company+2).value+=1
-    combon(7).value=gameturn/(7*24*60)
-    for a=0 to 8
-        if a<3 or a>6 then
-            tarval=combon(a).base*(combon(a).rank+1)^2
-            DbgPrint(tarval &":"& combon(a).value)
-            if combon(a).value>=tarval and combon(c).rank<6 then
-                combon(a).rank+=1
-                factor=(combon(a).rank^2/2)*100
-                If a=0 then rlprint "For exploring "&(combon(a).value) &" planets you receive a bonus of "&credits(int(combon(a).rank*factor)) &" Cr.",11
-                If a=1 then rlprint "For recording biodata of "&credits(combon(a).value) &" aliens you receive a bonus of "&credits(int(combon(a).rank*factor)) &" Cr.",11
-                If a=2 then rlprint "For delivering "&credits(cint(reward(2)*basis(st).resmod*haggle_("up"))) &" Cr. worth of resources you receive a bonus of "&int(combon(a).rank*factor) &" Cr.",11
-                If a=7 and combon(a).rank>1 then rlprint "For continued exclusive business over "&(combon(a).value) &" weeks you receive a bonus of "&credits(int(combon(a).rank*factor)) &" Cr.",11
-                If a=8 then rlprint "For destroying "&credits(combon(a).value) &" pirate ships you receive a bonus of "&int(combon(a).rank*factor) &" Cr.",11
-                combon(a).value=0
-                addmoney(int(combon(a).rank*factor),mt_bonus)
-            endif
-        endif
-    next
-    for a=3 to 6
-        tarval=combon(a).base*(combon(a).rank+1)^2
-        DbgPrint(tarval &":"& combon(a).value)
-    next
-    
-    if combon(3).value>1 and combon(4).value=0 and combon(5).value=0 and combon(6).value=0 then c=3
-    if combon(3).value=0 and combon(4).value>1 and combon(5).value=0 and combon(6).value=0 then c=4
-    if combon(3).value=0 and combon(4).value=0 and combon(5).value>1 and combon(6).value=0 then c=5
-    if combon(3).value=0 and combon(4).value=0 and combon(5).value=0 and combon(6).value>1 then c=6
-    if c>0 then
-        if c=basis(st).company+2 then
-            tarval=combon(c).base*(combon(c).rank+1)^2
-            if combon(c).value>=tarval and combon(c).rank<6 then
-                 combon(c).rank+=1
-                 factor=(combon(a).rank^2/2)*100
-                 rlprint "For exclusively selling to " & companyname(basis(st).company) & " you receive a bonus of "& credits(int(combon(c).rank*100)) & "Cr.",15
-                 addmoney(int(combon(c).rank*factor),mt_bonus)
-           endif
-        endif
-    endif
-
-    return 0
-end function
-
-
 function shares_value() as short
     dim as short a,v
     for a=1 to lastshare
@@ -628,8 +672,8 @@ function buyshares(comp as short,n as short) as short
             if lastshare<2048+n and companystats(comp).shares>0 then
                 lastshare=lastshare+1
                 shares(lastshare).company=comp
-                shares(lastshare).bought=gameturn
-                shares(lastshare).lastpayed=gameturn
+                shares(lastshare).bought=tVersion.gameturn
+                shares(lastshare).lastpayed=tVersion.gameturn
                 companystats(comp).shares-=1
             endif
         next
@@ -705,9 +749,9 @@ function dividend() as short
     dim payout(4) as single
     dim a as short
     for a=0 to lastshare
-        if shares(a).company>0 and shares(a).lastpayed<=gameturn-3*30*24*60 then '3 months
+        if shares(a).company>0 and shares(a).lastpayed<=tVersion.gameturn-3*30*24*60 then '3 months
             payout(shares(a).company)=payout(shares(a).company)+companystats(shares(a).company).rate/100
-            shares(a).lastpayed=gameturn
+            shares(a).lastpayed=tVersion.gameturn
         endif
     next
     for a=1 to 4
@@ -849,6 +893,9 @@ end function
 
 
 
+#endif'main
 End Namespace
 
-
+#ifdef main
+	tCompany.init()
+#endif		

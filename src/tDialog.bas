@@ -14,40 +14,43 @@ Type _dialognode
 End Type
 
 function load_dialog_quests() as short
-    dim as short f,i,j,g
+    dim as integer f
+    dim as short i,j,g
     dim as string l,w(3)
 
-    f=open_file("data/dialogquests.csv")
-    do
-        i+=1
-        for j=0 to 2
-            for g=0 to 3
-                w(g)=""
-            next
-            line input #f,l
-            string_towords(w(),l,";")
-
-            questguydialog(i,j,Q_WANT)=w(1)
-            questguydialog(i,j,Q_HAS)=w(2)
-            questguydialog(i,j,Q_ANSWER)=w(3)
-        next
-
-    loop until eof(f)
-
-    close #f
-    f=open_file("data/dialogquests2.csv")
-    i=0
-    do
-        w(0)=""
-        w(1)=""
-        w(2)=""
-        line input #f,l
-        string_towords(w(),l,";")
-        i+=1
-        questguyquestion(i,Q_WANT)=w(0)
-        questguyquestion(i,Q_HAS)=w(1)
-    loop until eof(f)
-    close #f
+    if tFile.Openinput("data/dialogquests.csv",f)=0 then 
+	    do
+	        i+=1
+	        for j=0 to 2
+	            for g=0 to 3
+	                w(g)=""
+	            next
+	            line input #f,l
+	            string_towords(w(),l,";")
+	
+	            questguydialog(i,j,Q_WANT)=w(1)
+	            questguydialog(i,j,Q_HAS)=w(2)
+	            questguydialog(i,j,Q_ANSWER)=w(3)
+	        next
+	
+	    loop until eof(f)
+	    tFile.Closefile(f)
+    EndIf
+    
+    if tFile.Openinput("data/dialogquests2.csv",f)=0 then 
+	    i=0
+	    do
+	        w(0)=""
+	        w(1)=""
+	        w(2)=""
+	        line input #f,l
+	        string_towords(w(),l,";")
+	        i+=1
+	        questguyquestion(i,Q_WANT)=w(0)
+	        questguyquestion(i,Q_HAS)=w(1)
+	    loop until eof(f)
+	    tFile.Closefile(f)
+    EndIf
     return 0
 end function
 
@@ -329,7 +332,7 @@ function update_questguy_dialog(i as short,node() as _dialognode,iteration as sh
             node(3).option(2).no=1
         case qt_travel
             node(3).effekt="PASSENGER"
-            questguy(i).flag(15)=(gameturn+(rnd_range(45,65))*distance(player.c,basis(questguy(i).flag(2)).c))
+            questguy(i).flag(15)=(tVersion.gameturn+(rnd_range(45,65))*distance(player.c,basis(questguy(i).flag(2)).c))
         case qt_biodata 
             if reward(1)>0 then
                 node(3).effekt="BUYBIODATA" 
@@ -369,7 +372,7 @@ function update_questguy_dialog(i as short,node() as _dialognode,iteration as sh
         if questguy(i).has.type=qt_travel then
             node(4).effekt="PASSENGER"
             node(4).param(0)=i
-            questguy(i).flag(15)=(gameturn+(rnd_range(45,65))*distance(player.c,basis(questguy(i).flag(2)).c))
+            questguy(i).flag(15)=(tVersion.gameturn+(rnd_range(45,65))*distance(player.c,basis(questguy(i).flag(2)).c))
             node(4).statement=questguydialog(questguy(i).has.type,questguy(i).has.motivation,Q_HAS)
 
         endif

@@ -129,7 +129,7 @@ function give_patrolquest(employer as short) as short
     next
     if j>-1 then
         if askyn("We could use some help with an easy patrol. Are you interested?(y/n)") then
-            patrolquest(j).generate(rnd_range(2,4),rnd_range(15,20),gameturn/250+10)'!
+            patrolquest(j).generate(rnd_range(2,4),rnd_range(15,20),tVersion.gameturn/250+10)'!
             patrolquest(j).employer=employer
             rlprint patrolquest(j).show &" Upon completion you will get paid "&Credits(patrolquest(j).reward) &" Cr."
             questroll=999
@@ -272,7 +272,7 @@ function give_quest(st as short) as short
             endif
             
         case 6
-            if player.questflag(5)=0 and gameturn>3*30*24*60 then
+            if player.questflag(5)=0 and tVersion.gameturn>3*30*24*60 then
                 rlprint "The company rep warns you about a ship that has reportedly been preying on pirates and merchants alike. 'It's fast, it's dangerous, and a confirmed kill is worth 15.000 credits to my company.",15
                 player.questflag(5)=1
                 lastfleet=lastfleet+1
@@ -1344,7 +1344,7 @@ function eris_does() as short
                     basis(rnd_range(0,2)).c.y=rnd_range(0,sm_y)
                 case 51 to 60
                     rlprint "Eris screws around with time",15
-                    gameturn=gameturn+5-rnd_range(1,10)
+                    tVersion.gameturn=tVersion.gameturn+5-rnd_range(1,10)
                 case 61 to 70
                     rlprint "Eris snaps with her fingers",15
                     drifting(rnd_range(1,lastdrifting)).x=player.c.x
