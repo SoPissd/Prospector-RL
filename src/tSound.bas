@@ -68,7 +68,7 @@ function load_sounds() as short
 			Print
 		else
 			print "Error initializing FBsound!"
-			LogWarning("Error initializing FBsound!")
+			'LogWarning("Error initializing FBsound!")
 			sleep 1500
 		endif
 	#EndIf

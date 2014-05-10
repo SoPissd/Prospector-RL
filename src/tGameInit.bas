@@ -880,15 +880,16 @@ end sub
 function Initgame() as integer
 	check_filestructure()
 	load_config()
-	load_fonts()
-	load_tiles()
 	load_keyset()
 	load_sounds()
 	load_palette()
 	DbgScreeninfo
+	'DbgWeapdumpCSV
+	   
+   	load_fonts()
+	load_tiles()
 	register()
-	'DbgWeapdumpCSV   
-    setglobals
+	setglobals
     DbgTilesCSV
     return 0   
 End function

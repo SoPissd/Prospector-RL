@@ -36,8 +36,13 @@ function keyminus(key as string) as short
 end function
 
 
-function Pressanykey() as Integer
-	'set__color( 12,0)
+function Pressanykey(aCol as short=0,aFg as short=0,aBg as short=0) as Integer
+	if aFg>0 then
+		set__color( aFg,aBg )
+	EndIf
+	if aCol>0 then
+		Locate csrlin,aCol
+	EndIf
 	Print "Press any key to exit"
 	do while inkey<>"": loop
 	Sleep

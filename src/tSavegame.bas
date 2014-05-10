@@ -367,7 +367,7 @@ function savegame(crash as short=0) as short
     put #f,,seed
     
     tFile.Closefile(f)
-
+    ?
 
     'Overwrites large save file with compressed save file. but skills if file is empty
     if fname<>"savegames/empty.sav" then
@@ -705,6 +705,7 @@ function load_game(filename as string) as short
 	    rng.Seed=seed
 	    
         tFile.Closefile(f)
+        ?
         if fname<>"savegames/empty.sav" and configflag(con_savescumming)=1 then
             kill(fname)
         elseif fname<>"savegames/empty.sav" then
@@ -719,7 +720,8 @@ function load_game(filename as string) as short
     else
         player.desig=filename
     endif
-    cls
+    
+    'cls
     
     DbgPortalsCSV
     DbgItems2CSV

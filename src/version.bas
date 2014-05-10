@@ -65,7 +65,8 @@ public function Errorscreen(text as string) As integer
 	If gamerunning=1 Then
 		Locate 15,0
 		savegame(1)
-	EndIf	
+	EndIf
+	?
 	return 0
 End function
 
