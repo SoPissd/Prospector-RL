@@ -897,11 +897,11 @@ function list_inventory() as string
         b+=1
 '        select case invn(i)
 '        case is >9
-'            draw string (_screenx-(len(trim(inv(i).desig))+3)*_fw2,_screeny-((c-b)*_fh2)),invn(i)&" "&inv(i).desigp,,font2,custom,@_col
+'            draw string (tScreen.x-(len(trim(inv(i).desig))+3)*_fw2,tScreen.y-((c-b)*_fh2)),invn(i)&" "&inv(i).desigp,,font2,custom,@_col
 '        case 2 to 9
-'            draw string (_screenx-(len(trim(inv(i).desig))+3)*_fw2,_screeny-((c-b)*_fh2)),invn(i)&" "&inv(i).desigp,,font2,custom,@_col
+'            draw string (tScreen.x-(len(trim(inv(i).desig))+3)*_fw2,tScreen.y-((c-b)*_fh2)),invn(i)&" "&inv(i).desigp,,font2,custom,@_col
 '        case else
-'            draw string (_screenx-len(trim(inv(i).desig))*_fw2,_screeny-((c-b)*_fh2)),inv(i).desig,,font2,custom,@_col
+'            draw string (tScreen.x-len(trim(inv(i).desig))*_fw2,tScreen.y-((c-b)*_fh2)),inv(i).desig,,font2,custom,@_col
 '
 '        end select
 
@@ -999,7 +999,7 @@ function buy_weapon(st as short) as short
         last=i
         ex=i+1
         
-        screenset 0,1
+        tScreen.set(0)
         set__color(11,0)
         cls
         display_ship()        

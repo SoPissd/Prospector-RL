@@ -56,7 +56,7 @@ function display_ship(show as byte=0) as short
        if crew(a).hpmax>=1 and crew(a).typ>=6 then player.security+=1
     next
 
-    textbox("Pi:" & p & " Gu:" &g &" Sc:" &s &" Dr:"&d &"  Security:"&player.security,sidebar,2*_fh2,(_screenx-sidebar)/_fw2,11,0,1 )
+    textbox("Pi:" & p & " Gu:" &g &" Sc:" &s &" Dr:"&d &"  Security:"&player.security,sidebar,2*_fh2,(tScreen.x-sidebar)/_fw2,11,0,1 )
     draw string(sidebar,4*_fh2), "Sensors:"&player.sensors,,Font2,custom,@_col
 
     for a=1 to 5
@@ -70,9 +70,9 @@ function display_ship(show as byte=0) as short
     if wl+4>_lines then
         _lines=wl+4
         save_config(configflag(con_tiles))
-        _screeny=_lines*_fh1
+        tScreen.y=_lines*_fh1
 
-        'screenres _screenx,_screeny,8,2,GFX_WINDOWED
+        'screenres tScreen.x,tScreen.y,8,2,GFX_WINDOWED
     endif
     draw string(sidebar,(wl+4)*_fh2), "Fuel(" &player.fuelmax+player.fuelpod &"):",,Font2,custom,@_col
     set__color( 11,0)

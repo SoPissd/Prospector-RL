@@ -61,6 +61,15 @@ next
 Dim Shared tmap(60,20) As _tile
 
 
+function load_tiles_msg() as short
+    tScreen.set(1)
+    locate 1,1
+    print "Loading tiles:.."
+    tScreen.set(0)    
+    cls
+    return 0
+end function
+
 function load_tiles() as short
     dim as short x,y,a,n,sx,sy,showtiles
     '
@@ -68,14 +77,14 @@ function load_tiles() as short
 		return 0
 	EndIf
     '
-    showtiles=0
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:."
-    screenset 0,1
+	load_tiles_msg()
+    
+	showtiles=0
+	
     for a=0 to 4096
         gt_no(a)=2048
     next
+	
     if not fileexists("graphics/ships.bmp") then
         color rgb(255,255,0)
         print "Couldn't find graphic tiles, switching to ASCII"
@@ -84,7 +93,7 @@ function load_tiles() as short
         sleep 1500
         return 0
     endif
-    cls
+
     bload "graphics/ships.bmp"
     for y=0 to _tiy*16 step _tiy
         sx=1
@@ -97,12 +106,7 @@ function load_tiles() as short
         draw string (24*9,y),""&sy
     next
     
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:.."
-    screenset 0,1
-    
-    cls
+	load_tiles_msg()
     bload "graphics/ships2.bmp"
     for y=0 to _tiy*16 step _tiy
         sx=1
@@ -115,12 +119,7 @@ function load_tiles() as short
         draw string (24*9,y),""&sy
     next
 
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:..."
-    screenset 0,1
-    
-    cls
+	load_tiles_msg()
     bload "graphics/ships3.bmp"
     for y=0 to _tiy*16 step _tiy
         sx=1
@@ -133,12 +132,7 @@ function load_tiles() as short
         draw string (24*10,y),""&sy
     next
 
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:...."
-    screenset 0,1
-    
-    cls
+	load_tiles_msg()
     bload "graphics/drifting.bmp"
     for y=0 to _tiy*16 step _tiy
         sx=1
@@ -151,12 +145,7 @@ function load_tiles() as short
         draw string (24*10,y),""&sy
     next
 
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:....."
-    screenset 0,1
-    
-    cls
+	load_tiles_msg()
     bload "graphics/shield.bmp"
     for x=0 to 7
         for y=0 to 4
@@ -168,14 +157,9 @@ function load_tiles() as short
     'Clear tile
     gtiles(0)=imagecreate(_tix,_tiy,rgba(0,0,0,255))
     
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:......"
-    screenset 0,1
-
+	load_tiles_msg()
     a=1
     n=1
-    cls
     bload "graphics/space.bmp"
     for y=0 to _tiy*6 step _tiy
         for x=0 to _tix*15 step _tix
@@ -187,12 +171,8 @@ function load_tiles() as short
         next
     next
     
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:......."
-    screenset 0,1
+	load_tiles_msg()
     n=75
-    cls
     bload "graphics/weapons.bmp"
     y=0
     for x=0 to _tix*2 step _tix
@@ -220,13 +200,8 @@ function load_tiles() as short
     next
 
     
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:........"
-    screenset 0,1
-    
+	load_tiles_msg()
     n=101
-    cls
     bload "graphics/land.bmp"
     for y=0 to _tiy*16 step _tiy
         for x=0 to _tix*19 step _tix
@@ -238,13 +213,8 @@ function load_tiles() as short
         next
     next
 
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:........."
-    screenset 0,1
-    
+	load_tiles_msg()
     n=750
-    cls
     bload "graphics/critters3.bmp"
     for y=0 to _tiy*10 step _tiy
         x=0
@@ -255,14 +225,8 @@ function load_tiles() as short
         n+=1
     next
 
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:.........."
-    screenset 0,1
-    
-
+	load_tiles_msg()
     n=800
-    cls
     bload "graphics/critters2.bmp"
     for y=0 to _tiy*10 step _tiy
         for x=0 to _tix*12 step _tix
@@ -276,13 +240,8 @@ function load_tiles() as short
     next
     if showtiles=1 then sleep
 
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:..........."
-    screenset 0,1
-    
+	load_tiles_msg()
     n=990
-    cls
     bload "graphics/player.bmp"
     for y=0 to _tiy*2 step _tiy
         for x=0 to _tix*2 step _tix
@@ -295,13 +254,8 @@ function load_tiles() as short
     next
 
 
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:............"
-    screenset 0,1
-    
+	load_tiles_msg()
     n=1000
-    cls
     bload "graphics/critters.bmp"
     for y=0 to _tiy*4 step _tiy
         for x=0 to _tix*19 step _tix
@@ -313,16 +267,9 @@ function load_tiles() as short
         next
     next
 
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:............."
-    screenset 0,1
-    
-
+	load_tiles_msg()
     n=1500
-    cls
     bload "graphics/characters.bmp"
-
     for y=0 to _tiy*1 step _tiy
         for x=0 to _tix*7 step _tix
             gtiles(a)=imagecreate(_tix,_tiy)
@@ -337,11 +284,7 @@ function load_tiles() as short
     'Space tiles
     cls
     bload "graphics/planetmap.bmp"
-
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:.............."
-    screenset 0,1
+	load_tiles_msg()
     
     for y=0 to _tiy*4 step _tiy
         for x=0 to _tix*5 step _tix
@@ -354,13 +297,8 @@ function load_tiles() as short
     next
 
 
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:..............."
-    screenset 0,1
-    
+	load_tiles_msg()
     n=1750
-    cls
     bload "graphics/spacestations.bmp"
     for x=0 to _tix*11 step _tix
         gtiles(a)=imagecreate(_tix,_tiy)
@@ -370,13 +308,8 @@ function load_tiles() as short
         n+=1
     next
 
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:................"
-    screenset 0,1
-    
+	load_tiles_msg()
     n=2001
-    cls
     bload "graphics/items.bmp"
     for y=0 to _tiy*6 step _tiy
         for x=0 to _tix*19 step _tix
@@ -388,14 +321,8 @@ function load_tiles() as short
         next
     next
 
-
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:................."
-    screenset 0,1
-    
+	load_tiles_msg()
     n=2500
-    cls
     bload "graphics/walls.bmp"
     for y=0 to _tiy*13 step _tiy
         for x=0 to _tix*9 step _tix
@@ -408,13 +335,8 @@ function load_tiles() as short
     next
 
 
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:.................."
-    screenset 0,1
-    
+	load_tiles_msg()
     n=3001
-    cls
     bload "graphics/portals.bmp"
     y=0
     for x=0 to _tix*8 step _tix
@@ -428,10 +350,8 @@ function load_tiles() as short
     bload "graphics/missing.bmp"
     gtiles(2048)=imagecreate(_tix,_tiy)
     get (x,y)-(x+_tix-1,y+_tiy-1),gtiles(2048)
-    screenset 1,1
-    locate 1,1
-    print "Loading tiles:.................."
-    
+
+	load_tiles_msg()    
     return 0
 end function
 

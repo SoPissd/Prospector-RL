@@ -323,7 +323,7 @@ end function
 
 function planet_cursor(p as _cords,mapslot as short,byref osx as short,shteam as byte) as string
     dim key as string
-    screenset 0,1
+    tScreen.set(0)
     cls
     osx=calcosx(p.x,planets(mapslot).depth)
     display_planetmap(mapslot,osx,4)

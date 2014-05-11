@@ -15,7 +15,10 @@ Enum tFileOpenMode
 	fmRandom
 End Enum	
 	
+dim lastfn as String
+
 public function init() As integer
+	lastfn=""
 	return 0
 End function
 
@@ -48,6 +51,7 @@ public function Openfile(filename as string, ByRef fileno as integer, filemode a
     if fileno<=0 then 
 		fileno=freefile
     EndIf
+    lastfn=filename
 	scope
 	select case filemode
 		case fmInput:	i= Open(filename, For Input,  As #fileno)	:goto endscope

@@ -866,7 +866,7 @@ end function
 
 function trading(st as short) as short
     dim a as short
-    screenset 1,1
+    tScreen.set(1)
     check_tasty_pretty_cargo
     if st<3 then
         do

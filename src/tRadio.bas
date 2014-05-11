@@ -73,7 +73,7 @@ function shipstatus(heading as short=0) as short
     set__color( 0,0)
     cls
     do
-        cw=(_screenx-16*_fw2)/3.5
+        cw=(tScreen.x-16*_fw2)/3.5
         cw=cw/_fw2
         if heading=0 then textbox("{15}Name: {11}"&player.desig &"{15} Type:{11}" &player.h_desig,1,0,40)
 
@@ -266,7 +266,7 @@ function ep_radio(ByRef nextlanding As _cords,ByRef ship_landing As Short, shipf
     Dim As _weap del
     slot=player.map
     osx=calcosx(awayteam.c.x,planets(slot).depth)
-    Screenset 1,1
+    tScreen.set(1)
     p2.x=player.landed.x
     p2.y=player.landed.y
     rlprint "Engaging remote control."

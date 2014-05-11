@@ -195,7 +195,7 @@ function explore_planet(from As _cords, orbit As Short) As _cords
     Next
     lastenemy=0
 
-    Screenset 0,1
+    tScreen.set(0)
     set__color(11,0)
     Cls
     Flip
@@ -753,7 +753,7 @@ EndIf
     osx=calcosx(awayteam.c.x,planets(slot).depth)
     
     DbgLogExplorePlanet("Displaystuff")
-    Screenset 0,1
+    tScreen.set(0)
     set__color(11,0)
     Cls
     display_planetmap(slot,osx,0)
@@ -820,7 +820,7 @@ EndIf
             lastenemy=ep_spawning(spawnmask(),lsp,diesize,nightday())
             ep_shipfire(shipfire())
             ep_items(localturn)
-            Screenset 0,1
+            tScreen.set(0)
             set__color(11,0)
             Cls
             display_planetmap(slot,osx,0)
@@ -847,7 +847,7 @@ EndIf
         If  tmap(awayteam.c.x,awayteam.c.y).resources>0 Or planetmap(awayteam.c.x,awayteam.c.y,slot)=17 Or  (tmap(awayteam.c.x,awayteam.c.y).no>2 And tmap(awayteam.c.x,awayteam.c.y).gives>0 And player.dead=0 And (awayteam.c.x<>old.x Or awayteam.c.y<>old.y))  Then
             old=awayteam.c
             osx=calcosx(awayteam.c.x,planets(slot).depth)
-            Screenset 0,1
+            tScreen.set(0)
             set__color(11,0)
             Cls
             display_planetmap(slot,osx,0)
@@ -874,7 +874,7 @@ EndIf
         DbgLogExplorePlanet("5  ae" & awayteam.e.e & nextmap.m)
         If (player.dead=0 And awayteam.e.tick=-1) Then
             
-            Screenset 0,1
+            tScreen.set(0)
             set__color(11,0)
             Cls
             display_planetmap(slot,osx,0)
@@ -884,7 +884,7 @@ EndIf
             rlprint("")
             Flip
             
-            Screenset 0,1
+            tScreen.set(0)
             set__color(11,0)
             Cls
             display_planetmap(slot,osx,0)
@@ -897,7 +897,7 @@ EndIf
             If nextmap.m=0 Then Key=(keyin(allowed,walking))
             DbgLogExplorePlanet("&" & key)
             If Key="" Then
-                screenset 0,1
+                tScreen.set(0)
                 Cls
                 display_planetmap(slot,osx,0)
                 ep_display ()
@@ -994,7 +994,7 @@ EndIf
             If vacuum(awayteam.c.x,awayteam.c.y)=1 And awayteam.helmet=0 Then ep_helmet()
             If vacuum(awayteam.c.x,awayteam.c.y)=0 And vacuum(old.x,old.y)=1 And awayteam.helmet=1 Then ep_helmet
         'Display all stuff
-            Screenset 0,1
+            tScreen.set(0)
             set__color(11,0)
             Cls
 
@@ -1020,7 +1020,7 @@ EndIf
             rlprint ""
             Flip
             DbgLogExplorePlanet("drew everything again and flipped")
-            'screenset 1,1
+            'tScreen.set(1)
 
             If rnd_range(1,100)<disease(awayteam.disease).nac Then
                 Key=""

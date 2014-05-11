@@ -65,7 +65,7 @@ function wormhole_ani(target As _cords) As Short
         If player.osy<=0 Then player.osy=0
         If player.osx>=sm_x-_mwx Then player.osx=sm_x-_mwx
         If player.osy>=sm_y-20 Then player.osy=sm_y-20
-        Screenset 0,1
+        tScreen.set(0)
         Cls
         player.di+=1
         If player.di=5 Then player.di=6
@@ -407,7 +407,7 @@ function target_landing(mapslot As Short,Test As Short=0) As Short
     Dim As Short c,osx
     set__color(11,0)
     Cls
-    Screenset 1,1
+    tScreen.set(1)
 
     rlprint "Choose landing site"
     p.x=30
@@ -666,7 +666,7 @@ function scanning() As Short
         EndIf
         If planets(mapslot).discovered<2 Then planets(mapslot).discovered=2
         Do
-            Screenset 0,1
+            tScreen.set(0)
             Cls
             display_planetmap(mapslot,osx,1)
             dplanet(planets(mapslot),slot,scanned,mapslot)
@@ -1146,20 +1146,20 @@ function explore_space() As Short
         Next
     EndIf
 #endif
-    Screenset 0,1
+    tScreen.set(0)
     Cls
     bg_parent=bg_shipstarstxt
     location=lc_onship
     display_stars(1)
     display_ship
     Flip
-    Screenset 0,1
+    tScreen.set(0)
     Cls
     bg_parent=bg_shipstarstxt
     display_stars(1)
     display_ship
     Flip
-    Screenset 0,1
+    tScreen.set(0)
 #if __FB_DEBUG__
     If debug=10 Then
 		DbgPrint(spdescr(7))
@@ -1255,7 +1255,7 @@ function explore_space() As Short
             If wormcom=1 Then comstr.t=comstr.t &key_la &" enter wormhole;"
             If artflag(25)>0 Then comstr.t=comstr.t &key_te &" wormhole generator"
             
-            Screenset 0,1
+            tScreen.set(0)
             Cls
             bg_parent=bg_shipstarstxt
             location=lc_onship
@@ -1265,7 +1265,7 @@ function explore_space() As Short
             rlprint ""
             Flip
         
-            'screenset 1,1
+            'tScreen.set(1)
             Key=keyin(allowed,walking)
             
             player=move_ship(Key)
@@ -1423,7 +1423,7 @@ function explore_space() As Short
                             player=spacestation(a)
                             Key=""
                             If configflag(con_autosave)=0 And player.dead=0 Then
-                                Screenset 1,1
+                                tScreen.set(1)
                                 rlprint "Saving game",15
                                 savegame()
                             EndIf
@@ -1478,7 +1478,7 @@ function explore_space() As Short
                         EndIf
                     EndIf
                 Next
-                Screenset 1,1
+                tScreen.set(1)
                 display_stars(1)
             EndIf
 
@@ -1515,7 +1515,7 @@ function explore_space() As Short
             If Key=key_awayteam Then showteam(0)
 
 
-            Screenset 0,1
+            tScreen.set(0)
             set__color(11,0)
             Cls
 
@@ -1538,7 +1538,7 @@ function explore_space() As Short
 
         If Key=key_rename Then
             If askyn("Do you want to rename your ship? (y/n)") Then
-                Screenset 1,1
+                tScreen.set(1)
                 set__color( 15,0)
                 draw_string(sidebar+(1+Len(Trim(player.h_sdesc)))*_fw2 ,0, Space(25),font2,_col)
                 Key=gettext(sidebar+(1+Len(Trim(player.h_sdesc)))*_fw2,1,32,"",1)
@@ -1565,7 +1565,7 @@ function explore_space() As Short
                 If player.osy>=sm_y-20 Then player.osy=sm_y-20
                 osx=player.osx
                 osy=player.osy
-                Screenset 0,1
+                tScreen.set(0)
                 Cls
                 display_stars(2)
                 display_ship(1)
@@ -1589,13 +1589,13 @@ function explore_space() As Short
                         EndIf
                      EndIf
                 Next
-                Screenset 0,1
+                tScreen.set(0)
                 Cls
                 display_stars(2)
                 display_ship(1)
                 rlprint ""
                 Flip
-                Screenset 1,1
+                tScreen.set(1)
                 If Asc(Key)<65 Or Asc(Key)>122 Then Key=""
                 text=gettext((p2.x-osx)*_fw1,(p2.y-osy)*_fh1,16,Key,1)
                 text=Trim(text)

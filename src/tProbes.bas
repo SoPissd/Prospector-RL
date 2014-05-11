@@ -4,7 +4,7 @@ function launch_probe() As Short
     Dim As Short i,d
     i=get_item(55)
     If i>0 Then
-        Screenset 0,1
+        tScreen.set(0)
         set__color(11,0)
         Cls
         display_stars(1)
@@ -102,7 +102,7 @@ function move_probes() As Short
                         probe(i)=probe(0)
                     EndIf
                     lastprobe-=1
-                    Screenset 0,1
+                    tScreen.set(0)
                     set__color(11,0)
                     Cls
                     display_stars(1)

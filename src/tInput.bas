@@ -15,8 +15,7 @@ function gettext(x as short, y as short, ml as short, text as string,pixel as sh
         text=left(text,ml-1)
         l=ml-1
     endif
-    do 
-            
+    do             
         key=""
         set__color( 11,0)
         draw string (x,y), text &"_ ",,font2,custom,@_col
@@ -69,7 +68,7 @@ function getnumber(a as integer,b as integer, e as integer) as integer
     dim buffer as string
     dim as integer c,d,i
     dim p as _cords
-    screenset 1,1
+    tScreen.set(1)
     rlprint ""
     if configflag(con_altnum)=0 then
         p=locEOL

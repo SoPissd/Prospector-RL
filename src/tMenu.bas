@@ -80,7 +80,7 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
     next
     
     if longestbox>20 or (longestbox/hw)>2 or hw<8 then
-        hw=_screenx-((4+x)*_fw1)-((longest)*_fw2)
+        hw=tScreen.x-((4+x)*_fw1)-((longest)*_fw2)
         hw=hw/_fw2
     endif
     'if hw>longesthelp then hw=longesthelp
@@ -88,7 +88,7 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
     e=0
     do        
         if bg<>bg_noflip then
-            screenset 0,1
+            tScreen.set(0)
             set__color(15,0)
             cls
             select case bg
@@ -184,7 +184,7 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
     next
     set__color( 11,0)
     cls
-    screenset 1,1
+    tScreen.set(1)
     if logo <> 0 then
       ImageDestroy(Logo)
     EndIf

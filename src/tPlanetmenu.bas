@@ -1338,7 +1338,7 @@ function ep_planetmenu(entrycords as _cords,slot As Short,shipfire() As _shipfir
     Dim As Short x,y,entry,launch,explore,a
     Dim As _cords mgcords(24),nextmap
     Dim As String text,Key
-    'screenset 1,1
+    'tScreen.set(1)
     text="Facilities"
     For x=0 To 60
         For y=0 To 20

@@ -963,7 +963,7 @@ function hiring(st as short,byref hiringpool as short,hp as short) as short
     dim as integer f,g,meni(18),ex,cwage(18)
     dim as string text,help,cname(18)
     
-    screenset 1,1
+    tScreen.set(1)
 
     cname(2)="Pilot"
     cname(3)="Gunner"

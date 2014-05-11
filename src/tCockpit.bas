@@ -4,7 +4,7 @@ function show_dotmap(x1 as short, y1 as short) as short
     dim as short a,x,y,px,py
     x1=x1*2
     y1=y1*2
-    px=_screenx-2-sm_x*2
+    px=tScreen.x-2-sm_x*2
     py=11*_fh1+_fh2+2
     set__color( 1,0)
     
@@ -199,7 +199,7 @@ function show_wormholemap(j as short=0) as short
     DimDebugL(0)
     dim as short px,py,i
     
-    px=_screenx-2-sm_x*2
+    px=tScreen.x-2-sm_x*2
     py=11*_fh1+_fh2+2
     
     if j>0 then

@@ -102,10 +102,10 @@ function load_fonts() as short
         _Fh1=_tiy
     endif
 
-    if _screeny<>_lines*_fh1 then _screeny=_lines*_fh1
-    _textlines=fix((22*_fh1)/_fh2)+fix((_screeny-_fh1*22)/_fh2)-1
-    _screenx=_mwx*_fw1+25*_fw2
-    screenres _screenx,_screeny,16,2,FB.GFX_WINDOWED
+    if tScreen.y<>_lines*_fh1 then tScreen.y=_lines*_fh1
+    _textlines=fix((22*_fh1)/_fh2)+fix((tScreen.y-_fh1*22)/_fh2)-1
+    tScreen.x=_mwx*_fw1+25*_fw2
+    tScreen.res()
 #if __FB_DEBUG__
     if debug=1 then print #f,"Made screen"
 #endif
@@ -128,10 +128,10 @@ function load_fonts() as short
 #endif
         titlefont=load_font("26",26)
     else
-        _screenx=1024
-        _screeny=768
-        screenres _screenx,_screeny,16,2,FB.GFX_WINDOWED
-        width _screenx/8,_screeny/16
+        tScreen.x=1024
+        tScreen.y=768
+        tScreen.res()
+        tScreen.size(tScreen.x/8,tScreen.y/16) 'width
         'font1=load_font("FH1.bmp",16)
         'font2=load_font("FH1.bmp",16)
         Font1 = ImageCreate((254-1) * 8, 17,rgba(0,0,0,0),16)
@@ -159,11 +159,11 @@ function load_fonts() as short
         _Fh1=_tiy
     endif
 
-    if _screeny<>_lines*_fh1 then _screeny=_lines*_fh1
-    _textlines=fix((22*_fh1)/_fh2)+fix((_screeny-_fh1*22)/_fh2)-1
-    _screenx=_mwx*_fw1+25*_fw2
-    screenres _screenx,_screeny,16,2,(FB.GFX_ALWAYS_ON_TOP OR FB.GFX_WINDOWED)
-    screenres _screenx,_screeny,16,2,FB.GFX_WINDOWED
+    if tScreen.y<>_lines*_fh1 then tScreen.y=_lines*_fh1
+    _textlines=fix((22*_fh1)/_fh2)+fix((tScreen.y-_fh1*22)/_fh2)-1
+    tScreen.x=_mwx*_fw1+25*_fw2
+    tScreen.res(tScreen.GFX_WINDOWED OR tScreen.GFX_ALWAYS_ON_TOP)
+    tScreen.res()
     sidebar=(_mwx+1)*_fw1+_fw2
 
 #if __FB_DEBUG__
@@ -236,7 +236,7 @@ function draw_border(xoffset as short) as short
     for a=(xoffset+1)*fw2 to (_mwx+1)*_fw1 step fw1
         draw string (a,21*_fh1),chr(196),,Font1,custom,@_col
     next
-    for a=0 to _screeny-fh1 step fh1
+    for a=0 to tScreen.y-fh1 step fh1
         set__color( 224,1)
         'draw string ((_mwx+1)*_fw1,a),chr(179),,Font1,custom,@_col
         draw string ((_mwx+1)*_fw1,a),chr(179),,Font1,custom,@_col

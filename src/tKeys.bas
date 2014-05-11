@@ -363,9 +363,9 @@ function keybindings(allowed as string="") as short
         if c>lk then c=1
 
         if varn(c)="" then cc=ncc
-        screenset 0,1
+        tScreen.set(0)
         set__color( 15,0)
-        draw string ((_screenx-12*_fw2)/2,1*_fh2),"Keybindings:",,FONT2,custom,@_col
+        draw string ((tScreen.x-12*_fw2)/2,1*_fh2),"Keybindings:",,FONT2,custom,@_col
         for x=1 to 4
             for y=1 to 20
                 if x>1 or y>6 then
@@ -439,7 +439,7 @@ function keybindings(allowed as string="") as short
         if varn(c)="" then o=c
 
         if no_key=key__enter and keys(c)<>"" then
-            screenset 1,1
+            tScreen.set(1)
             draw string ((2*_fw2)+(cc.x-1)*25*_fw2,(cc.y+2)*_fh2),space(25),,FONT2,custom,@_col
             draw string ((2*_fw2)+(cc.x-1)*25*_fw2,(cc.y+2)*_fh2),exl(c),,FONT2,custom,@_col
             newkey=gettext(2+(cc.x-1)*25+len(exl(c)),cc.y+2,3,"")

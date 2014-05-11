@@ -7,17 +7,23 @@
 #include "windows.bi"
 
 '
+#define main
+#include "src/tDefines.bas"
 #include "src/tModule.bas"
+#include "src/tScreen.bas"
+#include "src/tColor.bas"
 #include "src/tPng.bas"
 #include "src/tGraphics.bas"
 
-#include "src/tColor.bas"
 #include "src/Version.bas"
 #include "src/kbinput.bas"
 #include "src/tFile.bas"
+#include "src/tPalette.bas"
 #include "src/tUtils.bas"
 #include "src/tError.bas"
-
+#include "src/tViewfile.bas"
+'#include "src/tFile.bas"
+#undef main
 '
 ' patch up expectations for version.bas
 Function savegame(crash as short=0) As Short
@@ -103,7 +109,7 @@ function functiondefinitions overload (ByRef aSource as tSource) as tSource
 			c=mid(aSource.Source,k,1+j-k)
 '			if ((instr(c,"=")=0) or (instr(c,"=")>=instr(c,"(")))_
 '			and 
-			if instr(lcase(c),"declare ")=0 then
+			if not(instr(lcase(c),"end")=1 or instr(lcase(c),"declare")=1) then
 				if instr(lcase(c),"public ")>0 then
 					e=e + Localize(aSource,c) &chr(13) &chr(10)
 				else
@@ -118,14 +124,16 @@ function functiondefinitions overload (ByRef aSource as tSource) as tSource
 				if instr(c,"=")=0 then
 					j=instr(c,"overload")-1
 					if j>0 then c=mid(c,1,j-1)
+					j=instr(c,"(")
+					if j>0 then c=mid(c,1,j-1)
 					if instr(d,c+",")=0 then d=d+c+", "
 				EndIf
 			EndIf
 		EndIf
 	Wend
 	aSource.defines = mid(d,1,len(d)-2)
-	aSource.publics = e '+chr(13)+chr(10)
-	aSource.definitions = b '+chr(13)+chr(10)
+	aSource.publics = e
+	aSource.definitions = b
 	return aSource	
 End Function
 
@@ -221,16 +229,7 @@ End Function
 '
 function documentsorce(ByRef aSource as tSource) as String
 	dim as String a
-	dim as integer i, j
-	a= finput
-	i= instr(a,"/")
-	if i>0 then a=mid(a,i+1)   
-	i= instr(a,".")
-	if i>0 then a=mid(a,1,i) else a=a+"."   
-	a= line(a)	
-	a=mid(a,1,len(a)-3)
-	a=mid(a,2)
-	aSource.token= a
+	a=aSource.token
 	a=line(a+".")
 	'if len(aSource.namespc)>0 then
 	'endif
@@ -288,48 +287,96 @@ function newsource(ByRef aSource as tSource) as string
 	afun=""	
 	aend=""	
 	if len(aSource.namespc)=0 then
-		afun += crlf
-		afun += "namespace "+aSource.token +crlf
-		afun += crlf
+		'afun += crlf
+		'afun += "'namespace "+aSource.token +crlf
+		'afun += crlf
 		'
-		aend += "end namespace'"+aSource.token +crlf
+		'aend += "'end namespace'"+aSource.token +crlf
 	EndIf
 	'
+	afun += crlf
+	afun += "'" +crlf
+	afun += "'needs [head|main|both] defined," +crlf
+	afun += "' builds in test mode otherwise:" +crlf
+	afun += "#if not (define(head) or define(main))" +crlf
+	afun += "#define test"+crlf
+	afun += "#define both"+crlf
+	afun += "#endif'test" +crlf
+	afun += "#if define(both)" +crlf
+	afun += "#define head"+crlf
+	afun += "#define main"+crlf
+	afun += "#endif'both" +crlf
+	afun += "#ifdef test" +crlf
+	afun += "'     -=-=-=-=-=-=-=- TEST: "+aSource.token+" -=-=-=-=-=-=-=-" +crlf
+	afun += crlf
+	afun += crlf
+	afun += "#endif'test" +crlf
 	afun += "#ifdef head" +crlf
-	afun += "#print -=-=-=-=-=-=-=-HEAD" +crlf
+	afun += "'     -=-=-=-=-=-=-=- HEAD: "+aSource.token+" -=-=-=-=-=-=-=-" +crlf
 	afun += crlf
 	afun += crlf
 	afun += "#endif'head" +crlf
 	afun += "#ifdef main" +crlf
-	afun += "#print -=-=-=-=-=-=-=-MAIN" +crlf
+	afun += "'     -=-=-=-=-=-=-=- MAIN: "+aSource.token+" -=-=-=-=-=-=-=-" +crlf
 	afun += crlf
-	afun += "public function init()" +crlf
-	afun += chr(9) +"return 0" +crlf
-	afun += "end function" +crlf
+		afun += "namespace "+aSource.token +crlf
+		afun += "public function init()" +crlf
+		afun += chr(9) +"return 0" +crlf
+		afun += "end function" +crlf
+		afun += "end namespace'"+aSource.token +crlf
+		afun += crlf
+	if 0 then
+		afun += "public function load(fileno as Integer) As Integer" +crlf
+		afun += chr(9) +"return 0" +crlf
+		afun += "end function" +crlf
+		afun += crlf
+		afun += "public function save(fileno as Integer) As Integer" +crlf
+		afun += chr(9) +"return 0" +crlf
+		afun += "end function" +crlf
+		afun += crlf
+		afun += "'code" +crlf
+		afun += crlf
+	EndIf
 	afun += crlf
-	afun += "public function load(fileno as Integer) As Integer" +crlf
-	afun += chr(9) +"return 0" +crlf
-	afun += "end function" +crlf
-	afun += crlf
-	afun += "public function save(fileno as Integer) As Integer" +crlf
-	afun += chr(9) +"return 0" +crlf
-	afun += "end function" +crlf
-	afun += crlf
-	afun += "'code" +crlf
-	afun += crlf
+	afun += "#define cut2top"+crlf
 	'
-	aend = "#endif'main" +crlf + aend
-	aend += crlf
+	aend = "#endif'main" +crlf +aend
+	aend = "#define cut2bottom"+crlf +aend +crlf
+	'
 	aend += "#ifdef main" +crlf
 	aend += chr(9) +"tModule.register("
-	aend += """"+aSource.token+""""+","
-	aend += "@"+aSource.token+".init(),"
-	aend += "@"+aSource.token+".load(),"
-	aend += "@"+aSource.token+".save())"
-	aend += crlf
+	aend += """"+aSource.token+""""
+	aend += ",@"+aSource.token+".init()"
+	'aend += +",@"+aSource.token+".load()"
+	'aend += +",@"+aSource.token+".save()"
+	aend += ")"+crlf
 	aend += "#endif'main" +crlf
-	'		
+	aend += "#ifdef test" +crlf
+	aend += "#print -=-=-=-=-=-=-=- TEST: "+aSource.token+" -=-=-=-=-=-=-=-" +crlf
+	aend += "#endif'test" +crlf
+	'
 	return documentsorce(aSource) + afun + aSource.source + aend 
+End Function
+
+
+function countdefines(ByRef aSource as tSource) as integer
+	dim crlf as String = chr(13)+chr(10)
+	dim as string a1,a2
+	dim as Integer i,j
+	dim as integer n
+	a2=aSource.defines+","
+	do
+		i=instr(a2,",") 'split on comma
+		if i=0 then 
+			a1=a2
+			a2=""
+		else
+			a1=mid(a2,1,i-1)
+			a2=trim(mid(a2,i+1))
+		EndIf
+		n += 1
+	Loop until i=0
+	return n
 End Function
 
 
@@ -340,7 +387,7 @@ function listdefines(ByRef aSource as tSource) as string
 	a2=aSource.defines+","
 '? ":"+a2+":"	
 	do
-		i=instr(a2,",")
+		i=instr(a2,",") 'split on comma
 		if i=0 then 
 			a1=a2
 			a2=""
@@ -357,14 +404,28 @@ dim sources(128) as tSource
 dim lastsource as integer
 
 function initsource overload (fileno as Integer) as tSource
-	dim aSource as tSource
-	aSource=functiondefinitions(fileno)
-	prunesource(aSource)
+	sources(lastsource)=functiondefinitions(fileno)
+	prunesource(sources(lastsource))
+
+	dim as String a
+	dim as integer i
+	a= tFile.lastfn
+	i= instrRev(a,"/")
+	if i>0 then a=mid(a,i+1)   
+	i= instrRev(a,"\")
+	if i>0 then a=mid(a,i+1)   
+	i= instr(a,".")
+	if i>0 then a=mid(a,1,i) else a=a+"."   
+	a= line(a)	
+	a=mid(a,1,len(a)-3)
+	a=mid(a,2)
+	sources(lastsource).token= a
+	
 '	cls
-	? documentsorce(sources(lastsource))
-	? listdefines(sources(lastsource))
-	?
-	return aSource
+'	? documentsorce(sources(lastsource))
+'	? listdefines(sources(lastsource))
+'	?
+	return sources(lastsource)
 End Function
 
 function initsource overload (filename as string) as tSource
@@ -380,30 +441,38 @@ End Function
 function loadsource overload (fileno as Integer) as Integer
 	dim aSource as tSource
 	lastsource +=1
-	sources(lastsource)=initsource(fileno)
+	sources(lastsource)= initsource(fileno)
 	return 0	
 End Function
 	
 function loadsource overload (filename as string) as Integer
 	dim as integer fin
+	'write "D:\dev\prospector\base\"+filename
 	if (tFile.Openbinary("D:\dev\prospector\base\"+filename,fin)>0) then
-		return loadsource(fin)
+		'print "found", "D:\dev\prospector\base\"+filename
+'		if instr("src\tInit.bas,",filename+",")=0 _
+'			then 
+		loadsource(fin)
+		tFile.Closefile(fin)
+		return 0
 	endif
-	return -1	
+	write "io error",fin
+	return -1
 End Function
 	
 function loadline(fileno as Integer) as string
 	dim as string aline
 	dim ch as byte
 	dim as integer i=fileno
-	while not eof(fileno)
+	while not eof(i)
 		get #i,,ch
 		'if ch=10 then continue while
 		if ch=10 then exit while
 		if ch=13 then exit while
+		'if ch<asc(" ") then ? ch;
 		aline &= chr(ch)	
 	Wend
-	print len(aline)
+	'print len(aline),aline
 	return aline
 End Function
 
@@ -413,10 +482,19 @@ function loadsourcefiles(fileno as Integer) as Integer
 	while not eof(fileno)
 		'sleep
 		filename=loadline(fileno) 
+		i=instr(filename,"[") ' = "[next"
+		if i>0 then exit while
+		if mid(filename,1,5)="Main=" then continue while		
 		i=instr(filename,"=") ' = "1=src\cargotrade.bas"
 		if i>0 then filename=mid(filename,i+1)
-?filename
-		loadsource(filename)
+		'?filename
+		if filename<>"" then
+			if FileExists(filename) then
+				loadsource(filename)
+			else
+				write "io error ",filename
+			EndIf
+		EndIf
 	Wend	
 	return 0
 End Function
@@ -425,6 +503,7 @@ function loadsources(aProject as String) as Integer
 	dim as integer fin,fprj
 	dim as string finput
 	dim as string a
+'?"loadsources("+aProject+")"	
 	if (tFile.Openinput(aProject,fprj)>0) then
 		a=""		
 		while not eof(fprj) 
@@ -451,10 +530,144 @@ function loadsources(aProject as String) as Integer
 	return 0	
 End Function
 	
+dim as integer ndefs
+dim as string lasttoken
+
+function xref(aToken as String,iSource as integer) as Integer
+	dim as integer i,j,iStart
+	dim aSource as tSource
+	dim crlf as String = chr(13)+chr(10)
+	dim as string a1,a2
+	dim as Integer k,l
+	dim as integer n
+
+	for i = 1 to lastsource
+'? sources(i).token
+		if sources(i).token=aToken then
+			iStart=i
+			exit for
+		endif
+	next
+	if iStart=0 then 
+		? "nomatch", aToken
+		return 0
+	EndIf
+
+	'count defines and dim
+	j=countdefines(sources(iStart))
+	dim defines(j) as String
+	dim counts(j) as integer
+	
+'a2=defines(j+1)
+	
+	'get defines 
+	a2=sources(i).defines+","
+	do
+		k=instr(a2,",") 'split on comma
+		if k=0 then 
+			a1=a2
+			a2=""
+		else
+			a1=mid(a2,1,k-1)
+			a2=trim(mid(a2,k+1))
+		EndIf
+		if (a1<>"") and (instr(a1,".")=0) then
+			n += 1
+			defines(n)=a1
+		EndIf
+	Loop until k=0
+	j=n
+
+	'count across all other files
+	? 
+	for i = 1 to lastsource
+		if i=iStart then continue for
+		'rebuild defines with count
+		'j+= findinstring(sources(i).source,
+		'count for each define
+		'count for each define
+		for l = 1 to n
+			if len(defines(l))=0 then continue for
+			a2=sources(i).source
+			do
+				k=instr(a2,defines(l)) 'split on token
+				if k=0 then 
+					a1=a2
+					a2=""
+				else
+					a1=mid(a2,1,k-1)
+					a2=trim(mid(a2,k+len(defines(l))))
+					counts(l) += 1
+				EndIf
+			Loop until k=0
+		next
+		
+	Next
+	a1=""
+	for l = 1 to n
+		if defines(l)<>"" then
+			ndefs += 1
+			a1 += defines(l) +"=" &counts(l) &", "
+		EndIf
+	Next
+	aSource=sources(iSource)
+	aSource.defines=mid(a1,1,len(a1)-2)
+	sources(iSource)=aSource
+?	sources(iSource).defines
+return 0
+End Function
+
+function xrefall() as Integer
+	dim as integer iSource
+	dim as integer ikey
+	ndefs=0
+	for iSource = 1 to lastsource
+		lasttoken=sources(iSource).token
+		'? 
+		? sources(iSource).defines
+		xref(lasttoken,iSource)
+		'? sources(iSource).defines
+		'cls
+		'? documentsorce(sources(iSource))
+		'? listdefines(sources(iSource))
+		? newsource(sources(iSource))
+		ikey=Pressanykey
+		? ikey
+		sleep
+		if ikey=27 then
+			exit for
+		EndIf
+		'?
+		'sleep
+		?"------------"
+	Next	
+	for iSource = 1 to lastsource
+		? sources(iSource).defines
+		?"------------"
+	next	
+	'?ndefs
+	'?"------------"
+	return 0
+End Function
 
 function main() as Integer
-	chdir exepath
+	chdir exepath	
+	'dim f as Integer
+	'f=freefile
+	'open cons for output as #f
+	'print #f,"console cons!"
+	'close #f
+	'Viewfile("D:/dev/prospector/base/error.log")
+'	sleep
+	tError.ErrText ="just because!" '+chr(13)+chr(10)
+	'tError.ErrText +=filetostring("D:/dev/prospector/base/error.log")
+	'return 1
+'	return 0
+	
 	loadsources("prospector.fbp")
+	xrefall()
+		Pressanykey()		
+	'xref("tSlotmachine")
 	return 0
 End Function
 
@@ -462,22 +675,16 @@ End Namespace
 
 
 LETSGO:
-	'On Error goto Errormessage
-	tError.ErrorNr= tMain.main() 
-	'Pressanykey()
-	goto done
+	On Error goto Errormessage
+	tError.ErrorNr= tMain.main()
+	goto ErrorHandler 
 ERRORMESSAGE:
 	On Error goto 0
 	tError.ErrorNr= Err
 	tError.ErrorLn= Erl
-?"ERRORMESSAGE"
-debugbreak
 	tError.ErrText= ucase(stripFileExtension(lastword(*ERMN(),"\")))
-	tError.ErrText= tError.ErrText &":" &*ERFN() &" reporting Error #" &tError.ErrorNr &" at line " &tError.ErrorLn &"!"  
+	tError.ErrText= tError.ErrText &"::" &*ERFN() &"() reporting Error #" &tError.ErrorNr &" at line " &tError.ErrorLn &"!"
+ERRORHANDLER:
 	tError.ErrorHandler()
-WAITANDEXIT:
-	Print
-	Print
-	Pressanykey()
 DONE:
 	End tError.ErrorNr

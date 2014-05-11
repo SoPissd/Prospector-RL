@@ -132,7 +132,7 @@ function spacecombat(byref atts as _fleet,ter as short) as short
 '        defender.c.x=0
 '        defender.c.y=10
 '    endif
-    screenset 0,1
+    tScreen.set(0)
     cls
     l=display_ship(0)
     last=string_towords(ws(),comstr.t,";")
@@ -145,7 +145,7 @@ function spacecombat(byref atts as _fleet,ter as short) as short
     flip
     do
 
-        screenset 0,1
+        tScreen.set(0)
         cls
         display_ship(0)
         f=com_display(player, attacker(),0,e_track_p(),e_track_v(),e_map(),e_last,mines_p(),mines_v(),mines_last)
@@ -184,7 +184,7 @@ function spacecombat(byref atts as _fleet,ter as short) as short
                 'draw string(62*_fw1,5*_fh2), "Engine :"&player.engine &" ("&speed(0) &" MP)",,Font2,custom,@_col
                 'flip
                 key=keyin("1234678"&key_ac &key_ra &key_dropshield &key_sc &key_ru &key__esc &key_drop &key_fi &key_ru &key_togglemanjets &key_cheat)
-                'screenset 0,1
+                'tScreen.set(0)
                 if key=key_ac then
                     select case player.senac
                     case 2
@@ -296,7 +296,7 @@ function spacecombat(byref atts as _fleet,ter as short) as short
                                     t=-1
                                 endif
                             endif
-                            screenset 0,1
+                            tScreen.set(0)
                             cls
                             display_ship(0)
                             f=com_display(player, attacker(),0,e_track_p(),e_track_v(),e_map(),e_last,mines_p(),mines_v(),mines_last)
@@ -367,7 +367,7 @@ function spacecombat(byref atts as _fleet,ter as short) as short
                     if old.x<>player.c.x or old.y<>player.c.y then player.add_move_cost(manjetson)
                 endif
 
-'                screenset 0,1
+'                tScreen.set(0)
 '                cls
 '                displayship(0)
 '                com_display(player, attacker(),lastenemy,0,e_track_p(),e_track_v(),e_map(),e_last,mines_p(),mines_v(),mines_last)
@@ -447,7 +447,7 @@ function spacecombat(byref atts as _fleet,ter as short) as short
             endif
         next
 
-'        screenset 0,1
+'        tScreen.set(0)
 '        cls
 '        display_ship(0)
 '        f=com_display(player, attacker(),0,e_track_p(),e_track_v(),e_map(),e_last,mines_p(),mines_v(),mines_last)
@@ -511,7 +511,7 @@ function spacecombat(byref atts as _fleet,ter as short) as short
     player.senac=0
     player.shieldshut=0
 
-    screenset 0,1
+    tScreen.set(0)
 
     cls
     display_stars(1)
@@ -519,7 +519,7 @@ function spacecombat(byref atts as _fleet,ter as short) as short
     rlprint ""
 
     flip
-    screenset 1,1
+    tScreen.set(1)
 
     return 0
 end function

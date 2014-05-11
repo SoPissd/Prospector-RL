@@ -101,7 +101,7 @@ function ep_autoexploreroute(astarpath() As _cords,start As _cords,move As Short
         rollover=1
     EndIf
 #if __FB_DEBUG__
-    Screenset 1,1
+    tScreen.set(1)
     For x=0 To 60
         For y=0 To 20
             If candidate(x,y)=255 Then Pset(x,y)

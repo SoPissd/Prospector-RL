@@ -710,7 +710,7 @@ function com_hit(target as _ship, w as _weap, dambonus as short, range as short,
     if target.shieldside(side)>0 and w.p<=0 then text=w.desig &" "&desig &" is hit, but shields hold!"
 
     if configflag(con_tiles)=0 then
-        'screenset 1,1
+        'tScreen.set(1)
         if target.c.x-osx>=0 and target.c.x-osx<=_mwx then
             if distance(target.c,player.c)<(player.sensors+2)*player.senac then
                 for j=1 to 8
@@ -751,7 +751,7 @@ function com_fire(byref target as _ship,byref attacker as _ship,byref w as short
     dim del as _weap
     dim wp(255) as _cords
     dim as short roll,a,ROF,dambonus,rangebonus,tohitbonus,i,l,c,osx,j,col,col2,col3,firefree
-    'screenset 1,1
+    'tScreen.set(1)
     if target.desig=player.desig then
         col=c_gre
         col2=c_yel
@@ -1404,7 +1404,7 @@ function com_radio(defender as _ship, attacker() as _ship, e_track_p() as _cords
         rlprint "Set target for "&attacker(friendly(a)).desig &"."
         p=attacker(friendly(a)).c
         do
-            screenset 0,1
+            tScreen.set(0)
             cls
             osx=calcosx(player.c.x,1)
             com_display(player, attacker(),0,e_track_p(),e_track_v(),e_map(),e_last,mines_p(),mines_v(),mines_last)
@@ -1456,7 +1456,7 @@ function com_direction(dest as _cords,target as _cords) as short
 #if __FB_DEBUG__
     if debug=1 then
         set__color(11,0)
-        screenset 1,1
+        tScreen.set(1)
         osx=calcosx(player.c.x,1)
         draw string((target.x-osx)*_fw1,target.y*_fh1),""&direction,,font1,custom,@_col
     endif
@@ -1553,7 +1553,7 @@ function com_gettarget(defender as _ship, wn as short, attacker() as _ship,marke
         if marked<1 then marked=last
         if marked>last then marked=1
 
-        screenset 0,1
+        tScreen.set(0)
         cls
         display_ship(0)
         a=com_display(defender,attacker(),marked,e_track_p(),e_track_v(),e_map(),e_last,mines_p(),mines_v(),mines_last)
@@ -1826,7 +1826,7 @@ function com_detonatemine(d as short,mines_p() as _cords, mines_v() as short, by
     r=item(mines_v(d)).v2
 
     for t=1 to 5
-        screenset 0,1
+        tScreen.set(0)
         cls
         display_ship
 

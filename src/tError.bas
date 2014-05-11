@@ -1,5 +1,7 @@
 ' error handling
 
+dim shared as integer iErrConsole
+
 namespace tError
 	
 Dim as integer ErrorNr=0
@@ -20,12 +22,18 @@ function log_error(text as string) As integer
 	Dim As integer f
 	dim as string logfile
 	
-	if tFile.OpenLogfile(tVersion.ErrorlogFilename(),f,32)=0 then
+	if tFile.OpenLogfile(tVersion.ErrorlogFilename(),f,32)>0 then
 		Print #f, date + " " + time + " " + __VERSION__  + " " + text
 		tFile.Closefile(f)
+		'
+		? "LOGGED in " +  tVersion.ErrorlogFilename()+":"
+		? date + " " + time + " " + __VERSION__  + " " + text
 		return 0
+	else 
+		? "FAILED LOG WRITE to " +  tVersion.ErrorlogFilename()+"!"
+		? date + " " + time + " " + __VERSION__  + " " + text
+		return -1
 	Endif	
-	return -1
 End function
 
 function log_warning(aFile as string, aFunct as string, iLine as integer, text as string) as integer
@@ -45,17 +53,38 @@ End function
 '
 
 function Errorhandler() As integer
-	dim as string logfile
+	'to file
+	if tError.ErrorNr=0 and tError.ErrText="" then
+		close #iErrConsole
+		return 0
+	EndIf
+	print #iErrConsole,ErrText
 	log_error(ErrText)
-	tVersion.Errorscreen(ErrText)
+	'to current screen
+	tVersion.Errorscreen(ErrText,ErrorLn=0)
+	Pressanykey()
+	if tScreen.Enabled then
+		'to console
+		tScreen.mode(0)
+		tVersion.Errorscreen(tError.ErrText,ErrorLn=0)
+		Pressanykey()		
+	EndIf
 	return 0
 End function
 
 
 End Namespace
 
+iErrConsole=freefile
+open err for output as iErrConsole
+print #iErrConsole,"console err!"
+'close #f
+
 #ifdef main
 	#Define LogWarning(Text) Assert(tError.log_warning(__FILE__,__FUNCTION__,__LINE__,Text))						' disappears from release
 	tModule.Register("tError",@tError.Init())
+	
+#else	
 	? tError.log_warning("ok.log","fun",10,"txt")
+	LogWarning("warning")
 #endif		

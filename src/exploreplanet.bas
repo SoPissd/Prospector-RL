@@ -617,7 +617,7 @@ function alienbomb(c As Short,slot As Short) As Short
     osx=calcosx(awayteam.c.x,planets(slot).depth)
 
     For e=0 To item(c).v1*6
-        Screenset 0,1
+        tScreen.set(0)
         display_planetmap(slot,osx,0)
         For x=0 To 60
             For y=0 To 20
@@ -1315,7 +1315,7 @@ function ep_shipfire(shipfire() As _shipfire) As Short
                 Draw String (shipfire(sf2).where.x*_fw1,shipfire(sf2).where.y*_fh1),shipfire(sf2).tile,,Font1,custom,@_col
             EndIf
             If shipfire(sf2).when=0 Then
-                Screenset 1,1
+                tScreen.set(1)
                 shipfire(sf2).tile=""
                 b=rnd_range(1,6)+rnd_range(1,6)+maximum(player.sensors,player.gunner(0))
                 If b>13 Then rlprint gainxp(2),c_gre
@@ -1737,7 +1737,7 @@ function ep_fire(mapmask() As Byte,Key As String,ByRef autofire_target As _cords
     If range>=4 Then scol=12
     If range>=5 Then scol=10
 
-    Screenset 1,1
+    tScreen.set(1)
 
     If autofire_dir>0 And autofire_dir<>5 Then
         awayteam.e.add_action(awayteam.atcost)

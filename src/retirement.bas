@@ -555,7 +555,7 @@ function es_part1() as string
         endif
         t=t &" ||And you finally pass on to the next adventure, one you will never return from."
     endif
-    t=t &" ||| "&space(_screenx/(_fw2*2)-15)&" T H E  E N D ||"
+    t=t &" ||| "&space(tScreen.x/(_fw2*2)-15)&" T H E  E N D ||"
     return t
 end function
 

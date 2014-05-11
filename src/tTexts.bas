@@ -23,10 +23,11 @@ function text_to_html(text as string) as string
         if Left(trim(w(i)),1)="{" and Right(trim(w(i)),1)="}" then
             c=numfromstr(w(i))
             if first=1 then
-                w(i)="</span>"& html_color("rgb(" &RGBA_R(palette_(c))& ","&RGBA_G(palette_(c))& ","&RGBA_B(palette_(c))& ")")
+                w(i)="</span>"
             else
-                w(i)=html_color("rgb(" &RGBA_R(palette_(c))& ","&RGBA_G(palette_(c))& ","&RGBA_B(palette_(c))& ")")
+                w(i)=""
             endif
+            w(i) +=html_color("rgb(" & tColor.argb(c) & ")")
             first=1
         endif
     next

@@ -329,7 +329,7 @@ Private function mainmenu() as string
 
 #if __FB_DEBUG__
         If Key="t" Then
-            Screenset 1,1
+            tScreen.set(1)
             BLoad "graphics/spacestations.bmp"
             a=getnumber(0,10000,0)
             Put(30,0),gtiles(gt_no(a)),Pset

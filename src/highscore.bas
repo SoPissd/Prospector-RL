@@ -377,7 +377,7 @@ function death_text() as string
     if player.dead=35 then text="The dangers of spacecombat are manifold. Flying into your own engine exhaust is one of them."
     if player.dead=98 then
         endstory=tRetirement.es_part1
-        textbox (endstory,2,2,_screenx/_fw2-5)
+        textbox (endstory,2,2,tScreen.x/_fw2-5)
         text=endstory
     endif
     if player.dead=99 then text="Till next time!"
@@ -678,7 +678,7 @@ function post_mortemII(text as string) as short
     dim as string key,header(4),crewtext,income
     dim as byte unflags(lastspecial)
     make_unflags(unflags())
-    full=(_screenx-4*_fw1)/_fw2
+    full=(tScreen.x-4*_fw1)/_fw2
     half=fix(full/2)
     third=fix(full/3)
     
@@ -699,7 +699,7 @@ function post_mortemII(text as string) as short
     income=mission_type &"|{15}" & get_death &"||"&income_expenses
     do
         set__color(11,0)
-        screenset 0,1
+        tScreen.set(0)
         cls
         background(bg &".bmp")
     
@@ -839,10 +839,10 @@ function high_score(text as string) as short
     cls
     
     background(rnd_range(1,_last_title_pic)&".bmp")
-    yo=(_screeny-22*_fh2)/2
-    xo=(_screenx-80*_fw2)/2
+    yo=(tScreen.y-22*_fh2)/2
+    xo=(tScreen.x-80*_fw2)/2
     set__color( 0,0)
-    for a=yo/2-_fh2 to _screeny-yo/2+_fh2 step _fh2-1
+    for a=yo/2-_fh2 to tScreen.y-yo/2+_fh2 step _fh2-1
         draw_string (xo,a,space(80),font2,_col)
     next
     set__color( 15,0)
@@ -864,8 +864,8 @@ function high_score(text as string) as short
         draw_string (2*_fw2+xo,yo+(a*2+1)*_fh2, trim(highscore(a+off2).death),font2,_col)
     next
     set__color( 11,0)
-    if rank>10 then draw_string (2*_fw2+xo,_screeny-yo, highscore(10).points &" Points required to enter highscore. you scored "&s &" Points",font2,_col)
-    draw_string (2*_fw2+xo,_screeny-yo/2, "Esc to continue",font2,_col)
+    if rank>10 then draw_string (2*_fw2+xo,tScreen.y-yo, highscore(10).points &" Points required to enter highscore. you scored "&s &" Points",font2,_col)
+    draw_string (2*_fw2+xo,tScreen.y-yo/2, "Esc to continue",font2,_col)
     no_key=keyin(key__esc)
     'save highscore table
     f=freefile
@@ -899,17 +899,17 @@ function death_message() as short
         set__color( 11,0)
         
         b=0
-        tx=_screenx/_fw1-10
+        tx=tScreen.x/_fw1-10
         while len(text)>tx
             a=40
             do 
                 a=a-1
             loop until mid(text,a,1)=" "        
-            draw_string (5*_fw1,(_lines*_fh1)/2-(4*_fh1)+b*(_screeny/15),left(text,a),TITLEFONT,_tcol)
+            draw_string (5*_fw1,(_lines*_fh1)/2-(4*_fh1)+b*(tScreen.y/15),left(text,a),TITLEFONT,_tcol)
             text=mid(text,a,(len(text)-a+1))
             b=b+1
         wend
-        draw_string (5*_fw1,(_lines*_fh1)/2-(4*_fh1)+b*(_screeny/15),text,TITLEFONT,_tcol)
+        draw_string (5*_fw1,(_lines*_fh1)/2-(4*_fh1)+b*(tScreen.y/15),text,TITLEFONT,_tcol)
         
     endif
     

@@ -592,7 +592,7 @@ function play_poker(st as short) as short
     '        endif
     '    next
         do
-            screenset 0,1
+            tScreen.set(0)
             cls
             pli=poker_next(pli,p())
             draw_poker_table(p(),,,rules)

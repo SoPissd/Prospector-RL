@@ -1,8 +1,5 @@
 'tGraphics
 
-Dim Shared As UShort _screenx=800
-Dim Shared As UShort _screeny=0
-
 Enum backgrounds
     bg_title
     bg_noflip
@@ -43,13 +40,13 @@ function background(fn as string) as short
         img = ImageCreate( bmpwidth, Abs(bmpheight) )
 
         If img = 0 Then Return 0
-        'dst=imagecreate(_screenx,_screeny)
+        'dst=imagecreate(tScreen.x,tScreen.y)
         '' load BMP file into image buffer
         BLoad( fn, img )
         last=fn
     endif
-    x=(_screenx-bmpwidth)/2
-    y=(_screeny-bmpheight)/2
+    x=(tScreen.x-bmpwidth)/2
+    y=(tScreen.y-bmpheight)/2
     put (x,y),img,pset
     firstcall=1
     Return 0

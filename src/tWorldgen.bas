@@ -19,19 +19,19 @@ function create_spacemap() as short
         f=freefile
         open "creation.log" for output as #f
     endif
-    screenset 1,1
+    tScreen.set(1)
     b=rnd_range(1,_last_title_pic)
     background(b &".bmp")
     
     set__color 1,1
     for a=0 to 3
-        draw string(_screenx/2-(8*_fw1),_screeny/2-(2-a)*_fh1),space(27),,font1,custom,@_col
-        draw string(_screenx/2-(8*_fw1),_screeny/2-(2-a)*_fh1+_fh1/2),space(27),,font1,custom,@_col
+        draw string(tScreen.x/2-(8*_fw1),tScreen.y/2-(2-a)*_fh1),space(27),,font1,custom,@_col
+        draw string(tScreen.x/2-(8*_fw1),tScreen.y/2-(2-a)*_fh1+_fh1/2),space(27),,font1,custom,@_col
     next
     set__color 15,1
-    draw string(_screenx/2-(6*_fw1),_screeny/2-_fh1),"Generating Sector:",,font1,custom,@_col
+    draw string(tScreen.x/2-(6*_fw1),tScreen.y/2-_fh1),"Generating Sector:",,font1,custom,@_col
     set__color 5,1
-    draw string(_screenx/2-(7*_fw1),_screeny/2),string(1,178),,font1,custom,@_col
+    draw string(tScreen.x/2-(7*_fw1),tScreen.y/2),string(1,178),,font1,custom,@_col
     showclouds=0
     for a=0 to max_maps
         for x=0 to 60
@@ -42,43 +42,43 @@ function create_spacemap() as short
         planets(a)=del
     next
     if makelog=1 then print #f,,"Generated sector"
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(2,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(2,178),,font1,custom,@_col
     
     for a=0 to 1024
         portal(a).oneway=0
     next
     if makelog=1 then print #f,,"Portals done" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(3,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(3,178),,font1,custom,@_col
     
     gen_shops
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(4,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(4,178),,font1,custom,@_col
     
     reroll_shops
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(5,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(5,178),,font1,custom,@_col
     if makelog=1 then print #f,,"Reroll shops done" &lastitem
     
     add_stars
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(6,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(6,178),,font1,custom,@_col
     if makelog=1 then print #f,,"add_stars done" &lastitem
     
     add_wormholes
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(7,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(7,178),,font1,custom,@_col
     if makelog=1 then print #f,,"add_wormholes done" &lastitem
     
     distribute_stars
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(8,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(8,178),,font1,custom,@_col
     if makelog=1 then print #f,,"distribute_stars done" &lastitem
     
     make_clouds()
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(9,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(9,178),,font1,custom,@_col
     if makelog=1 then print #f,"make_clouds done" &lastitem
     
     gen_traderoutes()
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(10,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(10,178),,font1,custom,@_col
     if makelog=1 then print #f,"gen_traderoutes done" &lastitem
     
     add_stations
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(11,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(11,178),,font1,custom,@_col
     
     gascou+=1
     for a=0 to laststar
@@ -87,35 +87,35 @@ function create_spacemap() as short
     
     add_easy_planets(targetlist(firstwaypoint))
     if makelog=1 then print #f,"add_easy_planets done" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(12,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(12,178),,font1,custom,@_col
     
     add_special_planets
     if makelog=1 then print #f,"add_special_planets done" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(13,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(13,178),,font1,custom,@_col
     
     add_event_planets
     if makelog=1 then print #f,"addeventplanets done" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(14,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(14,178),,font1,custom,@_col
     
     fixstarmap()
     if makelog=1 then print #f,"Fixstarmap" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(15,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(15,178),,font1,custom,@_col
     
     add_caves
     if makelog=1 then print #f,"addcaves" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(16,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(16,178),,font1,custom,@_col
     
     add_piratebase
     if makelog=1 then print #f,"addpiratbase" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(17,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(17,178),,font1,custom,@_col
     
     add_drifters
     if makelog=1 then print #f,"adddrifters" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(18,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(18,178),,font1,custom,@_col
     
     load_bones
     if makelog=1 then print #f,"loadbones done" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(19,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(19,178),,font1,custom,@_col
     
     for a=0 to laststar
         if map(a).discovered=2 then map(a).discovered=show_specials
@@ -166,16 +166,16 @@ function create_spacemap() as short
     if makelog=1 then print #f,"Making Civs"
     
     make_civilisation(0,specialplanet(7))
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(20,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(20,178),,font1,custom,@_col
     
     if makelog=1 then print #f,"makeciv1 done" &lastitem
     make_civilisation(1,specialplanet(46))
     
     if makelog=1 then print #f,"makeciv2 done" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(21,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(21,178),,font1,custom,@_col
     
     add_questguys
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(22,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(22,178),,font1,custom,@_col
     
     if findcompany(1)=0 then specialplanet(40)=32767
     if findcompany(2)=0 then specialplanet(41)=32767
@@ -288,19 +288,19 @@ function make_spacemap() as short
         f=freefile
         open "creation.log" for output as #f
     endif
-    screenset 1,1
+    tScreen.set(1)
     b=rnd_range(1,_last_title_pic)
     background(b &".bmp")
     
     set__color 1,1
     for a=0 to 3
-        draw string(_screenx/2-(8*_fw1),_screeny/2-(2-a)*_fh1),space(27),,font1,custom,@_col
-        draw string(_screenx/2-(8*_fw1),_screeny/2-(2-a)*_fh1+_fh1/2),space(27),,font1,custom,@_col
+        draw string(tScreen.x/2-(8*_fw1),tScreen.y/2-(2-a)*_fh1),space(27),,font1,custom,@_col
+        draw string(tScreen.x/2-(8*_fw1),tScreen.y/2-(2-a)*_fh1+_fh1/2),space(27),,font1,custom,@_col
     next
     set__color 15,1
-    draw string(_screenx/2-(6*_fw1),_screeny/2-_fh1),"Generating Sector:",,font1,custom,@_col
+    draw string(tScreen.x/2-(6*_fw1),tScreen.y/2-_fh1),"Generating Sector:",,font1,custom,@_col
     set__color 5,1
-    draw string(_screenx/2-(7*_fw1),_screeny/2),string(1,178),,font1,custom,@_col
+    draw string(tScreen.x/2-(7*_fw1),tScreen.y/2),string(1,178),,font1,custom,@_col
     showclouds=0
     for a=0 to max_maps
         for x=0 to 60
@@ -311,43 +311,43 @@ function make_spacemap() as short
         planets(a)=del
     next
     if makelog=1 then print #f,,"Generated sector"
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(2,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(2,178),,font1,custom,@_col
     
     for a=0 to 1024
         portal(a).oneway=0
     next
     if makelog=1 then print #f,,"Portals done" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(3,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(3,178),,font1,custom,@_col
     
     gen_shops
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(4,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(4,178),,font1,custom,@_col
     
     reroll_shops
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(5,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(5,178),,font1,custom,@_col
     if makelog=1 then print #f,,"Reroll shops done" &lastitem
     
     add_stars
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(6,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(6,178),,font1,custom,@_col
     if makelog=1 then print #f,,"add_stars done" &lastitem
     
     add_wormholes
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(7,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(7,178),,font1,custom,@_col
     if makelog=1 then print #f,,"add_wormholes done" &lastitem
     
     distribute_stars
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(8,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(8,178),,font1,custom,@_col
     if makelog=1 then print #f,,"distribute_stars done" &lastitem
     
     make_clouds()
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(9,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(9,178),,font1,custom,@_col
     if makelog=1 then print #f,"make_clouds done" &lastitem
     
     gen_traderoutes()
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(10,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(10,178),,font1,custom,@_col
     if makelog=1 then print #f,"gen_traderoutes done" &lastitem
     
     add_stations
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(11,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(11,178),,font1,custom,@_col
     
     gascou+=1
     for a=0 to laststar
@@ -356,35 +356,35 @@ function make_spacemap() as short
     
     add_easy_planets(targetlist(firstwaypoint))
     if makelog=1 then print #f,"add_easy_planets done" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(12,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(12,178),,font1,custom,@_col
     
     add_special_planets
     if makelog=1 then print #f,"add_special_planets done" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(13,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(13,178),,font1,custom,@_col
     
     add_event_planets
     if makelog=1 then print #f,"addeventplanets done" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(14,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(14,178),,font1,custom,@_col
     
     fixstarmap()
     if makelog=1 then print #f,"Fixstarmap" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(15,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(15,178),,font1,custom,@_col
     
     add_caves
     if makelog=1 then print #f,"addcaves" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(16,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(16,178),,font1,custom,@_col
     
     add_piratebase
     if makelog=1 then print #f,"addpiratbase" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(17,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(17,178),,font1,custom,@_col
     
     add_drifters
     if makelog=1 then print #f,"adddrifters" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(18,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(18,178),,font1,custom,@_col
     
     load_bones
     if makelog=1 then print #f,"loadbones done" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(19,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(19,178),,font1,custom,@_col
     
     for a=0 to laststar
         if map(a).discovered=2 then map(a).discovered=show_specials
@@ -435,16 +435,16 @@ function make_spacemap() as short
     if makelog=1 then print #f,"Making Civs"
     
     make_civilisation(0,specialplanet(7))
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(20,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(20,178),,font1,custom,@_col
     
     if makelog=1 then print #f,"makeciv1 done" &lastitem
     make_civilisation(1,specialplanet(46))
     
     if makelog=1 then print #f,"makeciv2 done" &lastitem
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(21,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(21,178),,font1,custom,@_col
     
     add_questguys
-    draw string(_screenx/2-7*_fw1,_screeny/2),string(22,178),,font1,custom,@_col
+    draw string(tScreen.x/2-7*_fw1,tScreen.y/2),string(22,178),,font1,custom,@_col
     
     if findcompany(1)=0 then specialplanet(40)=32767
     if findcompany(2)=0 then specialplanet(41)=32767

@@ -109,7 +109,7 @@ function move_rover(pl As Short)  As Short
     update_tmap(pl)
     make_locallist(pl)
     t=(tVersion.gameturn-planets(pl).visited)
-    'If _debug=9 Then Screenset 1,1
+    'If _debug=9 Then tScreen.set(1)
     For i=1 To itemindex.vlast
         If item(itemindex.value(i)).ty=18 And item(itemindex.value(i)).w.p=0 And item(itemindex.value(i)).w.s=0 And item(itemindex.value(i)).w.m=pl And item(itemindex.value(i)).discovered>0 And t>0 Then
             ep_rovermove(itemindex.value(i),pl)

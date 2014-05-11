@@ -297,7 +297,7 @@ function logbook() as short
     next
 '    
     do
-        screenset 0,1
+        tScreen.set(0)
         cls
         draw_border(0)
         for x=(_mwx+1)*_fw1 to (_mwx+20)*_fw1 step 8
@@ -380,7 +380,7 @@ function logbook() as short
                 endif
                 
                 if key=key_comment and lobn(curs)<>0 then
-                    screenset 1,1
+                    tScreen.set(1)
                     rlprint "Enter comment on system"
                     map(lobn(curs)).comment=gettext(LocEOL.x,LocEOL.y,60,map(lobn(curs)).comment)
                     if map(lobn(curs)).comment<>"" then lobc(curs)=228
@@ -410,7 +410,7 @@ function logbook() as short
                                     display_planetmap(m,0,1)
                                     no_key=keyin(key_comment &key_report &key__esc)
                                     if no_key=key_comment then
-                                        screenset 1,1
+                                        tScreen.set(1)
                                         rlprint "Enter comment on planet"
                                         planets(m).comment=gettext(loceol.x,loceol.y,60,planets(m).comment)
                                         if planets(m).comment<>"" and map(lobn(curs)).comment="" then lobc(curs)=241

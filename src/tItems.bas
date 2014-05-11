@@ -796,7 +796,7 @@ end function
 function display_item_list(inv() as _items, invn() as short, marked as short, l as short,x as short,y as short) as short
     dim as short last,i,longest,ll,wh
     static offset as short
-    screenset 0,1
+    tScreen.set(0)
     last=ubound(inv)
     
     for i=1 to l

@@ -44,35 +44,64 @@ End function
 
 
 
-public function Errorscreen(text as string) As integer
-	Screenset 1,1
-	Cls
-	Locate 10,10
-	set__color( 14,0)
-	Print text
-	Locate 12,10
-	set__color( 12,0)
-	If gamerunning=1 Then
-		text= "savegames/" & gamedesig 'player.desig 
-		Print "Please send " & text & "-crash.sav and " & text & "-error.log to " +__AUTHOR__ +"."
+public function Errorscreen(text as string,suppress as integer=0) As integer
+	dim as integer irow=10
+	
+	if tScreen.Enabled then
+		tScreen.set(1,1)
+		Cls
+		tScreen.loc(irow,10)
+		if suppress=0 then
+		    tScreen.rgbcol(255,0,0)
+		else
+		    tScreen.rgbcol(127,127,127)
+		endif
+		Print text
+		Print 
+		irow= CsrLin
+		tScreen.loc(irow,10)
+	    tScreen.rgbcol(0,255,0)
+		'tColor.set(12,0)
 	else
-		Print "Please send error.log to " + __AUTHOR__ + "."
+		Print 
+		Print text
+		Print 
 	endif
-	Locate 13,10
-	Print __EMAIL__
-	set__color( 14,0)
 	'
-	If gamerunning=1 Then
-		Locate 15,0
-		savegame(1)
+	if suppress=0 then
+		If gamerunning=1 Then
+			text= "savegames/" & gamedesig 'player.desig 
+			Print "Please send " & text & "-crash.sav and " & text & "-error.log to " +__AUTHOR__ +"."
+		else
+			Print "Please send error.log to " + __AUTHOR__ + "."
+		endif
+		'
+		if __EMAIL__<>"" then
+			if tScreen.Enabled then
+				irow+=1
+				tScreen.loc(irow,10)
+			else
+			endif
+			Print __EMAIL__
+		endif
+		'
+		if tScreen.Enabled then
+		    tScreen.rgbcol(255,255,255)
+			If gamerunning=1 Then 
+				irow+=2
+				tScreen.loc(irow,10)
+			EndIf
+		EndIf
+		If gamerunning=1 Then
+			savegame(1)
+		EndIf
 	EndIf
-	?
 	return 0
 End function
 
 
 public function DisplayError(text as string) as integer
-    color rgb(255,255,0)
+    tScreen.rgbcol(255,255,0)
     print text
     'sleep	
 	return 0

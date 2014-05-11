@@ -3310,7 +3310,7 @@ function addcastle(from as _cords,slot as short) as short
         vaults(3).wd(6)=-1
     endif
     
-'    screenset 1,1
+'    tScreen.set(1)
 '    for x=0 to 60
 '        for y=0 to 20
 '            locate y+1,x+1

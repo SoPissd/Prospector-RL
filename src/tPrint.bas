@@ -21,7 +21,7 @@ function locEOL() as _cords
     'puts cursor at end of last displayline
     dim as short y,x,a,winh,firstline
     dim as _cords p
-    winh=fix((_screeny-_fh1*22)/_fh2)-1
+    winh=fix((tScreen.y-_fh1*22)/_fh2)-1
     do
         firstline+=1
     loop until firstline*_fh2>=22*_fh1
@@ -54,7 +54,7 @@ function rlprint(t as string, col as short=11) as short
     static lastmessagecount as short
     firstline=fix((22*_fh1)/_fh2)
     winw=fix(((_fw1*_mwx+1))/_fw2)
-    winh=fix((_screeny-_fh1*22-_fh2)/_fh2)
+    winh=fix((tScreen.y-_fh1*22-_fh2)/_fh2)
     if t<>"" then
 '    firstline=0
 '    do
@@ -131,7 +131,7 @@ function rlprint(t as string, col as short=11) as short
                     next
                     set__color( 14,1)
                     if displaytext(firstline+winh+1)<>"" then
-                        draw string((winw+1)*_fw2,_screeny-_fh2), chr(25),,font2,custom,@_col
+                        draw string((winw+1)*_fw2,tScreen.y-_fh2), chr(25),,font2,custom,@_col
                         no_key=keyin
                     endif
                 loop until displaytext(_textlines+1)=""

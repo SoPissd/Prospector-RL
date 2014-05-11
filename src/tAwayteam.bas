@@ -1359,12 +1359,12 @@ function crew_menu(crew() as _crewmember, from as short, r as short=0,text as st
     if p=0 then p=1
     no_key=""
     equip_awayteam(0)
-    lines=fix((_screeny)/(_fh2)) ' Stops last crew member for disappearing from screen
+    lines=fix((tScreen.y)/(_fh2)) ' Stops last crew member for disappearing from screen
     lines-=6
     cls
     do
         set__color( 11,0)
-        screenset 0,1
+        tScreen.set(0)
         cls
         message=""
         if no_key=key__enter then
@@ -1379,7 +1379,7 @@ function crew_menu(crew() as _crewmember, from as short, r as short=0,text as st
                                 crew(p).onship=0
                             end select
                         else
-                            draw string (10,_screeny-_fh2*2), "Is sick and must stay on board.",,font2,custom,@_col
+                            draw string (10,tScreen.y-_fh2*2), "Is sick and must stay on board.",,font2,custom,@_col
                         endif
                     else
                         if crew(p).onship=lc_onship and crew(p).disease=0 then
@@ -1388,13 +1388,13 @@ function crew_menu(crew() as _crewmember, from as short, r as short=0,text as st
                         else
                             locate 22,1
                             set__color( 14,0)
-                            draw string (10,_screeny-_fh2*2), "The captain must stay in the awayteam.",,font2,custom,@_col
+                            draw string (10,tScreen.y-_fh2*2), "The captain must stay in the awayteam.",,font2,custom,@_col
                         endif
                     endif
                 else
                     locate 22,1
                     set__color( 14,0)
-                    draw string (10,_screeny-_fh2*2), "You need to be at the ship to reassign.",,font2,custom,@_col
+                    draw string (10,tScreen.y-_fh2*2), "You need to be at the ship to reassign.",,font2,custom,@_col
                 endif
             endif
             if r=1 then return p
@@ -1642,18 +1642,18 @@ function crew_menu(crew() as _crewmember, from as short, r as short=0,text as st
         set__color( 11,0)
         locate 25,1
         if r=0 then
-            if from=0 then draw string (10,_screeny-_fh2),"enter add/remove from awaytem,"&key_rename &" rename a member, s set Item c clear, e toggle autoequip, esc exit",,font2,custom,@_col
-            if from<>0 then draw string (10,_screeny-_fh2),key_rename &" rename a member, s set Item, c clear, e toggle autoequip, esc exit",,font2,custom,@_col
+            if from=0 then draw string (10,tScreen.y-_fh2),"enter add/remove from awaytem,"&key_rename &" rename a member, s set Item c clear, e toggle autoequip, esc exit",,font2,custom,@_col
+            if from<>0 then draw string (10,tScreen.y-_fh2),key_rename &" rename a member, s set Item, c clear, e toggle autoequip, esc exit",,font2,custom,@_col
         endif
-        if r=1 then draw string (10,_screeny-_fh2),"installing augment "&text &": Enter to choose crewmember, esc to quit, a for all",,font2,custom,@_col
+        if r=1 then draw string (10,tScreen.y-_fh2),"installing augment "&text &": Enter to choose crewmember, esc to quit, a for all",,font2,custom,@_col
         'flip
         textbox(crew_bio(p),_mwx,1,20,15,1)
-        screenset 0,1
+        tScreen.set(0)
         no_key=keyin(,1)
         if keyplus(no_key) or getdirection(no_key)=2 then p+=1
         if keyminus(no_key) or getdirection(no_key)=8 then p-=1
         if no_key=key_rename then
-            screenset 1,1
+            tScreen.set(1)
             if p<6 then
                 n=gettext(16,(p-1+offset)*3,16,n)
             else
@@ -1667,7 +1667,7 @@ function crew_menu(crew() as _crewmember, from as short, r as short=0,text as st
         if p>dlast then offset-=1
         if p<dfirst then offset+=1
     loop until no_key=key__esc or no_key=" "
-    screenset 0,1
+    tScreen.set(0)
     cls
     flip
     return 0

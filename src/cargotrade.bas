@@ -337,12 +337,12 @@ private function sick_bay(st as short=0,obe as short=0) as short
                             endif
                             c2=0
                         endif
-                        screenset 0,1
+                        tScreen.set(0)
                         set__color(11,0)
                         cls
                         display_ship()
                         flip
-                        screenset 1,1
+                        tScreen.set(1)
                         if c<>0 then
                             do
                                 if c=1 and b=19 then 'No Loyalty Chip for Captain 

@@ -11,10 +11,14 @@
 #EndMacro
 
 '
+
 #undef main
+#define main
 inc("main",	"debug.bas",				"")
-inc("main",	"tColor.bas",				"")
+inc("main",	"tDefines.bas",				"")
 inc("main",	"tModule.bas",				"")
+inc("main",	"tScreen.bas",				"")
+inc("main",	"tColor.bas",				"")
 inc("main",	"version.bas",				"")
 '
 ' sound support
@@ -151,7 +155,7 @@ inc("main",	"tWaypoints.bas",			"")
 '
 inc("head",	"tPlanetmap.bas",			"headers")
 inc("main",	"tMakeplanet.bas",			"")
-inc("main",	"tPlanetmap.bas",			"")
+inc("main",	"tPlanetmap.bas",			"body")
 '
 inc("main",	"retirement.bas",			"")
 inc("main",	"tPlayer.bas",				"")
@@ -172,11 +176,6 @@ inc("main",	"tBones.bas",				"")
 inc("main",	"tWorldgen.bas",			"")
 inc("main",	"tShipyard.bas",			"")
 '
-inc("main",	"tCards.bas",				"")
-inc("main",	"tSlotmachine.bas",			"")
-inc("main",	"tPoker.bas",				"")
-inc("main",	"tCasino.bas",				"")
-'
 inc("main",	"tCockpit.bas",				"")
 inc("main",	"tAutopilot.bas",			"")
 inc("main",	"tLogbook.bas",				"")
@@ -186,8 +185,14 @@ inc("main",	"tSpacecombat.bas",			"")
 inc("main",	"quests.bas",				"")
 inc("main",	"cargotrade.bas",			"")
 inc("main",	"pirates.bas",				"")
-inc("main",	"tCompany.bas",				"")
+inc("main",	"tCompany.bas",				"body")
 inc("main",	"tStockmarket.bas",			"")
+'
+inc("main",	"tCards.bas",				"")
+inc("main",	"tSlotmachine.bas",			"")
+inc("main",	"tPoker.bas",				"")
+inc("main",	"tCasino.bas",				"")
+'
 inc("main",	"tRadio.bas",				"")
 inc("main",	"tPlanetmenu.bas",			"")
 inc("main",	"tDialog.bas",				"")
@@ -234,8 +239,7 @@ ERRORMESSAGE:
 WAITANDEXIT:
 	Print
 	Print
-	set__color( 12,0)
-	Pressanykey
+	Pressanykey(10,10,0) '10-green
 DONE:
 	set_volume(-1)
 	DbgLogExplorePlanetEnd

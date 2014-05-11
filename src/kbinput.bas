@@ -36,15 +36,31 @@ function keyminus(key as string) as short
 end function
 
 
-function Pressanykey(aCol as short=0,aFg as short=0,aBg as short=0) as Integer
-	if aFg>0 then
-		set__color( aFg,aBg )
-	EndIf
-	if aCol>0 then
-		Locate csrlin,aCol
-	EndIf
-	Print "Press any key to exit"
+function keyinput(allowed as string="") as string
+'    DimDebugL(0)'1
+    dim as UInteger key
 	do while inkey<>"": loop
-	Sleep
-	return 0
+    do        
+		key=GetKey()
+'		? chr(key and 255),chr(key shr 8)
+    loop until key>0 or allowed="" or (instr(allowed,chr(key))>0) 
+    return chr(key and 255)
+end function
+
+
+function Pressanykey(aRow as Integer=2,aCol as Integer=0,aFg as Integer=0,aBg as Integer=0) as Integer
+	dim key as integer
+	if (aFg>0) then
+		tColor.set(aFg,aBg)
+	EndIf
+	while aRow>0
+		?
+		aRow -=1
+	Wend
+	tScreen.loc(aRow,aCol)
+	Print "Press any key to exit";
+	do while inkey<>"": loop
+	key=GetKey()
+	?
+	return key
 End function

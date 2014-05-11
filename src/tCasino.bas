@@ -137,7 +137,7 @@ function casino(staked as short=0, st as short=-1) as short
     endif
     bg_parent=bg_noflip
     
-    screenset 1,1
+    tScreen.set(1)
     do
         menustring="Casino:/Play Roulette/Play Slot Machine/Play Poker/Have a drink/"
         leave=5
