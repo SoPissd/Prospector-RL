@@ -1,16 +1,29 @@
-'tDefines
-'#undef namespace
+'tDefines.
+'
+'namespace: tDefines
 
 '
-''
-'''
-#if defined(namespace)
-	namespace tDefines
-#endIf
-#if defined(all) or defined(head) 
-#if defined(namespace)'declare init load save
-#endIf
-'<your headers here>
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tDefines -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tDefines -=-=-=-=-=-=-=-
+
 
 'Define True/False values.
 #Ifndef FALSE
@@ -24,38 +37,23 @@
 #EndIf
 
 
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tDefines -=-=-=-=-=-=-=-
 
+namespace tDefines
+function init() as Integer
+	return 0
+end function
+end namespace'tDefines
 
-#endIf
-#if defined(all) or defined(body)
-#if not defined(namespace)'do not define init load save
-#endIf
-'<your implementation here>
+#endif'main
 
-#endIf
-#if not ( defined(all) or defined(body) or defined(head) )
-#define ok2zap_codeabove
-'''
-''
-'
-'<your original code>
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tDefines -=-=-=-=-=-=-=-
+	tModule.register("tDefines",@tDefines.init()) ',@tDefines.load(),@tDefines.save())
+#endif'main
 
-'
-''
-'''
-#define ok2zap_codebelow
-#endIf
-#if defined(namespace)
-	end namespace
-#endIf
-#if defined(all) or defined(body)
-	'<your initialization code>
-	tModules.Register("tDefines")
-#endIf
-#if not (defined(head) or defined(body))'test
-	'<your test code>
-#endif
-
-'''
-'' :)
-'
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tDefines -=-=-=-=-=-=-=-
+#endif'test

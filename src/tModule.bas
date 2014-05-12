@@ -1,6 +1,43 @@
-'tModule
+'tModule.
+'
+'namespace: tModule
+'
+'
+'defines:
+'Init=6, Register=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tModule -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
 
 namespace tModule
+	
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tModule -=-=-=-=-=-=-=-
+
+
+'private function tModule
+'private function tModule
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tModule -=-=-=-=-=-=-=-
+
 
 type tInitFunction As Function() As Integer
 type tSaveFunction As Function(fileno as Integer) As Integer
@@ -44,6 +81,14 @@ public function Register(aName as string,_
 End Function
 
 '
+#endif'main
 end namespace
 
-tModule.Register("tModule",@tModule.Init())
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tModule -=-=-=-=-=-=-=-
+	tModule.register("tModule",@tModule.init()) ',@tModule.load(),@tModule.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tModule -=-=-=-=-=-=-=-
+#endif'test

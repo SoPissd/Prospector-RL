@@ -7,7 +7,6 @@
 #include "windows.bi"
 
 '
-#define intest
 #print head
 #define head
 #undef main
@@ -16,8 +15,8 @@
 '
 #print main
 #define main
-#include "src/tDefines.bas"
 #include "src/tModule.bas"
+#include "src/tDefines.bas"
 #include "src/tScreen.bas"
 #include "src/tColor.bas"
 #include "src/Version.bas"
@@ -363,17 +362,17 @@ function newsource(ByRef aSource as tSource) as string
 	afun += "'     -=-=-=-=-=-=-=- MAIN: "+aSource.token+" -=-=-=-=-=-=-=-" +crlf
 	afun += crlf
 		afun += "namespace "+aSource.token +crlf
-		afun += "public function init()" +crlf
+		afun += "function init() as Integer" +crlf
 		afun += chr(9) +"return 0" +crlf
 		afun += "end function" +crlf
 		afun += "end namespace'"+aSource.token +crlf
 		afun += crlf
 	if 0 then
-		afun += "public function load(fileno as Integer) As Integer" +crlf
+		afun += "function load(fileno as Integer) As Integer" +crlf
 		afun += chr(9) +"return 0" +crlf
 		afun += "end function" +crlf
 		afun += crlf
-		afun += "public function save(fileno as Integer) As Integer" +crlf
+		afun += "function save(fileno as Integer) As Integer" +crlf
 		afun += chr(9) +"return 0" +crlf
 		afun += "end function" +crlf
 		afun += crlf
@@ -386,7 +385,7 @@ function newsource(ByRef aSource as tSource) as string
 	aend = "#endif'main" +crlf +aend
 	aend = "#define cut2bottom"+crlf +aend +crlf
 	'
-	aend += "#ifdef (defined(main) or defined(test))" +crlf
+	aend += "#if (defined(main) or defined(test))" +crlf
 	aend += "'      -=-=-=-=-=-=-=- INIT: "+aSource.token+" -=-=-=-=-=-=-=-" +crlf
 	aend += chr(9) +"tModule.register("
 	aend += """"+aSource.token+""""

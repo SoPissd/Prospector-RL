@@ -1,4 +1,45 @@
-'tPalette
+'tPalette.
+'
+'defines:
+'load_palette=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tPalette -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tPalette -=-=-=-=-=-=-=-
+
+declare public function load_palette(filename as string="p.pal") as short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tPalette -=-=-=-=-=-=-=-
+
+namespace tPalette
+function init()
+	return 0
+end function
+end namespace'tPalette
+
+
+#define cut2top
+
 
 #if not (defined(head) or defined(main)) 'test
 #print "tPalette test"
@@ -76,3 +117,14 @@ Pressanykey
 #endif		
 '#endif
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tPalette -=-=-=-=-=-=-=-
+	tModule.register("tPalette",@tPalette.init()) ',@tPalette.load(),@tPalette.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tPalette -=-=-=-=-=-=-=-
+#endif'test

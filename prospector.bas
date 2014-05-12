@@ -4,10 +4,83 @@
 '
 '
 'defines:
-'init=21
+'init=14
 '
 
 'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: prospector -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: prospector -=-=-=-=-=-=-=-
+
+
+'private function prospector
+'private function prospector
+'private function prospector
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: prospector -=-=-=-=-=-=-=-
+
+namespace prospector
+public function init()
+	return 0
+end function
+end namespace'prospector
+
+
+#define cut2top
+
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: prospector -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: prospector -=-=-=-=-=-=-=-
+
+
+'private function prospector
+'private function prospector
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: prospector -=-=-=-=-=-=-=-
+
+namespace prospector
+public function init()
+	return 0
+end function
+end namespace'prospector
+
+
+#define cut2top
+
 ' builds in test mode otherwise:
 #if not (define(head) or define(main))
 #define intest
@@ -93,6 +166,28 @@ end namespace'prospector
 '      -=-=-=-=-=-=-=- MAIN: prospector -=-=-=-=-=-=-=-
 	tModule.register("prospector",@prospector.init()) ',@prospector.load(),@prospector.save())
 #endif'main
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: prospector -=-=-=-=-=-=-=-
+#endif'test
+#define cut2bottom
+#endif'main
+
+#ifdef (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: prospector -=-=-=-=-=-=-=-
+	tModule.register("prospector",@prospector.init()) ',@prospector.load(),@prospector.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: prospector -=-=-=-=-=-=-=-
+#endif'test
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: prospector -=-=-=-=-=-=-=-
+	tModule.register("prospector",@prospector.init()) ',@prospector.load(),@prospector.save())
+#endif'main
+
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: prospector -=-=-=-=-=-=-=-
 #endif'test
