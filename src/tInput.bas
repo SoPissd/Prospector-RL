@@ -1,4 +1,44 @@
-'tInput
+'tInput.
+'
+'defines:
+'gettext=2, getnumber=1, askyn=212
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tInput -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tInput -=-=-=-=-=-=-=-
+
+declare function gettext(x as short, y as short, ml as short, text as string,pixel as short=0) as string
+declare function getnumber(a as integer,b as integer, e as integer) as integer
+declare function askyn(q as string,col as short=11,sure as short=0) as short
+
+
+#endif'head
+
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tInput -=-=-=-=-=-=-=-
+
+namespace tInput
+function init() as Integer
+	return 0
+end function
+end namespace'tInput
 
 Dim Shared evkey As FB.Event
 
@@ -152,3 +192,14 @@ function askyn(q as string,col as short=11,sure as short=0) as short
     endif
     return a
 end function
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tInput -=-=-=-=-=-=-=-
+	tModule.register("tInput",@tInput.init()) ',@tInput.load(),@tInput.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tInput -=-=-=-=-=-=-=-
+#endif'test

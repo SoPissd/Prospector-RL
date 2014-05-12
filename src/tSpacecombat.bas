@@ -1,6 +1,43 @@
-'tSpacecombat
+'tSpacecombat.
+'
+'defines:
+'spacecombat=9, playerfightfleet=6
+'
 
-declare function trading(st as short) as short
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tSpacecombat -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tSpacecombat -=-=-=-=-=-=-=-
+
+declare function spacecombat(byref atts as _fleet,ter as short) as short
+declare function playerfightfleet(f as short) as short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tSpacecombat -=-=-=-=-=-=-=-
+
+namespace tSpacecombat
+function init() as Integer
+	return 0
+end function
+end namespace'tSpacecombat
+
 
 function spacecombat(byref atts as _fleet,ter as short) as short
     dim attacker(16) as _ship
@@ -569,3 +606,14 @@ function playerfightfleet(f as short) as short
     return 0
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tSpacecombat -=-=-=-=-=-=-=-
+	tModule.register("tSpacecombat",@tSpacecombat.init()) ',@tSpacecombat.load(),@tSpacecombat.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tSpacecombat -=-=-=-=-=-=-=-
+#endif'test

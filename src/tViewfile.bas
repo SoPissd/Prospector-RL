@@ -1,4 +1,45 @@
-'tViewfile
+'tViewfile.
+'
+'defines:
+'Viewfile=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tViewfile -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tViewfile -=-=-=-=-=-=-=-
+
+
+'private function Viewfile(filename as string,nlines as integer=4096) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tViewfile -=-=-=-=-=-=-=-
+
+namespace tViewfile
+function init() as Integer
+	return 0
+end function
+end namespace'tViewfile
+
+
+#define cut2top
+
 
 
 public function Viewfile(filename as string,nlines as integer=4096) as short
@@ -68,3 +109,14 @@ public function Viewfile(filename as string,nlines as integer=4096) as short
     return 0
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tViewfile -=-=-=-=-=-=-=-
+	tModule.register("tViewfile",@tViewfile.init()) ',@tViewfile.load(),@tViewfile.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tViewfile -=-=-=-=-=-=-=-
+#endif'test

@@ -1,4 +1,47 @@
-'tSound
+'tSound.
+'
+'defines:
+'set_volume=4, load_sounds=1, play_sound=19
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tSound -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tSound -=-=-=-=-=-=-=-
+
+declare function set_volume(volume as Integer) as short
+declare function load_sounds() as short
+declare function play_sound(iSound As Short,iRepeats As Short=1,iDelay As Short=0) as short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tSound -=-=-=-=-=-=-=-
+
+namespace tSound
+function init() as Integer
+	return 0
+end function
+end namespace'tSound
+
+
+#define cut2top
+
 
 ' sound support
 
@@ -102,3 +145,14 @@ function play_sound(iSound As Short,iRepeats As Short=1,iDelay As Short=0) as sh
 End function
 
 ' /sound support
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tSound -=-=-=-=-=-=-=-
+	tModule.register("tSound",@tSound.init()) ',@tSound.load(),@tSound.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tSound -=-=-=-=-=-=-=-
+#endif'test

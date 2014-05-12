@@ -1,17 +1,55 @@
-'main.bas
+'main.
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: main -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: main -=-=-=-=-=-=-=-
+
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: main -=-=-=-=-=-=-=-
+
 
 #Macro inc(section,file,comments)
 '#print #file "---" #comments
 #undef head
 #undef main
-'#print section
+#undef both
+#undef test
+#undef intest
+'#print section -=- file  -=- comments
 #define section
+#if section="both"
+#define head
+#define main
+#undef both
+#endif
 #include file
 #undef section
 #EndMacro
 
 '
 ' sound support
+#IfDef sound
+#define _FBSOUND
+#endif
 #IfDef _FBSOUND
 	#print (Sound through fbsound)
 	#Define _sound
@@ -32,52 +70,18 @@
 	#EndIf
 #EndIf
 '
-inc("main",	"fbGfx.bi",					"")
-inc("main",	"file.bi",					"")
-inc("main",	"zlib.bi",					"")
+inc("both",	"fbGfx.bi",					"")
+inc("both",	"file.bi",					"")
+inc("both",	"zlib.bi",					"")
 '
-#undef main
-#define main
-inc("main",	"debug.bas",				"")
-'
-#if _DbgOptLoadWin = 1			
-	#print loading windows headers			
-	inc("main",	"windows.bi",			windows header mandatory for debugbreak & console)
-#else
-#if _DbgOptLoadWin = 2			
-	#print loading winbase headers			
-	inc("main",	"winbase.bi",			windows header mandatory for debugbreak & console)
-#endif							
-#endif							
-'
-#if _DbgOptLoadMLD = 1
-	#print loading memory leak detector			
-	'#include once "crt.bi"
-	'#ifdef __FB_WIN32__
-	''# inclib "msvcrt"
-	'#endif
-	''#include once "crt/string.bi"
-	''#include once "crt/math.bi"
-	''#include once "crt/time.bi"
-	''#include once "crt/wchar.bi"
-	''#include once "crt/ctype.bi"
-	''#include once "crt/stdlib.bi"
-	''#include once "crt/stdio.bi"
-	''#include once "crt/fcntl.bi"
-	''#include once "crt/errno.bi"
-	'#if defined(__FB_WIN32__) or defined(__FB_DOS__)
-	''# include once "crt/dir.bi"
-	'#endif
-	inc("main",	"fbmld.bi",				memory-leak-detector)
-#endif							
-'
-'
-'
-inc("main",	"tDefines.bas",				"")
-inc("main",	"tModule.bas",				"")
-inc("main",	"tScreen.bas",				"")
-inc("main",	"tColor.bas",				"")
-inc("main",	"version.bas",				"")
+'#undef main
+inc("head",	"tDefines.bas",				"head, basic true/false/null")
+inc("both",	"tModule.bas",				"the module loader. first init, then save/load")
+inc("main",	"tDefines.bas",				"main, register the unit")
+inc("both",	"debug.bas",				"debug macros or their null eqivalents. also include loading")
+inc("both",	"tScreen.bas",				"wrap screen,screenset,locate,width,color so console code works too")
+inc("both",	"tColor.bas",				"maps color codes to screen via palette")
+inc("both",	"version.bas",				"provides ErrorlogFilename and Errorscreen. same vars too")
 '
 On Error Goto errormessage
 Cls
@@ -91,158 +95,70 @@ chdir exepath
 '
 'core
 '
-inc("main",	"tRng.bas",					"")
-inc("main",	"tPng.bas",					"")
-inc("main",	"tGraphics.bas",			"")
+inc("both",	"tRng.bas",					"rng with retrievable seed")
+inc("both",	"tPng.bas",					"png load? save functions")
 '
-inc("main",	"kbinput.bas",				"")
-inc("main",	"tFile.bas",				"")
-inc("main",	"tUtils.bas",				"")
-inc("main",	"tError.bas",				"")
+inc("both",	"kbinput.bas",				"keyplus,keyminus,Pressanykey,keyinput and consts for simple keys.")
+inc("both",	"tFile.bas",				"Openfile++, filetostring, stringtofile, logtofile and more utilities")
+inc("both",	"tUtils.bas",				"string helpers mostly. needs tests to be written")
+inc("both",	"tError.bas",				"Errorhandler messages for graphics and console. logging too")
+inc("both",	"tGraphics.bas",			"background and bmp loading. calcosx")
 '
-inc("main",	"tCoords.bas",				"")
-inc("main",	"tAstar.bas",				"")
-inc("main",	"tMath.bas",				"")
-inc("main",	"tTime.bas",				"")
+inc("both",	"tCoords.bas",				"")
+inc("both",	"tAstar.bas",				"")
+inc("both",	"tMath.bas",				"")
+inc("both",	"tTime.bas",				"")
 '
-inc("main",	"tKeys.bas",				"")
-inc("main",	"tPrint.bas",				"")
-inc("main",	"tTextbox.bas",				"")
-'
-inc("main",	"tConfig.bas",				"")
-inc("main",	"tInput.bas",				"")
-inc("main",	"tSound.bas",				"")
-'
-inc("main",	"tConsts.bas",				"")
-inc("main",	"tTypes.bas",				"")
-inc("main",	"tEnums.bas",				"")
-inc("main",	"tVars.bas",				"")
-'
-'
-'app
-'
-'
-inc("main",	"tCommandstring.bas",		"")
-inc("main",	"tFonts.bas",				"")
-inc("main",	"tTiles.bas",				"")
-inc("main",	"tTiledata.bas",			"")
-'
-'game
-'
-inc("main",	"tTexts.bas",				"")
-inc("main",	"tEnergycounter.bas",		"")
-inc("main",	"tWeapon.bas",				"")
-inc("main",	"tShip.bas",				"")
-inc("main",	"tCustomship.bas",			"")
-inc("main",	"tMonster.bas",				"")
-inc("main",	"tFaction.bas",				"")
-inc("main",	"tStars.bas",				"")
-inc("main",	"tIndex.bas",				"")
-inc("main",	"tItems.bas",				"")
-inc("main",	"tItem.bas",				"")
-inc("main",	"tArtifacts.bas",			"")
-inc("main",	"tCivilisation.bas",		"")
-inc("main",	"tPlanet.bas",				"")
-inc("main",	"tSpacemap.bas",			"")
-inc("main",	"tFleet.bas",				"")
-inc("main",	"tPeople.bas",				"")
-inc("main",	"tModifyitem.bas",			"")
-inc("main",	"tMakeitem.bas",			"")
-inc("main",	"tCrew.bas",				"")
-inc("main",	"tParty.bas",				"")
-inc("main",	"tRumors.bas",				"")
-inc("main",	"tWaypoints.bas",			"")
-'
-inc("head",	"tPlanetmap.bas",			"headers")
-inc("main",	"tMakeplanet.bas",			"")
-inc("main",	"tPlanetmap.bas",			"body")
-'
-inc("main",	"retirement.bas",			"")
-inc("main",	"tPlayer.bas",				"")
-inc("main",	"tQuest.bas",				"")
-inc("main",	"tCredits.bas"	,			"")
-inc("main",	"tMakemonster.bas",			"")
-inc("main",	"crew.bas",					"")
-inc("main",	"tCommunicate.bas",			"")
-inc("main",	"tAwayteam.bas",			"")
-inc("main",	"tCargo.bas",				"")
-'
-inc("main",	"debug2.bas",				"")
-inc("main",	"space.bas",				"")
-inc("main",	"tTrading.bas",				"")
-inc("main",	"tShops.bas",				"")
-inc("main",	"tSpecialPlanet.bas",		"")
-inc("main",	"tBones.bas",				"")
-inc("main",	"tWorldgen.bas",			"")
-inc("main",	"tShipyard.bas",			"")
-'
-inc("main",	"tCockpit.bas",				"")
-inc("main",	"tAutopilot.bas",			"")
-inc("main",	"tLogbook.bas",				"")
-inc("main",	"spacecom.bas",				"")
-inc("head",	"tCompany.bas",				"headers")
-inc("main",	"tSpacecombat.bas",			"")
-inc("main",	"quests.bas",				"")
-inc("main",	"cargotrade.bas",			"")
-inc("main",	"pirates.bas",				"")
-inc("main",	"tCompany.bas",				"body")
-inc("main",	"tStockmarket.bas",			"")
-'
-inc("main",	"tCards.bas",				"")
-inc("main",	"tSlotmachine.bas",			"")
-inc("main",	"tPoker.bas",				"")
-inc("main",	"tCasino.bas",				"")
-'
-inc("main",	"tRadio.bas",				"")
-inc("main",	"tPlanetmenu.bas",			"")
-inc("main",	"tDialog.bas",				"")
-'
-inc("main",	"tAutoexplore.bas",			"")
-inc("main",	"tRover.bas",				"")
-inc("main",	"tMonstermove.bas",			"")
-inc("main",	"tAttack.bas",				"")
-inc("main",	"exploreplanet.bas",		"")
-inc("main",	"tPlaneteffect.bas",		"")
-inc("main",	"tProbes.bas",				"")
-inc("main",	"compcolon.bas",			"")
-inc("main",	"tExplore.bas",				"")
-inc("main",	"tLanding.bas",				"")
-inc("main",	"tFuel.bas",				"")
-inc("main",	"tExplorespace.bas",		"")
-'
-'game-menu
-'
-inc("main",	"highscore.bas",			"")
-inc("main",	"tPalette.bas",				"")
-inc("main",	"tMenu.bas",				"")
-inc("main",	"tSavegame.bas",			"")
-inc("main",	"tGameinit.bas",			"")
-inc("main",	"tViewfile.bas",			"")
-inc("main",	"tGamekeys.bas",			"")
-inc("main",	"tGame.bas",				"")
+#undef inc
+#Macro inc(file,comments)
+'#print -=- file  -=- comments
+#include file
+#EndMacro
+
+#print loading headers
+#define head
+#print head
+#undef main
+#include "main.bi"
+#print headers loaded
+#print loading implementations
+#undef head
+#define main
+#include "main.bi"
+#print implementations loaded
+#endif'main
+
+
 '
 'main
 '
-Print "Switching"
-Print
-
-LETSGO:
-	On Error goto Errormessage
+#ifdef main
+namespace tMain
+function init() as Integer
+	Print "Switching"
+	Print
 	tError.ErrorNr= (Initgame()<> 0) or Prospector()
+	return 0
+end function
+end namespace'tMain
+#endif'main
+
+
+'      -=-=-=-=-=-=-=- MAIN -=-=-=-=-=-=-=-
+Letsgo:
+	On Error goto Errormessage
+	tModule.register("main",@tMain.init()) ',@main.load(),@main.save())
 	goto ErrorHandler 
-ERRORMESSAGE:
+Errormessage:
 	On Error goto 0
 	tError.ErrorNr= Err
 	tError.ErrorLn= Erl
 	tError.ErrText= ucase(stripFileExtension(lastword(*ERMN(),"\")))
 	tError.ErrText= tError.ErrText &"::" &*ERFN() &"() reporting Error #" &tError.ErrorNr &" at line " &tError.ErrorLn &"!"
-ERRORHANDLER:
+ErrorHandler:
 	tError.ErrorHandler()
-DONE:
+Done:
 	set_volume(-1)
-	DbgLogExplorePlanetEnd
+	'DbgLogExplorePlanetEnd
 	DbgEnd
 	End tError.ErrorNr
-'
-'#
-'

@@ -1,5 +1,64 @@
-'quests
-declare function set_fleet(fl as _fleet) as short
+'quests.
+'
+'defines:
+'eris_doesnt_like_your_ship=0, eris_finds_apollo=1, getunusedplanet=0,
+', load_quest_cargo=0, give_bountyquest=1, give_patrolquest=1,
+', give_quest=0, Find_Passage=0, find_passage_quest=0, planet_bounty=1,
+', check_questcargo=1, make_questitem=3, form_alliance=0, ask_alliance=4,
+', robot_invasion=1, reward_patrolquest=2, reward_bountyquest=2,
+', scrap_component=0, eris_does=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: quests -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: quests -=-=-=-=-=-=-=-
+
+declare function eris_finds_apollo() as short
+declare function give_bountyquest(employer as short) as short
+declare function give_patrolquest(employer as short) as short
+declare function planet_bounty() as short
+declare function check_questcargo(st as short) as short
+declare function make_questitem(i as short,wanthas as short) as short
+declare function ask_alliance(who as short) as short
+declare function robot_invasion() as short
+declare function reward_patrolquest() as short
+declare function reward_bountyquest(employer as short) as short
+declare function eris_does() as short
+
+'private function eris_doesnt_like_your_ship() as short
+'private function getunusedplanet() as short
+'private function load_quest_cargo(t as short,car as short,dest as short) as short
+'private function give_quest(st as short) as short
+'private function Find_Passage(m as short, start as _cords, goal as _cords) as short
+'private function find_passage_quest(m as short, start as _cords, goal as _cords) as short
+'private function form_alliance(who as short) as short
+'private function scrap_component() as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: quests -=-=-=-=-=-=-=-
+
+namespace quests
+function init() as Integer
+	return 0
+end function
+end namespace'quests
 
 
 function eris_doesnt_like_your_ship() as short
@@ -1376,3 +1435,14 @@ function eris_does() as short
     return 0
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: quests -=-=-=-=-=-=-=-
+	tModule.register("quests",@quests.init()) ',@quests.load(),@quests.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: quests -=-=-=-=-=-=-=-
+#endif'test

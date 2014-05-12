@@ -1,4 +1,59 @@
-'tRadio
+'tRadio.
+'
+'defines:
+'ep_heatmap=0, shipstatus=1, display_monsters=0, ep_display=22,
+', ep_radio=1, space_radio=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tRadio -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tRadio -=-=-=-=-=-=-=-
+
+Type _shipfire
+    what As Short
+    when As Short
+    where As _cords
+    tile As String*1
+    stun As Byte
+End Type
+
+declare function shipstatus(heading as short=0) as short
+declare function ep_display(osx As Short=555) As Short
+declare function ep_radio(ByRef nextlanding As _cords,ByRef ship_landing As Short, shipfire() As _shipfire,lavapoint() As _cords, ByRef sf As Single,nightday() As Byte,localtemp() As Single) As Short
+declare function space_radio() As Short
+
+'private function ep_heatmap(lavapoint() As _cords,lastlavapoint As Short) As Short
+'private function display_monsters(osx as short) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tRadio -=-=-=-=-=-=-=-
+
+namespace tRadio
+function init() as Integer
+	return 0
+end function
+end namespace'tRadio
+
+
+#define cut2top
+
 
 function ep_heatmap(lavapoint() As _cords,lastlavapoint As Short) As Short
     Dim As Short map(60,20),heatmap(60,20)
@@ -613,3 +668,14 @@ function space_radio() As Short
 End function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tRadio -=-=-=-=-=-=-=-
+	tModule.register("tRadio",@tRadio.init()) ',@tRadio.load(),@tRadio.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tRadio -=-=-=-=-=-=-=-
+#endif'test

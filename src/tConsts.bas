@@ -1,4 +1,40 @@
-'tConsts
+'tConsts.
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tConsts -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tConsts -=-=-=-=-=-=-=-
+
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tConsts -=-=-=-=-=-=-=-
+
+namespace tConsts
+function init() as Integer
+	return 0
+end function
+end namespace'tConsts
+
+
+#define cut2top
+
 
 Const c_red=12
 Const c_gre=10
@@ -56,13 +92,23 @@ Const _spawnoff=0
 Const show_moral=0
 Const makemoodlog=0
 Const lastflag=20
-Const max_maps=2047
 Const _clearmap=0
 Const _testspacecombat=0
 Const add_tile_each_map=0
 Const lastquestguy=15
 
-Const lastgood=9
+
 
 Const _debug_bones=0
 Const _test_disease=0
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tConsts -=-=-=-=-=-=-=-
+	tModule.register("tConsts",@tConsts.init()) ',@tConsts.load(),@tConsts.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tConsts -=-=-=-=-=-=-=-
+#endif'test

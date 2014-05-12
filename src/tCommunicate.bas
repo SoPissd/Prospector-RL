@@ -1,5 +1,48 @@
-'tCommunicate
-declare function do_dialog(no as short,e as _monster, fl as short) as short
+'tCommunicate.
+'
+'defines:
+'rndsentence=0, dirdesc=0, get_item=1, talk_culture=0, foreignpolicy=2,
+', communicate=4
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tCommunicate -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tCommunicate -=-=-=-=-=-=-=-
+
+declare function get_item(ty as short=0,ty2 as short=0,byref num as short=0,noequ as short=0) as short
+declare function foreignpolicy(c as short, i as byte) as short
+declare function communicate(e as _monster,mapslot as short,monslot as short) as short
+
+'private function rndsentence(e as _monster) as short
+'private function dirdesc(f as _cords,t as _cords) as string
+'private function talk_culture(c as short) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tCommunicate -=-=-=-=-=-=-=-
+
+namespace tCommunicate
+function init() as Integer
+	return 0
+end function
+end namespace'tCommunicate
+
 
 function rndsentence(e as _monster) as short
     dim as short aggr,intel
@@ -1216,3 +1259,14 @@ function communicate(e as _monster,mapslot as short,monslot as short) as short
 end function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tCommunicate -=-=-=-=-=-=-=-
+	tModule.register("tCommunicate",@tCommunicate.init()) ',@tCommunicate.load(),@tCommunicate.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tCommunicate -=-=-=-=-=-=-=-
+#endif'test

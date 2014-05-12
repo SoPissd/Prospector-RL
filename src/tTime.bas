@@ -1,4 +1,46 @@
-'tTime
+'tTime.
+'
+'defines:
+'display_time=8, date_string=2
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tTime -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tTime -=-=-=-=-=-=-=-
+
+declare function display_time(t As UInteger,form As Byte=0) As String
+declare function date_string() as string
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tTime -=-=-=-=-=-=-=-
+
+namespace tTime
+function init() as Integer
+	return 0
+end function
+end namespace'tTime
+
+
+#define cut2top
+
 
 function display_time(t As UInteger,form As Byte=0) As String
     Dim As UInteger d,h,m
@@ -61,3 +103,14 @@ function date_string() as string
     if val(w(0))=12 then w(0)="DEZ"
     return w(1)&"-"&w(0)&"-"&w(2)
 end function
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tTime -=-=-=-=-=-=-=-
+	tModule.register("tTime",@tTime.init()) ',@tTime.load(),@tTime.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tTime -=-=-=-=-=-=-=-
+#endif'test

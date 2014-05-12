@@ -1,12 +1,40 @@
+'tTypes.
 
-'#Define NULL 0
-'#Define FALSE 0
-'#Define TRUE (Not FALSE)
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tTypes -=-=-=-=-=-=-=-
 
-Type _visit
-    s As Short
-    t As Integer
-End Type
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tTypes -=-=-=-=-=-=-=-
+
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tTypes -=-=-=-=-=-=-=-
+
+namespace tTypes
+function init() as Integer
+	return 0
+end function
+end namespace'tTypes
+
+
+#define cut2top
+
 
 Type _transfer
     from As _cords
@@ -28,43 +56,6 @@ Dim Shared lastportal As Short
 
 
 
-'Flag 28=techgoods delivered to star creatures
-Type _ae
-    c As _cords
-    rad As Byte
-    dam As Byte
-    dur As Byte
-    typ As Byte
-End Type
-
-Type _goods
-    'n as string*16
-    p As Single
-    v As Single
-    'test as single
-    'test2 as single
-End Type
-
-Type _basis
-    c As _cords
-    discovered As Short
-    inv(lastgood) As _goods
-    'different companys for each station
-    repname As String*32
-    company As Byte
-    spy As Byte
-    shop(8) As Byte
-    pricelevel As Single=1
-    mapmod As Single
-    biomod As Single
-    resmod As Single
-    pirmod As Single
-    lastsighting As Short
-    lastsightingdis As Short
-    lastsightingturn As Short
-    lastfight As Short
-    docked As Short
-End Type
 
 Type _comment
     c As _cords
@@ -75,12 +66,6 @@ End Type
 Dim Shared coms(255) As _comment
 
 
-
-Type _table
-    points As Integer
-    desig As String *80
-    death As String *80
-End Type
 
 
 Type _disease
@@ -103,15 +88,6 @@ Type _disease
 End Type
 
 Dim Shared disease(17) As _disease
-
-
-Type _shipfire
-    what As Short
-    when As Short
-    where As _cords
-    tile As String*1
-    stun As Byte
-End Type
 
 
 'type MODE
@@ -174,3 +150,14 @@ End Type
 '7 mapsincredits
 '8 Pirate outpost
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tTypes -=-=-=-=-=-=-=-
+	tModule.register("tTypes",@tTypes.init()) ',@tTypes.load(),@tTypes.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tTypes -=-=-=-=-=-=-=-
+#endif'test

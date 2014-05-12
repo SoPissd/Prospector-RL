@@ -1,6 +1,31 @@
-'tPlanet
-'#print tPLANET
+'tPlanet.
+'
+'defines:
+'deletemonsters=49, isgardenworld=10, isgasgiant=15, isasteroidfield=1,
+', system_text=1, make_unflags=3, uniques_html=1, uniques=3,
+', nextplan=0, prevplan=0, display_portal=2, display_portals=1,
+', dtile=6, display_sysmap=0, display_system=3, getplanet=0
+'
 
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tPlanet -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tPlanet -=-=-=-=-=-=-=-
 
 Type _planetsave
     awayteam As _monster
@@ -10,8 +35,6 @@ Type _planetsave
     ship As _cords
     map As Short
 End Type
-
-Dim Shared savefrom(16) As _planetsave
 
 Type _planet
     p As Short
@@ -57,6 +80,36 @@ Type _planet
 End Type
 
 
+declare function deletemonsters(a as short) as short
+declare function isgardenworld(m as short) as short
+declare function isgasgiant(m as short) as short
+declare function isasteroidfield(m as short) as short
+declare function system_text(a as short) as string
+declare function make_unflags(unflags() as byte) as short
+declare function uniques_html(unflags() as byte) as string
+declare function uniques(unflags() as byte) as string
+declare function display_portal(b as short,slot as short,osx as short) as short
+declare function display_portals(slot as short,osx as short) as short
+declare function dtile(x as short,y as short, tiles as _tile,visible as byte) as short
+declare function display_system(in as short,forcebar as byte=0,hi as byte=0) as short
+
+'private function nextplan(p as short,in as short) as short
+'private function prevplan(p as short,in as short) as short
+'private function display_sysmap(x as short, y as short, in as short, hi as short=0,bl as string,br as string) as short
+'private function getplanet(sys as short,forcebar as byte=0) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tPlanet -=-=-=-=-=-=-=-
+
+namespace tPlanet
+function init() as Integer
+	return 0
+end function
+end namespace'tPlanet
+
+
+Dim Shared savefrom(16) As _planetsave
 Dim Shared planets_flavortext(max_maps) As String
 
 Dim Shared planets(max_maps) As _planet
@@ -316,11 +369,6 @@ function dtile(x as short,y as short, tiles as _tile,visible as byte) as short
     set__color( 11,0)
     return 0
 end function
-
-
-
-Declare function display_ship(show as byte=0) as short
-Declare function display_awayteam(showshipandteam as byte=1,osx as short=555) as short
 
 
 
@@ -670,3 +718,14 @@ end function
 'end function
 '
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tPlanet -=-=-=-=-=-=-=-
+	tModule.register("tPlanet",@tPlanet.init()) ',@tPlanet.load(),@tPlanet.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tPlanet -=-=-=-=-=-=-=-
+#endif'test

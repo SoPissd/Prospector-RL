@@ -1,4 +1,48 @@
-'tGameInit
+'tGameinit.
+'
+'defines:
+'clear_gamestate=2, setglobals=0, check_filestructure=0, Initgame=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tGameinit -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tGameinit -=-=-=-=-=-=-=-
+
+declare function clear_gamestate() As Short
+declare function Initgame() as integer
+
+'private function setglobals() as short
+'private function check_filestructure() as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tGameinit -=-=-=-=-=-=-=-
+
+namespace tGameinit
+function init() as Integer
+	return 0
+end function
+end namespace'tGameinit
+
+
+#define cut2top
+
 
 function clear_gamestate() As Short
     Dim As Short a,x,y
@@ -882,7 +926,7 @@ function Initgame() as integer
 	load_config()
 	load_keyset()
 	load_sounds()
-	load_palette()
+	tPalette.load_palette()
 	DbgScreeninfo
 	'DbgWeapdumpCSV
 	   
@@ -893,3 +937,14 @@ function Initgame() as integer
     DbgTilesCSV
     return 0   
 End function
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tGameinit -=-=-=-=-=-=-=-
+	tModule.register("tGameinit",@tGameinit.init()) ',@tGameinit.load(),@tGameinit.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tGameinit -=-=-=-=-=-=-=-
+#endif'test

@@ -20,9 +20,9 @@
 #include "src/tScreen.bas"
 #include "src/tColor.bas"
 '
-#define intest
+#define testing
 #include "src/Version.bas"
-#undef intest
+#undef testing
 '
 #include "src/kbinput.bas"
 #include "src/tFile.bas"
@@ -799,13 +799,15 @@ function xrefall() as Integer
 		'? documentsorce(sources(iSource))
 		'? listdefines(sources(iSource))
 '		? newsource(sources(iSource))
+
 		dim aSource as tSource
 		aSource=sources(iSource)
-		dim source as string
-		source=newsource(aSource)
-? "Writing " &len(source) &"bytes to " + aSource.filename		
-		tFile.stringtofile(aSource.filename,source)
-'	    ? Declarepublicfunctions(sources(iSource))
+'dim source as string
+'source=newsource(aSource)
+'? "Writing " &len(source) &"bytes to " + aSource.filename		
+'tFile.stringtofile(aSource.filename,source)
+
+	    ? Declarepublicfunctions(aSource)
 		
 		continue for
 		ikey=Pressanykey

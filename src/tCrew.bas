@@ -1,4 +1,34 @@
-'tCrew
+'tCrew.
+'
+'defines:
+'SetCaptainsprite=2, character_name=0, add_talent=44, tohit_gun=1,
+', tohit_close=1, crew_bio=1, count_crew=0, augment_text=0, skill_text=0,
+', crew_html=2, crew_text=1, low_morale_message=2, Crewblock=0,
+', countdeadofficers=1, get_item_list=0, items_table=0, equipment_value=4,
+', list_inventory=11, captain_sprite=5, item_assigned=0, first_unused=0,
+', haggle_=21, paystuff=60, buy_weapon=2, bunk_multi=1, changemoral=4,
+', is_passenger=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tCrew -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tCrew -=-=-=-=-=-=-=-
 
 Type _crewmember
     ICON As String*1
@@ -34,6 +64,47 @@ Type _crewmember
     baseskill(3) As Short
     story(10) As Byte
 End Type
+
+
+declare function SetCaptainsprite(nr as Byte) as short
+declare function add_talent(cr as short, ta as short, value as single) as single
+declare function tohit_gun(a as short) as short
+declare function tohit_close(a as short) as short
+declare function crew_bio(i as short) as string
+declare function crew_html(c as _crewmember) as string
+declare function crew_text(c as _crewmember) as string
+declare function low_morale_message() as short
+declare function countdeadofficers(max as short) as short
+declare function equipment_value() as integer
+declare function list_inventory() as string
+declare function captain_sprite() as short
+declare function haggle_(way as string) as single
+declare function paystuff(price as integer) as integer
+declare function buy_weapon(st as short) as short
+declare function bunk_multi() as single
+declare function changemoral(value as short, where as short) as short
+declare function is_passenger(i as short) as short
+
+'private function character_name(byref gender as byte) as string
+'private function count_crew(crew() as _crewmember) as short
+'private function augment_text(c as _crewmember) as string
+'private function skill_text(c as _crewmember) as string
+'private function Crewblock() as string
+'private function get_item_list(invit() as _items, invnit()as short,ty as short=0,ty2 as short=0,ty3 as short=0,ty4 as short=0,noequip as short=0) as short
+'private function items_table() as string
+'private function item_assigned(i as short) as short
+'private function first_unused(i as short) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tCrew -=-=-=-=-=-=-=-
+
+namespace tCrew
+function init() as Integer
+	return 0
+end function
+end namespace'tCrew
+
 
 Dim Shared crew(255) As _crewmember
 
@@ -1100,3 +1171,14 @@ function is_passenger(i as short) as short
     next
     return 0
 end function
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tCrew -=-=-=-=-=-=-=-
+	tModule.register("tCrew",@tCrew.init()) ',@tCrew.load(),@tCrew.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tCrew -=-=-=-=-=-=-=-
+#endif'test

@@ -1,4 +1,48 @@
-'tRover
+'tRover.
+'
+'defines:
+'ep_roverreveal=0, ep_rovermove=1, update_tmap=1, move_rover=2
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tRover -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tRover -=-=-=-=-=-=-=-
+
+declare function ep_rovermove(a as short, slot as short) as short
+declare function update_tmap(slot as short) as short
+declare function move_rover(pl As Short)  As Short
+
+'private function ep_roverreveal(i As Integer) As Short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tRover -=-=-=-=-=-=-=-
+
+namespace tRover
+function init() as Integer
+	return 0
+end function
+end namespace'tRover
+
+
+#define cut2top
+
 
 function ep_roverreveal(i As Integer) As Short
     Dim As Short x,y,slot,j
@@ -157,3 +201,14 @@ function move_rover(pl As Short)  As Short
     Return 0
 End function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tRover -=-=-=-=-=-=-=-
+	tModule.register("tRover",@tRover.init()) ',@tRover.load(),@tRover.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tRover -=-=-=-=-=-=-=-
+#endif'test

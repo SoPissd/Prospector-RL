@@ -1,4 +1,45 @@
-'tModifyitem
+'tModifyitem.
+'
+'defines:
+'modify_item=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tModifyitem -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tModifyitem -=-=-=-=-=-=-=-
+
+
+'private function modify_item(i as _items,nomod as byte) as _items
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tModifyitem -=-=-=-=-=-=-=-
+
+namespace tModifyitem
+function init() as Integer
+	return 0
+end function
+end namespace'tModifyitem
+
+
+#define cut2top
+
 
 function modify_item(i as _items,nomod as byte) as _items
     dim as short a,rate
@@ -292,3 +333,14 @@ function modify_item(i as _items,nomod as byte) as _items
     return i
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tModifyitem -=-=-=-=-=-=-=-
+	tModule.register("tModifyitem",@tModifyitem.init()) ',@tModifyitem.load(),@tModifyitem.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tModifyitem -=-=-=-=-=-=-=-
+#endif'test

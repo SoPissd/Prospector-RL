@@ -1,3 +1,42 @@
+'tCards.
+'
+'namespace: cards
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tCards -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tCards -=-=-=-=-=-=-=-
+
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tCards -=-=-=-=-=-=-=-
+
+namespace tCards
+function init() as Integer
+	return 0
+end function
+end namespace'tCards
+
+
+#define cut2top
 /'****************************************************************************
 *
 * Name: cardobj.bi
@@ -799,3 +838,14 @@ End function
 End Namespace
 
 Dim Shared pcards As cards.cardobj
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tCards -=-=-=-=-=-=-=-
+	tModule.register("tCards",@tCards.init()) ',@tCards.load(),@tCards.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tCards -=-=-=-=-=-=-=-
+#endif'test

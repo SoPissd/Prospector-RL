@@ -1,4 +1,47 @@
-'tFonts
+'tFonts.
+'
+'defines:
+'load_font=1, load_fonts=1, draw_border=5
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tFonts -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tFonts -=-=-=-=-=-=-=-
+
+declare function load_font(fontdir as string,byref fh as ubyte) as ubyte ptr
+declare function load_fonts() as short
+declare function draw_border(xoffset as short) as short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tFonts -=-=-=-=-=-=-=-
+
+namespace tFonts
+function init() as Integer
+	return 0
+end function
+end namespace'tFonts
+
+
+#define cut2top
+
 
 Type FONTTYPE
   As Integer w
@@ -250,3 +293,14 @@ function draw_border(xoffset as short) as short
 end function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tFonts -=-=-=-=-=-=-=-
+	tModule.register("tFonts",@tFonts.init()) ',@tFonts.load(),@tFonts.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tFonts -=-=-=-=-=-=-=-
+#endif'test

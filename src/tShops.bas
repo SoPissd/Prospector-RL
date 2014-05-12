@@ -1,4 +1,52 @@
-'tShops
+'tShops.
+'
+'defines:
+'reroll_shops=5, place_shop_order=0, shop=111, mudds_shop=2,
+', sell_alien=4, botsanddrones_shop=2, makemudsshop=4
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tShops -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tShops -=-=-=-=-=-=-=-
+
+declare function reroll_shops() as short
+declare function shop(sh as short,pmod as single,shopn as string) as short
+declare function mudds_shop() as short
+declare function sell_alien(sh as short) as short
+declare function botsanddrones_shop() as short
+declare function makemudsshop(slot as short, x1 as short, y1 as short)  as short
+
+'private function place_shop_order(sh as short) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tShops -=-=-=-=-=-=-=-
+
+namespace tShops
+function init() as Integer
+	return 0
+end function
+end namespace'tShops
+
+
+#define cut2top
+
 
 function reroll_shops() as short
     dim as short a,b,i,c,sh,flag,roll,spec,shopno
@@ -711,3 +759,14 @@ function makemudsshop(slot as short, x1 as short, y1 as short)  as short
     return 0
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tShops -=-=-=-=-=-=-=-
+	tModule.register("tShops",@tShops.init()) ',@tShops.load(),@tShops.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tShops -=-=-=-=-=-=-=-
+#endif'test

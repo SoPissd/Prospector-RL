@@ -1,7 +1,49 @@
-'tPng
+'tPng.
+'
+'defines:
+'bswap=0, savepng=2
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tPng -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tPng -=-=-=-=-=-=-=-
+
+declare function savepng( _
+    byref filename as string = "screenshot.png", _
+    byval image as any ptr = 0, _
+    byval save_alpha as integer = 0) as integer
+
+'private function bswap(byval n as uinteger) as uinteger
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tPng -=-=-=-=-=-=-=-
+
+namespace tPng
+function init() as Integer
+	return 0
+end function
+end namespace'tPng
 
 
-'Declare function savepng( _
+#define cut2top
+
 '	ByRef filename As String = "screenshot.png", _
 '	ByVal image As Any Ptr = 0, _
 '	ByVal save_alpha As Integer = 0) As Integer
@@ -239,3 +281,14 @@ function savepng( _
 
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tPng -=-=-=-=-=-=-=-
+	tModule.register("tPng",@tPng.init()) ',@tPng.load(),@tPng.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tPng -=-=-=-=-=-=-=-
+#endif'test

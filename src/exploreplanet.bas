@@ -1,3 +1,82 @@
+'exploreplanet.
+'
+'defines:
+'earthquake=2, ep_areaeffects=1, ep_display_clouds=7, ep_dropitem=1,
+', ep_inspect=1, alienbomb=1, ep_items=1, ep_landship=1, ep_launch=1,
+', ep_pickupitem=1, ep_portal=0, ep_tileeffects=2, ep_lava=1,
+', ep_updatemasks=0, getmonster=0, ep_spawning=0, ep_shipfire=1,
+', ep_helmet=3, grenade=20, ep_grenade=1, ep_playerhitmonster=1,
+', ep_fire=2, ep_closedoor=1, mondis=0, ep_examine=1, ep_jumppackjump=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: exploreplanet -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: exploreplanet -=-=-=-=-=-=-=-
+
+'Flag 28=techgoods delivered to star creatures
+Type _ae
+    c As _cords
+    rad As Byte
+    dam As Byte
+    dur As Byte
+    typ As Byte
+End Type
+
+
+declare function earthquake(t as _tile,dam as short)as _tile
+declare function ep_areaeffects(areaeffect() As _ae,ByRef last_ae As Short,lavapoint() As _cords,cloudmap() As Byte) As Short
+declare function ep_display_clouds(cloudmap() As Byte) As Short
+declare function ep_dropitem() As Short
+declare function ep_inspect(ByRef localturn As Short) As Short
+declare function alienbomb(c As Short,slot As Short) As Short
+declare function ep_items(localturn As Short) As Short
+declare function ep_landship(ByRef ship_landing As Short,nextlanding As _cords,nextmap As _cords) As Short
+declare function ep_launch(ByRef nextmap As _cords) As Short
+declare function ep_pickupitem(Key As String) As Short
+declare function ep_tileeffects(areaeffect() As _ae, ByRef last_ae As Short,lavapoint() As _cords, nightday() As Byte, localtemp() As Single,cloudmap() As Byte) As Short
+declare function ep_lava(lavapoint() As _cords) As Short
+declare function ep_shipfire(shipfire() As _shipfire) As Short
+declare function ep_helmet() As Short
+declare function grenade(from As _cords,map As Short) As _cords
+declare function ep_grenade(shipfire() As _shipfire, ByRef sf As Single) As Short
+declare function ep_playerhitmonster(old As _cords, mapmask() As Byte) As Short
+declare function ep_fire(mapmask() As Byte,Key As String,ByRef autofire_target As _cords) As Short
+declare function ep_closedoor() As Short
+declare function ep_examine() As Short
+declare function ep_jumppackjump() As Short
+
+'private function ep_portal() As _cords
+'private function ep_updatemasks(spawnmask() As _cords,mapmask() As Byte,nightday() As Byte, ByRef dawn As Single, ByRef dawn2 As Single) As Short
+'private function getmonster() as short
+'private function ep_spawning(spawnmask() As _cords,lsp As Short, diesize As Short,nightday() As Byte) As Short
+'private function mondis(enemy as _monster) as string
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: exploreplanet -=-=-=-=-=-=-=-
+
+namespace exploreplanet
+function init() as Integer
+	return 0
+end function
+end namespace'exploreplanet
+
 
 function earthquake(t as _tile,dam as short)as _tile
     dim roll as short
@@ -2059,3 +2138,14 @@ function ep_jumppackjump() As Short
 End function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: exploreplanet -=-=-=-=-=-=-=-
+	tModule.register("exploreplanet",@exploreplanet.init()) ',@exploreplanet.load(),@exploreplanet.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: exploreplanet -=-=-=-=-=-=-=-
+#endif'test

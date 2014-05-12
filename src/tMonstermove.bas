@@ -1,3 +1,51 @@
+'tMonstermove.
+'
+'defines:
+'monsterhit=0, ep_changemood=0, move_monster=0, ep_monsterupdate=0,
+', ep_friendfoe=0, ep_nearest=0, ep_monstermove=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tMonstermove -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tMonstermove -=-=-=-=-=-=-=-
+
+
+'private function monsterhit(attacker As _monster, defender As _monster,vis As Byte) As _monster
+'private function ep_changemood(i As Short,message() As Byte) As Short
+'private function move_monster(i As short, target As _cords,flee as byte,rollover as byte,mapmask() As Byte) As short
+'private function ep_monsterupdate(i As Short, spawnmask() as _cords,lsp as short,mapmask() As Byte,nightday() As Byte,message() As Byte) As Short
+'private function ep_friendfoe(i As Short,j As Short) As Short
+'private function ep_nearest(i As Short) As Short
+'private function ep_monstermove(spawnmask() As _cords, lsp As Short, mapmask() As Byte,nightday() As Byte) As Short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tMonstermove -=-=-=-=-=-=-=-
+
+namespace tMonstermove
+function init() as Integer
+	return 0
+end function
+end namespace'tMonstermove
+
+
+#define cut2top
 ' tMonstermove
 
 
@@ -579,3 +627,14 @@ function ep_monstermove(spawnmask() As _cords, lsp As Short, mapmask() As Byte,n
 End function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tMonstermove -=-=-=-=-=-=-=-
+	tModule.register("tMonstermove",@tMonstermove.init()) ',@tMonstermove.load(),@tMonstermove.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tMonstermove -=-=-=-=-=-=-=-
+#endif'test

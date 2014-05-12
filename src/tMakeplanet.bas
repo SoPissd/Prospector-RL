@@ -1,5 +1,107 @@
-'planet
-'#print *PLANET*
+'tMakeplanet.
+'
+'defines:
+'checkdoor=1, digger=0, flood_fill=4, flood_fill2=1, floodfill3=2,
+', floodfill4=0, checkvalid=5, checkbord=0, makecomplex3=11,
+', makecomplex4=1, makelabyrinth=3, makeroots=2, chksrd=0, makevault=1,
+', makecavemap=16, makegeyseroasis=2, modsurface=1, makeice=2,
+', makecraters=7, togglingfilter=3, makeislands=12, makeoceanworld=3,
+', makemossworld=6, makecanyons=3, addportal=32, deleteportal=4,
+', makesettlement=0, makeroad=15, findsmartest=0, invisiblelabyrinth=1,
+', station_event=2, clean_station_event=1, make_mine=1, makeoutpost =0,
+', make_drifter=9, is_drifter=3, make_aliencolony=2, addpyramid=1,
+', remove_doors=0, add_door2=0, add_door=0, addcastle=0, adaptmap=1,
+', dominant_terrain=0, countasteroidfields=2, countgasgiants=4,
+', checkcomplex=1, get_random_system=0, getrandomplanet=0, get_system=1,
+', fillmap=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tMakeplanet -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tMakeplanet -=-=-=-=-=-=-=-
+
+declare function checkdoor(x as short,y as short, map() as short) as short
+declare function flood_fill(x as short,y as short,map() as short, flag as short=0) as short
+declare function flood_fill2(x as short,y as short, xm as short, ym as short, map() as byte) as short
+declare function floodfill3(x as short,y as short,map() as short) as short
+declare function checkvalid(x as short,y as short, map() as short) as short
+declare function makecomplex3(slot as short,cn as short, rc as short,columns as short,tileset as short) as short
+declare function makecomplex4(slot as short,rn as short,tileset as short) as short
+declare function makelabyrinth(slot as short) as short
+declare function makeroots(slot as short) as short
+declare function makevault(r as _rect,slot as short,nsp as _cords, typ as short,ind as short) as short
+declare function makecavemap(enter as _cords,tumod as short,dimod as short, spemap as short, froti as short, blocked as short=1) as short
+declare function makegeyseroasis(slot as short) as short
+declare function modsurface(a as short,o as short) as short
+declare function makeice(a as short,o as short) as short
+declare function makecraters(a as short, o as short) as short
+declare function togglingfilter(slot as short, high as short=1, low as short=2) as short     
+declare function makeislands(a as short, o as short) as short
+declare function makeoceanworld(a as short,o as short) as short
+declare function makemossworld(a as short, o as short) as short
+declare function makecanyons(a as short, o as short) as short
+declare function addportal(from as _cords, dest as _cords, oneway as short, tile as short,desig as string, col as short) as short
+declare function deleteportal(f as short=0, d as short=0) as short
+declare function makeroad(byval s as _cords,byval e as _cords, a as short) as short
+declare function invisiblelabyrinth(tmap() as _tile,xoff as short ,yoff as short, _x as short=11, _y as short=11) as short
+declare function station_event(m as short) as short
+declare function clean_station_event() as short
+declare function make_mine(slot as short) as short
+declare function make_drifter(d as _driftingship, bg as short=0,broken as short=0,f2 as short=0) as short
+declare function is_drifter(m as short) as short
+declare function make_aliencolony(slot as short,map as short, popu as short) as short
+declare function addpyramid(p as _cords, slot as short) as short
+declare function adaptmap(slot as short) as short
+declare function countasteroidfields(sys as short) as short
+declare function countgasgiants(sys as short) as short
+declare function checkcomplex(map as short,fl as short) as integer
+declare function get_system() as short  'returns the number of the system the player is in
+
+'private function digger(byval p as _cords,map() as short,d as byte,ti as short=2,stopti as short=0) as short
+'private function floodfill4(map() as short,x as short,y as short) as short
+'private function checkbord(x as short,y as short, map() as short) as short
+'private function chksrd(p as _cords, slot as short) as short'Returns the sum of tile values around a point, -1 if at a border
+'private function makesettlement(p as _cords,slot as short, typ as short) as short
+'private function findsmartest(slot as short) as short
+'private function makeoutpost (slot as short,x1 as short=0, y1 as short=0) as short
+'private function remove_doors(map() as short) as short
+'private function add_door2(map() as short) as short
+'private function add_door(map() as short) as short
+'private function addcastle(from as _cords,slot as short) as short
+'private function dominant_terrain(x as short,y as short,m as short) as short
+'private function get_random_system(unique as short=0,gascloud as short=0,disweight as short=0,hasgarden as short=0) as short 'Returns a random system. If unique=1 then specialplanets are possible
+'private function getrandomplanet(s as short) as short
+'private function fillmap(map() as short,tile as short) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tMakeplanet -=-=-=-=-=-=-=-
+
+namespace tMakeplanet
+function init() as Integer
+	return 0
+end function
+end namespace'tMakeplanet
+
+
+#define cut2top
+
 
 
 function checkdoor(x as short,y as short, map() as short) as short
@@ -3894,3 +3996,14 @@ end function
 
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tMakeplanet -=-=-=-=-=-=-=-
+	tModule.register("tMakeplanet",@tMakeplanet.init()) ',@tMakeplanet.load(),@tMakeplanet.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tMakeplanet -=-=-=-=-=-=-=-
+#endif'test

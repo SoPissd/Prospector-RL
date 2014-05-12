@@ -1,4 +1,57 @@
-'tExplorespace
+'tExplorespace.
+'
+'defines:
+'wormhole_navigation=0, wormhole_ani=0, wormhole_travel=0, move_ship=0,
+', target_landing=0, asteroid_mining=0, scanning=1, spacestation=11,
+', dock_drifting_ship=0, rescue=0, explore_space=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tExplorespace -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tExplorespace -=-=-=-=-=-=-=-
+
+declare function scanning() As Short
+declare function spacestation(st As Short) As _ship
+declare function explore_space() As Short
+
+'private function wormhole_navigation() As Short
+'private function wormhole_ani(target As _cords) As Short
+'private function wormhole_travel() As Short
+'private function move_ship(Key As String) As _ship
+'private function target_landing(mapslot As Short,Test As Short=0) As Short
+'private function asteroid_mining(slot As Short) As Short
+'private function dock_drifting_ship(a As Short)  As Short
+'private function rescue() As Short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tExplorespace -=-=-=-=-=-=-=-
+
+namespace tExplorespace
+function init() as Integer
+	return 0
+end function
+end namespace'tExplorespace
+
+
+#define cut2top
+
 
 function wormhole_navigation() As Short
     Dim As Short c,d,pl,b,i,wi(wormhole)
@@ -1655,3 +1708,14 @@ function explore_space() As Short
     Return 0
 End function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tExplorespace -=-=-=-=-=-=-=-
+	tModule.register("tExplorespace",@tExplorespace.init()) ',@tExplorespace.load(),@tExplorespace.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tExplorespace -=-=-=-=-=-=-=-
+#endif'test

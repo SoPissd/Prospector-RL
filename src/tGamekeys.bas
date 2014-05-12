@@ -1,4 +1,45 @@
-'tGamekeys
+'tGamekeys.
+'
+'defines:
+'keyin=8
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tGamekeys -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tGamekeys -=-=-=-=-=-=-=-
+
+declare function keyin(byref allowed as string="" , blocked as short=0)as string
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tGamekeys -=-=-=-=-=-=-=-
+
+namespace tGamekeys
+function init() as Integer
+	return 0
+end function
+end namespace'tGamekeys
+
+
+#define cut2top
+
 
 function keyin(byref allowed as string="" , blocked as short=0)as string
     DimDebugL(0)'1
@@ -253,3 +294,14 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
     return key
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tGamekeys -=-=-=-=-=-=-=-
+	tModule.register("tGamekeys",@tGamekeys.init()) ',@tGamekeys.load(),@tGamekeys.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tGamekeys -=-=-=-=-=-=-=-
+#endif'test

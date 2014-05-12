@@ -1,4 +1,40 @@
-'tCommandString
+'tCommandstring.
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tCommandstring -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tCommandstring -=-=-=-=-=-=-=-
+
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tCommandstring -=-=-=-=-=-=-=-
+
+namespace tCommandstring
+function init() as Integer
+	return 0
+end function
+end namespace'tCommandstring
+
+
+#define cut2top
+
 
 Type _commandstring
     t As String
@@ -56,3 +92,14 @@ function _commandstring.display(wl As Short) As Short
     Return 0
 End function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tCommandstring -=-=-=-=-=-=-=-
+	tModule.register("tCommandstring",@tCommandstring.init()) ',@tCommandstring.load(),@tCommandstring.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tCommandstring -=-=-=-=-=-=-=-
+#endif'test

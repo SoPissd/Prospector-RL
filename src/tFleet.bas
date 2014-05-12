@@ -1,6 +1,31 @@
-'tFleet
+'tFleet.
+'
+'defines:
+'merc_dis=0, random_pirate_system=1, makequestfleet=1, makemerchantfleet=1,
+', makepiratefleet=1, makealienfleet=1, makecivfleet=2,
+', civfleetdescription=1, makepatrol=1, add_fleets=0, bestpilotinfleet=1,
+', countfleet=0, make_fleet=1, disnbase=81
+'
 
-declare function rnd_point(m as short=-1,w as short=-1,t as short=-1,vege as short=-1)as _cords
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tFleet -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tFleet -=-=-=-=-=-=-=-
 
 type _fleet
     ty As Short 'Type: 1=patrol 2=merchant 3=pirate
@@ -17,6 +42,38 @@ type _fleet
     con(15) As Short ' Old ship storage con(0)=Nicety of pirates con(1)=Escorting,con(2)=lastbattle
     mem(15) As _ship 'Actual ship storage
 End Type
+
+declare function random_pirate_system() as short
+declare function makequestfleet(a as short) as _fleet
+declare function makemerchantfleet() as _fleet
+declare function makepiratefleet(modifier as short=0) as _fleet
+declare function makealienfleet() as _fleet
+declare function makecivfleet(slot as short) as _fleet
+declare function civfleetdescription(f as _fleet) as string
+declare function makepatrol() as _fleet
+declare function bestpilotinfleet(f as _fleet) as short
+declare function make_fleet() as _fleet
+declare function disnbase(c as _cords,weight as short=2) as single
+
+'private function merc_dis(fl as short,byref goal as short) as short
+'private function add_fleets(byref target as _fleet,byref source as _fleet) as _fleet
+'private function countfleet(ty as short) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tFleet -=-=-=-=-=-=-=-
+
+namespace tFleet
+function init() as Integer
+	return 0
+end function
+end namespace'tFleet
+
+
+#define cut2top
+
+
+'declare function rnd_point(m as short=-1,w as short=-1,t as short=-1,vege as short=-1)as _cords
 
 Dim Shared fleet(255) As _fleet
 
@@ -446,3 +503,14 @@ function disnbase(c as _cords,weight as short=2) as single
     return r
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tFleet -=-=-=-=-=-=-=-
+	tModule.register("tFleet",@tFleet.init()) ',@tFleet.load(),@tFleet.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tFleet -=-=-=-=-=-=-=-
+#endif'test

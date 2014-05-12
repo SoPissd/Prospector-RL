@@ -1,4 +1,46 @@
-'tExplore
+'tExplore.
+'
+'defines:
+'trouble_with_tribbles=0, update_world=2, teleport=6, explore_planet=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tExplore -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tExplore -=-=-=-=-=-=-=-
+
+declare function update_world(location as short) as short
+declare function teleport(from As _cords,map As Short) As _cords
+
+'private function trouble_with_tribbles() as short
+'private function explore_planet(from As _cords, orbit As Short) As _cords
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tExplore -=-=-=-=-=-=-=-
+
+namespace tExplore
+function init() as Integer
+	return 0
+end function
+end namespace'tExplore
+
+
 
 
 function trouble_with_tribbles() as short
@@ -1308,3 +1350,14 @@ EndIf
 End function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tExplore -=-=-=-=-=-=-=-
+	tModule.register("tExplore",@tExplore.init()) ',@tExplore.load(),@tExplore.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tExplore -=-=-=-=-=-=-=-
+#endif'test

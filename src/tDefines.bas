@@ -3,6 +3,10 @@
 'namespace: tDefines
 
 '
+'
+'defines:
+'init=16
+'
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -49,7 +53,7 @@ end namespace'tDefines
 
 #endif'main
 
-#if (defined(main) or defined(test))
+#if defined(main)
 '      -=-=-=-=-=-=-=- INIT: tDefines -=-=-=-=-=-=-=-
 	tModule.register("tDefines",@tDefines.init()) ',@tDefines.load(),@tDefines.save())
 #endif'main

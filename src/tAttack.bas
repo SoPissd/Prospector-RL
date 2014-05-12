@@ -1,4 +1,46 @@
-'tAttack
+'tAttack.
+'
+'defines:
+'hitmonster=0, ep_fireeffect=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tAttack -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tAttack -=-=-=-=-=-=-=-
+
+
+'private function hitmonster(defender As _monster,attacker As _monster,mapmask() As Byte, first As Short=-1, last As Short=-1) As _monster
+'private function ep_fireeffect(p2 As _cords,slot As Short, c As Short, range As Short, mapmask() As Byte, first As Short=0,last As Short=0) As Short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tAttack -=-=-=-=-=-=-=-
+
+namespace tAttack
+function init() as Integer
+	return 0
+end function
+end namespace'tAttack
+
+
+#define cut2top
+
 
 function hitmonster(defender As _monster,attacker As _monster,mapmask() As Byte, first As Short=-1, last As Short=-1) As _monster
     Dim a As Short
@@ -198,3 +240,14 @@ function ep_fireeffect(p2 As _cords,slot As Short, c As Short, range As Short, m
     Return c
 End function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tAttack -=-=-=-=-=-=-=-
+	tModule.register("tAttack",@tAttack.init()) ',@tAttack.load(),@tAttack.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tAttack -=-=-=-=-=-=-=-
+#endif'test

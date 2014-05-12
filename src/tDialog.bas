@@ -1,4 +1,30 @@
-'tDialog
+'tDialog.
+'
+'defines:
+'load_dialog_quests=1, load_dialog=1, update_questguy_dialog=0,
+', questguy_message=0, adapt_nodetext=0, add_passenger=2, dialog_effekt=0,
+', node_menu=0, do_dialog=14
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tDialog -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tDialog -=-=-=-=-=-=-=-
 
 Type _dialogoption
     no As UShort
@@ -12,6 +38,32 @@ Type _dialognode
     param(5) As Short
     Option(16) As _dialogoption
 End Type
+
+
+declare function questguy_dialog(i as short) as short
+
+declare function load_dialog_quests() as short
+declare function load_dialog(fn as string, n() as _dialognode) as short
+declare function add_passenger(n as string,typ as short, price as short, bonus as short, target as short, sTime as short, gender as short) as short
+declare function do_dialog(no as short,e as _monster, fl as short) as short
+
+'private function update_questguy_dialog(i as short,node() as _dialognode,iteration as short) as short
+'private function questguy_message(c as short) as short
+'private function adapt_nodetext(t as string, e as _monster,fl as short,qgindex as short=0) as string
+'private function dialog_effekt(effekt as string,p() as short,e as _monster, fl as short) as short
+'private function node_menu(no as short,node() as _dialognode,e as _monster, fl as short,qgindex as short=0) as short
+'private function questguy_dialog(i as short) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tDialog -=-=-=-=-=-=-=-
+
+namespace tDialog
+function init() as Integer
+	return 0
+end function
+end namespace'tDialog
+
 
 function load_dialog_quests() as short
     dim as integer f
@@ -612,7 +664,7 @@ function adapt_nodetext(t as string, e as _monster,fl as short,qgindex as short=
 end function
 
 
-function add_passenger(n as string,typ as short, price as short, bonus as short, target as short, ttime as short, gender as short) as short
+function add_passenger(n as string,typ as short, price as short, bonus as short, target as short, sTime as short, gender as short) as short
     dim c as short
     c=get_freecrewslot
     if c>0 then
@@ -623,7 +675,7 @@ function add_passenger(n as string,typ as short, price as short, bonus as short,
         crew(c).hp=1
         crew(c).typ=typ
         crew(c).target=target
-        crew(c).time=ttime
+        crew(c).time=sTime
         crew(c).price=price
         crew(c).bonus=bonus
         crew(c).onship=1
@@ -1295,3 +1347,14 @@ function do_dialog(no as short,e as _monster, fl as short) as short
 end function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tDialog -=-=-=-=-=-=-=-
+	tModule.register("tDialog",@tDialog.init()) ',@tDialog.load(),@tDialog.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tDialog -=-=-=-=-=-=-=-
+#endif'test

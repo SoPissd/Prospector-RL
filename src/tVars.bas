@@ -1,6 +1,40 @@
-'tVars
+'tVars.
 
-'Dim Key As String
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tVars -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tVars -=-=-=-=-=-=-=-
+
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tVars -=-=-=-=-=-=-=-
+
+namespace tVars
+function init() as Integer
+	return 0
+end function
+end namespace'tVars
+
+
+#define cut2top
+
 
 Dim Shared pixelsize As Integer
 
@@ -135,3 +169,14 @@ Dim Shared As String bountyquestreason(6)
 Dim Shared As Short just_run
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tVars -=-=-=-=-=-=-=-
+	tModule.register("tVars",@tVars.init()) ',@tVars.load(),@tVars.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tVars -=-=-=-=-=-=-=-
+#endif'test

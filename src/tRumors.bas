@@ -1,4 +1,45 @@
-'tRumors
+'tRumors.
+'
+'defines:
+'get_rumor=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tRumors -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tRumors -=-=-=-=-=-=-=-
+
+
+'private function get_rumor(i as short=18) as string
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tRumors -=-=-=-=-=-=-=-
+
+namespace tRumors
+function init() as Integer
+	return 0
+end function
+end namespace'tRumors
+
+
+#define cut2top
+
 
 function get_rumor(i as short=18) as string
     dim as short last=18
@@ -37,3 +78,14 @@ function get_rumor(i as short=18) as string
     end select
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tRumors -=-=-=-=-=-=-=-
+	tModule.register("tRumors",@tRumors.init()) ',@tRumors.load(),@tRumors.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tRumors -=-=-=-=-=-=-=-
+#endif'test

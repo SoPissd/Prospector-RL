@@ -1,4 +1,45 @@
-'tCivilisation
+'tCivilisation.
+'
+'defines:
+'show_standing=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tCivilisation -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tCivilisation -=-=-=-=-=-=-=-
+
+declare function show_standing() as short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tCivilisation -=-=-=-=-=-=-=-
+
+namespace tCivilisation
+function init() as Integer
+	return 0
+end function
+end namespace'tCivilisation
+
+
+#define cut2top
+
 
 Type _civilisation
     n As String*16
@@ -82,3 +123,14 @@ function show_standing() as short
 end function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tCivilisation -=-=-=-=-=-=-=-
+	tModule.register("tCivilisation",@tCivilisation.init()) ',@tCivilisation.load(),@tCivilisation.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tCivilisation -=-=-=-=-=-=-=-
+#endif'test

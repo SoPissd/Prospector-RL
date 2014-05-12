@@ -1,3 +1,58 @@
+'debug2.
+'
+'defines:
+'_WeapdumpCSV=0, _PlanetTempCSV=0, _TilesCSV=0, _PricesCSV=0,
+', _MonsterCSV=0, _ItemsCSV=0, _Items2CSV=0, _ItemDump=0, _PortalsCSV=0,
+', _FactionsCSV=0, _FleetsCSV=0, _FleetsDump=0, _DbgLogMQI=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: debug2 -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: debug2 -=-=-=-=-=-=-=-
+
+
+'private function _WeapdumpCSV() as Short
+'private function _PlanetTempCSV() as Short
+'private function _TilesCSV() as Short
+'private function _PricesCSV() as Short
+'private function _MonsterCSV() as Short
+'private function _ItemsCSV() as Short
+'private function _Items2CSV() as Short
+'private function _ItemDump() as Short
+'private function _PortalsCSV() as Short
+'private function _FactionsCSV() as Short
+'private function _FleetsCSV() as Short
+'private function _FleetsDump() as Short
+'private function _DbgLogMQI(text as string) as Short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: debug2 -=-=-=-=-=-=-=-
+
+namespace debug2
+function init() as Integer
+	return 0
+end function
+end namespace'debug2
+
+
+#define cut2top
 
 #if __FB_DEBUG__
 
@@ -272,3 +327,14 @@ close #_LogExplorePlanet
 
 
    
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: debug2 -=-=-=-=-=-=-=-
+	tModule.register("debug2",@debug2.init()) ',@debug2.load(),@debug2.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: debug2 -=-=-=-=-=-=-=-
+#endif'test

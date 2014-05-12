@@ -1,4 +1,28 @@
-'tWaypoints
+'tWaypoints.
+'
+'defines:
+'check=43, add_p=7, checkandadd=0, nearlowest=0, gen_waypoints=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tWaypoints -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tWaypoints -=-=-=-=-=-=-=-
 
 Type _pfcords
     x As Short
@@ -6,6 +30,25 @@ Type _pfcords
     c As UInteger
     i As Byte
 End Type
+
+
+declare function check(queue() as _pfcords, p as _pfcords) as short
+declare function add_p(queue() as _pfcords,p as _pfcords) as short
+
+'private function checkandadd(queue() as _pfcords,map() as byte ,in as short) as short
+'private function nearlowest(p as _pfcords,queue() as _pfcords) as _pfcords
+'private function gen_waypoints(queue() as _pfcords,start as _pfcords,goal as _pfcords,map() as byte) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tWaypoints -=-=-=-=-=-=-=-
+
+namespace tWaypoints
+function init() as Integer
+	return 0
+end function
+end namespace'tWaypoints
+
 
 function check(queue() as _pfcords, p as _pfcords) as short
     dim as integer i
@@ -216,3 +259,14 @@ function gen_waypoints(queue() as _pfcords,start as _pfcords,goal as _pfcords,ma
 end function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tWaypoints -=-=-=-=-=-=-=-
+	tModule.register("tWaypoints",@tWaypoints.init()) ',@tWaypoints.load(),@tWaypoints.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tWaypoints -=-=-=-=-=-=-=-
+#endif'test

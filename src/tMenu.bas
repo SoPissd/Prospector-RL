@@ -1,4 +1,45 @@
-'tMenu
+'tMenu.
+'
+'defines:
+'menu=12
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tMenu -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tMenu -=-=-=-=-=-=-=-
+
+declare function menu(bg as byte,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1) as short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tMenu -=-=-=-=-=-=-=-
+
+namespace tMenu
+function init() as Integer
+	return 0
+end function
+end namespace'tMenu
+
+
+#define cut2top
+
 
 function menu(bg as byte,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1) as short
     ' 0= headline 1=first entry
@@ -190,3 +231,14 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
     EndIf
     return e
 end function
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tMenu -=-=-=-=-=-=-=-
+	tModule.register("tMenu",@tMenu.init()) ',@tMenu.load(),@tMenu.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tMenu -=-=-=-=-=-=-=-
+#endif'test

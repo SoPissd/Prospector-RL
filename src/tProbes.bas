@@ -1,4 +1,46 @@
-'tProbes
+'tProbes.
+'
+'defines:
+'launch_probe=1, move_probes=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tProbes -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tProbes -=-=-=-=-=-=-=-
+
+declare function launch_probe() As Short
+declare function move_probes() As Short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tProbes -=-=-=-=-=-=-=-
+
+namespace tProbes
+function init() as Integer
+	return 0
+end function
+end namespace'tProbes
+
+
+#define cut2top
+
 
 function launch_probe() As Short
     Dim As Short i,d
@@ -129,3 +171,14 @@ function move_probes() As Short
 End function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tProbes -=-=-=-=-=-=-=-
+	tModule.register("tProbes",@tProbes.init()) ',@tProbes.load(),@tProbes.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tProbes -=-=-=-=-=-=-=-
+#endif'test

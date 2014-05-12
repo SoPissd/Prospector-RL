@@ -1,6 +1,67 @@
-'tAwayteam
+'tAwayteam.
+'
+'defines:
+'hpdisplay=0, display_awayteam=21, gainxp=13, alerts=1, cure_awayteam=2,
+', rnd_crewmember=1, diseaserun=1, heal_awayteam=1, infect=6,
+', wear_armor=0, equip_awayteam=9, no_spacesuit=0, dam_awayteam=14,
+', repair_spacesuits=1, pathblock=9, ep_checkmove=1, giveitem=0,
+', ep_communicateoffer=1, crew_menu=0, showteam=6
+'
 
-'declare function do_dialog(no as short,e as _monster, fl as short) as short
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tAwayteam -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tAwayteam -=-=-=-=-=-=-=-
+
+declare function display_awayteam(showshipandteam as byte=1,osx as short=555) as short
+declare function gainxp(typ as short,v as short=1) as string
+declare function alerts() as short
+declare function cure_awayteam(where as short) as short
+declare function rnd_crewmember(onship as short=0) as short
+declare function diseaserun(onship as short) as short
+declare function heal_awayteam(byref a as _monster,heal as short) as short
+declare function infect(a as short,dis as short) as short
+declare function equip_awayteam(m as short) as short
+declare function dam_awayteam(dam as short, ap as short=0,disease as short=0) as string
+declare function repair_spacesuits(v as short=-1) as short
+declare function pathblock(byval c as _cords,byval b as _cords,mapslot as short,blocktype as short=1,col as short=0, delay as short=25,rollover as byte=0) as short
+declare function ep_checkmove(ByRef old As _cords,Key As String) As Short
+declare function ep_communicateoffer(Key As String) As Short
+declare function showteam(from as short, r as short=0,text as string="") as short
+
+'private function hpdisplay(a as _monster) as short
+'private function wear_armor(a as short,b as short) as short
+'private function no_spacesuit(who() as short,byref alle as short=0) as short
+'private function giveitem(e as _monster,nr as short) as short
+'private function crew_menu(crew() as _crewmember, from as short, r as short=0,text as string="") as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tAwayteam -=-=-=-=-=-=-=-
+
+namespace tAwayteam
+function init() as Integer
+	return 0
+end function
+end namespace'tAwayteam
+
+
+#define cut2top
 
 
 function hpdisplay(a as _monster) as short
@@ -1679,3 +1740,14 @@ function showteam(from as short, r as short=0,text as string="") as short
 end function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tAwayteam -=-=-=-=-=-=-=-
+	tModule.register("tAwayteam",@tAwayteam.init()) ',@tAwayteam.load(),@tAwayteam.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tAwayteam -=-=-=-=-=-=-=-
+#endif'test

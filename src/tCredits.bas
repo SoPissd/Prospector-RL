@@ -1,5 +1,47 @@
-'Credits
-declare function shares_value() as short
+'tCredits.
+'
+'defines:
+'mission_type=1, money_text=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tCredits -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tCredits -=-=-=-=-=-=-=-
+
+declare function mission_type() as string
+declare function money_text() as string
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tCredits -=-=-=-=-=-=-=-
+
+namespace tCredits
+function init() as Integer
+	return 0
+end function
+end namespace'tCredits
+
+
+#define cut2top
+
+'declare function shares_value() as short
 
 
 function mission_type() as string
@@ -80,3 +122,14 @@ function money_text() as string
     return text
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tCredits -=-=-=-=-=-=-=-
+	tModule.register("tCredits",@tCredits.init()) ',@tCredits.load(),@tCredits.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tCredits -=-=-=-=-=-=-=-
+#endif'test

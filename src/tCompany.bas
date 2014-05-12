@@ -1,10 +1,38 @@
 'tCompany.
+'
+'namespace: tCompany
 
+'
+'
+'defines:
+'init=16, private pay_bonuses=0, company=50, private unload_s=0,
+', private unload_f=0, merctrade=3, com_remove=4, shares_value=1,
+', sellshares=0, getshares=0, buyshares=0, getsharetype=0, portfolio=0,
+', dividend=0, cropstock=0, display_stock=0, stockmarket=0, trading=13
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tCompany -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
 
 namespace tCompany
-	
+
 #ifdef head
-'#print -=-=-=-=-=-=-=-HEAD
+'     -=-=-=-=-=-=-=- HEAD: tCompany -=-=-=-=-=-=-=-
 
 Type _share
     company As Byte
@@ -25,19 +53,40 @@ Type _company_bonus
     rank As UInteger
 End Type
 
-'
+
+declare function company(st as short) as short
+declare function com_remove(attacker() as _ship, t as short,flag as short=0) as short
+declare function shares_value() as short
+declare function trading(st as short) as short
+declare function merctrade(byref f as _fleet) as short
 
 Dim Shared combon(9) As _company_bonus
-
 Dim Shared shares(2048) As _share
 Dim Shared lastshare As Short
 
 Dim Shared companystats(5) As _company
 
+'private function tCompany
+'private function tCompany
+'private function private pay_bonuses(st as short) as short
+'private function private unload_s(s as _ship,st as short) as _ship    
+'private function private unload_f(f as _fleet, st as short) as _fleet
+'private function sellshares(comp as short,n as short) as short
+'private function getshares(comp as short) as short
+'private function buyshares(comp as short,n as short) as short
+'private function getsharetype() as short
+'private function portfolio(x as short,y2 as short) as short
+'private function dividend() as short
+'private function cropstock() as short
+'private function display_stock() as short
+'private function stockmarket(st as short) as short
+'private function unload_f(f as _fleet, st as short) as _fleet
 
 #endif'head
 #ifdef main
-'#print -=-=-=-=-=-=-=-MAIN
+'     -=-=-=-=-=-=-=- MAIN: tCompany -=-=-=-=-=-=-=-
+
+
 	
 public function init() as integer
 	dim a as Integer
@@ -75,6 +124,7 @@ public function init() as integer
     '
 	return 0
 End Function
+
 
 private function pay_bonuses(st as short) as short
     DimDebug(0)
@@ -896,7 +946,13 @@ end function
 #endif'main
 End Namespace
 
-#ifdef main
+#ifdef head
+	declare function com_remove(attacker() as _ship, t as short,flag as short=0) as short
+	declare function trading(st as short) as short
+	declare function merctrade(byref f as _fleet) as short
+	declare function unload_f(f as _fleet, st as short) as _fleet
+
+#else
 
 	'satisfy forward declarations
 	function com_remove(attacker() as _ship, t as short,flag as short=0) as short
@@ -918,3 +974,13 @@ End Namespace
 	tModule.Register("tCompany",@tCompany.Init())
 '	tModule.Register("tCompany",@tCompany.Init(),@tCompany.Load(),@tCompany.Save())
 #endif		
+
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tCompany -=-=-=-=-=-=-=-
+	tModule.register("tCompany",@tCompany.init()) ',@tCompany.load(),@tCompany.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tCompany -=-=-=-=-=-=-=-
+#endif'test

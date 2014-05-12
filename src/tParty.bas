@@ -1,4 +1,46 @@
-'tParty
+'tParty.
+'
+'defines:
+'display_ship=85, recalcshipsbays=11
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tParty -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tParty -=-=-=-=-=-=-=-
+
+declare function display_ship(show as byte=0) as short
+declare function recalcshipsbays() as short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tParty -=-=-=-=-=-=-=-
+
+namespace tParty
+function init() as Integer
+	return 0
+end function
+end namespace'tParty
+
+
+#define cut2top
+
 
 
 function display_ship(show as byte=0) as short
@@ -205,3 +247,14 @@ function recalcshipsbays() as short
     return 0
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tParty -=-=-=-=-=-=-=-
+	tModule.register("tParty",@tParty.init()) ',@tParty.load(),@tParty.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tParty -=-=-=-=-=-=-=-
+#endif'test

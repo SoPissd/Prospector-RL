@@ -1,4 +1,46 @@
-'tSpecialPlanet
+'tSpecialPlanet.
+'
+'defines:
+'make_special_planet=3, makewhplanet=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tSpecialPlanet -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tSpecialPlanet -=-=-=-=-=-=-=-
+
+declare function make_special_planet(a as short) as short
+declare function makewhplanet() as short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tSpecialPlanet -=-=-=-=-=-=-=-
+
+namespace tSpecialPlanet
+function init() as Integer
+	return 0
+end function
+end namespace'tSpecialPlanet
+
+
+#define cut2top
+
 
 
 function make_special_planet(a as short) as short
@@ -2712,3 +2754,14 @@ function makewhplanet() as short
     placeitem(make_item(99,16),p.x,p.y,a)
     return 0
 end function
+
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tSpecialPlanet -=-=-=-=-=-=-=-
+	tModule.register("tSpecialPlanet",@tSpecialPlanet.init()) ',@tSpecialPlanet.load(),@tSpecialPlanet.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tSpecialPlanet -=-=-=-=-=-=-=-
+#endif'test

@@ -1,14 +1,38 @@
+'tRng.
+'
+'defines:
+'rnd_range=1622
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tRng -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tRng -=-=-=-=-=-=-=-
+
+declare function rnd_range(first As Integer, last As Integer) As Integer
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tRng -=-=-=-=-=-=-=-
+
 'tRng
 
-'rng with retrievable seed
-'algo from https://en.wikipedia.org/wiki/Random_number_generation
-
-'
-'m_w = <choose-initializer>;    /* must not be zero, nor 0x464fffff */
-'m_z = <choose-initializer>;    /* must not be zero, nor 0x9068ffff */
-' 
-'uint get_random()
-'{
 '    m_z = 36969 * (m_z & 65535) + (m_z >> 16);
 '    m_w = 18000 * (m_w & 65535) + (m_w >> 16);
 '    return (m_z << 16) + m_w;  /* 32-bit result */
@@ -17,12 +41,14 @@
 
 'outputs 32bit but maintains
 'random pool with a 64 bit state 
+namespace tRng
+	
 Type tRngSeed
 	w as UInteger
 	z as UInteger	
 End Type
 
-Type tRng
+Type tRandom
   declare constructor(ByVal aSeed as tRngSeed=(0,0))
   declare destructor()
   declare property Seed as tRngSeed
@@ -35,27 +61,31 @@ Private:
   declare property isInvalidSeed as short
 End Type
 
-Constructor tRng(ByVal aSeed as tRngSeed=(0,0))
+function init() as Integer
+	return 0
+end function
+
+Constructor tRandom(ByVal aSeed as tRngSeed=(0,0))
 	Seed= aSeed	
 End Constructor
 
-Destructor tRng()
+Destructor tRandom()
 End Destructor
 
 'on setting the seed we have to exclude 
 'a couple of values that would break the cycling
-Property tRng.isInvalidSeed as Short
+Property tRandom.isInvalidSeed as Short
   return (_seed.w=0) or (_seed.w=&h464fffffu) _
       or (_seed.z=0) or (_seed.z=&h9068ffffu)
 End Property
 
-Property tRng.Seed As tRngSeed
+Property tRandom.Seed As tRngSeed
 	Property= _seed
 End Property
 
 'use the built-in crypto generator to get two
 'high quality numbers to initialize on invalid seeds
-Property tRNG.Seed(ByVal aSeed as tRngSeed)
+Property tRandom.Seed(ByVal aSeed as tRngSeed)
 	_seed.w=aSeed.w
 	_seed.z=aSeed.z
 	if isInvalidSeed then
@@ -70,17 +100,17 @@ End Property
 'Wikipedia cites this as an example of a simple pseudo-random number generator:
 '"the multiply-with-carry method invented by George Marsaglia. It is computationally
 ' fast and has good (albeit not cryptographically strong) randomness properties"
-Property tRNG.uValue as uInteger
+Property tRandom.uValue as uInteger
 	_seed.z = 36969 * (_seed.z and &hFFFF) + (_seed.z shr 16)
 	_seed.w = 18000 * (_seed.w and &hFFFF) + (_seed.w shr 16)
 	return (_seed.z shl 16) + _seed.w
 End Property
 
-Property tRNG.dValue as double
+Property tRandom.dValue as double
 	return uValue/cast(uinteger, &hffffffff) '2^33-1
 End Property
 
-function tRng.uRange(ByVal uLow As UInteger, ByVal uHigh As UInteger) as UInteger
+function tRandom.uRange(ByVal uLow As UInteger, ByVal uHigh As UInteger) as UInteger
 	if uLow>uHigh then
 		return uRange(uHigh,uLow)
 	else
@@ -88,11 +118,14 @@ function tRng.uRange(ByVal uLow As UInteger, ByVal uHigh As UInteger) as UIntege
 	endif
 End function
 
+end namespace
+#endif
+
 
 #ifdef main
 
-dim shared rng as tRng
-dim shared seed as tRngSeed
+dim shared rng as tRng.tRandom
+dim shared seed as tRng.tRngSeed
 seed = rng.Seed
 
 'Returns a random short
@@ -155,4 +188,13 @@ sub main()
 	?"done"
 End Sub
 main()
-#endif
+#endif'else if main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tRng -=-=-=-=-=-=-=-
+	tModule.register("tRng",@tRng.init()) ',@tRng.load(),@tRng.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tRng -=-=-=-=-=-=-=-
+#endif'test

@@ -1,15 +1,69 @@
-'tPlanetmap
+'tPlanetmap.
+'
+'defines:
+'rnd_point=3, vege_per=1, display_item=3, cursor=4, display_planetmap=17,
+', fixstarmap=2, planet_cursor=0, get_nonspecialplanet=0,
+', get_planet_cords=0, changetile=13, load_map=4, isbuilding=0,
+', get_colony_building=0, remove_building=1, closest_building=0,
+', makeplatform=5, makecomplex=22, makecomplex2=0, makefinalmap=3,
+', makeplanetmap=12, make_eventplanet=1
+'
 
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tPlanetmap -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
 #ifdef head
-'#print -=-=-=-=-=-=-=-HEAD
+'     -=-=-=-=-=-=-=- HEAD: tPlanetmap -=-=-=-=-=-=-=-
+
+Const max_maps=2047
 Dim Shared planetmap(60,20,max_maps) As Short
+
+declare function rnd_point(m as short=-1,w as short=-1,t as short=-1,vege as short=-1)as _cords
+declare function vege_per(slot as short) as single
+declare function display_item(i as integer,osx as short,slot as short) as short
+declare function cursor(target as _cords,map as short,osx as short,osy as short=0,radius as short=0) as string
+declare function display_planetmap(slot as short,osx as short,bg as byte) as short
+declare function fixstarmap() as short
+declare function changetile(x as short,y as short,m as short,t as short) as short
 declare function load_map(m as short,slot as short)as short
-declare function make_special_planet(a as short) as short
-declare function makemudsshop(slot as short, x1 as short, y1 as short)  as short
+declare function remove_building(map as short) as short
+declare function makeplatform(slot as short,platforms as short,rooms as short, translate as short, adddoors as short=0) as short
+declare function makecomplex(byref enter as _cords, down as short,blocked as byte=0) as short
+declare function makefinalmap(m as short) as short
+declare function makeplanetmap(a as short,orbit as short,spect as short) as short
+declare function make_eventplanet(slot as short) as short
+
+'private function planet_cursor(p as _cords,mapslot as short,byref osx as short,shteam as byte) as string
+'private function get_nonspecialplanet(disc as short=0) as short
+'private function get_planet_cords(byref p as _cords,mapslot as short,shteam as byte=0) as string
+'private function isbuilding(x as short,y as short,map as short) as short 
+'private function get_colony_building(map as short) as _cords
+'private function closest_building(p as _cords,map as short) as _Cords
+'private function makecomplex2(slot as short,gc1 as _cords, gc2 as _cords, roundedcorners1 as short,roundedcorners2 as short,nocol1 as short,nocol2 as short,doorchance as short,loopchance as short,loopdoor as short,adddoor as short,addloop as short,nosmallrooms as short,culdesacruns as short, t as short) as short
 
 #endif'head
 #ifdef main
-'#print -=-=-=-=-=-=-=-MAIN
+'     -=-=-=-=-=-=-=- MAIN: tPlanetmap -=-=-=-=-=-=-=-
+
+namespace tPlanetmap
+function init() as Integer
+	return 0
+end function
+end namespace'tPlanetmap
 
 
 function rnd_point(m as short=-1,w as short=-1,t as short=-1,vege as short=-1)as _cords
@@ -2357,4 +2411,11 @@ end function
 
 #endif'main
 
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tPlanetmap -=-=-=-=-=-=-=-
+	tModule.register("tPlanetmap",@tPlanetmap.init()) ',@tPlanetmap.load(),@tPlanetmap.save())
+#endif'main
 
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tPlanetmap -=-=-=-=-=-=-=-
+#endif'test

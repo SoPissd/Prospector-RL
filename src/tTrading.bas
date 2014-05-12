@@ -1,4 +1,58 @@
-'tTrading
+'tTrading.
+'
+'defines:
+'check_tasty_pretty_cargo=3, merchant=27, station_goods=0, getfreecargo=0,
+', displaywares=1, buygoods=2, cargobay=3, getinvbytype=3,
+', get_invbay_bytype=0, sellgoods=3, showprices=1, buysitems=9
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tTrading -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tTrading -=-=-=-=-=-=-=-
+
+declare function check_tasty_pretty_cargo() as short
+declare function merchant() as single
+declare function displaywares(st as short) as short
+declare function buygoods(st as short) as short
+declare function cargobay(text as string,st as short,sell as byte=0) as string
+declare function getinvbytype(t as short) as short
+declare function sellgoods(st as short) as short
+declare function showprices(st as short) as short
+declare function buysitems(desc as string,ques as string, ty as short, per as single=1,aggrmod as short=0) as short
+
+'private function station_goods(st as short, tb as byte) as string
+'private function getfreecargo() as short
+'private function get_invbay_bytype(t as short) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tTrading -=-=-=-=-=-=-=-
+
+namespace tTrading
+function init() as Integer
+	return 0
+end function
+end namespace'tTrading
+
+
+#define cut2top
+
 
 
 
@@ -428,3 +482,14 @@ function buysitems(desc as string,ques as string, ty as short, per as single=1,a
     return 0
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tTrading -=-=-=-=-=-=-=-
+	tModule.register("tTrading",@tTrading.init()) ',@tTrading.load(),@tTrading.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tTrading -=-=-=-=-=-=-=-
+#endif'test

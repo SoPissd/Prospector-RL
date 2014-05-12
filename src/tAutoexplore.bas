@@ -1,4 +1,50 @@
-'tAutoexplore
+'tAutoexplore.
+'
+'defines:
+'ep_needs_spacesuit=0, ep_atship=1, ep_planetroute=0,
+', ep_autoexploreroute=0, ep_autoexplore=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tAutoexplore -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tAutoexplore -=-=-=-=-=-=-=-
+
+declare function ep_atship() As Short
+
+'private function ep_needs_spacesuit(slot As Short,c As _cords,ByRef reason As String="") As Short
+'private function ep_planetroute(route() As _cords,move As Short,start As _cords, target As _cords,rollover As Short) As Short
+'private function ep_autoexploreroute(astarpath() As _cords,start As _cords,move As Short, slot As Short, rover As Short=0) As Short
+'private function ep_autoexplore(slot As Short) As Short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tAutoexplore -=-=-=-=-=-=-=-
+
+namespace tAutoexplore
+function init() as Integer
+	return 0
+end function
+end namespace'tAutoexplore
+
+
+#define cut2top
+
 
 
 function ep_needs_spacesuit(slot As Short,c As _cords,ByRef reason As String="") As Short
@@ -190,3 +236,14 @@ function ep_autoexplore(slot As Short) As Short
     EndIf
     Return lastapwp
 End function
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tAutoexplore -=-=-=-=-=-=-=-
+	tModule.register("tAutoexplore",@tAutoexplore.init()) ',@tAutoexplore.load(),@tAutoexplore.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tAutoexplore -=-=-=-=-=-=-=-
+#endif'test

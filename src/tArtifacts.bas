@@ -1,9 +1,47 @@
-'tArtifacts
+'tArtifacts.
+'
+'defines:
+'artifacts_html=1, list_artifacts=3, artifact=13
+'
 
-declare function recalcshipsbays() as short
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tArtifacts -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tArtifacts -=-=-=-=-=-=-=-
+
+declare function artifacts_html(artflags() as short) as string
+declare function list_artifacts(artflags() as short) as string
+declare function artifact(c as short) as short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tArtifacts -=-=-=-=-=-=-=-
+
+namespace tArtifacts
+function init() as Integer
+	return 0
+end function
+end namespace'tArtifacts
 
 Const lastartifact=25
 Dim Shared artflag(lastartifact) As Short
+
 
 function artifacts_html(artflags() as short) as string
     dim as short a,c
@@ -303,3 +341,14 @@ function artifact(c as short) as short
     return 0
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tArtifacts -=-=-=-=-=-=-=-
+	tModule.register("tArtifacts",@tArtifacts.init()) ',@tArtifacts.load(),@tArtifacts.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tArtifacts -=-=-=-=-=-=-=-
+#endif'test

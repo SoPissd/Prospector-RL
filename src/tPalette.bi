@@ -1,6 +1,3 @@
-'tPallete.bi
-'
-'includes generated from p.pal
 '
 DefaultPallete:
 	DATA 0 ,0 ,0' 0
@@ -259,5 +256,4 @@ DefaultPallete:
 	DATA 0 ,0 ,0' 253
 	DATA 0 ,0 ,0' 254
 	DATA 0 ,0 ,0' 255
-
 '

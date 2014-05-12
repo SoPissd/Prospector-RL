@@ -1,4 +1,29 @@
-'tWeapon
+'tWeapon.
+'
+'defines:
+'make_weapon=0, count_and_make_weapons=0, make_weap_helptext=1,
+', starting_turret=0, weapon_text=2
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tWeapon -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tWeapon -=-=-=-=-=-=-=-
 
 Type _weap
     desig As String*30
@@ -18,6 +43,27 @@ Type _weap
     reloading As Byte
     shutdown As Byte
 End Type
+
+declare function make_weap_helptext(w as _weap) as string
+declare function weapon_text(w as _weap) as string
+
+'private function make_weapon(a as short) as _weap
+'private function count_and_make_weapons(st as short) as short
+'private function starting_turret() as _weap
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tWeapon -=-=-=-=-=-=-=-
+
+namespace tWeapon
+function init() as Integer
+	return 0
+end function
+end namespace'tWeapon
+
+
+#define cut2top
+
 
 Dim Shared As _weap wsinv(20) 
 
@@ -242,3 +288,14 @@ function weapon_text(w as _weap) as string
 end function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tWeapon -=-=-=-=-=-=-=-
+	tModule.register("tWeapon",@tWeapon.init()) ',@tWeapon.load(),@tWeapon.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tWeapon -=-=-=-=-=-=-=-
+#endif'test

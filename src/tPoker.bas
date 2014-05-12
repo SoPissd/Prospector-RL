@@ -1,4 +1,58 @@
-'tPoker
+'tPoker.
+'
+'defines:
+'poker_eval=0, better_hand=0, ace_highlo_eval=0, draw_poker_table=0,
+', poker_next=0, sort_cards=0, card_shuffle=0, player_eval=0,
+', highest_pot=0, poker_winner=0, play_poker=1, swap_card=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tPoker -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tPoker -=-=-=-=-=-=-=-
+
+declare function play_poker(st as short) as short
+
+'private function poker_eval(cardin() as integer, acehigh as short,knowall as short) as _handrank
+'private function better_hand(h1 as _handrank,h2 as _handrank) as short
+'private function ace_highlo_eval(c() as integer,knowall as short) as _handrank
+'private function draw_poker_table(p() as _pokerplayer,reveal as short=0,winner as short=0,r as _pokerrules) as short
+'private function poker_next(i as short,p() as _pokerplayer) as short
+'private function sort_cards(card() as integer,knowall as short=0) as short
+'private function card_shuffle(card() as integer) as short
+'private function player_eval(p() as _pokerplayer,i as short,rules as _pokerrules) as short
+'private function highest_pot(p() as _pokerplayer) as short
+'private function poker_winner(p() as _pokerplayer) as short
+'private function swap_card(cardin() as integer) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tPoker -=-=-=-=-=-=-=-
+
+namespace tPoker
+function init() as Integer
+	return 0
+end function
+end namespace'tPoker
+
+
+#define cut2top
+
 
 Type _handrank
     rank As Short
@@ -743,3 +797,14 @@ function swap_card(cardin() as integer) as short
     return l
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tPoker -=-=-=-=-=-=-=-
+	tModule.register("tPoker",@tPoker.init()) ',@tPoker.load(),@tPoker.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tPoker -=-=-=-=-=-=-=-
+#endif'test

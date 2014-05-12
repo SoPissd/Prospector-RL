@@ -1,4 +1,45 @@
-'tCargo
+'tCargo.
+'
+'defines:
+'cargo_text=3
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tCargo -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tCargo -=-=-=-=-=-=-=-
+
+declare function cargo_text() as string
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tCargo -=-=-=-=-=-=-=-
+
+namespace tCargo
+function init() as Integer
+	return 0
+end function
+end namespace'tCargo
+
+
+#define cut2top
+
 
 function cargo_text() as string
     dim text as string
@@ -42,3 +83,14 @@ function cargo_text() as string
     if cc(1)=0 then text=text &"No free bays."
     return text
 end function
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tCargo -=-=-=-=-=-=-=-
+	tModule.register("tCargo",@tCargo.init()) ',@tCargo.load(),@tCargo.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tCargo -=-=-=-=-=-=-=-
+#endif'test

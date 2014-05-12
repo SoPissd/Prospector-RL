@@ -1,3 +1,65 @@
+'tMath.
+'
+'defines:
+'urn=13, round_nr=2, C_to_F=0, round_str=4, find_high=0, find_low=1,
+', sub0=0, content=9, findrect=0, maximum=14, minimum=15, getany=0,
+', nextpoint=0, line_in_points=0, nearest=15, farthest=4, fill_rect=3,
+', rndrectwall=0, movepoint=6
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tMath -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tMath -=-=-=-=-=-=-=-
+
+declare function urn(min as short, max as short,mult as short,bonus as short) as short 
+declare function round_nr(i as single,c as short) as single
+declare function round_str(i As Double,c As Short) As String
+declare function find_low(list() as short,last as short,start as short=1) as short
+declare function content(r as _rect,tile as short,map()as short) as integer
+declare function maximum(a as double,b as double) as double
+declare function minimum(a as double,b as double) as double
+declare function nearest(byval c as _cords, byval b as _cords,rollover as byte=0) as single
+declare function farthest(c as _cords, b as _cords) as single
+declare function fill_rect(r as _rect,wall as short, flor as short,map() as short) as short
+declare function movepoint(byval c as _cords, a as short, eo as short=0, border as short=0) as _cords
+
+'private function C_to_F(c as single) as single
+'private function find_high(list() as short,last as short, start as short=1) as short
+'private function sub0(a as single,b as single) as single
+'private function findrect(tile as short,map() as short,er as short=10,fi as short=60) as _rect
+'private function getany(possible() as short) as short
+'private function nextpoint(byval start as _cords, byval target as _cords) as _cords
+'private function line_in_points(b as _cords,c as _cords,p() as _cords) as short
+'private function rndrectwall(r as _rect,d as short=5) as _cords
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tMath -=-=-=-=-=-=-=-
+
+namespace tMath
+function init() as Integer
+	return 0
+end function
+end namespace'tMath
+
+
+#define cut2top
 Type vector
         x As Integer
         y As Integer
@@ -511,3 +573,14 @@ function movepoint(byval c as _cords, a as short, eo as short=0, border as short
     return c
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tMath -=-=-=-=-=-=-=-
+	tModule.register("tMath",@tMath.init()) ',@tMath.load(),@tMath.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tMath -=-=-=-=-=-=-=-
+#endif'test

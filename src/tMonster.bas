@@ -1,6 +1,24 @@
-'tMonster
+'tMonster.
 
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tMonster -=-=-=-=-=-=-=-
 
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tMonster -=-=-=-=-=-=-=-
 
 Type _monster
     e As _energycounter
@@ -104,6 +122,18 @@ Type _monster
     itemch(8) As Short
 End Type
 
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tMonster -=-=-=-=-=-=-=-
+
+namespace tMonster
+function init() as Integer
+	return 0
+end function
+end namespace'tMonster
+
 Dim Shared enemy(255) As _monster
 
 Dim Shared cagedmonster(128) As _monster
@@ -112,6 +142,13 @@ Dim Shared lastcagedmonster As UByte
 Dim Shared awayteam As _monster
 
 
-Declare function makemonster(a as short, map as short, forcearms as byte=0) as _monster
-Declare function makecorp(a as short) as _basis
-Declare function make_ship(a as short) as _ship
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tMonster -=-=-=-=-=-=-=-
+	tModule.register("tMonster",@tMonster.init()) ',@tMonster.load(),@tMonster.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tMonster -=-=-=-=-=-=-=-
+#endif'test

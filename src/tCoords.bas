@@ -1,4 +1,29 @@
-'tCoords
+'tCoords.
+'
+'defines:
+'cords=33, distance=225, sort_by_distance=3, furthest=0, rndwallpoint=0,
+', rndwall=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tCoords -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tCoords -=-=-=-=-=-=-=-
 
 Type _cords
     s As Short '
@@ -23,6 +48,29 @@ Type _rect
     w As Short
     wd(16) As Byte
 End Type
+
+
+declare function cords(c As _cords) As String
+declare function distance(first as _cords, last as _cords,rollover as byte=0) as single
+declare function sort_by_distance(c as _cords,p() as _cords,l() as short,last as short) as short
+
+'private function furthest(list() as _cords,last as short, a as _cords,b as _cords) as short
+'private function rndwallpoint(r as _rect, w as byte) as _cords
+'private function rndwall(r as _rect) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tCoords -=-=-=-=-=-=-=-
+
+namespace tCoords
+function init() as Integer
+	return 0
+end function
+end namespace'tCoords
+
+
+#define cut2top
+
 
 Dim Shared apwaypoints(1024) As _cords
 Dim Shared usedship(8) As _cords
@@ -147,3 +195,14 @@ function rndwall(r as _rect) as short
 end function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tCoords -=-=-=-=-=-=-=-
+	tModule.register("tCoords",@tCoords.init()) ',@tCoords.load(),@tCoords.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tCoords -=-=-=-=-=-=-=-
+#endif'test

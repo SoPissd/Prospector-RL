@@ -1,14 +1,52 @@
-' error handling
+'tError.
+'
+'namespace: tError
+
+'
+'
+'defines:
+'init=16, log_error=0, log_warning=0, Errorhandler=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tError -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
 
 dim shared as integer iErrConsole
 
 namespace tError
-	
+
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tError -=-=-=-=-=-=-=-
+
+declare function init() As integer
+
+'private function log_error(text as string) As integer
+'private function log_warning(aFile as string, aFunct as string, iLine as integer, text as string) as integer
+'private function Errorhandler() As integer
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tError -=-=-=-=-=-=-=-
+
 Dim as integer ErrorNr=0
 Dim as integer ErrorLn=0
 Dim as String ErrText
 
-'
 
 function init() As integer
 	ErrorNr=0
@@ -72,19 +110,24 @@ function Errorhandler() As integer
 	return 0
 End function
 
+#endif'main
 
 End Namespace
 
-iErrConsole=freefile
-open err for output as iErrConsole
-print #iErrConsole,"console err!"
-'close #f
+#if (defined(main) or defined(test))
+	' -=-=-=-=-=-=-=- INIT: tError -=-=-=-=-=-=-=-
+	'
+	iErrConsole=freefile
+	open err for output as iErrConsole
+	print #iErrConsole,"console err!"
+	'close #f
 
-#ifdef main
 	#Define LogWarning(Text) Assert(tError.log_warning(__FILE__,__FUNCTION__,__LINE__,Text))						' disappears from release
-	tModule.Register("tError",@tError.Init())
-	
-#else	
+	tModule.register("tError",@tError.init()) ',@tError.load(),@tError.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tError -=-=-=-=-=-=-=-
 	? tError.log_warning("ok.log","fun",10,"txt")
 	LogWarning("warning")
-#endif		
+#endif'test

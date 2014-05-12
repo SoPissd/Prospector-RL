@@ -1,4 +1,45 @@
-'tFaction
+'tFaction.
+'
+'defines:
+'factionadd=58
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tFaction -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tFaction -=-=-=-=-=-=-=-
+
+declare function factionadd(a as short,b as short, add as short) as short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tFaction -=-=-=-=-=-=-=-
+
+namespace tFaction
+function init() as Integer
+	return 0
+end function
+end namespace'tFaction
+
+
+#define cut2top
+
 
 Type _faction
     war(8) As Short
@@ -37,3 +78,14 @@ function factionadd(a as short,b as short, add as short) as short
 end function        
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tFaction -=-=-=-=-=-=-=-
+	tModule.register("tFaction",@tFaction.init()) ',@tFaction.load(),@tFaction.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tFaction -=-=-=-=-=-=-=-
+#endif'test

@@ -1,4 +1,46 @@
-'tAutopilot
+'tAutopilot.
+'
+'defines:
+'ap_astar=0, auto_pilot=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tAutopilot -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tAutopilot -=-=-=-=-=-=-=-
+
+declare function auto_pilot(start as _cords, ende as _cords, diff as short) as short
+
+'private function ap_astar(start as _cords,ende as _cords,diff as short) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tAutopilot -=-=-=-=-=-=-=-
+
+namespace tAutopilot
+function init() as Integer
+	return 0
+end function
+end namespace'tAutopilot
+
+
+#define cut2top
+
 
 function ap_astar(start as _cords,ende as _cords,diff as short) as short
     DimDebug(0)
@@ -45,3 +87,14 @@ function auto_pilot(start as _cords, ende as _cords, diff as short) as short
     return 0
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tAutopilot -=-=-=-=-=-=-=-
+	tModule.register("tAutopilot",@tAutopilot.init()) ',@tAutopilot.load(),@tAutopilot.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tAutopilot -=-=-=-=-=-=-=-
+#endif'test

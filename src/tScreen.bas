@@ -1,6 +1,35 @@
-'tScreen
+'tScreen.
+'
+'namespace: tScreen
+
+'
+'
+'defines:
+'mode=24, set=613, loc=199, res=105, size=25, col=315, rgbcol=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tScreen -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
 
 namespace tScreen
+
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tScreen -=-=-=-=-=-=-=-
 
 #ifndef GFX_WINDOWED
 const as integer GFX_WINDOWED				= &h00
@@ -11,6 +40,23 @@ const as integer GFX_NO_FRAME				= &h08
 const as integer GFX_SHAPED_WINDOW			= &h10
 const as integer GFX_ALWAYS_ON_TOP			= &h20
 #endif
+
+declare function mode(iMode as integer=0) As Short
+declare function set(fg As Short=1,bg As Short=1) As Short
+declare function loc(iRow As Short=0,iCol As Short=0) As Short
+declare function res(flags as integer= GFX_WINDOWED ) As Short
+declare function size(irows As Short=25,icols As Short=80) As Short
+declare function col(fg As Short,bg As Short=0) As Short
+
+'private function rgbcol(r As Short,g As Short,b As Short) As integer
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tScreen -=-=-=-=-=-=-=-
+
+function init() as Integer
+	return 0
+end function
 
 Dim Shared as UShort Enabled=0
 Dim Shared as UShort LastCol=0
@@ -63,3 +109,14 @@ function rgbcol(r As Short,g As Short,b As Short) As integer
 End Function
 
 end namespace
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tScreen -=-=-=-=-=-=-=-
+	tModule.register("tScreen",@tScreen.init()) ',@tScreen.load(),@tScreen.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tScreen -=-=-=-=-=-=-=-
+#endif'test

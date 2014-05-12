@@ -26,7 +26,7 @@
 #endif'test
 
 namespace tModule
-	
+
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tModule -=-=-=-=-=-=-=-
 
@@ -75,7 +75,7 @@ public function Register(aName as string,_
 	lastmodule+=1
 	modules(lastmodule)=amodule
 	'
-	'? amodule.aName +".Init()"
+	? amodule.aName +".Init()"
 	amodule.fInit()
 	return 0
 End Function

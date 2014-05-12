@@ -1,7 +1,62 @@
-'pirates
+'pirates.
+'
+'defines:
+'clearfleetlist=1, set_fleet=5, friendly_pirates=0, join_fight=0,
+', meet_fleet=0, getship=0, fleet_battle=0, resolve_fight=0,
+', decide_if_fight=0, collide_fleets=1, ss_sighting=1, update_targetlist=0,
+', move_fleets=1, piratecrunch=0, setmonster=0, monster2crew=0,
+', debug_printfleet=0
+'
 
-declare function merctrade(byref f as _fleet) as short
-declare function unload_f(f as _fleet, st as short) as _fleet
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: pirates -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: pirates -=-=-=-=-=-=-=-
+
+declare function clearfleetlist() as short
+declare function set_fleet(fl as _fleet) as short
+declare function collide_fleets() as short
+declare function ss_sighting(i as short) as short
+declare function move_fleets() as short
+
+'private function friendly_pirates(f as short) as short
+'private function join_fight(f as short) as short
+'private function meet_fleet(f as short)as short
+'private function getship(f as _fleet) as short
+'private function fleet_battle(byref red as _fleet,byref blue as _fleet) as short
+'private function resolve_fight(f2 as short) as short
+'private function decide_if_fight(f1 as short,f2 as short) as short
+'private function update_targetlist()as short
+'private function piratecrunch(fl as _fleet) as _fleet
+'private function setmonster(enemy as _monster,map as short,spawnmask()as _cords,lsp as short,x as short=0,y as short=0,mslot as short=0,its as short=0) as _monster    
+'private function monster2crew(m as _monster) as _crewmember
+'private function debug_printfleet(f as _fleet) as string
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: pirates -=-=-=-=-=-=-=-
+
+namespace pirates
+function init() as Integer
+	return 0
+end function
+end namespace'pirates
+
 
 function clearfleetlist() as short
     dim as short a,b,c
@@ -781,3 +836,14 @@ function debug_printfleet(f as _fleet) as string
 end function
 #endif
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: pirates -=-=-=-=-=-=-=-
+	tModule.register("pirates",@pirates.init()) ',@pirates.load(),@pirates.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: pirates -=-=-=-=-=-=-=-
+#endif'test

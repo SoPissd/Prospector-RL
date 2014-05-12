@@ -1,10 +1,27 @@
 'tFile.
+'
+'namespace: tFile
+'
+'
+'defines:
+'init=16, Closefile=0, private Openerror=0, Openfile=0, OpenInput=0,
+', OpenOutput=0, OpenAppend=0, OpenBinary=0, OpenLogfile=0, filetostring=0,
+', stringtofile=0, Assertpath=0, Filesize=0, Countlines=0, ttest=0
+'
 
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
 '
-' File Input/output routines
-'
-'
-
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tFile -=-=-=-=-=-=-=-
 #if not (defined(head) or defined(main)) 'test
 #print "tFile test"
 #define intest
@@ -24,6 +41,22 @@
 #define test
 #endif 
 
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tFile -=-=-=-=-=-=-=-
+
+
+'private function = Close(#fileno)
+'private function private Openerror(filename as string, fileno as integer, filemode as tFileOpenMode) as integer
+'private function ttest() as Integer
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tFile -=-=-=-=-=-=-=-
+
 namespace tFile	
 	
 Enum tFileOpenMode
@@ -35,9 +68,11 @@ Enum tFileOpenMode
 End Enum	
 	
 dim lastfn as String
+dim FileError as String
 
 public function init() As integer
 	lastfn=""
+	FileError=""
 	return 0
 End function
 
@@ -61,7 +96,7 @@ private function Openerror(filename as string, fileno as integer, filemode as tF
 	endscope:
 	end scope		
 	'
-	tVersion.DisplayError("Couldn't open "&filename &" for " &text &" as #" &fileno)
+	FileError= "Couldn't open "&filename &" for " &text &" as #" &fileno
     return -1
 End function
 
@@ -71,6 +106,7 @@ public function Openfile(filename as string, ByRef fileno as integer, filemode a
 		fileno=freefile
     EndIf
     lastfn=filename
+    FileError=""
 	scope
 	select case filemode
 		case fmInput:	i= Open(filename, For Input,  As #fileno)	:goto endscope
@@ -245,3 +281,14 @@ function ttest() as Integer
 End Function
 ttest()
 #endif 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tFile -=-=-=-=-=-=-=-
+	tModule.register("tFile",@tFile.init()) ',@tFile.load(),@tFile.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tFile -=-=-=-=-=-=-=-
+#endif'test

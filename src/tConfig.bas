@@ -1,28 +1,29 @@
-'tConfig
-Declare function getnumber(a as integer,b as integer, e as integer) as integer
+'tConfig.
+'
+'defines:
+'explored_percentage_string=1, save_config=1, load_config=1,
+', configuration=7
+'
 
-Declare function UpdateMapSize(size as short) as Short
-Declare function SetCaptainsprite(nr as byte) as short
-Declare function set_volume(volume as Integer) as short
-Declare function menu(bg as byte,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1) as short
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tConfig -=-=-=-=-=-=-=-
 
-Dim Shared As UByte _fohi1, _fohi2
-Dim Shared As Byte _volume=2
-
-
-Dim Shared vismask(sm_x,sm_y) As Byte
-Dim Shared spacemap(sm_x,sm_y) As Short
-
-Dim shared as ubyte wormhole=8
-dim shared as ubyte laststar=90
-
-Dim Shared As Byte _tix=24
-Dim Shared As Byte _tiy=24
-
-Dim Shared As Byte gt_mwx=40
-
-Dim Shared As Byte _teamcolor=15
-Dim Shared As Byte _shipcolor=14
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tConfig -=-=-=-=-=-=-=-
 
 Enum config
     con_empty
@@ -55,9 +56,51 @@ Enum config
     con_end
 End Enum
 
-Dim Shared As Byte configflag(con_end-1)
 
-'
+declare function explored_percentage_string() as string
+declare function save_config(oldtiles as short) as short
+declare function load_config() as short
+declare function configuration() as short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tConfig -=-=-=-=-=-=-=-
+
+namespace tConfig
+function init() as Integer
+	return 0
+end function
+end namespace'tConfig
+
+
+#define cut2top
+
+'Declare function getnumber(a as integer,b as integer, e as integer) as integer
+
+'Declare function UpdateMapSize(size as short) as Short
+'Declare function SetCaptainsprite(nr as byte) as short
+'Declare function menu(bg as byte,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1) as short
+
+Dim Shared As UByte _fohi1, _fohi2
+Dim Shared As Byte _volume=2
+
+
+Dim Shared vismask(sm_x,sm_y) As Byte
+Dim Shared spacemap(sm_x,sm_y) As Short
+
+Dim shared as ubyte wormhole=8
+dim shared as ubyte laststar=90
+
+Dim Shared As Byte _tix=24
+Dim Shared As Byte _tiy=24
+
+Dim Shared As Byte gt_mwx=40
+
+Dim Shared As Byte _teamcolor=15
+Dim Shared As Byte _shipcolor=14
+
+Dim Shared As Byte configflag(con_end-1)
 
 Dim Shared As String configname(con_end-1)
 configname(con_tiles)="tiles"
@@ -382,3 +425,14 @@ function configuration() as short
     return save_config(oldtiles)
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tConfig -=-=-=-=-=-=-=-
+	tModule.register("tConfig",@tConfig.init()) ',@tConfig.load(),@tConfig.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tConfig -=-=-=-=-=-=-=-
+#endif'test

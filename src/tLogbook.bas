@@ -1,4 +1,49 @@
-'tLogbook.bas
+'tLogbook.
+'
+'defines:
+'lb_listmake=0, lb_filter=0, dplanet=1, bioreport=3, logbook=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tLogbook -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tLogbook -=-=-=-=-=-=-=-
+
+declare function dplanet(p as _planet,orbit as short,scanned as short,slot as short) as short
+declare function bioreport(slot as short) as short
+declare function logbook() as short
+
+'private function lb_listmake(lobk() as string, lobn() as short, lobc() as short,lobp()as _cords) as short
+'private function lb_filter(lobk() as string, lobn() as short, lobc() as short,lobp() as _cords,last as short) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tLogbook -=-=-=-=-=-=-=-
+
+namespace tLogbook
+function init() as Integer
+	return 0
+end function
+end namespace'tLogbook
+
+
+#define cut2top
+
 
 function lb_listmake(lobk() as string, lobn() as short, lobc() as short,lobp()as _cords) as short
     DimDebug(0)
@@ -457,3 +502,14 @@ function logbook() as short
     loop until key=key__esc or player.dead<>0 or walking=10
     return 0
 end function
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tLogbook -=-=-=-=-=-=-=-
+	tModule.register("tLogbook",@tLogbook.init()) ',@tLogbook.load(),@tLogbook.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tLogbook -=-=-=-=-=-=-=-
+#endif'test

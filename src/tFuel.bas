@@ -1,4 +1,46 @@
-'tFuel
+'tFuel.
+'
+'defines:
+'rg_icechunk=0, gasgiant_fueling=2
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tFuel -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tFuel -=-=-=-=-=-=-=-
+
+declare function gasgiant_fueling(p As Short, orbit As Short, sys As Short) As Short
+
+'private function rg_icechunk() As Short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tFuel -=-=-=-=-=-=-=-
+
+namespace tFuel
+function init() as Integer
+	return 0
+end function
+end namespace'tFuel
+
+
+#define cut2top
+
 
 
 function rg_icechunk() As Short
@@ -240,3 +282,14 @@ End function
 '
 'dim shared fuel(48) as _fuel
 'dim shared lastfuel as byte
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tFuel -=-=-=-=-=-=-=-
+	tModule.register("tFuel",@tFuel.init()) ',@tFuel.load(),@tFuel.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tFuel -=-=-=-=-=-=-=-
+#endif'test

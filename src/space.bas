@@ -1,3 +1,69 @@
+'space.
+'
+'defines:
+'add_stations=2, add_stars=2, add_wormholes=2, add_ano=1,
+', add_special_planets=2, gen_bountyquests=2, add_easy_planets=2,
+', add_event_planets=2, add_company_shop=0, add_drifters=2, add_caves=2,
+', add_piratebase=2, questguy_newloc=2, add_questguys=2,
+', distribute_stars=2, gen_traderoutes=2, gen_shops=2, make_clouds=2,
+', make_alienship=0, civ_adapt_tiles=2, make_civilisation=4
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: space -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: space -=-=-=-=-=-=-=-
+
+declare function add_stations() as short
+declare function add_stars() as short
+declare function add_wormholes() as short
+declare function add_ano(p1 as _cords,p2 as _cords,ano as short=0) as short
+declare function add_special_planets() as short
+declare function gen_bountyquests() as short
+declare function add_easy_planets(start as _cords) as short
+declare function add_event_planets() as short
+declare function add_drifters() as short
+declare function add_caves() as short
+declare function add_piratebase() as short
+declare function questguy_newloc(i as short) as short
+declare function add_questguys() as short
+declare function distribute_stars() as short
+declare function gen_traderoutes() as short
+declare function gen_shops() as short
+declare function make_clouds() as short
+declare function civ_adapt_tiles(slot as short) as short
+declare function make_civilisation(slot as short,m as short) as short
+
+'private function add_company_shop(slot as short,mt as short) as short
+'private function make_alienship(slot as short,t as short) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: space -=-=-=-=-=-=-=-
+
+namespace tSpace
+function init() as Integer
+	return 0
+end function
+end namespace'tSpace
+
+
+#define cut2top
 
 function add_stations() as short
     dim as _cords p
@@ -1832,3 +1898,14 @@ end function
 
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: space -=-=-=-=-=-=-=-
+	tModule.register("tSpace",@tSpace.init()) ',@space.load(),@space.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: space -=-=-=-=-=-=-=-
+#endif'test

@@ -1,4 +1,48 @@
-'tPlayer
+'tPlayer.
+'
+'defines:
+'addmoney=106, randomname=0, settactics=1, weapon_string=2
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tPlayer -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tPlayer -=-=-=-=-=-=-=-
+
+declare function addmoney(amount as integer,mt as byte) as short
+declare function settactics() as short
+declare function weapon_string() as string
+
+'private function randomname() as string
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tPlayer -=-=-=-=-=-=-=-
+
+namespace tPlayer
+function init() as Integer
+	return 0
+end function
+end namespace'tPlayer
+
+
+#define cut2top
+
 
 Enum moneytype
     mt_startcash
@@ -151,3 +195,14 @@ function _monster.add_move_cost() As Short
 End function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tPlayer -=-=-=-=-=-=-=-
+	tModule.register("tPlayer",@tPlayer.init()) ',@tPlayer.load(),@tPlayer.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tPlayer -=-=-=-=-=-=-=-
+#endif'test

@@ -1,4 +1,28 @@
-'tTiles
+'tTiles.
+'
+'defines:
+'load_tiles_msg=0, load_tiles=1, plant_name=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tTiles -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tTiles -=-=-=-=-=-=-=-
 
 Type _tile
     no As Short
@@ -51,6 +75,25 @@ Type _tile
     turnsonleave As Short
     turnsonleavetext As String*512
 End Type
+
+declare function load_tiles() as short
+declare function plant_name(ti as _tile) as string
+
+'private function load_tiles_msg() as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tTiles -=-=-=-=-=-=-=-
+
+namespace tTiles
+function init() as Integer
+	return 0
+end function
+end namespace'tTiles
+
+
+#define cut2top
+
 
 Dim Shared tiles(512) As _tile
 dim as uinteger a
@@ -757,3 +800,14 @@ end function
 'end function
 '
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tTiles -=-=-=-=-=-=-=-
+	tModule.register("tTiles",@tTiles.init()) ',@tTiles.load(),@tTiles.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tTiles -=-=-=-=-=-=-=-
+#endif'test

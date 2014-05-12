@@ -1,4 +1,45 @@
-'tLanding
+'tLanding.
+'
+'defines:
+'landing=32
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tLanding -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tLanding -=-=-=-=-=-=-=-
+
+declare function landing(mapslot As Short,lx As Short=0,ly As Short=0,Test As Short=0) As Short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tLanding -=-=-=-=-=-=-=-
+
+namespace tLanding
+function init() as Integer
+	return 0
+end function
+end namespace'tLanding
+
+
+#define cut2top
+
 
 function landing(mapslot As Short,lx As Short=0,ly As Short=0,Test As Short=0) As Short
     DimDebug(0)'510
@@ -281,3 +322,14 @@ function landing(mapslot As Short,lx As Short=0,ly As Short=0,Test As Short=0) A
 End function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tLanding -=-=-=-=-=-=-=-
+	tModule.register("tLanding",@tLanding.init()) ',@tLanding.load(),@tLanding.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tLanding -=-=-=-=-=-=-=-
+#endif'test

@@ -1,4 +1,45 @@
-'tMakeitem
+'tMakeitem.
+'
+'defines:
+'make_item=133
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tMakeitem -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tMakeitem -=-=-=-=-=-=-=-
+
+declare function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=0,nomod as byte=0) as _items
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tMakeitem -=-=-=-=-=-=-=-
+
+namespace tMakeitem
+function init() as Integer
+	return 0
+end function
+end namespace'tMakeitem
+
+
+#define cut2top
+
 
 function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=0,nomod as byte=0) as _items
     dim i as _items
@@ -2423,3 +2464,14 @@ function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=
     
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tMakeitem -=-=-=-=-=-=-=-
+	tModule.register("tMakeitem",@tMakeitem.init()) ',@tMakeitem.load(),@tMakeitem.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tMakeitem -=-=-=-=-=-=-=-
+#endif'test

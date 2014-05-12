@@ -1,7 +1,11 @@
 'tPalette.
 '
+'namespace: tPalette
+
+'
+'
 'defines:
-'load_palette=1
+'init=16, load_palette=1
 '
 
 'needs [head|main|both] defined,
@@ -17,30 +21,6 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tPalette -=-=-=-=-=-=-=-
-
-#undef intest
-#define test
-#endif'test
-#ifdef head
-'     -=-=-=-=-=-=-=- HEAD: tPalette -=-=-=-=-=-=-=-
-
-declare public function load_palette(filename as string="p.pal") as short
-
-
-#endif'head
-#ifdef main
-'     -=-=-=-=-=-=-=- MAIN: tPalette -=-=-=-=-=-=-=-
-
-namespace tPalette
-function init() as Integer
-	return 0
-end function
-end namespace'tPalette
-
-
-#define cut2top
-
-
 #if not (defined(head) or defined(main)) 'test
 #print "tPalette test"
 #define main
@@ -52,12 +32,33 @@ end namespace'tPalette
 #include "kbinput.bas"
 '#include "tUtils.bas"
 #undef main
+
 # define gen_include
 #ifdef gen_include
 dim shared fout as integer
 #endif 
 #endif
 
+#undef intest
+#define test
+#endif'test
+
+namespace tPalette
+
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tPalette -=-=-=-=-=-=-=-
+
+declare function init() as Integer
+declare function load_palette(filename as string="p.pal") as short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tPalette -=-=-=-=-=-=-=-
+
+function init() as Integer
+	return 0
+End Function
 
 function load_palette(filename as string="p.pal") as short
     dim as integer f
@@ -99,6 +100,17 @@ function load_palette(filename as string="p.pal") as short
     return 0
 end function
 
+#endif'main
+end namespace
+
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tPalette -=-=-=-=-=-=-=-
+	tModule.register("tPalette",@tPalette.init()) ',@tPalette.load(),@tPalette.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tPalette -=-=-=-=-=-=-=-
 '#if ( define(all) or define(head) or define(main) )
 '#else
 #ifdef gen_include
@@ -117,14 +129,5 @@ Pressanykey
 #endif		
 '#endif
 
-#define cut2bottom
-#endif'main
-
-#if (defined(main) or defined(test))
-'      -=-=-=-=-=-=-=- INIT: tPalette -=-=-=-=-=-=-=-
-	tModule.register("tPalette",@tPalette.init()) ',@tPalette.load(),@tPalette.save())
-#endif'main
-
-#ifdef test
-#print -=-=-=-=-=-=-=- TEST: tPalette -=-=-=-=-=-=-=-
 #endif'test
+

@@ -1,5 +1,58 @@
-'Declare function reward_bountyquest(employer as short) as short
-'Declare function give_quest(st as short) as short
+'cargotrade.
+'
+'defines:
+'private load_s=0, private load_f=0, private refuel_f=0, private refuel=0,
+', private repair_hull=0, private sick_bay=0, private pirateupgrade=0,
+', private customize_item=0, private nextemptyc=0, private change_prices=0,
+', private removeinvbytype=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: cargotrade -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: cargotrade -=-=-=-=-=-=-=-
+
+
+'private function private load_s(s as _ship, good as short, st as short) as short
+'private function private load_f(f as _fleet, st as short) as _fleet
+'private function private refuel_f(f as _fleet, st as short) as _fleet
+'private function private refuel(st as short,price as single) as short
+'private function private repair_hull(pricemod as single=1) as short
+'private function private sick_bay(st as short=0,obe as short=0) as short
+'private function private pirateupgrade() as short
+'private function private customize_item() as short
+'private function private nextemptyc() as short
+'private function private change_prices(st as short,etime as short) as short
+'private function private removeinvbytype( t as short, am as short) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: cargotrade -=-=-=-=-=-=-=-
+
+namespace cargotrade
+function init() as Integer
+	return 0
+end function
+end namespace'cargotrade
+
+
+#define cut2top
+
 
 '
 
@@ -676,3 +729,14 @@ private function removeinvbytype( t as short, am as short) as short
     return am
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: cargotrade -=-=-=-=-=-=-=-
+	tModule.register("cargotrade",@cargotrade.init()) ',@cargotrade.load(),@cargotrade.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: cargotrade -=-=-=-=-=-=-=-
+#endif'test

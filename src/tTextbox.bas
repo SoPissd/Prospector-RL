@@ -1,4 +1,47 @@
-'tTextbox
+'tTextbox.
+'
+'defines:
+'scroll_bar=1, textbox=31
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tTextbox -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tTextbox -=-=-=-=-=-=-=-
+
+declare function scroll_bar(offset as short,linetot as short,lineshow as short,winhigh as short, x as short,y as short,col as short) as short
+declare function textbox(text as string,x as short,y as short,w as short,_
+    fg as short=11, bg as short=0,pixel as byte=0,byref op as short=0,byref offset as short=0) as short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tTextbox -=-=-=-=-=-=-=-
+
+namespace tTextbox
+function init() as Integer
+	return 0
+end function
+end namespace'tTextbox
+
+
+#define cut2top
+
 
 function scroll_bar(offset as short,linetot as short,lineshow as short,winhigh as short, x as short,y as short,col as short) as short
     dim as single part,i,balkenh,offset2,oneline
@@ -115,3 +158,14 @@ function textbox(text as string,x as short,y as short,w as short,_
     return lcount
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tTextbox -=-=-=-=-=-=-=-
+	tModule.register("tTextbox",@tTextbox.init()) ',@tTextbox.load(),@tTextbox.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tTextbox -=-=-=-=-=-=-=-
+#endif'test

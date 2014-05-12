@@ -1,10 +1,58 @@
-'tColor
-#if not (defined(head) or defined(main)) 'test
+'tColor.
+'
+'namespace: tColor
+
+'
+'
+'defines:
+'_tcol=33, _col=442, _icol=0, Init=6, argb=0, set=611, set__color=537,
+', prt=0, test=41
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tColor -=-=-=-=-=-=-=-
 #print "tColor test"
-#include "tDefines.bas"
 #include "tModule.bas"
+#include "tDefines.bas"
 #include "tScreen.bas"
-#endif
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tColor -=-=-=-=-=-=-=-
+
+declare function _col( ByVal src As UInteger, ByVal dest As UInteger, ByVal param As Any Ptr ) As UInteger
+declare function _icol( ByVal src As UInteger, ByVal dest As UInteger, ByVal param As Any Ptr ) As UInteger
+declare function _tcol( ByVal src As UInteger, ByVal dest As UInteger, ByVal param As Any Ptr ) As UInteger
+
+namespace tColor
+declare function set(fg As Short,bg As Short=0,visible As Byte=1) As Short	
+End Namespace
+
+declare function set__color(fg As Short,bg As Short=0,visible As Byte=1) As Short
+
+'private function tColor
+'private function argb(c as short) As String
+'private function prt(imax as integer=15) as integer
+'declare function test() as integer
+
+#endif'head
+
+
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tColor -=-=-=-=-=-=-=-
 
 Dim Shared _fgcolor_ As UInteger
 Dim Shared _bgcolor_ As UInteger
@@ -19,7 +67,6 @@ function _tcol( ByVal src As UInteger, ByVal dest As UInteger, ByVal param As An
     EndIf
 End function
 
-Declare function _col( ByVal src As UInteger, ByVal dest As UInteger, ByVal param As Any Ptr ) As UInteger
 
 function _col( ByVal src As UInteger, ByVal dest As UInteger, ByVal param As Any Ptr ) As UInteger
     If src=0 Then
@@ -28,8 +75,6 @@ function _col( ByVal src As UInteger, ByVal dest As UInteger, ByVal param As Any
         Return _fgcolor_
     EndIf
 End function
-
-Declare function _icol( ByVal src As UInteger, ByVal dest As UInteger, ByVal param As Any Ptr ) As UInteger
 
 function _icol( ByVal src As UInteger, ByVal dest As UInteger, ByVal param As Any Ptr ) As UInteger
     'Itemcolor
@@ -40,12 +85,9 @@ function _icol( ByVal src As UInteger, ByVal dest As UInteger, ByVal param As An
     EndIf
 End function
 
-'
-
 #Define RGBA_R( c ) ( CUInt( c ) Shr 16 And 255 )
 #Define RGBA_G( c ) ( CUInt( c ) Shr  8 And 255 )
 #Define RGBA_B( c ) ( CUInt( c )        And 255 )
-
 
 #include "tPalette.bi"
 
@@ -154,3 +196,14 @@ End Function
 
 #endif
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tColor -=-=-=-=-=-=-=-
+	tModule.register("tColor",@tColor.init()) ',@tColor.load(),@tColor.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tColor -=-=-=-=-=-=-=-
+#endif'test

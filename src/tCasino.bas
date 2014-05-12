@@ -1,6 +1,42 @@
-'tCasino
-declare function add_passenger(n as string,typ as short, price as short, bonus as short, target as short, ttime as short, gender as short) as short
-declare function questguy_dialog(i as short) as short
+'tCasino.
+'
+'defines:
+'drawroulettetable=1, casino=6
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tCasino -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tCasino -=-=-=-=-=-=-=-
+
+declare function drawroulettetable() as short
+declare function casino(staked as short=0, st as short=-1) as short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tCasino -=-=-=-=-=-=-=-
+
+namespace tCasino
+function init() as Integer
+	return 0
+end function
+end namespace'tCasino
 
 
 function drawroulettetable() as short
@@ -464,3 +500,14 @@ function casino(staked as short=0, st as short=-1) as short
     if result>30000 then result=30000
     return mwon-mlos
 end function
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tCasino -=-=-=-=-=-=-=-
+	tModule.register("tCasino",@tCasino.init()) ',@tCasino.load(),@tCasino.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tCasino -=-=-=-=-=-=-=-
+#endif'test

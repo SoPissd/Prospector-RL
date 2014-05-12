@@ -1,4 +1,45 @@
-'tCustomship
+'tCustomship.
+'
+'defines:
+'delete_custom=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tCustomship -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tCustomship -=-=-=-=-=-=-=-
+
+declare function delete_custom(pir as short) as short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tCustomship -=-=-=-=-=-=-=-
+
+namespace tCustomship
+function init() as Integer
+	return 0
+end function
+end namespace'tCustomship
+
+
+#define cut2top
+
 
 function delete_custom(pir as short) as short
     dim s as _ship
@@ -43,3 +84,14 @@ function delete_custom(pir as short) as short
 end function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tCustomship -=-=-=-=-=-=-=-
+	tModule.register("tCustomship",@tCustomship.init()) ',@tCustomship.load(),@tCustomship.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tCustomship -=-=-=-=-=-=-=-
+#endif'test

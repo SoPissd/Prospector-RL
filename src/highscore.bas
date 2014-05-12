@@ -1,3 +1,69 @@
+'highscore.
+'
+'defines:
+'income_expenses_html=0, income_expenses=1, space_mapbmp=0, get_death=0,
+', death_text=0, explper=0, exploration_text=0, ship_table=0,
+', planet_artifacts_table=0, crew_table=0, score=5,
+', exploration_text_html=0, acomp_table=0, postmort_html=0,
+', post_mortemII=0, high_score=1, death_message=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: highscore -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: highscore -=-=-=-=-=-=-=-
+
+declare function income_expenses() as string
+declare function score() as integer
+declare function high_score(text as string) as short
+declare function death_message() as short
+
+'private function income_expenses_html() as string
+'private function space_mapbmp() as short
+'private function get_death() as string
+'private function death_text() as string
+'private function explper() as short
+'private function exploration_text() as string
+'private function ship_table() as string
+'private function planet_artifacts_table() as string
+'private function crew_table() as string
+'private function exploration_text_html() as string
+'private function acomp_table() as string
+'private function postmort_html(text as string) as short
+'private function post_mortemII(text as string) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: highscore -=-=-=-=-=-=-=-
+
+namespace tHighscore
+function init() as Integer
+	return 0
+end function
+end namespace'tHighscore
+
+
+Type _table
+    points As Integer
+    desig As String *80
+    death As String *80
+End Type
+
 '
 ' Calculate and display Highscore and post-mortem
 '
@@ -786,7 +852,7 @@ end function
 
 function high_score(text as string) as short
     
-    dim highscore(11) as _table
+    dim hScore(11) as _table
     dim in as integer=1
     dim key as string
     dim rank as integer
@@ -797,14 +863,14 @@ function high_score(text as string) as short
     dim a as integer
     dim s as integer
     dim as short xo,yo,sp
-    'open highscore table
+    'open hScore table
     f=freefile
     open "highscore" for binary as f
     for a=1 to 10
-        get #f,,highscore(a)
+        get #f,,hScore(a)
     next        
     close f
-    'edit highscore table
+    'edit hScore table
     rank=1
     if player.desig<>"" then
         
@@ -817,22 +883,22 @@ function high_score(text as string) as short
         endif
         
         for a=1 to 10
-            if highscore(a).points>s then rank=rank+1
+            if hScore(a).points>s then rank=rank+1
         next
         if rank<10 then
             for a=9 to rank step -1
-                highscore(a+1)=highscore(a)
+                hScore(a+1)=hScore(a)
             next
         endif
         if rank<11 then
-            highscore(rank).points=s
-            highscore(rank).desig=player.desig &" ("&date_string &"), "& ltrim(player.h_desig) &", " &credits(player.money) &" Cr."            
-            highscore(rank).death=get_death
+            hScore(rank).points=s
+            hScore(rank).desig=player.desig &" ("&date_string &"), "& ltrim(player.h_desig) &", " &credits(player.money) &" Cr."            
+            hScore(rank).death=get_death
         endif
     else
         rank=-1
     endif
-    'display highscore table
+    'display hScore table
     offset=rank
     set__color( 11,0)
 
@@ -854,17 +920,17 @@ function high_score(text as string) as short
         else
             set__color( 11,0)
         endif
-        sp=73-len(a &".)")-len(trim(highscore(a+off2).desig))-len(highscore(a+off2).points &" pts.")
-        draw_string (2*_fw2+xo,yo+(a*2)*_fh2, a & ".) " & trim(highscore(a+off2).desig) & ", "  & space(sp)&credits( highscore(a+off2).points) &" pts." ,font2,_col)
+        sp=73-len(a &".)")-len(trim(hScore(a+off2).desig))-len(hScore(a+off2).points &" pts.")
+        draw_string (2*_fw2+xo,yo+(a*2)*_fh2, a & ".) " & trim(hScore(a+off2).desig) & ", "  & space(sp)&credits( hScore(a+off2).points) &" pts." ,font2,_col)
         if a=rank then
             set__color( 14,0)
         else
             set__color( 7,0)
         endif
-        draw_string (2*_fw2+xo,yo+(a*2+1)*_fh2, trim(highscore(a+off2).death),font2,_col)
+        draw_string (2*_fw2+xo,yo+(a*2+1)*_fh2, trim(hScore(a+off2).death),font2,_col)
     next
     set__color( 11,0)
-    if rank>10 then draw_string (2*_fw2+xo,tScreen.y-yo, highscore(10).points &" Points required to enter highscore. you scored "&s &" Points",font2,_col)
+    if rank>10 then draw_string (2*_fw2+xo,tScreen.y-yo, hScore(10).points &" Points required to enter highscore. you scored "&s &" Points",font2,_col)
     draw_string (2*_fw2+xo,tScreen.y-yo/2, "Esc to continue",font2,_col)
     no_key=keyin(key__esc)
     'save highscore table
@@ -875,7 +941,7 @@ function high_score(text as string) as short
     in=1
     open "highscore" for binary as f
       for a=1 to 10  
-        put #f,,highscore(a)
+        put #f,,hScore(a)
         
       next
     close f
@@ -923,3 +989,14 @@ function death_message() as short
     return 0
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: highscore -=-=-=-=-=-=-=-
+	tModule.register("tHighscore",@tHighscore.init()) ',@highscore.load(),@highscore.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: highscore -=-=-=-=-=-=-=-
+#endif'test

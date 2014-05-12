@@ -1,7 +1,53 @@
-'tRetirement.
+'retirement.
+'
+'namespace: tRetirement
+
+'
+'
+'defines:
+'buytitle=0, retirement=3, hasassets=0, sellassetts =0, es_living=0,
+', es_title=0, es_part1=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: retirement -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: retirement -=-=-=-=-=-=-=-
+
+
+'private function tRetirement
+'private function tRetirement
+'private function hasassets() as short
+'private function sellassetts () as string
+'private function es_living(byref pmoney as single) as string
+'private function es_title(byref pmoney as single) as string
+'private function es_part1() as string
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: retirement -=-=-=-=-=-=-=-
 
 namespace tRetirement
 	
+function init() as Integer
+	return 0
+end function
+
 Dim Shared assets(16) As UByte
 
 public function buytitle() as short
@@ -560,3 +606,14 @@ function es_part1() as string
 end function
 
 End Namespace
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: retirement -=-=-=-=-=-=-=-
+	tModule.register("tRetirement",@tRetirement.init()) ',@retirement.load(),@retirement.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: retirement -=-=-=-=-=-=-=-
+#endif'test

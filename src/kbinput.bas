@@ -1,6 +1,47 @@
-'kbInput
+'kbinput.
+'
+'defines:
+'keyplus=8, keyminus=8, keyinput=0, Pressanykey=4
+'
 
-'function keyin(byref allowed as string="" , blocked as short=0)as string
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: kbinput -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: kbinput -=-=-=-=-=-=-=-
+
+declare function keyplus(key as string) as short
+declare function keyminus(key as string) as short
+declare function Pressanykey(aRow as Integer=2,aCol as Integer=0,aFg as Integer=0,aBg as Integer=0) as Integer
+declare function keyinput(allowed as string="") as string
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: kbinput -=-=-=-=-=-=-=-
+
+namespace kbinput
+function init() as Integer
+	return 0
+end function
+end namespace'kbinput
+
+
+#define cut2top
+
 
 Dim Shared As UByte _FH1,_FH2,_FW1,_FW2,_TFH
 
@@ -64,3 +105,14 @@ function Pressanykey(aRow as Integer=2,aCol as Integer=0,aFg as Integer=0,aBg as
 	?
 	return key
 End function
+
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: kbinput -=-=-=-=-=-=-=-
+	tModule.register("kbinput",@kbinput.init()) ',@kbinput.load(),@kbinput.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: kbinput -=-=-=-=-=-=-=-
+#endif'test

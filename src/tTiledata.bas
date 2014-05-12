@@ -1,4 +1,40 @@
-'tTiledata
+'tTiledata.
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tTiledata -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tTiledata -=-=-=-=-=-=-=-
+
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tTiledata -=-=-=-=-=-=-=-
+
+namespace tTiledata
+function init() as Integer
+	return 0
+end function
+end namespace'tTiledata
+
+
+#define cut2top
+
 
 
 tiles(1).tile=247
@@ -2522,3 +2558,14 @@ tiles(411).turnsinto=411
 'open "data/tiles.dat" for binary as #f
 'get #f,,tiles()
 'close #f
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tTiledata -=-=-=-=-=-=-=-
+	tModule.register("tTiledata",@tTiledata.init()) ',@tTiledata.load(),@tTiledata.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tTiledata -=-=-=-=-=-=-=-
+#endif'test

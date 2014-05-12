@@ -1,4 +1,61 @@
-'tUtils
+'tUtils.
+'
+'defines:
+'string_towords=5, numfromstr=1, lastword=2, stripFileExtension=2,
+', first_lc=1, first_uc=1, add_a_or_an=56, credits=134, lev_minimum=0,
+', fuzzymatch=0, roman=5, Texttofile=0, screenshot_nextfilename=0,
+', screenshot=12
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tUtils -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tUtils -=-=-=-=-=-=-=-
+
+declare function string_towords(word() as string, s as string, break as string, punct as short=0) as short
+declare function numfromstr(t as string) as short
+declare function lastword(text as string, delim as string, capacity as short=29) As String
+declare function stripFileExtension(text as string, delim as string=".") As String 
+declare function first_lc(t as string) as string
+declare function first_uc(t as string) as string
+declare function add_a_or_an(t as string,beginning as short) as string
+declare function credits(cr As Integer) As String
+declare function roman(i as integer) as string
+declare function screenshot(a as short) as short
+
+'private function Texttofile(text as string) as string
+'private function lev_minimum( a As Integer, b As Integer, c As Integer ) As Integer
+'private function fuzzymatch( s As String, t As String ) As single
+'private function screenshot_nextfilename(fname as String, ext as String, force as short) as String
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tUtils -=-=-=-=-=-=-=-
+
+namespace tUtils
+function init() as Integer
+	return 0
+end function
+end namespace'tUtils
+
+
+#define cut2top
+
 '
 
 function string_towords(word() as string, s as string, break as string, punct as short=0) as short
@@ -205,19 +262,19 @@ end function
 public function Texttofile(text as string) as string
 	
     dim a as short
-    dim head as short
+    dim sHead as short
     dim outtext as string
     outtext="<p>"
     for a=0 to len(text)
         if mid(text,a,1)="|" or mid(text,a,1)="{" then
             if mid(text,a,1)="|" then
-                if head=1 then
+                if sHead=1 then
                     outtext=outtext &"</b>"
-                    head=2
+                    sHead=2
                 endif
-                if head=0 then
+                if sHead=0 then
                     outtext=outtext &"<b>"
-                    head=1
+                    sHead=1
                 endif
                 outtext=outtext &"<br>"'chr(13)& chr(10)
             endif
@@ -254,3 +311,14 @@ function screenshot(a as short) as short
     return 0
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tUtils -=-=-=-=-=-=-=-
+	tModule.register("tUtils",@tUtils.init()) ',@tUtils.load(),@tUtils.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tUtils -=-=-=-=-=-=-=-
+#endif'test

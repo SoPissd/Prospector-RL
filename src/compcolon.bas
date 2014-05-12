@@ -1,3 +1,51 @@
+'compcolon.
+'
+'defines:
+'score_planet=0, score_system=0, get_com_colon_candidate=0,
+', colonize_planet=1, count_tiles=0, grow_colony=0, grow_colonies=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: compcolon -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: compcolon -=-=-=-=-=-=-=-
+
+declare function colonize_planet(st as short) as short
+declare function grow_colonies() as short
+
+'private function score_planet(i as short,st as short) as short
+'private function score_system(s as short,st as short) as short
+'private function get_com_colon_candidate(st as short) as short
+'private function count_tiles(i as short,map as short) as short
+'private function grow_colony(map as short) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: compcolon -=-=-=-=-=-=-=-
+
+namespace compcolon
+function init() as Integer
+	return 0
+end function
+end namespace'compcolon
+
+
+#define cut2top
 '
 
 
@@ -222,3 +270,14 @@ function grow_colonies() as short
     return 0
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: compcolon -=-=-=-=-=-=-=-
+	tModule.register("compcolon",@compcolon.init()) ',@compcolon.load(),@compcolon.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: compcolon -=-=-=-=-=-=-=-
+#endif'test

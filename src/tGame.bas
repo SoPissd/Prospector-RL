@@ -1,4 +1,49 @@
-'tGame
+'tGame.
+'
+'defines:
+'Private start_new_game=0, Private from_savegame=0, Private mainmenu=0,
+', Prospector=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tGame -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tGame -=-=-=-=-=-=-=-
+
+declare function Prospector() as Integer
+
+'private function Private start_new_game() As Short
+'private function Private from_savegame(Key As String) As String
+'private function Private mainmenu() as string
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tGame -=-=-=-=-=-=-=-
+
+namespace tGame
+function init() as Integer
+	return 0
+end function
+end namespace'tGame
+
+
+#define cut2top
+
 
 
 Private function start_new_game() As Short
@@ -6,7 +51,7 @@ Private function start_new_game() As Short
     Dim _debug As Byte	' needs renaming/removing still    
 
     Dim As String text
-    Dim As Short a,b,c,f,d
+    Dim As integer a,b,c,f,d
     Dim doubleitem(4555) As Byte
     Dim i As _items
     
@@ -384,3 +429,14 @@ Public function Prospector() as Integer
 	Loop Until configflag(con_restart)=1
 	return 0
 end function
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tGame -=-=-=-=-=-=-=-
+	tModule.register("tGame",@tGame.init()) ',@tGame.load(),@tGame.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tGame -=-=-=-=-=-=-=-
+#endif'test

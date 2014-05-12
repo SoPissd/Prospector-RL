@@ -1,4 +1,48 @@
-'tPlanetmenu
+'tPlanetmenu.
+'
+'defines:
+'planetflags_toship=0, ep_gives=1, gets_entry=0, ep_planetmenu=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tPlanetmenu -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tPlanetmenu -=-=-=-=-=-=-=-
+
+declare function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _shipfire, spawnmask() As _cords,lsp As Short,Key As String, loctemp As Single) As Short
+
+'private function planetflags_toship(m As Short) As _ship
+'private function gets_entry(x as short,y as short, slot as short) as short
+'private function ep_planetmenu(entrycords as _cords,slot As Short,shipfire() As _shipfire,spawnmask() As _cords, lsp As Short,loctemp As Single) As _cords
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tPlanetmenu -=-=-=-=-=-=-=-
+
+namespace tPlanetmenu
+function init() as Integer
+	return 0
+end function
+end namespace'tPlanetmenu
+
+
+#define cut2top
+
 
 function planetflags_toship(m As Short) As _ship
     Dim s As _ship
@@ -1412,3 +1456,14 @@ function ep_planetmenu(entrycords as _cords,slot As Short,shipfire() As _shipfir
 End function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tPlanetmenu -=-=-=-=-=-=-=-
+	tModule.register("tPlanetmenu",@tPlanetmenu.init()) ',@tPlanetmenu.load(),@tPlanetmenu.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tPlanetmenu -=-=-=-=-=-=-=-
+#endif'test

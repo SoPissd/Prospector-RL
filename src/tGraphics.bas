@@ -1,4 +1,47 @@
-'tGraphics
+'tGraphics.
+'
+'defines:
+'background=10, bmp_load=2, calcosx=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tGraphics -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tGraphics -=-=-=-=-=-=-=-
+
+declare function background(fn as string) as short
+declare function bmp_load( ByRef filename As String ) As Any Ptr
+
+'private function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for windows less than 60 tiles wide
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tGraphics -=-=-=-=-=-=-=-
+
+namespace tGraphics
+function init() as Integer
+	return 0
+end function
+end namespace'tGraphics
+
+
+#define cut2top
+
 
 Enum backgrounds
     bg_title
@@ -112,3 +155,14 @@ function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for window
 end function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tGraphics -=-=-=-=-=-=-=-
+	tModule.register("tGraphics",@tGraphics.init()) ',@tGraphics.load(),@tGraphics.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tGraphics -=-=-=-=-=-=-=-
+#endif'test

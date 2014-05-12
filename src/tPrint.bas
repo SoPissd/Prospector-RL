@@ -1,4 +1,43 @@
-'tPrint
+'tPrint.
+'
+'defines:
+'scrollup=0, locEOL=0, rlprint=1759
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tPrint -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tPrint -=-=-=-=-=-=-=-
+
+declare function rlprint(t as string, col as short=11) as short
+
+'private function scrollup(b as short) as short
+'private function locEOL() as _cords
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tPrint -=-=-=-=-=-=-=-
+
+namespace tPrint
+function init() as Integer
+	return 0
+end function
+end namespace'tPrint
 
 Dim Shared As Byte _lines=25
 Dim Shared As Byte _textlines
@@ -157,4 +196,13 @@ function rlprint(t as string, col as short=11) as short
     return 0
 end function
 
+#endif'main
 
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tPrint -=-=-=-=-=-=-=-
+	tModule.register("tPrint",@tPrint.init()) ',@tPrint.load(),@tPrint.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tPrint -=-=-=-=-=-=-=-
+#endif'test

@@ -1,4 +1,48 @@
-'tStars
+'tStars.
+'
+'defines:
+'is_special=11, UpdateMapSize=2, sysfrommap=68, orbitfrommap=2
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tStars -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tStars -=-=-=-=-=-=-=-
+
+declare function is_special(m as short) as short
+declare function UpdateMapSize(size as short) as Short
+declare function sysfrommap(a as short)as short
+declare function orbitfrommap(a as short) as short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tStars -=-=-=-=-=-=-=-
+
+namespace tStars
+function init() as Integer
+	return 0
+end function
+end namespace'tStars
+
+
+#define cut2top
+
 
 Type _stars
     c As _cords
@@ -62,3 +106,14 @@ end function
 
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tStars -=-=-=-=-=-=-=-
+	tModule.register("tStars",@tStars.init()) ',@tStars.load(),@tStars.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tStars -=-=-=-=-=-=-=-
+#endif'test

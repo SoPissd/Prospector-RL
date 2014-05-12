@@ -1,4 +1,47 @@
-'tItem
+'tItem.
+'
+'defines:
+'uid_pos=0, check_item_filter=3, caged_monster_text=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tItem -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tItem -=-=-=-=-=-=-=-
+
+declare function check_item_filter(t as short,f as short) as short
+declare function caged_monster_text() as string
+
+'private function uid_pos(uid as uinteger) as integer
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tItem -=-=-=-=-=-=-=-
+
+namespace tItem
+function init() as Integer
+	return 0
+end function
+end namespace'tItem
+
+
+#define cut2top
+
 
 function uid_pos(uid as uinteger) as integer
     dim i as integer
@@ -72,3 +115,14 @@ end function
 
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tItem -=-=-=-=-=-=-=-
+	tModule.register("tItem",@tItem.init()) ',@tItem.load(),@tItem.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tItem -=-=-=-=-=-=-=-
+#endif'test

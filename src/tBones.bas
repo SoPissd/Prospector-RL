@@ -1,4 +1,47 @@
-'tBones
+'tBones.
+'
+'defines:
+'getbonesfile=0, load_bones=2, save_bones=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tBones -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tBones -=-=-=-=-=-=-=-
+
+declare function load_bones() as short
+declare function save_bones(t as short) as short
+
+'private function getbonesfile() as string
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tBones -=-=-=-=-=-=-=-
+
+namespace tBones
+function init() as Integer
+	return 0
+end function
+end namespace'tBones
+
+
+#define cut2top
+
 
 function getbonesfile() as string
     dim s as string
@@ -127,3 +170,14 @@ function save_bones(t as short) as short
     return 0
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tBones -=-=-=-=-=-=-=-
+	tModule.register("tBones",@tBones.init()) ',@tBones.load(),@tBones.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tBones -=-=-=-=-=-=-=-
+#endif'test

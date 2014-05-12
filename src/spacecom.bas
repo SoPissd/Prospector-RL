@@ -1,6 +1,91 @@
-'spacecom
+'spacecom.
+'
+'defines:
+'count_gas_giants_area=4, display_station=0, display_star=24,
+', display_stars=22, com_criticalhit=0, com_hit=0, com_side=0,
+', com_fire=0, com_NPCfireweapon=0, com_NPCFire=1, com_evaltarget=0,
+', com_findtarget=0, com_turn=0, com_add_e_track=0, draw_shield=0,
+', com_vismask=0, com_targetlist=0, com_display=1, com_radio=0,
+', com_direction=0, com_shipfromtarget=0, com_getweapon=0, com_wstring=0,
+', com_gettarget=0, com_dropmine=1, com_regshields=2, com_sinkheat=3,
+', com_damship=0, com_detonatemine=3, com_flee=0, com_shipbox=1,
+', com_testweap=1, com_mindist=0, com_victory=1, com_NPCMove=2,
+', gen_fname=6
+'
 
-declare function com_remove(attacker() as _ship, t as short,flag as short=0) as short
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: spacecom -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: spacecom -=-=-=-=-=-=-=-
+
+declare function count_gas_giants_area(c as _cords,r as short) as short
+declare function display_star(a as short,fbg as byte=0) as short
+declare function display_stars(bg as short=0) as short
+declare function com_NPCFire(defender as _ship,attacker() as _ship) as short
+declare function com_display(defender as _ship, attacker() as _ship,  marked as short, e_track_p() as _cords,e_track_v() as short,e_map() as byte,e_last as short,mines_p() as _cords,mines_v() as short,mines_last as short) as short
+declare function com_dropmine(defender as _ship,mines_p() as _cords,mines_v() as short,byref mines_last as short ,attacker() as _ship) as short
+declare function com_regshields(s as _ship) as short
+declare function com_sinkheat(s as _ship,manjets as short) as short
+declare function com_detonatemine(d as short,mines_p() as _cords, mines_v() as short, byref mines_last as short, defender as _ship, attacker() as _ship) as short
+declare function com_shipbox(s as _ship,di as short) as string
+declare function com_testweap(w as _weap, p1 as _cords,attacker() as _ship,mines_p() as _cords,mines_last as short,echo as short=0) as short
+declare function com_victory(attacker() as _ship) as short
+declare function com_NPCMove(defender as _ship,attacker() as _ship,e_track_p() as _cords,e_track_v() as short,e_map() as byte,byref e_last as short) as short
+declare function gen_fname(fname() as string) as short
+
+'private function display_station(a as short) as short
+'private function com_criticalhit(t as _ship, roll as short) as _ship
+'private function com_hit(target as _ship, w as _weap, dambonus as short, range as short,attn as string,side as short) as _ship
+'private function com_side(target as _ship,c as _cords) as short
+'private function com_fire(byref target as _ship,byref attacker as _ship,byref w as short, gunner as short, range as short) as _ship
+'private function com_NPCfireweapon(byref defender as _ship, byref attacker as _ship,b as short) as short
+'private function com_evaltarget(attacker as _ship,defender as _ship) as short
+'private function com_findtarget(defender as _ship,attacker() as _ship) as short
+'private function com_turn(dircur as byte,dirdest as byte,turnrate as byte) as short
+'private function com_add_e_track(ship as _ship,e_track_p() as _cords,e_track_v() as short, e_map() as byte,e_last as short) as short
+'private function draw_shield(ship as _ship,osx as short) as short
+'private function com_vismask(c as _cords) as short
+'private function com_targetlist(list_c() as _cords, list_e() as short, defender as _ship, attacker() as _ship, mines_p() as _cords,mines_v() as short, mines_last as short) as short
+'private function com_radio(defender as _ship, attacker() as _ship, e_track_p() as _cords,e_track_v() as short,e_map() as byte,e_last as short,mines_p() as _cords,mines_v() as short,mines_last as short)  as short
+'private function com_direction(dest as _cords,target as _cords) as short
+'private function com_shipfromtarget(target as _cords,defender as _ship,attacker() as _ship) as short
+'private function com_getweapon() as short
+'private function com_wstring(w as _weap, range as short) as string
+'private function com_gettarget(defender as _ship, wn as short, attacker() as _ship,marked as short,e_track_p() as _cords,e_track_v() as short,e_map() as byte,e_last as short,mines_p() as _cords,mines_v() as short,mines_last as short) as short
+'private function com_damship(byref t as _ship, dam as short, col as short) as _ship
+'private function com_flee(defender as _ship,attacker() as _ship) as short
+'private function com_mindist(s as _ship) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: spacecom -=-=-=-=-=-=-=-
+
+namespace spacecom
+function init() as Integer
+	return 0
+end function
+end namespace'spacecom
+
+
+#define cut2top
+
+
+'declare function com_remove(attacker() as _ship, t as short,flag as short=0) as short
 
 
 function count_gas_giants_area(c as _cords,r as short) as short
@@ -2116,3 +2201,14 @@ function gen_fname(fname() as string) as short
     fname(8)="space station"
     return 0
 end function
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: spacecom -=-=-=-=-=-=-=-
+	tModule.register("spacecom",@spacecom.init()) ',@spacecom.load(),@spacecom.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: spacecom -=-=-=-=-=-=-=-
+#endif'test

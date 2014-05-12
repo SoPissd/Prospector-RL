@@ -1,4 +1,46 @@
-'tSpacemap
+'tSpacemap.
+'
+'defines:
+'nearest_base=5, dispbase=0, make_vismask=7, vis_test=0, distributepoints=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tSpacemap -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tSpacemap -=-=-=-=-=-=-=-
+
+declare function nearest_base(c as _cords) as short
+declare function make_vismask(c as _cords, sight as short,m as short,ad as short=0) as short
+
+'private function dispbase(c as _cords) as single
+'private function vis_test(a as _cords,p as _cords,test as short) as short
+'private function distributepoints(result() as _cords, ps() as _cords, last as short) as single
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tSpacemap -=-=-=-=-=-=-=-
+
+namespace tSpacemap
+function init() as Integer
+	return 0
+end function
+end namespace'tSpacemap
+
 
 Dim Shared basis(12) As _basis
 'basis
@@ -167,11 +209,11 @@ function make_vismask(c as _cords, sight as short,m as short,ad as short=0) as s
     return 0
 end function
 
-function vis_test(a as _cords,p as _cords,test as short) as short
+function vis_test(a as _cords,p as _cords,tst as short) as short
     dim as short x1,x2
     x1=a.x-_mwx/2
     x2=a.x+_mwx/2
-    if test=0 then 'Surface, can Wrap
+    if tst=0 then 'Surface, can Wrap
         if x1<0 or x2>60 then 'Wraps
             if x1<0 then x1+=61
             if x2>60 then x2-=61
@@ -230,3 +272,14 @@ end function
 
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tSpacemap -=-=-=-=-=-=-=-
+	tModule.register("tSpacemap",@tSpacemap.init()) ',@tSpacemap.load(),@tSpacemap.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tSpacemap -=-=-=-=-=-=-=-
+#endif'test

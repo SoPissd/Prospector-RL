@@ -1,10 +1,29 @@
-'tShip
+'tShip.
+'
+'defines:
+'gethullspecs=0, makehullbox=12, max_hull=4, shipstatsblock=3,
+', display_ship_weapons=2, getnextfreebay=4
+'
 
-declare function best_crew(skill as short, no as short) as short
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tShip -=-=-=-=-=-=-=-
 
-Dim Shared foundsomething As Integer
-Dim Shared alliance(7) As Byte
-
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tShip -=-=-=-=-=-=-=-
 
 Enum shipequipment
     se_navcom
@@ -13,6 +32,11 @@ Enum shipequipment
     se_shipdetection
     se_fuelsystem
 End Enum
+
+Type _visit
+    s As Short
+    t As Integer
+End Type
 
 Type _ship
     c As _cords
@@ -110,6 +134,34 @@ Type _ship
     bcol As Short
     mcol As Short
 End Type
+
+declare function makehullbox(t as short,file as string) as string
+declare function max_hull(s as _ship) as short
+declare function shipstatsblock() as string
+declare function display_ship_weapons(m as short=0) as short
+declare function getnextfreebay() as short
+
+'private function gethullspecs(t as short,file as string) as _ship
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tShip -=-=-=-=-=-=-=-
+
+namespace tShip
+function init() as Integer
+	return 0
+end function
+end namespace'tShip
+
+
+#define cut2top
+
+
+'declare function best_crew(skill as short, no as short) as short
+
+Dim Shared foundsomething As Integer
+Dim Shared alliance(7) As Byte
+
 
 Dim Shared player As _ship
 Dim Shared empty_ship As _ship
@@ -331,3 +383,14 @@ function getnextfreebay() as short
 end function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tShip -=-=-=-=-=-=-=-
+	tModule.register("tShip",@tShip.init()) ',@tShip.load(),@tShip.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tShip -=-=-=-=-=-=-=-
+#endif'test

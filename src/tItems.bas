@@ -1,8 +1,33 @@
-'tItems
+'tItems.
+'
+'defines:
+'calc_resrev=1, findbest=30, make_locallist=5, rnd_item=14, sort_items=1,
+', make_shipequip=0, destroyitem=29, destroy_all_items_at=1,
+', placeitem=165, item_filter=0, removeequip=2, display_item_list=1,
+', next_item=0, getrnditem=0, findbest_jetpack=0, findworst=0,
+', lowest_by_id=0, count_items=0, better_item=1
+'
 
-declare function skill_test(bonus as short,targetnumber as short,echo as string="") as short
-	
-	
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tItems -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tItems -=-=-=-=-=-=-=-
+
 Type _items
     id As UInteger
     ti_no As UShort
@@ -29,17 +54,46 @@ Type _items
     res As UByte
 End Type
 
+
+declare function calc_resrev() as short
+declare function findbest(t as short,p as short=0, m as short=0,id as short=0) as short
+declare function make_locallist(slot as short) as short
+declare function rnd_item(t as short) as _items
+declare function sort_items(list() as _items) as short
+declare function destroyitem(b as short) as short     
+declare function destroy_all_items_at(ty as short, wh as short) as short
+declare function placeitem(i as _items,x as short=0,y as short=0, m as short=0, p as short=0, s as short=0) as short
+declare function removeequip() as short
+declare function display_item_list(inv() as _items, invn() as short, marked as short, l as short,x as short,y as short) as short
+declare function better_item(i1 as _items,i2 as _items) as short
+
+'private function make_shipequip(a as short) as _items
+'private function item_filter() as short
+'private function next_item(c as integer) as integer
+'private function getrnditem(fr as short,ty as short) as short
+'private function findbest_jetpack() as short
+'private function findworst(t as short,p as short=0, m as short=0) as short
+'private function lowest_by_id(id as short) as short
+'private function count_items(i as _items) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tItems -=-=-=-=-=-=-=-
+
+namespace tItems
+function init() as Integer
+	return 0
+end function
+end namespace'tItems
+
+	
 Dim Shared item(25000) As _items
 Dim Shared lastitem As Integer=-1
 Dim Shared shopitem(20,30) As _items
 
-Declare function placeitem(i As _items,x As Short=0,y As Short=0,m As Short=0,p As Short=0,s As Short=0) As Short
-Declare function make_item(a As Short,mod1 As Short=0,mod2 As Short=0,prefmin As Short=0,nomod As Byte=0) As _items
-Declare function rnd_item(t As Short) As _items
-
-'
-
 Dim Shared reward(11) As Single
+
+
 
 function calc_resrev() as short
     dim as short i
@@ -962,3 +1016,14 @@ function better_item(i1 as _items,i2 as _items) as short
     if i1.v1+i1.v2+i1.v3+i1.v4+i1.v5>i2.v1+i2.v2+i2.v3+i2.v4+i2.v5 then return 1
     return 0
 end function
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tItems -=-=-=-=-=-=-=-
+	tModule.register("tItems",@tItems.init()) ',@tItems.load(),@tItems.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tItems -=-=-=-=-=-=-=-
+#endif'test

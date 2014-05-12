@@ -1,4 +1,47 @@
-'tWorldgen
+'tWorldgen.
+'
+'defines:
+'findcompany=0, create_spacemap=0, make_spacemap=2
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tWorldgen -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tWorldgen -=-=-=-=-=-=-=-
+
+declare function make_spacemap() as short
+
+'private function findcompany(c as short) as short
+'private function create_spacemap() as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tWorldgen -=-=-=-=-=-=-=-
+
+namespace tWorldgen
+function init() as Integer
+	return 0
+end function
+end namespace'tWorldgen
+
+
+#define cut2top
+
 
 function findcompany(c as short) as short
     dim a as short
@@ -545,3 +588,14 @@ function make_spacemap() as short
 #endif
     return 0
 end function
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tWorldgen -=-=-=-=-=-=-=-
+	tModule.register("tWorldgen",@tWorldgen.init()) ',@tWorldgen.load(),@tWorldgen.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tWorldgen -=-=-=-=-=-=-=-
+#endif'test

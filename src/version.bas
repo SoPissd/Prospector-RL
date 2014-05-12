@@ -1,13 +1,47 @@
-'version.bas
+'version.
 '
-Dim Shared __VERSION__ As String:	__VERSION__	= "R184+\Sliced" 
-Dim Shared __AUTHOR__ As String:	__AUTHOR__	= "the author"
-Dim Shared __EMAIL__ As String:		__EMAIL__	= "via github"
+'namespace: tVersion
+
 '
-'__EMAIL__ = "The email address is: " + __EMAIL__
-__EMAIL__ = "Contact " + __AUTHOR__ + " " +__EMAIL__ +"."
+'
+'defines:
+'Init=6, Load=3, Save=4, ErrorlogFilename=0, Errorscreen=0, DisplayError=0
 '
 
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: version -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: version -=-=-=-=-=-=-=-
+
+
+'private function tVersion
+'private function tVersion
+'private function tVersion
+'private function tVersion
+'private function tVersion
+'private function tVersion
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: version -=-=-=-=-=-=-=-
+'
+#include "version.bi"
+'
 Declare function savegame(crash as short=0)As Short
 
 namespace tVersion
@@ -41,7 +75,6 @@ public function ErrorlogFilename() as String
 	EndIf
 	function = a + "error.log"	
 End function
-
 
 
 public function Errorscreen(text as string,suppress as integer=0) As integer
@@ -100,23 +133,30 @@ public function Errorscreen(text as string,suppress as integer=0) As integer
 End function
 
 
-public function DisplayError(text as string) as integer
-    tScreen.rgbcol(255,255,0)
-    print text
-    'sleep	
-	return 0
-End function
+'public function DisplayError(text as string) as integer
+'    tScreen.rgbcol(255,255,0)
+'    print text
+'    'sleep	
+'	return 0
+'End function
 
-'
+
+#endif'main
 end namespace
 
-#ifdef main
-	tModule.Register("tVersion",@tVersion.Init(),@tVersion.Load(),@tVersion.Save())
-#endif		
 
-#ifdef intest
+#ifdef testing
 	' patch up expectations during testing.
 	Function savegame(crash as short=0) As Short
 		return 0
 	End Function
 #endif		
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: version -=-=-=-=-=-=-=-
+	tModule.Register("tVersion",@tVersion.Init(),@tVersion.Load(),@tVersion.Save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: version -=-=-=-=-=-=-=-
+#endif'test

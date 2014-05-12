@@ -1,4 +1,60 @@
-'tShipyard
+'tShipyard.
+'
+'defines:
+'poolandtransferweapons=1, upgradehull=7, buy_ship=1, used_ships=2,
+', change_armor=0, ship_design=0, custom_ships=0, ship_inspection=0,
+', shipyard=9, missing_ammo=2, change_loadout=0, shipupgrades=3,
+', buy_engine=0
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tShipyard -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tShipyard -=-=-=-=-=-=-=-
+
+declare function poolandtransferweapons(s1 As _ship,s2 As _ship) As Short
+declare function upgradehull(t as short,byref s as _ship,forced as short=0) as short
+declare function buy_ship(st as short,ds as string,pr as short) as short
+declare function used_ships() as short
+declare function shipyard(where as byte) as short
+declare function missing_ammo() as short
+declare function shipupgrades(st as short) as short
+
+'private function change_armor(st as short) as short
+'private function ship_design(where as byte) as short
+'private function custom_ships(where as byte) as short
+'private function ship_inspection(price as short) as short
+'private function change_loadout() as short
+'private function buy_engine() as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tShipyard -=-=-=-=-=-=-=-
+
+namespace tShipyard
+function init() as Integer
+	return 0
+end function
+end namespace'tShipyard
+
+
+#define cut2top
+
 
 Enum ShipYards
     sy_civil
@@ -873,3 +929,14 @@ function buy_engine() as short
     return 0
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tShipyard -=-=-=-=-=-=-=-
+	tModule.register("tShipyard",@tShipyard.init()) ',@tShipyard.load(),@tShipyard.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tShipyard -=-=-=-=-=-=-=-
+#endif'test

@@ -1,4 +1,46 @@
-'tQuest
+'tQuest.
+'
+'defines:
+'bounty_quest_text=0, show_quests=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tQuest -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tQuest -=-=-=-=-=-=-=-
+
+declare function show_quests() as short
+
+'private function bounty_quest_text() as string
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tQuest -=-=-=-=-=-=-=-
+
+namespace tQuest
+function init() as Integer
+	return 0
+end function
+end namespace'tQuest
+
+
+#define cut2top
+
 
 
 Type _bountyquest
@@ -158,3 +200,14 @@ function show_quests() as short
     return 0
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tQuest -=-=-=-=-=-=-=-
+	tModule.register("tQuest",@tQuest.init()) ',@tQuest.load(),@tQuest.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tQuest -=-=-=-=-=-=-=-
+#endif'test

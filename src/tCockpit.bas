@@ -1,4 +1,48 @@
-'tCockpit
+'tCockpit.
+'
+'defines:
+'show_dotmap=2, show_minimap=1, show_wormholemap=1, messages=3
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tCockpit -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tCockpit -=-=-=-=-=-=-=-
+
+declare function show_dotmap(x1 as short, y1 as short) as short
+declare function show_minimap(xx as short,yy as short) as short
+declare function show_wormholemap(j as short=0) as short
+declare function messages() as short
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tCockpit -=-=-=-=-=-=-=-
+
+namespace tCockpit
+function init() as Integer
+	return 0
+end function
+end namespace'tCockpit
+
+
+#define cut2top
+
 
 function show_dotmap(x1 as short, y1 as short) as short
     dim as short a,x,y,px,py
@@ -291,3 +335,14 @@ function messages() as short
 end function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tCockpit -=-=-=-=-=-=-=-
+	tModule.register("tCockpit",@tCockpit.init()) ',@tCockpit.load(),@tCockpit.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tCockpit -=-=-=-=-=-=-=-
+#endif'test

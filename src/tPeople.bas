@@ -1,6 +1,47 @@
-'tPeople
+'tPeople.
+'
+'defines:
+'rnd_questguy_byjob=0, get_other_questguy=0, questguy_newquest=2,
+', has_questguy_want=1, get_highestrisk_questguy=0
+'
 
-declare function make_questitem(i as short,wanthas as short) as short
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tPeople -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tPeople -=-=-=-=-=-=-=-
+
+declare function questguy_newquest(i as short) as short
+declare function has_questguy_want(i as short,byref t as short) as short
+
+'private function rnd_questguy_byjob(jo as short,self as short=0) as short
+'private function get_other_questguy(i as short,sameplace as byte=0) as short
+'private function get_highestrisk_questguy(st as short) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tPeople -=-=-=-=-=-=-=-
+
+namespace tPeople
+function init() as Integer
+	return 0
+end function
+end namespace'tPeople
+
 
 Type _questitem
     generic As Byte 'If new is generated, and last one was generic, next one is specific
@@ -373,3 +414,14 @@ function get_highestrisk_questguy(st as short) as short
 end function
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tPeople -=-=-=-=-=-=-=-
+	tModule.register("tPeople",@tPeople.init()) ',@tPeople.load(),@tPeople.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tPeople -=-=-=-=-=-=-=-
+#endif'test

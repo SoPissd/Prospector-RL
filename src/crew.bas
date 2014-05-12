@@ -1,5 +1,62 @@
-declare function showteam(from as short, r as short=0,text as string="") as short
+'crew.
+'
+'defines:
+'skill_test=94, can_learn_skill=2, best_crew=6, findartifact=4,
+', max_security=3, total_bunks=0, check_passenger=1, gain_talent=2,
+', find_crew_type=0, levelup=0, remove_no_spacesuit=1, remove_member=1,
+', get_freecrewslot=1, change_captain_appearance=0, sort_crew=2,
+', add_member=19, girlfriends=1, hiring=4
+'
 
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: crew -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: crew -=-=-=-=-=-=-=-
+
+declare function skill_test(bonus as short,targetnumber as short,echo as string="") as short
+declare function can_learn_skill(ci as short,si as short) as short
+declare function best_crew(skill as short, no as short) as short
+declare function findartifact(v5 as short) as short
+declare function max_security() as short
+declare function check_passenger(st as short) as short
+declare function gain_talent(slot as short,talent as short=0) as string
+declare function remove_no_spacesuit(who() as short,last as short) as short
+declare function remove_member(n as short, f as short) as short
+declare function get_freecrewslot() as short
+declare function sort_crew() as short
+declare function add_member(a as short,skill as short) as short
+declare function girlfriends(st as short) as short
+declare function hiring(st as short,byref hiringpool as short,hp as short) as short
+
+'private function total_bunks() as short
+'private function find_crew_type(t as short) as short
+'private function levelup(p as _ship,from as short) as _ship
+'private function change_captain_appearance(x as short,y as short) as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: crew -=-=-=-=-=-=-=-
+
+namespace Crew1
+function init() as Integer
+	return 0
+end function
+end namespace'Crew1
 
 
 function skill_test(bonus as short,targetnumber as short,echo as string="") as short
@@ -1347,3 +1404,14 @@ end function
 
 
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: crew -=-=-=-=-=-=-=-
+	tModule.register("Crew1",@Crew1.init()) ',@crew.load(),@crew.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: crew -=-=-=-=-=-=-=-
+#endif'test

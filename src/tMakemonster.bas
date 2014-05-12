@@ -1,4 +1,52 @@
-'tMakemonster
+'tMakemonster.
+'
+'defines:
+'get_biodata=3, randomcritterdescription=0, alienname=0, count_diet=0,
+', makemonster=6, makecorp=1, rarest_good=0, make_ship=2
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tMakemonster -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tMakemonster -=-=-=-=-=-=-=-
+
+declare function get_biodata(e as _monster) as integer
+declare function makemonster(a as short, map as short, forcearms as byte=0) as _monster
+declare function make_ship(a as short) as _ship
+
+'private function randomcritterdescription(enemy as _monster, spec as short,weight as short,movetype as short,byref pumod as byte,diet as byte,water as short,depth as short) as _monster
+'private function alienname(flag as short) as string
+'private function count_diet(slot as short,diet as short) as short
+'private function rarest_good() as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tMakemonster -=-=-=-=-=-=-=-
+
+namespace tMakemonster
+function init() as Integer
+	return 0
+end function
+end namespace'tMakemonster
+
+
+#define cut2top
+
 
 
 function get_biodata(e as _monster) as integer
@@ -3721,59 +3769,6 @@ function makemonster(a as short, map as short, forcearms as byte=0) as _monster
     return enemy
 end function
 
-function makecorp(a as short) as _basis
-    dim basis as _basis
-    dim as short b
-    if a=0 then a=rnd_range(1,4)
-    if a<0 then
-        b=a
-        do 
-            a=rnd_range(1,4)
-        loop until a<>-b
-    endif
-    basis.company=a
-    if a=1 then
-        basis.repname="Eridiani Explorations"
-        basis.mapmod=1.8
-        basis.biomod=1
-        basis.resmod=1.5
-        basis.pirmod=1
-    endif
-    if a=2 then
-        basis.repname="Smith Heavy Industries"
-        basis.mapmod=1
-        basis.biomod=1
-        basis.resmod=1.75
-        basis.pirmod=0.95
-    endif
-    if a=3 then 
-        basis.repname="Triax Traders Its."
-        basis.mapmod=1
-        basis.biomod=1
-        basis.resmod=1.55
-        basis.pirmod=1.1
-    endif
-    if a=4 then
-        basis.repname="Omega Bioengineering"
-        basis.mapmod=1
-        basis.biomod=1.5
-        basis.resmod=1.5
-        basis.pirmod=1
-    endif
-    return basis 
-end function
-
-
-function rarest_good() as short
-    dim as short j,i,good(lastgood)
-    for j=0 to 3
-        for i=1 to lastgood
-            good(i)+=basis(j).inv(i).v
-        next
-    next
-    return find_low(good(),lastgood)
-end function
-
 
 function make_ship(a as short) as _ship
 dim p as _ship
@@ -4598,3 +4593,14 @@ dim as short c,b
     
     return p
 end function
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tMakemonster -=-=-=-=-=-=-=-
+	tModule.register("tMakemonster",@tMakemonster.init()) ',@tMakemonster.load(),@tMakemonster.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tMakemonster -=-=-=-=-=-=-=-
+#endif'test

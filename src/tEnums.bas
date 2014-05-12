@@ -1,4 +1,40 @@
-'tEnums
+'tEnums.
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tEnums -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tEnums -=-=-=-=-=-=-=-
+
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tEnums -=-=-=-=-=-=-=-
+
+namespace tEnums
+function init() as Integer
+	return 0
+end function
+end namespace'tEnums
+
+
+#define cut2top
+
 
 Enum moduleshops
     ms_energy
@@ -196,3 +232,14 @@ Enum rwrd
     rwrd_pretty
 End Enum
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tEnums -=-=-=-=-=-=-=-
+	tModule.register("tEnums",@tEnums.init()) ',@tEnums.load(),@tEnums.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tEnums -=-=-=-=-=-=-=-
+#endif'test

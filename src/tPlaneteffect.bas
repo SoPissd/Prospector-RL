@@ -1,4 +1,46 @@
-'tPlaneteffect
+'tPlaneteffect.
+'
+'defines:
+'ep_crater=0, ep_planeteffect=1
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tPlaneteffect -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tPlaneteffect -=-=-=-=-=-=-=-
+
+declare function ep_planeteffect(shipfire() As _shipfire, ByRef sf As Single,lavapoint() As _cords,localturn As Short,cloudmap() As Byte) As Short
+
+'private function ep_crater(shipfire() As _shipfire, ByRef sf As Single) As Short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tPlaneteffect -=-=-=-=-=-=-=-
+
+namespace tPlaneteffect
+function init() as Integer
+	return 0
+end function
+end namespace'tPlaneteffect
+
+
+#define cut2top
+
 
 function ep_crater(shipfire() As _shipfire, ByRef sf As Single) As Short
     Dim As Short b,r,x,y,c
@@ -258,3 +300,14 @@ function ep_planeteffect(shipfire() As _shipfire, ByRef sf As Single,lavapoint()
     Return 0
 End function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tPlaneteffect -=-=-=-=-=-=-=-
+	tModule.register("tPlaneteffect",@tPlaneteffect.init()) ',@tPlaneteffect.load(),@tPlaneteffect.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tPlaneteffect -=-=-=-=-=-=-=-
+#endif'test

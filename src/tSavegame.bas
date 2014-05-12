@@ -1,4 +1,53 @@
-'tSavegame
+'tSavegame.
+'
+'defines:
+'count_savegames=1, getfilename=1, savegame_crashfilename=0,
+', savegame=7, load_game=2
+'
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tSavegame -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tSavegame -=-=-=-=-=-=-=-
+
+declare function count_savegames() as short
+declare function getfilename() as string
+declare function load_game(filename as string) as short
+
+#ifndef savegame 'allow this to be a forward
+declare function savegame(crash as short=0) as short
+#endif
+
+'private function savegame_crashfilename(fname as String, ext as String) as String
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tSavegame -=-=-=-=-=-=-=-
+
+namespace tSavegame
+function init() as Integer
+	return 0
+end function
+end namespace'tSavegame
+
+
+#define cut2top
+
 
 function count_savegames() as short
     dim as short c
@@ -362,7 +411,7 @@ function savegame(crash as short=0) as short
 
     put #f,,civ()
 
-    dim seed as tRngSeed
+    dim seed as tRng.tRngSeed
 	seed=rng.seed
     put #f,,seed
     
@@ -700,7 +749,7 @@ function load_game(filename as string) as short
         get #f,,foundsomething
 
         get #f,,civ()
-        dim seed as tRngSeed
+        dim seed as tRng.tRngSeed
 	    get #f,,seed
 	    rng.Seed=seed
 	    
@@ -730,3 +779,14 @@ function load_game(filename as string) as short
     return 0
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tSavegame -=-=-=-=-=-=-=-
+	tModule.register("tSavegame",@tSavegame.init()) ',@tSavegame.load(),@tSavegame.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tSavegame -=-=-=-=-=-=-=-
+#endif'test

@@ -1,8 +1,45 @@
-'tKeys
+'tKeys.
+'
+'defines:
+'getdirection=23, save_keyset=0, load_key=1, load_keyset=1, keybindings=4
+'
 
-declare function keyin(byref allowed as string="" , blocked as short=0) as string
-Declare function askyn(q As String,col As Short=11,sure As Short=0) As Short
-Declare function gettext(x As Short, y As Short, ml As Short, text As String,pixel As Short=0) As String
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tKeys -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tKeys -=-=-=-=-=-=-=-
+
+declare function getdirection(key as string) as short
+declare function load_key(byval t2 as string,byref n as string="") as string
+declare function load_keyset() as short
+declare function keybindings(allowed as string="") as short
+
+'private function save_keyset() as short
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tKeys -=-=-=-=-=-=-=-
+
+namespace tKeys
+function init() as Integer
+	return 0
+end function
+end namespace'tKeys
 
 
 'dim shared as FB.image ptr TITLEFONT
@@ -472,4 +509,14 @@ function keybindings(allowed as string="") as short
     return 0
 end function
 
-'
+'#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tKeys -=-=-=-=-=-=-=-
+	tModule.register("tKeys",@tKeys.init()) ',@tKeys.load(),@tKeys.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tKeys -=-=-=-=-=-=-=-
+#endif'test

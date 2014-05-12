@@ -1,4 +1,40 @@
-'tIndex
+'tIndex.
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: tIndex -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tIndex -=-=-=-=-=-=-=-
+
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tIndex -=-=-=-=-=-=-=-
+
+namespace tIndex
+function init() as Integer
+	return 0
+end function
+end namespace'tIndex
+
+
+#define cut2top
+
 
 type _index
     dim as short maxl=128
@@ -59,3 +95,14 @@ function _index.move(v as short,oc as _cords,nc as _cords) as short
     return 0
 end function
 
+#define cut2bottom
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tIndex -=-=-=-=-=-=-=-
+	tModule.register("tIndex",@tIndex.init()) ',@tIndex.load(),@tIndex.save())
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tIndex -=-=-=-=-=-=-=-
+#endif'test

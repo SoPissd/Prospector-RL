@@ -1,4 +1,37 @@
-'#define _debug 0
+'debug.
+
+'needs [head|main|both] defined,
+' builds in test mode otherwise:
+#if not (defined(head) or defined(main))
+#define intest
+#define both
+#endif'test
+#if defined(both)
+#define head
+#define main
+#endif'both
+'
+#ifdef intest
+'     -=-=-=-=-=-=-=- TEST: debug -=-=-=-=-=-=-=-
+
+#undef intest
+#define test
+#endif'test
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: debug -=-=-=-=-=-=-=-
+
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: debug -=-=-=-=-=-=-=-
+
+namespace tDebug
+function init() as Integer
+	return 0
+end function
+end namespace'debug
+
 
 ' validate target OS
 #ifdef __FB_WIN32__						'windows ok
@@ -120,6 +153,49 @@
 	#endif
 #EndMacro
 
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: debug -=-=-=-=-=-=-=-
+	tModule.register("debug",@tDebug.init()) ',@debug.load(),@debug.save())
+
+	#if _DbgOptLoadWin = 1			
+		#print loading windows headers			
+		inc("main",	"windows.bi",			windows header mandatory for debugbreak & console)
+	#else
+	#if _DbgOptLoadWin = 2			
+		#print loading winbase headers			
+		inc("main",	"winbase.bi",			windows header mandatory for debugbreak & console)
+	#endif							
+	#endif							
+	'
+	#if _DbgOptLoadMLD = 1
+		#print loading memory leak detector			
+		'#include once "crt.bi"
+		'#ifdef __FB_WIN32__
+		''# inclib "msvcrt"
+		'#endif
+		''#include once "crt/string.bi"
+		''#include once "crt/math.bi"
+		''#include once "crt/time.bi"
+		''#include once "crt/wchar.bi"
+		''#include once "crt/ctype.bi"
+		''#include once "crt/stdlib.bi"
+		''#include once "crt/stdio.bi"
+		''#include once "crt/fcntl.bi"
+		''#include once "crt/errno.bi"
+		'#if defined(__FB_WIN32__) or defined(__FB_DOS__)
+		''# include once "crt/dir.bi"
+		'#endif
+		inc("main",	"fbmld.bi",				memory-leak-detector)
+	#endif							
+
+#endif'main
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: debug -=-=-=-=-=-=-=-
+#endif'test
+
 
 ' cut 'n paste
 
@@ -129,4 +205,3 @@
 #if __FB_DEBUG__
 #else
 #endif
-
