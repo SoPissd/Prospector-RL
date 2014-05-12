@@ -113,3 +113,10 @@ end namespace
 #ifdef main
 	tModule.Register("tVersion",@tVersion.Init(),@tVersion.Load(),@tVersion.Save())
 #endif		
+
+#ifdef intest
+	' patch up expectations during testing.
+	Function savegame(crash as short=0) As Short
+		return 0
+	End Function
+#endif		

@@ -18,7 +18,7 @@ function load_dialog_quests() as short
     dim as short i,j,g
     dim as string l,w(3)
 
-    if tFile.Openinput("data/dialogquests.csv",f)=0 then 
+    if tFile.Openinput("data/dialogquests.csv",f)>0 then 
 	    do
 	        i+=1
 	        for j=0 to 2
@@ -37,7 +37,7 @@ function load_dialog_quests() as short
 	    tFile.Closefile(f)
     EndIf
     
-    if tFile.Openinput("data/dialogquests2.csv",f)=0 then 
+    if tFile.Openinput("data/dialogquests2.csv",f)>0 then 
 	    i=0
 	    do
 	        w(0)=""

@@ -185,9 +185,8 @@ Private function start_new_game() As Short
     If player.desig="" Then player.desig=randomname()
     tVersion.gamedesig=player.desig
     
-    a=Freefile
-    If Open ("savegames/"&player.desig &".sav" For Input As a)=0 Then
-        Close a
+    If tFile.Openinput("savegames/"&player.desig &".sav",a)>0 Then
+        tFile.Closefile(a)
         Do
             draw_string (50,10*_fh2, "That ship is already registered.",font2,_col)
             draw_string(50,9*_fh2, "You christen the beauty:" &Space(25),font2,_col)

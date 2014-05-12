@@ -27,13 +27,14 @@ function background(fn as string) as short
     fn="graphics/"&fn
     '' open BMP file
     filenum = FreeFile()
-    If Open( fn For Binary Access Read As #filenum ) <> 0 Then Return 0
+    If tFile.Openbinary(fn,filenum ) =0 Then Return 0
+    'If Openbinaryread '( fn For Binary Access Read As #filenum ) <> 0 Then Return 0
 
         '' retrieve BMP dimensions
         Get #filenum, 19, bmpwidth
         Get #filenum, 23, bmpheight
 
-    Close #filenum
+    tFile.Closefile(filenum)
     if fn<>last then
         '' create image with BMP dimensions
         if firstcall<>0 then imagedestroy(img)
@@ -61,15 +62,13 @@ function bmp_load( ByRef filename As String ) As Any Ptr
 	Dim As Integer filenum,bmpwidth,bmpheight
   	Dim As Any Ptr img
 
-   '' open BMP file
-   filenum = FreeFile()
-   If Open( filename For Binary Access Read As #filenum ) <> 0 Then 
-   	Return NULL
-   Else
+	'' open BMP file
+	If tFile.Openbinary(filename,filenum) =0 Then return null
    	'' retrieve BMP dimensions
-      Get #filenum, 19, bmpwidth
-      Get #filenum, 23, bmpheight
-    	Close #filenum
+    Get #filenum, 19, bmpwidth
+    Get #filenum, 23, bmpheight
+    tFile.Closefile(filenum)
+	
    	'' create image with BMP dimensions
     img = ImageCreate( bmpwidth, Abs(bmpheight) )
    	If img = NULL Then 
@@ -88,7 +87,6 @@ function bmp_load( ByRef filename As String ) As Any Ptr
     			Return img
     		EndIf
    	EndIf
-   EndIf
 End function
 
 

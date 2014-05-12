@@ -7,6 +7,9 @@
 #include "windows.bi"
 
 '
+#define intest
+#define head
+#include "src/tDefines.bas"
 #define main
 #include "src/tDefines.bas"
 #include "src/tModule.bas"
@@ -25,11 +28,6 @@
 '#include "src/tFile.bas"
 #undef main
 '
-' patch up expectations for version.bas
-Function savegame(crash as short=0) As Short
-	return 0
-End Function
-
 '
 
 namespace tMain
@@ -770,9 +768,13 @@ cls
 '		? newsource(sources(iSource))
 		dim aSource as tSource
 		aSource=sources(iSource)
-		tFile.stringtofile(aSource.filename,newsource(aSource))
+		dim source as string
+		source=newsource(aSource)
+? "Writing " &len(source) &"bytes to " + aSource.filename		
+		tFile.stringtofile(aSource.filename,source)
 '	    ? Declarepublicfunctions(sources(iSource))
 		
+		continue for
 		ikey=Pressanykey
 '		? ikey
 '		sleep

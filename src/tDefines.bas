@@ -12,6 +12,20 @@
 #endIf
 '<your headers here>
 
+'Define True/False values.
+#Ifndef FALSE
+	#Define FALSE 0
+	#Define TRUE (Not FALSE)
+#EndIf
+
+'Create a NULL value.
+#Ifndef NULL
+    #Define NULL 0
+#EndIf
+
+
+
+
 #endIf
 #if defined(all) or defined(body)
 #if not defined(namespace)'do not define init load save
@@ -25,18 +39,6 @@
 ''
 '
 '<your original code>
-
-'Define True/False values.
-#Ifndef FALSE
-	#Define FALSE 0
-	#Define TRUE (Not FALSE)
-#EndIf
-
-'Create a NULL value.
-#Ifndef NULL
-    #Define NULL 0
-#EndIf
-
 
 '
 ''

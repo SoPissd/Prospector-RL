@@ -5,6 +5,25 @@
 '
 '
 
+#if not (defined(head) or defined(main)) 'test
+#print "tFile test"
+#define intest
+#define head
+#define main
+#include "tDefines.bas"
+#include "tModule.bas"
+#include "tScreen.bas"
+#include "tColor.bas"
+#include "Version.bas"
+#include "kbinput.bas"
+'#include "tUtils.bas"
+#include "file.bi"
+#include "windows.bi"
+#undef main
+#undef intest
+#define test
+#endif 
+
 namespace tFile	
 	
 Enum tFileOpenMode
@@ -140,7 +159,7 @@ End function
 
 public function stringtofile overload (fileno as integer,text as string) as integer
     if fileno>0 then
-    	print #fileno, text
+    	print #fileno, text;
 		return 0
     EndIf
 	return -1
@@ -198,3 +217,31 @@ End Namespace
 #ifdef main
 	tModule.Register("tFile",@tFile.Init())
 #endif		
+
+#ifdef test
+#print "tFile testing"
+'declare function GetCurrentDirectory alias "GetCurrentDirectoryA" (byval as DWORD, byval as LPSTR) as DWORD
+function ttest() as Integer
+	dim as String a1,a2,fn
+	a1="1234"
+	a1+=space(300)+a1
+	'
+	fn="test.txt"
+	? "temp-file "+fn
+	? "curdir "+curdir
+	? "exepath "+exepath
+	? 
+	?	
+	? "testing string-to-file and file-to-string"
+	tFile.stringtofile(fn,a1)
+	a2=tFile.filetostring(fn)
+	? a1,len(a1)
+	? a2,len(a2)
+	? "a1=a2 = "; a1=a2
+	?
+	? "zapped temp-file "+fn
+	kill fn
+	return Pressanykey(0)	
+End Function
+ttest()
+#endif 
