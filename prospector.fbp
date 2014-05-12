@@ -133,6 +133,7 @@ TabOrder=13
 109=src\tInput.bas
 110=src\tGamekeys.bas
 111=src\tColor.bas
+112=src\tWorldgen.bas
 Main=76
 112=src\tModule.bas
 47=src\tPalette.bi

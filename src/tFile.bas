@@ -140,7 +140,7 @@ End function
 
 public function stringtofile overload (fileno as integer,text as string) as integer
     if fileno>0 then
-    	put #fileno,, text
+    	print #fileno, text
 		return 0
     EndIf
 	return -1
