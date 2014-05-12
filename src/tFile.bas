@@ -33,12 +33,12 @@ Enum tFileOpenMode
 End Enum	
 	
 
-dim error as String
+dim FileError as String
 dim lastfn as String
 
 public function init() As integer
 	lastfn=""
-	error=""
+	FileError=""
 	return 0
 End function
 
@@ -62,7 +62,7 @@ private function Openerror(filename as string, fileno as integer, filemode as tF
 	endscope:
 	end scope		
 	'
-	error="Couldn't open "&filename &" for " &text &" as #" &fileno
+	FileError="Couldn't open "&filename &" for " &text &" as #" &fileno
     return -1
 End function
 
@@ -72,7 +72,7 @@ public function Openfile(filename as string, ByRef fileno as integer, filemode a
 		fileno=freefile
     EndIf
     lastfn=filename
-    error=""
+    FileError=""
 	scope
 	select case filemode
 		case fmInput:	i= Open(filename, For Input,  As #fileno)	:goto endscope
