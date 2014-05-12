@@ -44,6 +44,7 @@ namespace tMain
 		publics as String		'crlf list of implementation first-lines 
 		definitions as String	'crlf list of implementation first-lines 
 		source as String		'source
+		filename as String
 	End Type
 	
 
@@ -532,6 +533,8 @@ function Declarepublicfunctions(ByRef aSource as tSource) as String
 	'
 	return a0
 End Function
+
+
 function initsource overload (fileno as Integer) as tSource
 	dim aSource as tSource
 	aSource=functiondefinitions(fileno)
@@ -584,6 +587,7 @@ function loadsource overload (filename as string) as Integer
 '		if instr("src\tInit.bas,",filename+",")=0 _
 '			then 
 		loadsource(fin)
+		sources(lastsource).filename=filename
 		tFile.Closefile(fin)
 		return 0
 	endif
@@ -763,7 +767,8 @@ cls
 		'cls
 		'? documentsorce(sources(iSource))
 		'? listdefines(sources(iSource))
-		? newsource(sources(iSource))
+'		? newsource(sources(iSource))
+		stringtofile(sources(iSource).filename,newsource(sources(iSource)))
 '	    ? Declarepublicfunctions(sources(iSource))
 		
 		ikey=Pressanykey
