@@ -11,16 +11,6 @@
 #EndMacro
 
 '
-
-#undef main
-#define main
-inc("main",	"debug.bas",				"")
-inc("main",	"tDefines.bas",				"")
-inc("main",	"tModule.bas",				"")
-inc("main",	"tScreen.bas",				"")
-inc("main",	"tColor.bas",				"")
-inc("main",	"version.bas",				"")
-'
 ' sound support
 #IfDef _FBSOUND
 	#print (Sound through fbsound)
@@ -46,6 +36,9 @@ inc("main",	"fbGfx.bi",					"")
 inc("main",	"file.bi",					"")
 inc("main",	"zlib.bi",					"")
 '
+#undef main
+#define main
+inc("main",	"debug.bas",				"")
 '
 #if _DbgOptLoadWin = 1			
 	#print loading windows headers			
@@ -78,6 +71,13 @@ inc("main",	"zlib.bi",					"")
 	inc("main",	"fbmld.bi",				memory-leak-detector)
 #endif							
 '
+'
+'
+inc("main",	"tDefines.bas",				"")
+inc("main",	"tModule.bas",				"")
+inc("main",	"tScreen.bas",				"")
+inc("main",	"tColor.bas",				"")
+inc("main",	"version.bas",				"")
 '
 On Error Goto errormessage
 Cls
@@ -227,19 +227,17 @@ Print "Switching"
 Print
 
 LETSGO:
-	tError.ErrorNr= (Initgame()<> 0) or Prospector() 	
-	goto done
+	On Error goto Errormessage
+	tError.ErrorNr= (Initgame()<> 0) or Prospector()
+	goto ErrorHandler 
 ERRORMESSAGE:
 	On Error goto 0
 	tError.ErrorNr= Err
 	tError.ErrorLn= Erl
 	tError.ErrText= ucase(stripFileExtension(lastword(*ERMN(),"\")))
-	tError.ErrText= tError.ErrText &":" &*ERFN() &" reporting Error #" &tError.ErrorNr &" at line " &tError.ErrorLn &"!"  
-	tError.ErrorHandler
-WAITANDEXIT:
-	Print
-	Print
-	Pressanykey(10,10,0) '10-green
+	tError.ErrText= tError.ErrText &"::" &*ERFN() &"() reporting Error #" &tError.ErrorNr &" at line " &tError.ErrorLn &"!"
+ERRORHANDLER:
+	tError.ErrorHandler()
 DONE:
 	set_volume(-1)
 	DbgLogExplorePlanetEnd

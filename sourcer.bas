@@ -61,6 +61,7 @@ End Function
 
 private function Privatize(funct as string) as string
 	dim as Integer i
+'	? "privatize",funct
 	i=instr(lcase(funct),"function ")
 	if i>0 then funct= mid(funct,1,i-1) + mid(funct,i+len("function "))
 	return funct
@@ -239,45 +240,76 @@ function documentsorce(ByRef aSource as tSource) as String
 	if len(aSource.defines)>0 then
 		 a += line()+line("defines:")+line(aSource.defines,60,15)+line() 
 	endif
-	if len(aSource.publics)>0 then
-		 a += line()+line("publics:")+line(aSource.publics,120)+line() 
-	endif
-	if len(aSource.definitions)>0 then
-		 a += line()+line("definitions:")+line(aSource.definitions,120)+line() 
-	endif
+	'if len(aSource.publics)>0 then
+	'	 a += line()+line("publics:")+line(aSource.publics,120)+line() 
+	'endif
+	'if len(aSource.definitions)>0 then
+	'	 a += line()+line("definitions:")+line(aSource.definitions,120)+line() 
+	'endif
 	return a	
 End Function
 
 
-function prunesource(ByRef aSource as tSource) as Integer
+function prunesource(ByRef aSource as tSource) as tSource
 	dim a as String
+	dim a0 as String
 	dim ch as String
 	dim adoc as String
-	dim as integer i,li,j,n
-	n=len(aSource.source)
+	dim as integer i,il,li,j,n
+	a0=aSource.source
+	n=len(a0)
 	i=1
 	li=i
+'? asource.token	
 	while (i<n)
-		li=i
-		j= instr(i,aSource.source,chr(13))
-		a= mid(aSource.source,i,j-1)
-		i+=j
-		while i<n and mid(aSource.source,i,1)<" "
-			i+=1
+		il=i
+		while i<n
+'? i,":"+mid(a0,i,1)+":"
+			if mid(a0,i,1)<=" " then
+				i+=1
+'? i,j,"a"
+			elseif mid(a0,i,1)="'" then
+				i+=1
+'? i,j,"b"
+
+			elseif mid(a0,i-1,1)="'" then
+				j=instr(i,a0,chr(10))
+'? i,j,"c"
+				if j>0 then i = j
+				if j>0 then il = i
+'? i,il,"c: i,il"
+			else
+				exit while
+			endif
 		Wend
+		'j= instr(i,aSource.source,chr(13))
+		'a= mid(aSource.source,i,j-1)
+		'i+=j
+		'?i,a
 '		j=1
 '		while j<len(a) and mid(a,j,1)<" "
 '			j+=1
 '		Wend
 '		a=mid(a,j)
 '? ">"+a+"<"		
-		if mid(a,1,1)="'" then a=""
-		if a<>"" then exit while
+'		if mid(a,1,1)="'" then a=""
+'		if a<>"" then 
+		li=il
+'		?li,a
+		exit while
+'		EndIf
+'		?il,a
 		'i += 1
-	Wend
+	Wend	
 	aSource.source=mid(aSource.source,li)
-	return 0
+'cls
+'?li
+'?aSource.source
+'?">";mid(aSource.source,1,20);"...";:sleep:?
+	return aSource
 End Function
+
+declare function Declarepublicfunctions(ByRef aSource as tSource) as String	
 
 function newsource(ByRef aSource as tSource) as string
 	dim adoc as String
@@ -295,7 +327,7 @@ function newsource(ByRef aSource as tSource) as string
 	EndIf
 	'
 	afun += crlf
-	afun += "'" +crlf
+	'afun += "'" +crlf
 	afun += "'needs [head|main|both] defined," +crlf
 	afun += "' builds in test mode otherwise:" +crlf
 	afun += "#if not (define(head) or define(main))" +crlf
@@ -309,11 +341,13 @@ function newsource(ByRef aSource as tSource) as string
 	afun += "#ifdef test" +crlf
 	afun += "'     -=-=-=-=-=-=-=- TEST: "+aSource.token+" -=-=-=-=-=-=-=-" +crlf
 	afun += crlf
-	afun += crlf
+	'afun += crlf
 	afun += "#endif'test" +crlf
 	afun += "#ifdef head" +crlf
 	afun += "'     -=-=-=-=-=-=-=- HEAD: "+aSource.token+" -=-=-=-=-=-=-=-" +crlf
 	afun += crlf
+	afun += Declarepublicfunctions(aSource)
+	
 	afun += crlf
 	afun += "#endif'head" +crlf
 	afun += "#ifdef main" +crlf
@@ -344,6 +378,7 @@ function newsource(ByRef aSource as tSource) as string
 	aend = "#define cut2bottom"+crlf +aend +crlf
 	'
 	aend += "#ifdef main" +crlf
+	aend += "'      -=-=-=-=-=-=-=- MAIN: "+aSource.token+" -=-=-=-=-=-=-=-" +crlf
 	aend += chr(9) +"tModule.register("
 	aend += """"+aSource.token+""""
 	aend += ",@"+aSource.token+".init()"
@@ -403,9 +438,105 @@ End Function
 dim sources(128) as tSource
 dim lastsource as integer
 
+
+function Declarepublicfunctions(ByRef aSource as tSource) as String	
+	'aPublics as string,aDefines as string
+	dim as String a0,a1,a2,a3,a
+	dim as Integer i,j,n
+    n=countdefines(aSource)
+	dim defines(n) as String
+	dim counts(n) as integer
+	'
+	dim crlf as String = chr(13)+chr(10)
+	a2=aSource.defines+","
+	n=0
+	do
+		i=instr(a2,",") 'split on comma
+		if i=0 then 
+			a1=a2
+			a2=""
+		else
+			a1=mid(a2,1,i-1)
+			a2=trim(mid(a2,i+1))
+		EndIf
+		'
+		if a1="" then continue do
+		j=instr(a1,"=")
+		if j>0 then a3=mid(a1,j+1) else a3="0"
+		if j>0 then a1=mid(a1,1,j-1)
+		j=val(a3)
+		if j=0 then continue do
+		n+=1
+		defines(n)=a1
+		counts(n)=j
+'write a1,j		
+	Loop until i=0
+	'
+	a2=aSource.Publics+aSource.definitions
+	while len(a2)>0
+		i=instr(a2,chr(13))
+		if i=0 then
+			a1=a2
+			a2=""
+		else
+			a1=mid(a2,1,i)
+			a2=mid(a2,i+1)
+			
+			while len(a2)>2 and mid(a2,1,1)<" "
+				a2=mid(a2,2)
+			Wend
+			j=instr(a1,"(")
+			a3=trim(mid(a1,1,j-1))
+			if instr(a3,".")>0 then continue while
+			for j = 1 to n
+				if defines(j)=a3 then
+					exit for
+				EndIf
+			Next
+			if defines(j)<>a3 then continue while
+			if a1="" then continue while
+			a1="declare public function "+a1' +" '" &counts(j)
+			a0=a0+a1+chr(13)+chr(10)
+		EndIf
+	Wend
+	a0+=chr(13)+chr(10)
+	'
+	a2=aSource.Publics+aSource.definitions
+	while len(a2)>0
+		i=instr(a2,chr(13))
+		if i=0 then
+			a1=a2
+			a2=""
+		else
+			a1=mid(a2,1,i)
+			a2=mid(a2,i+1)
+			
+			while len(a2)>2 and mid(a2,1,1)<" "
+				a2=mid(a2,2)
+			Wend
+			if a1="" then continue while
+			j=instr(a1,"(")
+			a3=trim(mid(a1,1,j-1))
+			if instr(a3,".")>0 then continue while
+			for j = 1 to n
+				if defines(j)=a3 then
+					exit for
+				EndIf
+			Next
+			if defines(j)=a3 then continue while
+			a1="'private function "+a1
+			a0=a0+a1+chr(13)+chr(10)
+		EndIf
+	Wend
+'	a0+=chr(13)+chr(10)
+	'
+	return a0
+End Function
 function initsource overload (fileno as Integer) as tSource
-	sources(lastsource)=functiondefinitions(fileno)
-	prunesource(sources(lastsource))
+	dim aSource as tSource
+	aSource=functiondefinitions(fileno)
+	aSource=prunesource(aSource)
+	sources(lastsource)=aSource
 
 	dim as String a
 	dim as integer i
@@ -613,9 +744,10 @@ function xref(aToken as String,iSource as integer) as Integer
 	aSource=sources(iSource)
 	aSource.defines=mid(a1,1,len(a1)-2)
 	sources(iSource)=aSource
-?	sources(iSource).defines
+'?	sources(iSource).defines
 return 0
 End Function
+
 
 function xrefall() as Integer
 	dim as integer iSource
@@ -623,17 +755,20 @@ function xrefall() as Integer
 	ndefs=0
 	for iSource = 1 to lastsource
 		lasttoken=sources(iSource).token
+cls
 		'? 
-		? sources(iSource).defines
+'		? sources(iSource).defines
 		xref(lasttoken,iSource)
 		'? sources(iSource).defines
 		'cls
 		'? documentsorce(sources(iSource))
 		'? listdefines(sources(iSource))
 		? newsource(sources(iSource))
+'	    ? Declarepublicfunctions(sources(iSource))
+		
 		ikey=Pressanykey
-		? ikey
-		sleep
+'		? ikey
+'		sleep
 		if ikey=27 then
 			exit for
 		EndIf
@@ -642,15 +777,16 @@ function xrefall() as Integer
 		?"------------"
 	Next	
 	for iSource = 1 to lastsource
-		? sources(iSource).defines
-		?"------------"
+'		? sources(iSource).defines
+'		?"------------"
 	next	
 	'?ndefs
 	'?"------------"
-	return 0
+	return ikey
 End Function
 
 function main() as Integer
+	cls
 	chdir exepath	
 	'dim f as Integer
 	'f=freefile
@@ -659,14 +795,15 @@ function main() as Integer
 	'close #f
 	'Viewfile("D:/dev/prospector/base/error.log")
 '	sleep
-	tError.ErrText ="just because!" '+chr(13)+chr(10)
+	'tError.ErrText ="just because!" '+chr(13)+chr(10)
 	'tError.ErrText +=filetostring("D:/dev/prospector/base/error.log")
 	'return 1
 '	return 0
 	
 	loadsources("prospector.fbp")
-	xrefall()
+	if xrefall()<>27 then
 		Pressanykey()		
+	EndIf
 	'xref("tSlotmachine")
 	return 0
 End Function
