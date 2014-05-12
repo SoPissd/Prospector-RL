@@ -19,7 +19,11 @@
 #include "src/tDefines.bas"
 #include "src/tScreen.bas"
 #include "src/tColor.bas"
+'
+#define intest
 #include "src/Version.bas"
+#undef intest
+'
 #include "src/kbinput.bas"
 #include "src/tFile.bas"
 #include "src/tPalette.bas"

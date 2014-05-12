@@ -32,7 +32,7 @@ declare public function load_palette(filename as string="p.pal") as short
 '     -=-=-=-=-=-=-=- MAIN: tPalette -=-=-=-=-=-=-=-
 
 namespace tPalette
-function init()
+function init() as Integer
 	return 0
 end function
 end namespace'tPalette
