@@ -768,7 +768,9 @@ cls
 		'? documentsorce(sources(iSource))
 		'? listdefines(sources(iSource))
 '		? newsource(sources(iSource))
-		stringtofile(sources(iSource).filename,newsource(sources(iSource)))
+		dim aSource as tSource
+		aSource=sources(iSource)
+		tFile.stringtofile(aSource.filename,newsource(aSource))
 '	    ? Declarepublicfunctions(sources(iSource))
 		
 		ikey=Pressanykey

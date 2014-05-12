@@ -82,7 +82,7 @@ End function
 
 
 public function OpenLogfile(filename as string, ByRef fileno as integer, kbsizelimit as integer=0) as integer
-	if OpenAppend(filename,fileno)=0 then
+	if OpenAppend(filename,fileno)>0 then
 		if (kbsizelimit>0) and (LOF(fileno)>kbsizelimit*1024) then
 			Closefile(fileno) ' its getting stupidly large
 			return OpenOutput(filename,fileno)
@@ -108,7 +108,7 @@ public function filetostring overload (filename as string) as String
 	dim f as Integer
     dim text as string
 
-    if tFile.Openbinary(filename,f)=0 then
+    if tFile.Openbinary(filename,f)>0 then
 	    text=filetostring(f)
 	    tFile.Closefile(f)
     EndIf
@@ -118,7 +118,7 @@ public function filetostring overload (filename as string) as String
     'dest = Allocate(dest_len)
     'kill(fname)
 
-    'if tFile.Openbinary(fname,f)=0 then        	    
+    'if tFile.Openbinary(fname,f)>0 then        	    
     '    compress(dest , @dest_len, StrPtr(filedata_string), src_len)
     '    put #f,,names           '36 bytes
     '    put #f,,desig           '36 bytes
@@ -149,7 +149,7 @@ End function
 
 public function stringtofile overload (filename as string,text as string) as integer
 	dim f as Integer
-    if Openoutput(filename,f)=0 then
+    if Openoutput(filename,f)>0 then
     	stringtofile(f,text)
 	    return tFile.Closefile(f)
     EndIf
@@ -169,7 +169,7 @@ end function
 
 public function Filesize(filename as string) as integer
 	Dim as Integer f, size
-	if OpenBinary(filename,f)=0 then
+	if OpenBinary(filename,f)>0 then
 		size= LOF(f)
         Closefile(f)
 		return size
@@ -182,7 +182,7 @@ public function Countlines(filename as string,nonblank as integer=1) as integer
 	'counts non-blank lines by default
 	Dim as Integer f, n
     dim dummy as string
-	if OpenInput(filename,f)=0 then
+	if OpenInput(filename,f)>0 then
 		do
         	line input #f,dummy
 	        if (nonblank=0) or (len(dummy)>0) then n+=1
