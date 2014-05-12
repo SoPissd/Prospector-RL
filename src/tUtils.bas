@@ -203,21 +203,21 @@ end function
 
 
 public function Texttofile(text as string) as string
-    dim as string outtext
-    dim as short iHead
-    dim as short a
-    
+	
+    dim a as short
+    dim head as short
+    dim outtext as string
     outtext="<p>"
     for a=0 to len(text)
         if mid(text,a,1)="|" or mid(text,a,1)="{" then
             if mid(text,a,1)="|" then
-                if iHead=1 then
+                if head=1 then
                     outtext=outtext &"</b>"
-                    iHead=2
+                    head=2
                 endif
-                if iHead=0 then
+                if head=0 then
                     outtext=outtext &"<b>"
-                    iHead=1
+                    head=1
                 endif
                 outtext=outtext &"<br>"'chr(13)& chr(10)
             endif
@@ -230,4 +230,27 @@ public function Texttofile(text as string) as string
     return outtext
 end function
 
+
+'
+
+function screenshot_nextfilename(fname as String, ext as String, force as short) as String
+	' use numbered screenshots after the first one
+	if force or not fileexists(fname+ext) then return fname+ext
+	dim as short i=0
+	dim as String a,b
+	b="000"
+	do
+		i +=1
+		a = ""&i
+		a = left(b,len(b)-len(a))+a
+		a = fname + "-" + a + ext
+	Loop until not fileexists(a)
+	return a
+End function
+
+
+function screenshot(a as short) as short
+    savepng( screenshot_nextfilename("summary/" + tVersion.Gamedesig, ".png", 0), 0, 1) 'player.desig
+    return 0
+end function
 

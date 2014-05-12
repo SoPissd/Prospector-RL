@@ -239,5 +239,3 @@ function savepng( _
 
 end function
 
-
-

@@ -112,7 +112,3 @@ function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for window
 end function
 
 
-function screenshot(a as short) as short
-    savepng( tFile.screenshot_nextfilename("summary/" + tVersion.Gamedesig, ".png", 0), 0, 1) 'player.desig
-    return 0
-end function

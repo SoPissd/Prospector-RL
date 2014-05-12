@@ -332,16 +332,20 @@ function newsource(ByRef aSource as tSource) as string
 	afun += "'needs [head|main|both] defined," +crlf
 	afun += "' builds in test mode otherwise:" +crlf
 	afun += "#if not (define(head) or define(main))" +crlf
-	afun += "#define test"+crlf
+	afun += "#define intest"+crlf
 	afun += "#define both"+crlf
 	afun += "#endif'test" +crlf
 	afun += "#if define(both)" +crlf
 	afun += "#define head"+crlf
 	afun += "#define main"+crlf
 	afun += "#endif'both" +crlf
-	afun += "#ifdef test" +crlf
+	afun += "'" +crlf
+	afun += "#ifdef intest" +crlf
+	afun += "#undef intest"+crlf
+	afun += "#define test"+crlf
 	afun += "'     -=-=-=-=-=-=-=- TEST: "+aSource.token+" -=-=-=-=-=-=-=-" +crlf
 	afun += crlf
+
 	'afun += crlf
 	afun += "#endif'test" +crlf
 	afun += "#ifdef head" +crlf
@@ -383,8 +387,9 @@ function newsource(ByRef aSource as tSource) as string
 	aend += chr(9) +"tModule.register("
 	aend += """"+aSource.token+""""
 	aend += ",@"+aSource.token+".init()"
-	'aend += +",@"+aSource.token+".load()"
-	'aend += +",@"+aSource.token+".save()"
+	aend += ") '"
+	aend += ",@"+aSource.token+".load()"
+	aend += ",@"+aSource.token+".save()"
 	aend += ")"+crlf
 	aend += "#endif'main" +crlf
 	aend += "#ifdef test" +crlf
