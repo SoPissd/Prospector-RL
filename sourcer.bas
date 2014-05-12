@@ -757,7 +757,7 @@ function xrefall() as Integer
 	ndefs=0
 	for iSource = 1 to lastsource
 		lasttoken=sources(iSource).token
-cls
+'cls
 		'? 
 '		? sources(iSource).defines
 		xref(lasttoken,iSource)
@@ -783,7 +783,7 @@ cls
 		EndIf
 		'?
 		'sleep
-		?"------------"
+'		?"------------"
 	Next	
 	for iSource = 1 to lastsource
 '		? sources(iSource).defines
