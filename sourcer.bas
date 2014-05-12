@@ -15,16 +15,18 @@
 #include "src/tModule.bas"
 #include "src/tScreen.bas"
 #include "src/tColor.bas"
-#include "src/tPng.bas"
-#include "src/tGraphics.bas"
-
 #include "src/Version.bas"
 #include "src/kbinput.bas"
 #include "src/tFile.bas"
 #include "src/tPalette.bas"
+'
+#include "src/tPng.bas"
+#include "src/tGraphics.bas"
+'
 #include "src/tUtils.bas"
 #include "src/tError.bas"
 #include "src/tViewfile.bas"
+'
 '#include "src/tFile.bas"
 #undef main
 '

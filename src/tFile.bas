@@ -212,6 +212,23 @@ public function Countlines(filename as string,nonblank as integer=1) as integer
 end function
 
 '
+
+function screenshot_nextfilename(fname as String, ext as String, force as short) as String
+	' use numbered screenshots after the first one
+	if force or not fileexists(fname+ext) then return fname+ext
+	dim as short i=0
+	dim as String a,b
+	b="000"
+	do
+		i +=1
+		a = ""&i
+		a = left(b,len(b)-len(a))+a
+		a = fname + "-" + a + ext
+	Loop until not fileexists(a)
+	return a
+End function
+
+'
 End Namespace
 
 #ifdef main
