@@ -1,4 +1,6 @@
 'tFile.
+
+'
 ' File Input/output routines
 '
 '
@@ -32,13 +34,10 @@ Enum tFileOpenMode
 	fmRandom
 End Enum	
 	
-
-dim FileError as String
 dim lastfn as String
 
 public function init() As integer
 	lastfn=""
-	FileError=""
 	return 0
 End function
 
@@ -62,7 +61,7 @@ private function Openerror(filename as string, fileno as integer, filemode as tF
 	endscope:
 	end scope		
 	'
-	FileError="Couldn't open "&filename &" for " &text &" as #" &fileno
+	tVersion.DisplayError("Couldn't open "&filename &" for " &text &" as #" &fileno)
     return -1
 End function
 
@@ -72,7 +71,6 @@ public function Openfile(filename as string, ByRef fileno as integer, filemode a
 		fileno=freefile
     EndIf
     lastfn=filename
-    FileError=""
 	scope
 	select case filemode
 		case fmInput:	i= Open(filename, For Input,  As #fileno)	:goto endscope
@@ -212,23 +210,6 @@ public function Countlines(filename as string,nonblank as integer=1) as integer
 	endif
     return n
 end function
-
-'
-
-function screenshot_nextfilename(fname as String, ext as String, force as short) as String
-	' use numbered screenshots after the first one
-	if force or not fileexists(fname+ext) then return fname+ext
-	dim as short i=0
-	dim as String a,b
-	b="000"
-	do
-		i +=1
-		a = ""&i
-		a = left(b,len(b)-len(a))+a
-		a = fname + "-" + a + ext
-	Loop until not fileexists(a)
-	return a
-End function
 
 '
 End Namespace

@@ -205,19 +205,19 @@ end function
 public function Texttofile(text as string) as string
 	
     dim a as short
-    dim iHead as short
+    dim head as short
     dim outtext as string
     outtext="<p>"
     for a=0 to len(text)
         if mid(text,a,1)="|" or mid(text,a,1)="{" then
             if mid(text,a,1)="|" then
-                if iHead=1 then
+                if head=1 then
                     outtext=outtext &"</b>"
-                    iHead=2
+                    head=2
                 endif
-                if iHead=0 then
+                if head=0 then
                     outtext=outtext &"<b>"
-                    iHead=1
+                    head=1
                 endif
                 outtext=outtext &"<br>"'chr(13)& chr(10)
             endif

@@ -8,8 +8,13 @@
 
 '
 #define intest
+#print head
 #define head
+#undef main
 #include "src/tDefines.bas"
+#undef head
+'
+#print main
 #define main
 #include "src/tDefines.bas"
 #include "src/tModule.bas"
@@ -28,6 +33,7 @@
 #include "src/tViewfile.bas"
 '
 '#include "src/tFile.bas"
+#print done
 #undef main
 '
 '
@@ -331,22 +337,20 @@ function newsource(ByRef aSource as tSource) as string
 	'afun += "'" +crlf
 	afun += "'needs [head|main|both] defined," +crlf
 	afun += "' builds in test mode otherwise:" +crlf
-	afun += "#if not (define(head) or define(main))" +crlf
+	afun += "#if not (defined(head) or defined(main))" +crlf
 	afun += "#define intest"+crlf
 	afun += "#define both"+crlf
 	afun += "#endif'test" +crlf
-	afun += "#if define(both)" +crlf
+	afun += "#if defined(both)" +crlf
 	afun += "#define head"+crlf
 	afun += "#define main"+crlf
 	afun += "#endif'both" +crlf
 	afun += "'" +crlf
 	afun += "#ifdef intest" +crlf
-	afun += "#undef intest"+crlf
-	afun += "#define test"+crlf
 	afun += "'     -=-=-=-=-=-=-=- TEST: "+aSource.token+" -=-=-=-=-=-=-=-" +crlf
 	afun += crlf
-
-	'afun += crlf
+	afun += "#undef intest"+crlf
+	afun += "#define test"+crlf
 	afun += "#endif'test" +crlf
 	afun += "#ifdef head" +crlf
 	afun += "'     -=-=-=-=-=-=-=- HEAD: "+aSource.token+" -=-=-=-=-=-=-=-" +crlf
@@ -382,8 +386,8 @@ function newsource(ByRef aSource as tSource) as string
 	aend = "#endif'main" +crlf +aend
 	aend = "#define cut2bottom"+crlf +aend +crlf
 	'
-	aend += "#ifdef main" +crlf
-	aend += "'      -=-=-=-=-=-=-=- MAIN: "+aSource.token+" -=-=-=-=-=-=-=-" +crlf
+	aend += "#ifdef (defined(main) or defined(test))" +crlf
+	aend += "'      -=-=-=-=-=-=-=- INIT: "+aSource.token+" -=-=-=-=-=-=-=-" +crlf
 	aend += chr(9) +"tModule.register("
 	aend += """"+aSource.token+""""
 	aend += ",@"+aSource.token+".init()"
@@ -392,6 +396,7 @@ function newsource(ByRef aSource as tSource) as string
 	aend += ",@"+aSource.token+".save()"
 	aend += ")"+crlf
 	aend += "#endif'main" +crlf
+	aend += crlf
 	aend += "#ifdef test" +crlf
 	aend += "#print -=-=-=-=-=-=-=- TEST: "+aSource.token+" -=-=-=-=-=-=-=-" +crlf
 	aend += "#endif'test" +crlf
@@ -501,6 +506,13 @@ function Declarepublicfunctions(ByRef aSource as tSource) as String
 			Next
 			if defines(j)<>a3 then continue while
 			if a1="" then continue while
+			'
+			j=len(a1)
+			while j>0 and mid(a1,j,1)<" "
+				j -=1
+			Wend
+			if j<len(a1) then a1=mid(a1,1,j)
+			'
 			a1="declare public function "+a1' +" '" &counts(j)
 			a0=a0+a1+chr(13)+chr(10)
 		EndIf
@@ -530,6 +542,13 @@ function Declarepublicfunctions(ByRef aSource as tSource) as String
 				EndIf
 			Next
 			if defines(j)=a3 then continue while
+			'
+			j=len(a1)
+			while j>0 and mid(a1,j,1)<" "
+				j -=1
+			Wend
+			if j<len(a1) then a1=mid(a1,1,j)
+			'
 			a1="'private function "+a1
 			a0=a0+a1+chr(13)+chr(10)
 		EndIf
@@ -737,7 +756,11 @@ function xref(aToken as String,iSource as integer) as Integer
 				else
 					a1=mid(a2,1,k-1)
 					a2=trim(mid(a2,k+len(defines(l))))
-					counts(l) += 1
+					j=len(a1) 'needs whitespace or symbol now to make a match
+					while j>0 and instr(chr(13)+chr(10)+chr(9)+" ()+-/\*&%$@!#^",mid(a1,j,1))>0
+						j -=1
+					Wend
+					if j<>len(a1) then counts(l) += 1
 				EndIf
 			Loop until k=0
 		next
