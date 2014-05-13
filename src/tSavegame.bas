@@ -410,7 +410,7 @@ function savegame(crash as short=0) as short
     put #f,,foundsomething
 
     put #f,,civ()
-	'tRng.save(f)
+	tRng.save(f)
     
     tFile.Closefile(f)
     ?
@@ -494,13 +494,14 @@ function load_game(filename as string) as short
     next
 
     player.desig=filename
+    tVersion.gamedesig=filename
 
     if filename<>"" then
         fname="savegames/"&filename
         print "loading"&fname;
 
         if (filename <> "savegames/empty.sav") _	'makes sure we dont load the uncompressed empty
-        and (tFile.OpenBinary(fname,f)=0) then		'Starting the uncompress
+        and (tFile.OpenBinary(fname,f)>0) then		'Starting the uncompress
 
             get #f,,names           '36 bytes
             get #f,,dat             '36 bytes
@@ -519,7 +520,7 @@ function load_game(filename as string) as short
             uncompress(dest, @dest_len, src, src_len)
 
             tFile.Closefile(f)
-			if (tFile.OpenBinary(fname,f)=0) then
+			if (tFile.OpenBinary(fname,f)>0) then
 	            compressed_data = space(LOF(f))
 	            get #f,, compressed_data
 	            tFile.Closefile(f)
@@ -527,7 +528,7 @@ function load_game(filename as string) as short
 
             kill(fname)
 
-			if (tFile.OpenBinary(fname,f)=0) then
+			if (tFile.OpenBinary(fname,f)>0) then
 	            put #f,, *dest, dest_len
 	            tFile.Closefile(f)
 			endif
@@ -536,7 +537,7 @@ function load_game(filename as string) as short
         'Ending uncompress
 
 
-		if (tFile.OpenBinary(fname,f)=0) then
+		if (tFile.OpenBinary(fname,f)>0) then
 		endif
 			
         get #f,,names
@@ -581,8 +582,6 @@ function load_game(filename as string) as short
         next
 
         print ".";
-
-
 
         for a=0 to 16
             get #f,,savefrom(a).awayteam
@@ -747,7 +746,7 @@ function load_game(filename as string) as short
         get #f,,foundsomething
 
         get #f,,civ()
-        'tRng.load(f)
+        tRng.load(f)
 	    
         tFile.Closefile(f)
         ?
