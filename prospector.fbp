@@ -21,7 +21,7 @@ Output=
 Run=
 Delete=
 [TabOrder]
-TabOrder=13
+TabOrder=0
 [File]
 1=src\cargotrade.bas
 2=src\compcolon.bas
