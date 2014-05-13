@@ -426,23 +426,23 @@ function savegame(crash as short=0) as short
         dim as Integer src_len = len(filedata_string) + 1
         dest_len = compressBound(src_len)
         dest = Allocate(dest_len)
-        kill(fname)
-
-        if tFile.Openbinary(fname,f)=0 then        	    
-	        compress(dest , @dest_len, StrPtr(filedata_string), src_len)
-	        put #f,,names           '36 bytes
-	        put #f,,desig           '36 bytes
-	        put #f,,datestring      '12 bytes + 1 overhead
-	        put #f,,unflags()       'lastspecial + 1 overhead
-	        put #f,,artflag()       'lastartifact + 1 overhead
-	        put #f,, src_len 'we can use this to know the amount of memory needed when we load - should be 4 bytes long
-   		    'Putting in the short info the the load game menu
-        	header_len =  36 + 36 + 12 + lastspecial + lastartifact*2 + 4 + 4 + 3 ' bytelengths of names, desig, datestring,
-	        'unflags, artflag, src_len, header_len, and 3 bytes of over head for the 3 arrays datestring, unflags, artflag
-	        put #f,, header_len
-	        put #f,, *dest, dest_len
-	        tFile.Closefile(f)
-        EndIf
+	    if compress(dest , @dest_len, StrPtr(filedata_string), src_len) = Z_OK then
+	        kill(fname)
+	        if tFile.Openbinary(fname,f)=0 then        	    
+		        put #f,,names           '36 bytes
+		        put #f,,desig           '36 bytes
+		        put #f,,datestring      '12 bytes + 1 overhead
+		        put #f,,unflags()       'lastspecial + 1 overhead
+		        put #f,,artflag()       'lastartifact + 1 overhead
+		        put #f,, src_len 'we can use this to know the amount of memory needed when we load - should be 4 bytes long
+	   		    'Putting in the short info the the load game menu
+	        	header_len =  36 + 36 + 12 + lastspecial + lastartifact*2 + 4 + 4 + 3 ' bytelengths of names, desig, datestring,
+		        'unflags, artflag, src_len, header_len, and 3 bytes of over head for the 3 arrays datestring, unflags, artflag
+		        put #f,, header_len
+		        put #f,, *dest, dest_len
+		        tFile.Closefile(f)
+	        EndIf
+	    EndIf
         Deallocate(dest)
         
 '     	if <0 then

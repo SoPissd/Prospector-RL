@@ -89,6 +89,11 @@ function keyinput(allowed as string="") as string
 end function
 
 
+function ClearKeys() as integer
+	do while inkey<>"": loop
+	return 0	
+End Function
+
 function Pressanykey(aRow as Integer=2,aCol as Integer=0,aFg as Integer=0,aBg as Integer=0) as Integer
 	dim key as integer
 	if (aFg>0) then

@@ -47,6 +47,7 @@ Declare function savegame(crash as short=0)As Short
 namespace tVersion
 	
 Dim Shared Gamerunning as byte =0
+Dim Shared logerror as byte =1
 Dim Shared gameturn As UInteger =0
 Dim Shared Gamedesig as string 
 
@@ -54,6 +55,7 @@ public function Init() as integer
 	Gamedesig	=""
 	Gamerunning	=0
 	gameturn	=0
+	logerror	=1
 	return 0
 End function
 
@@ -125,8 +127,9 @@ public function Errorscreen(text as string,suppress as integer=0) As integer
 				tScreen.loc(irow,10)
 			EndIf
 		EndIf
-		If gamerunning=1 Then
+		if (logerror>0) and (gamerunning=1) Then
 			savegame(1)
+			logerror=0
 		EndIf
 	EndIf
 	return 0

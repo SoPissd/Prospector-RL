@@ -340,7 +340,7 @@ Private function mainmenu() as string
 	dim key as string
 	dim text as string
     Do        
-		do while inkey<>"": loop
+		ClearKeys()
         a=Menu(bg_title,__VERSION__ &"/Load game/Start new game/Highscore/Manual/Configuration/Keybindings/Quit",,40,_lines-10*_fh2/_fh1)
         If a=2 Then
             Key="1"
@@ -361,6 +361,7 @@ Private function mainmenu() as string
         If a=4 Then viewfile("readme.txt")
         If a=5 Then configuration
         If a=6 Then keybindings
+? #iErrConsole,"a="&a,key
 
 '		if key="8" then
 '			DbgItemsCSV()
@@ -397,6 +398,9 @@ Private function mainmenu() as string
         EndIf
 #endif
     Loop Until Key="1" Or Key="2" Or a=7
+    if a=7 then
+    	return "7"
+    EndIf
     return key
 End function
 
@@ -407,7 +411,6 @@ Public function Prospector() as Integer
 	    set__color(11,0)
 		dim key as string
 	    key= mainmenu()
-	    Cls
 	    If Key="1" Then start_new_game
 	    If Key="1" Or Key="2" Or Key="a" Or Key="b" And player.dead=0 Then
 	        Key=""
@@ -419,14 +422,17 @@ Public function Prospector() as Integer
 	    If Key="7" Or Key="g" Then
 	    	exit do  ' aka return 0
 	    EndIf
-	    If player.dead>0 Then death_message()
-	    set__color( 15,0)
+	    If (player.dead>0) and (configflag(con_restart)<>1 or player.dead<>99) Then
+		  death_message()
+	    EndIf
+		player.dead=0
+	    'set__color(15,0)
     	If configflag(con_restart)=0 Then
 	        load_game("empty.sav")
 	        clear_gamestate
 	        tVersion.gamerunning=0
 	    EndIf
-	Loop Until configflag(con_restart)=1
+	Loop Until configflag(con_restart)=0'1
 	return 0
 end function
 #define cut2bottom

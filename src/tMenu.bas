@@ -194,7 +194,8 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
         else
             rlprint ""
         endif
-		do while inkey<>"": loop
+
+		ClearKeys
         if player.dead=0 then key=keyin(,96+c)
         
         if hfl=1 then 
@@ -229,6 +230,7 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
     if logo <> 0 then
       ImageDestroy(Logo)
     EndIf
+? #iErrConsole,e
     return e
 end function
 #define cut2bottom
