@@ -60,7 +60,7 @@ End Enum
 declare function explored_percentage_string() as string
 declare function save_config(oldtiles as short) as short
 declare function load_config() as short
-declare function configuration() as short
+declare function configuration(iBg as short=0) as short
 
 
 #endif'head
@@ -325,7 +325,7 @@ end function
 
 
 
-function configuration() as short
+function configuration(iBg as short) as short
     dim text as string
     dim onoff(1) as string
     dim offon(1) as string
@@ -346,6 +346,10 @@ function configuration() as short
     sprite(1)="White"
     sprite(2)=" Red "
 '    screenshot(1)
+	if iBg=0 then
+		iBg= -rnd_range(1,_last_title_pic)
+	EndIf
+
     do
         if configflag(con_customfonts)=1 then
             res="tiles:"&_fohi1 &" text:"& _fohi2 &" lines:"&_lines
@@ -370,7 +374,7 @@ function configuration() as short
             end select
         next
         text=text &"/Exit"
-        c=menu(bg_randompic,text,,,,1)
+        c=menu(iBg,text,,,,1)
         select case c
         case con_sound,con_captainsprite
             configflag(c)+=1

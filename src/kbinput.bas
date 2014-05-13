@@ -26,21 +26,18 @@
 
 declare function keyplus(key as string) as short
 declare function keyminus(key as string) as short
-declare function Pressanykey(aRow as Integer=2,aCol as Integer=0,aFg as Integer=0,aBg as Integer=0) as Integer
 declare function keyinput(allowed as string="") as string
 
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: kbinput -=-=-=-=-=-=-=-
 
-namespace kbinput
+namespace tKbinput
+	
 function init() as Integer
 	return 0
 end function
-end namespace'kbinput
-
-
-#define cut2top
+end namespace'tKbinput
 
 
 Dim Shared As UByte _FH1,_FH2,_FW1,_FW2,_TFH
@@ -49,7 +46,7 @@ Const key__esc = 	Chr(27)
 Const key__enter =	Chr(13)
 Const key__space =	Chr(32)
 
-Const xk=Chr(255)
+Const xk= Chr(255)
 Const key__up = 	xk & "H"
 Const key__dn = 	xk & "P"
 Const key__rt= 		xk & "M"
@@ -76,46 +73,13 @@ function keyminus(key as string) as short
     return r
 end function
 
-
-function keyinput(allowed as string="") as string
-'    DimDebugL(0)'1
-    dim as UInteger key
-	do while inkey<>"": loop
-    do        
-		key=GetKey()
-'		? chr(key and 255),chr(key shr 8)
-    loop until key>0 or allowed="" or (instr(allowed,chr(key))>0) 
-    return chr(key and 255)
-end function
-
-
-function ClearKeys() as integer
-	do while inkey<>"": loop
-	return 0	
-End Function
-
-function Pressanykey(aRow as Integer=2,aCol as Integer=0,aFg as Integer=0,aBg as Integer=0) as Integer
-	dim key as integer
-	if (aFg>0) then
-		tColor.set(aFg,aBg)
-	EndIf
-	while aRow>0
-		?
-		aRow -=1
-	Wend
-	tScreen.loc(aRow,aCol)
-	Print "Press any key to exit";
-	do while inkey<>"": loop
-	key=GetKey()
-	?
-	return key
-End function
+'
 
 #endif'main
 
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: kbinput -=-=-=-=-=-=-=-
-	tModule.register("kbinput",@kbinput.init()) ',@kbinput.load(),@kbinput.save())
+	tModule.register("tKbinput",@tKbinput.init()) ',@kbinput.load(),@kbinput.save())
 #endif'main
 
 #ifdef test

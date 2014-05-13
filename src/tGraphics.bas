@@ -24,7 +24,7 @@
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tGraphics -=-=-=-=-=-=-=-
 
-declare function background(fn as string) as short
+declare function background(fn as string) as integer
 declare function bmp_load( ByRef filename As String ) As Any Ptr
 
 'private function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for windows less than 60 tiles wide
@@ -61,7 +61,7 @@ Enum backgrounds
 End Enum
 
 
-function background(fn as string) as short
+function background(fn as string) as integer
     static last as string
     static firstcall as byte
     Dim As Integer filenum, bmpwidth, bmpheight,x,y
@@ -70,7 +70,7 @@ function background(fn as string) as short
     fn="graphics/"&fn
     '' open BMP file
     filenum = FreeFile()
-    If tFile.Openbinary(fn,filenum ) =0 Then Return 0
+    If tFile.Openbinary(fn,filenum ) =0 Then Return -1
     'If Openbinaryread '( fn For Binary Access Read As #filenum ) <> 0 Then Return 0
 
         '' retrieve BMP dimensions
@@ -82,7 +82,6 @@ function background(fn as string) as short
         '' create image with BMP dimensions
         if firstcall<>0 then imagedestroy(img)
         img = ImageCreate( bmpwidth, Abs(bmpheight) )
-
         If img = 0 Then Return 0
         'dst=imagecreate(tScreen.x,tScreen.y)
         '' load BMP file into image buffer
@@ -94,7 +93,6 @@ function background(fn as string) as short
     put (x,y),img,pset
     firstcall=1
     Return 0
-
 end function
 
 

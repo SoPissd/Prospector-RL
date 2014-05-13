@@ -26,8 +26,6 @@
 #define test
 #endif'test
 
-dim shared as integer iErrConsole
-
 namespace tError
 
 #ifdef head
@@ -93,19 +91,24 @@ End function
 function Errorhandler() As integer
 	'to file
 	if tError.ErrorNr=0 and tError.ErrText="" then
-		close #iErrConsole
+		if tConsole.fErrOut>0 then
+			print #tConsole.fErrOut,"All done."
+			close #tConsole.fErrOut
+		endif
 		return 0
 	EndIf
-	print #iErrConsole,ErrText
+	if tConsole.fErrOut>0 and tError.ErrText="" then
+		print #tConsole.fErrOut,ErrText
+	endif
 	log_error(ErrText)
 	'to current screen
 	tVersion.Errorscreen(ErrText,ErrorLn=0)
-	Pressanykey()
+	tConsole.Pressanykey()
 	if tScreen.Enabled then
 		'to console
 		tScreen.mode(0)
 		tVersion.Errorscreen(tError.ErrText,ErrorLn=0)
-		Pressanykey()		
+		tConsole.Pressanykey()		
 	EndIf
 	return 0
 End function
@@ -117,16 +120,12 @@ End Namespace
 #if (defined(main) or defined(test))
 	' -=-=-=-=-=-=-=- INIT: tError -=-=-=-=-=-=-=-
 	'
-	iErrConsole=freefile
-	open err for output as iErrConsole
-
 	#Define LogWarning(Text) Assert(tError.log_warning(__FILE__,__FUNCTION__,__LINE__,Text))						' disappears from release
 	tModule.register("tError",@tError.init()) ',@tError.load(),@tError.save())
 #endif'main
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tError -=-=-=-=-=-=-=-
-	print #iErrConsole,"console err!"
 	? tError.log_warning("ok.log","fun",10,"txt")
 	LogWarning("warning")
 #endif'test

@@ -28,7 +28,7 @@
 declare function Prospector() as Integer
 
 'private function Private start_new_game() As Short
-'private function Private from_savegame(Key As String) As String
+'Private function from_savegame(iBg as short,key As String) As String
 'private function Private mainmenu() as string
 
 #endif'head
@@ -46,7 +46,25 @@ end namespace'tGame
 
 
 
-Private function start_new_game() As Short
+Private function gotslotforsavegame(iBg as short) As integer 
+    Dim As String aText
+    If count_savegames()>20 Then       
+        rlprint "Too many Savegames, choose one to overwrite",14
+        aText=getfilename(iBg)
+        If aText<>"" Then
+            If askyn("Are you sure you want to delete "&aText &"(y/n)") Then
+                Kill("savegames/"&aText)
+                return 1
+            EndIf
+        EndIf
+		return 0 'nope    	
+    else
+		return 1    	
+    EndIf    
+End Function
+
+
+Private function start_new_game(iBg as short=0) As Short
     DimDebugL(0)'1'127
     Dim _debug As Byte	' needs renaming/removing still    
 
@@ -54,13 +72,15 @@ Private function start_new_game() As Short
     Dim As integer a,b,c,f,d
     Dim doubleitem(4555) As Byte
     Dim i As _items
+
+	If gotslotforsavegame(iBg)=0 Then return -1
     
-    make_spacemap()
+    make_spacemap(iBg)
     DbgPlanetTempCSV
 
     text="/"&makehullbox(1,"data/ships.csv") &"|Comes with 3 Probes MKI/"&makehullbox(2,"data/ships.csv")&"|Comes with 2 combat drones and fully armored|You get one more choice at a talent if you take this ship/"&makehullbox(3,"data/ships.csv") &"|Comes with paid for cargo to collect on delivery/"&makehullbox(4,"data/ships.csv") &"|Comes with 5 veteran security team members/"&makehullbox(6,"data/ships.csv")&"|You will start as a pirate if you choose this option"
     If configflag(con_startrandom)=1 Then
-        b=Menu(bg_randompic,"Choose ship/Scout/Long Range Fighter/Light Transport/Troop Transport/Pirate Cruiser/Random",text)
+        b=Menu(iBg,"Choose ship/Scout/Long Range Fighter/Light Transport/Troop Transport/Pirate Cruiser/Random",text)
     Else
         b=rnd_range(1,4)
     EndIf
@@ -306,7 +326,7 @@ End function
 
 
 
-Private function from_savegame(Key As String) As String
+Private function from_savegame(iBg as short,key As String) As String
     Dim As Short c
     c=count_savegames
     set__color(11,0)
@@ -316,7 +336,7 @@ Private function from_savegame(Key As String) As String
         no_key=keyin 
         Key=""
     Else
-        load_game(getfilename())
+        load_game(getfilename(iBg))
         If player.desig="" Then 
             Key=""
         else
@@ -328,40 +348,46 @@ Private function from_savegame(Key As String) As String
             EndIf
         endif
     EndIf
-    set__color(11,0)
-    Cls
+'    set__color(11,0)
+'    Cls
     Return Key
 End function
 
 
 
-Private function mainmenu() as string
+Private function mainmenu(ByRef iBg as short) as string
 	dim a as integer
 	dim key as string
-	dim text as string
+	dim aText as string
+	dim iLines as integer
+	aText =__VERSION__+"/"
+	aText+="Load game/"
+	aText+="Start new game/"
+	aText+="Highscore/"
+	aText+="Manual/"
+	aText+="Configuration/"
+	aText+="Keybindings/"
+	aText+="Quit"
+	iLines=7+1+2 'choices+title+top'n'bottom rows= +3 == 10 total
     Do        
-		ClearKeys()
-        a=Menu(bg_title,__VERSION__ &"/Load game/Start new game/Highscore/Manual/Configuration/Keybindings/Quit",,40,_lines-10*_fh2/_fh1)
-        If a=2 Then
-            Key="1"
-            If count_savegames()>20 Then
-                Key=""
-                rlprint "Too many Savegames, choose one to overwrite",14
-                text=getfilename()
-                If text<>"" Then
-                    If askyn("Are you sure you want to delete "&text &"(y/n)") Then
-                        Kill("savegames/"&text)
-                        Key="1"
-                    EndIf
-                EndIf
-            EndIf
-        EndIf
-        If a=1 Then Key=from_savegame("2")
-        If a=3 Then high_score("")
-        If a=4 Then viewfile("readme.txt")
-        If a=5 Then configuration
+		if a<0 then		'esc makes last choice the default choice 
+			a=iLines-2
+			iBg=0
+		EndIf
+		if iBg=0 then 	'use a random picture the first time round
+			iBg= -rnd_range(1,_last_title_pic)
+		EndIf
+		if a=0 then a=1 
+		tConsole.ClearKeys()
+        a=Menu(iBg,aText,,40,_lines-iLines*_fh2/_fh1,,1,,a)
+        If a=1 Then Key="2"
+        If a=2 Then Key="1"
+        If a=3 Then high_score(iBg,"")
+        If a=4 Then viewfile("readme.txt",256)
+        If a=5 Then configuration(iBg)
         If a=6 Then keybindings
-? #iErrConsole,"a="&a,key
+        If a=7 Then Key="7"
+'? #fErrOut,"a=" &a ,"key=:" &key &":"
 
 '		if key="8" then
 '			DbgItemsCSV()
@@ -397,33 +423,40 @@ Private function mainmenu() as string
 			DbgPricesCSV
         EndIf
 #endif
-    Loop Until Key="1" Or Key="2" Or a=7
-    if a=7 then
-    	return "7"
-    EndIf
+    Loop Until Key="1" Or Key="2" or key="7" 'Or a=7 'or a=-27
     return key
 End function
 
 
 
 Public function Prospector() as Integer
+	dim iBg as short
 	Do
 	    set__color(11,0)
 		dim key as string
-	    key= mainmenu()
-	    If Key="1" Then start_new_game
-	    If Key="1" Or Key="2" Or Key="a" Or Key="b" And player.dead=0 Then
-	        Key=""
+	    key= mainmenu(iBg)
+'? #fErrOut,"mainmenu(iBg)=" &key
+	    If Key="1" Then    	
+			start_new_game(iBg)
+	    EndIf
+	    if Key="2" then
+	    	key=from_savegame(iBg,"2")
+	    	if key="" then continue do	    	
+	    EndIf
+	    If Key="1" Or Key="2" And player.dead=0 Then
 	        tVersion.gamerunning=1
 	        display_stars(1)
 	        display_ship(1)
 	        explore_space
 	    EndIf
-	    If Key="7" Or Key="g" Then
+	    If Key="7" Then
+	    	player.dead=99
+			death_message(iBg,2600)
+			player.dead=0
 	    	exit do  ' aka return 0
 	    EndIf
-	    If (player.dead>0) and (configflag(con_restart)<>1 or player.dead<>99) Then
-		  death_message()
+	    If (player.dead>0) and not (configflag(con_restart)=1 or player.dead=99) Then
+		  death_message(iBg)
 	    EndIf
 		player.dead=0
 	    'set__color(15,0)
@@ -432,7 +465,8 @@ Public function Prospector() as Integer
 	        clear_gamestate
 	        tVersion.gamerunning=0
 	    EndIf
-	Loop Until configflag(con_restart)=0'1
+	Loop Until configflag(con_restart)=1
+	'Pressanykey
 	return 0
 end function
 #define cut2bottom

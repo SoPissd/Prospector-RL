@@ -30,8 +30,8 @@
 
 declare function income_expenses() as string
 declare function score() as integer
-declare function high_score(text as string) as short
-declare function death_message() as short
+declare function high_score(iBg as short, text as string) as short
+declare function death_message(iBg as short,iShowMS as integer=0) as short
 
 'private function income_expenses_html() as string
 'private function space_mapbmp() as short
@@ -405,7 +405,7 @@ end function
 
 function death_text() as string
     dim text as string
-    if player.fuel<=0 then player.dead=1
+    if player.dead<>99 and player.fuel<=0 then player.dead=1
     if player.dead=1 then text="You ran out of fuel. Slowly your life support fails while you wait for your end beneath the eternal stars"
     if player.dead=2 then text="The station impounds your ship for outstanding depts. You start a new career as cook at the stations bistro"
     if player.dead=3 then text="Your awayteam was obliterated. your Bones are being picked clean by alien scavengers under a strange sun"
@@ -850,7 +850,7 @@ function post_mortemII(text as string) as short
 end function
 
 
-function high_score(text as string) as short
+function high_score(iBg as short, text as string) as short
     
     dim hScore(11) as _table
     dim in as integer=1
@@ -903,8 +903,8 @@ function high_score(text as string) as short
     set__color( 11,0)
 
     cls
+    background(-iBg &".bmp")
     
-    background(rnd_range(1,_last_title_pic)&".bmp")
     yo=(tScreen.y-22*_fh2)/2
     xo=(tScreen.x-80*_fw2)/2
     set__color( 0,0)
@@ -950,14 +950,18 @@ function high_score(text as string) as short
 end function
 
 
-function death_message() as short
+function death_message(iBg as short,iShowMS as integer=0) as short
     dim as string text,text2
     dim as short b,a,wx,tx
     text=""
     
+    if player.dead<99 then
     if not fileexists("summary/"&player.desig &".png") then screenshot(3)
+    EndIf 
+    
     cls
-    background(rnd_range(1,_last_title_pic)&".bmp")
+    background(-iBg &".bmp")
+    
     set__color( 12,0)
     text=death_text()
     text2=text
@@ -979,11 +983,11 @@ function death_message() as short
         
     endif
     
-    no_key=""
-    no_key=keyin
+	no_key=tConsole.aGetKey(iShowMS)
+
     if player.dead<99 then 
         if askyn("Do you want to see the last messages again?(y/n)") then messages
-        high_score(text2)
+        high_score(iBg,text2)
     endif
 
     return 0

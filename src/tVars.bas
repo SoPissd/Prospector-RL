@@ -121,8 +121,6 @@ Dim Shared companynameshort(5) As String
 Dim Shared combatmap(60,20) As Byte
 
 
-Dim Shared _last_title_pic As Byte=14
-
 Dim Shared makew(20,5) As Byte
 
 Dim Shared gtiles(2048) As Any Ptr

@@ -65,6 +65,7 @@ inc("main",	"tDefines.bas",				"main, register the unit")
 inc("both",	"debug.bas",				"debug macros or their null eqivalents. also include loading")
 inc("both",	"tScreen.bas",				"wrap screen,screenset,locate,width,color so console code works too")
 inc("both",	"tColor.bas",				"maps color codes to screen via palette")
+inc("both",	"tConsole.bas",				"all the keyboard wrappers needed to trap for application close always")
 inc("both",	"version.bas",				"provides ErrorlogFilename and Errorscreen. same vars too")
 '
 'core

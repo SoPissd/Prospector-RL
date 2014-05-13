@@ -26,7 +26,7 @@
 '     -=-=-=-=-=-=-=- HEAD: tSavegame -=-=-=-=-=-=-=-
 
 declare function count_savegames() as short
-declare function getfilename() as string
+declare function getfilename(iBg as short) as string
 declare function load_game(filename as string) as short
 
 #ifndef savegame 'allow this to be a forward
@@ -64,7 +64,7 @@ function count_savegames() as short
 end function
 
 
-function getfilename() as string
+function getfilename(iBg as short) as string
     dim filename as string
     dim a as string
     dim b as string*36
@@ -137,7 +137,7 @@ function getfilename() as string
         a=dir()
     wend
     text=text &"/Exit"
-    c=menu(bg_randompictxt,text,help,2,2)
+    c=menu(iBg,text,help,2,2)
     if c>0 and c<=24 then filename=n(c)
     return filename
 end function

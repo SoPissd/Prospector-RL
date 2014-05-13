@@ -24,8 +24,12 @@
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tMenu -=-=-=-=-=-=-=-
 
-declare function menu(bg as byte,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1) as short
+declare function menu(_
+		bg as short,te as string, he as string="", x as short=2, y as short=2, _
+	    blocked as short=0, markesc as short=0,st as short=-1,loca as short=1) as short
 
+
+Dim Shared _last_title_pic As Byte=14
 
 #endif'head
 #ifdef main
@@ -41,10 +45,12 @@ end namespace'tMenu
 #define cut2top
 
 
-function menu(bg as byte,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1) as short
+function menu(bg as short,te as string, he as string="", x as short=2, y as short=2, _
+	          blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as short
     ' 0= headline 1=first entry
     dim as short blen
     dim as string text,help
+    dim as string bgname
     dim lines(256) as string
     dim helps(256) as string
     dim shrt(256) as string
@@ -53,7 +59,7 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
     dim b as short
     dim c as short
     'static loca as short
-    dim loca as short
+    'dim loca as short
     dim e as short
     dim l as short
     dim hfl as short
@@ -62,18 +68,24 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
     dim tlen as short
     dim longest as short
     dim as short ofx,l2,longestbox,longesthelp,backpic,offset
-    backpic=rnd_range(1,_last_title_pic)
+
+    if bg<0 then
+	    backpic=-bg
+	    bg=bg_title
+    else
+	    backpic=rnd_range(1,_last_title_pic)
+    endif
     
     dim as any ptr logo
     if bg=bg_title then
         logo= bmp_load("graphics/prospector.bmp")
     endif
+    
     text=te
     help=he
     b=len(text)
-    if loca=0 then loca=1
-    c=0
     text=text &"/"
+    c=0
     do
         tlen=instr(text,"/")
         lines(c)=left(text,tlen-1)
@@ -81,6 +93,7 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
         c=c+1
     loop until len(text)<=0
     c=c-1
+    
     if help<>"" then
         if right(help,len(help)-1)<>"/" then help=help &"/"
         hfl=1
@@ -108,6 +121,7 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
         endif
         if len(trim(lines(a)))>longest then longest=len(trim(lines(a)))
     next
+    
     for a=0 to c
         lines(a)=lines(a)&space(longest-len(lines(a)))
     next
@@ -134,7 +148,7 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
             cls
             select case bg
             case bg_title
-                background(backpic &".bmp") 
+           		background(backpic &".bmp")
                 if logo<>NULL then
                     put (39,69),logo,trans
                 else
@@ -195,7 +209,7 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
             rlprint ""
         endif
 
-		ClearKeys
+		tConsole.ClearKeys
         if player.dead=0 then key=keyin(,96+c)
         
         if hfl=1 then 
@@ -216,9 +230,11 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
         for a=0 to c
             if key=lcase(shrt(a)) then loca=a
         next
+'        if player.dead<>0 then e=c
+'        if key=key__esc then e=-27
         if key=key__esc or player.dead<>0 then e=c
     loop until e>0 
-    if key=key__esc and markesc=1 then e=-1
+    if key=key__esc and markesc=1 then e=-asc(key__esc)
     set__color( 0,0)
     for a=0 to c
         locate y+a,x
@@ -230,7 +246,8 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
     if logo <> 0 then
       ImageDestroy(Logo)
     EndIf
-? #iErrConsole,e
+'	ClearKeys()
+'? #fErrOut,e
     return e
 end function
 #define cut2bottom

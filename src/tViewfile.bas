@@ -38,11 +38,7 @@ end function
 end namespace'tViewfile
 
 
-#define cut2top
-
-
-
-public function Viewfile(filename as string,nlines as integer=4096) as short
+function Viewfile(filename as string,nlines as integer=4096) as short
     dim as integer f
     dim as Integer offset,c,a,lastspace,height
     dim lines(nlines) as string
@@ -67,6 +63,7 @@ public function Viewfile(filename as string,nlines as integer=4096) as short
             c=c+1
 
         loop until eof(f) or c>nlines
+        
         tFile.Closefile(f)
         for a=1 to c
             col(a)=11
@@ -92,20 +89,29 @@ public function Viewfile(filename as string,nlines as integer=4096) as short
             locate height+1,15
             set__color( 14,0)
             print "Arrow down and up to browse, esc to exit";
-            key=keyinput("12346789 ")
+            key=tConsole.keyinput("12346789 ")
 '            key=keyin("12346789 ",1)
-            if key="8"  then offset=offset+1
-            if key="2"  then offset=offset-1
-            if keyplus(key)  then offset=offset-22
-            if keyminus(key)  then offset=offset+22
-            if offset<0 then offset=0
-            if offset>c-height then offset=c-height
+            if key="8" or key=key__up then 
+				offset=offset+1
+            elseif key="2" or key=key__dn then 
+    	        offset=offset-1
+            elseif keyplus(key)  then 
+	            offset=offset-(height-1)
+            elseif keyminus(key)  then 
+	            offset=offset+(height-1)
+            EndIf
+            if offset<0 then 
+				offset=0
+            elseif offset>c-height then 
+	            offset=c-height
+            EndIf
         loop until key=key__esc or key=" "
     else
         locate 10,10
-        print #iErrConsole, "Couldnt open " + filename
+        print #tConsole.fErrOut, "Couldnt open " + filename
         print "Couldnt open " + filename
     endif
+	tConsole.ClearKeys()
     return 0
 end function
 

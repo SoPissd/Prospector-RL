@@ -55,6 +55,7 @@ function clear_gamestate() As Short
     Dim d_basis As _basis
     Dim d_drifter As _driftingship
     Dim d_portal As _transfer
+    
     set__color(15,0)
     Draw String(tScreen.x/2-7*_fw1,tScreen.y/2),"Resetting game",,font2,custom,@_col
 

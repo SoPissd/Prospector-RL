@@ -56,6 +56,7 @@ dim shared lastmodule as integer = 0
 
 '
 
+
 public function Init() as integer
 	return 0
 End Function

@@ -24,7 +24,7 @@
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tWorldgen -=-=-=-=-=-=-=-
 
-declare function make_spacemap() as short
+declare function make_spacemap(iBg as short=0) as short
 
 'private function findcompany(c as short) as short
 'private function create_spacemap() as short
@@ -52,7 +52,7 @@ function findcompany(c as short) as short
 end function
 
 
-function create_spacemap() as short
+function create_spacemap(iBg as short=0) as short
     dim as short a,f,b,c,d,e,astcou,gascou,x,y,i
     dim as byte makelog=0
     dim as _cords p1,p2,p3
@@ -63,8 +63,9 @@ function create_spacemap() as short
         open "creation.log" for output as #f
     endif
     tScreen.set(1)
-    b=rnd_range(1,_last_title_pic)
-    background(b &".bmp")
+	if iBg<0 then iBg=-iBg else iBg=0
+	if iBg=0 then iBg=rnd_range(1,_last_title_pic)
+    background(iBg &".bmp")
     
     set__color 1,1
     for a=0 to 3
@@ -321,7 +322,7 @@ function create_spacemap() as short
 end function
 
 
-function make_spacemap() as short
+function make_spacemap(iBg as short=0) as short
     dim as short a,f,b,c,d,e,astcou,gascou,x,y,i
     dim as byte makelog=0
     dim as _cords p1,p2,p3
@@ -332,8 +333,9 @@ function make_spacemap() as short
         open "creation.log" for output as #f
     endif
     tScreen.set(1)
-    b=rnd_range(1,_last_title_pic)
-    background(b &".bmp")
+	if iBg<0 then iBg=-iBg else iBg=0
+	if iBg=0 then iBg=rnd_range(1,_last_title_pic)
+    background(iBg &".bmp")
     
     set__color 1,1
     for a=0 to 3
