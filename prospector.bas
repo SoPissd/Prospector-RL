@@ -1,6 +1,5 @@
 'prospector.
 '
-'#define sound
-'#include "src/tModule.bas"
+#define makesound
 #include "src/main.bas"
 

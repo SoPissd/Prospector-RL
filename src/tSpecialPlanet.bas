@@ -830,7 +830,7 @@ function make_special_planet(a as short) as short
         
         
         p2.x=rnd_range(2,p1.x-2)
-        p2.y=rnd_range(1,p1.y)
+        p2.y=rnd_range(1,p1.y-4)
         if p2.y<5 then p2.y=5
         makeroad(p1,p2,a)
         for x=p2.x to p2.x+3

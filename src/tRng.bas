@@ -24,6 +24,25 @@
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tRng -=-=-=-=-=-=-=-
 
+Type tRngSeed
+	w as UInteger
+	z as UInteger	
+End Type
+
+Type tRandom
+  declare constructor(ByVal aSeed as tRngSeed=(0,0))
+  declare destructor()
+  declare property Seed as tRngSeed
+  declare property Seed(ByVal aSeed as tRngSeed)
+  declare property uValue as uinteger
+  declare property dValue as double
+  declare function uRange(ByVal uLow As UInteger, ByVal uHigh As UInteger) as UInteger
+  declare sub Reseed()
+Private:
+  _seed as tRngSeed
+  declare property isInvalidSeed as short
+End Type
+
 declare function rnd_range(first As Integer, last As Integer) As Integer
 
 
@@ -41,29 +60,6 @@ declare function rnd_range(first As Integer, last As Integer) As Integer
 
 'outputs 32bit but maintains
 'random pool with a 64 bit state 
-namespace tRng
-	
-Type tRngSeed
-	w as UInteger
-	z as UInteger	
-End Type
-
-Type tRandom
-  declare constructor(ByVal aSeed as tRngSeed=(0,0))
-  declare destructor()
-  declare property Seed as tRngSeed
-  declare property Seed(ByVal aSeed as tRngSeed)
-  declare property uValue as uinteger
-  declare property dValue as double
-  declare function uRange(ByVal uLow As UInteger, ByVal uHigh As UInteger) as UInteger
-Private:
-  _seed as tRngSeed
-  declare property isInvalidSeed as short
-End Type
-
-function init() as Integer
-	return 0
-end function
 
 Constructor tRandom(ByVal aSeed as tRngSeed=(0,0))
 	Seed= aSeed	
@@ -83,18 +79,20 @@ Property tRandom.Seed As tRngSeed
 	Property= _seed
 End Property
 
+sub tRandom.Reseed()
+	randomize timer,5
+	while isInvalidSeed
+		_seed.w= fix(rnd()*cast(uinteger, &hffffffff))
+		_seed.z= fix(rnd()*cast(uinteger, &hffffffff))
+	wend	
+End Sub
+
 'use the built-in crypto generator to get two
 'high quality numbers to initialize on invalid seeds
 Property tRandom.Seed(ByVal aSeed as tRngSeed)
 	_seed.w=aSeed.w
 	_seed.z=aSeed.z
-	if isInvalidSeed then
-		randomize timer,5
-		while isInvalidSeed
-			_seed.w= fix(rnd()*cast(uinteger, &hffffffff))
-			_seed.z= fix(rnd()*cast(uinteger, &hffffffff))
-		wend
-	EndIf 
+	if isInvalidSeed then Reseed()
 End Property
 
 'Wikipedia cites this as an example of a simple pseudo-random number generator:
@@ -118,19 +116,38 @@ function tRandom.uRange(ByVal uLow As UInteger, ByVal uHigh As UInteger) as UInt
 	endif
 End function
 
+namespace tRng
+	
+dim shared rng as tRandom
+dim shared seed as tRngSeed
+
+function init() as Integer
+	rng.Reseed()
+	seed = rng.Seed
+	return 0
+end function
+function load(fileno as Integer) As Integer 'tRng.load()
+    dim seed as tRngSeed
+	get #fileno,,seed
+	rng.Seed=seed
+	return 0
+end function
+function save(fileno as Integer) As Integer 'tRng.save()
+    dim seed as tRngSeed
+	seed=rng.seed
+    put #fileno,,seed
+	return 0
+end function
+
 end namespace
 #endif
 
 
 #ifdef main
 
-dim shared rng as tRng.tRandom
-dim shared seed as tRng.tRngSeed
-seed = rng.Seed
-
 'Returns a random short
 function rnd_range(first As Integer, last As Integer) As Integer
-    return rng.uRange(first, last)
+    return tRng.rng.uRange(first, last)
 End function
 
 
@@ -192,7 +209,7 @@ main()
 
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: tRng -=-=-=-=-=-=-=-
-	tModule.register("tRng",@tRng.init()) ',@tRng.load(),@tRng.save())
+	tModule.register("tRng",@tRng.init(),@tRng.load(),@tRng.save())
 #endif'main
 
 #ifdef test

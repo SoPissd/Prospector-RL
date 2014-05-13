@@ -410,10 +410,7 @@ function savegame(crash as short=0) as short
     put #f,,foundsomething
 
     put #f,,civ()
-
-    dim seed as tRng.tRngSeed
-	seed=rng.seed
-    put #f,,seed
+	'tRng.save(f)
     
     tFile.Closefile(f)
     ?
@@ -496,6 +493,7 @@ function load_game(filename as string) as short
         planets(a)=p
     next
 
+    player.desig=filename
 
     if filename<>"" then
         fname="savegames/"&filename
@@ -749,9 +747,7 @@ function load_game(filename as string) as short
         get #f,,foundsomething
 
         get #f,,civ()
-        dim seed as tRng.tRngSeed
-	    get #f,,seed
-	    rng.Seed=seed
+        'tRng.load(f)
 	    
         tFile.Closefile(f)
         ?
@@ -767,7 +763,6 @@ function load_game(filename as string) as short
         endif
         player.lastvisit.s=-1
     else
-        player.desig=filename
     endif
     
     'cls

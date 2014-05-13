@@ -1,5 +1,8 @@
 'main.
 
+'Cls
+On Error Goto errormessage
+
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
 #if not (defined(head) or defined(main))
@@ -46,30 +49,7 @@
 #EndMacro
 
 '
-' sound support
-#IfDef sound
-#define _FBSOUND
-#endif
-#IfDef _FBSOUND
-	#print (Sound through fbsound)
-	#Define _sound
-	#define dprint
-	Dim Shared Sound(12) As Integer
-	#Include "fbsound.bi"
-	#undef dprint
-#Else
-	#IfDef _FMODSOUND
-		#print (Sound through fmodsound)
-		#Define _sound
-		Dim Shared Sound(12) As Integer Ptr
-		Dim Shared As Integer fmod_error
-		#IncLib "fmod.dll"
-		#Include "fmod.bi"
-	#Else
-		#print (No sound)
-	#EndIf
-#EndIf
-'
+inc("both",	"tSound.bi",				"first, include the sound drivers")
 inc("both",	"fbGfx.bi",					"")
 inc("both",	"file.bi",					"")
 inc("both",	"zlib.bi",					"")
@@ -83,8 +63,6 @@ inc("both",	"tScreen.bas",				"wrap screen,screenset,locate,width,color so conso
 inc("both",	"tColor.bas",				"maps color codes to screen via palette")
 inc("both",	"version.bas",				"provides ErrorlogFilename and Errorscreen. same vars too")
 '
-On Error Goto errormessage
-Cls
 Print
 Print "Prospector "&__VERSION__
 Print "Built "+__DATE__+" "+__TIME__
@@ -95,7 +73,9 @@ chdir exepath
 '
 'core
 '
+#print ready...
 inc("both",	"tRng.bas",					"rng with retrievable seed")
+#print ready...
 inc("both",	"tPng.bas",					"png load? save functions")
 '
 inc("both",	"kbinput.bas",				"keyplus,keyminus,Pressanykey,keyinput and consts for simple keys.")
