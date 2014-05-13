@@ -517,21 +517,25 @@ function load_game(filename as string) as short
             src = Allocate(src_len)
             
             get #f,,*src, src_len
-            uncompress(dest, @dest_len, src, src_len)
-
             tFile.Closefile(f)
-			if (tFile.OpenBinary(fname,f)>0) then
-	            compressed_data = space(LOF(f))
-	            get #f,, compressed_data
-	            tFile.Closefile(f)
-	        endif
-
-            kill(fname)
-
-			if (tFile.OpenBinary(fname,f)>0) then
-	            put #f,, *dest, dest_len
-	            tFile.Closefile(f)
-			endif
+            
+            if uncompress(dest, @dest_len, src, src_len) = Z_OK then
+				'make a copy of the compressed data
+				if (tFile.OpenBinary(fname,f)>0) then
+		            compressed_data = space(LOF(f))
+		            get #f,, compressed_data
+		            tFile.Closefile(f)
+				endif
+	
+	            'and write out as uncompressed
+	            kill(fname)	
+				if (tFile.OpenBinary(fname,f)>0) then
+		            put #f,, *dest, dest_len
+		            tFile.Closefile(f)
+				endif
+            else
+            	'not compressed
+            endif
     	endif
 
         'Ending uncompress
@@ -752,13 +756,13 @@ function load_game(filename as string) as short
         ?
         if fname<>"savegames/empty.sav" and configflag(con_savescumming)=1 then
             kill(fname)
-        elseif fname<>"savegames/empty.sav" then
+        elseif (fname<>"savegames/empty.sav") and (len(compressed_data)>0) then
             'need to rewrite our compressed data back
             kill(fname)
-			if (tFile.OpenBinary(fname,f)=0) then
+			if (tFile.OpenBinary(fname,f)>0) then
+	            put #f,, compressed_data
+		        tFile.Closefile(f)
 			endif
-            put #f,, compressed_data
-	        tFile.Closefile(f)
         endif
         player.lastvisit.s=-1
     else
