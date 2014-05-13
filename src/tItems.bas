@@ -892,7 +892,7 @@ function display_item_list(inv() as _items, invn() as short, marked as short, l 
         endif
         if ll>wh then scroll_bar(-offset,ll,wh,wh-1,(x+longest)*_fw2,y*_fh2+_fh2,11)
     next
-    flip
+    tScreen.update()
     return 0
 end function
 

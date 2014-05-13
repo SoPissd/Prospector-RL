@@ -190,7 +190,7 @@ function menu(bg as byte,te as string, he as string="", x as short=2, y as short
         next
         
         if bg<>bg_noflip then 
-            flip
+            tScreen.update()
         else
             rlprint ""
         endif

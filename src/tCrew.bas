@@ -1076,7 +1076,7 @@ function buy_weapon(st as short) as short
         display_ship()        
         rlprint ""
         d=menu(bg_parent,weapons,help,2,2)
-        flip
+        tScreen.update()
         if d>=1 and d<=last then
             b=player.h_maxweaponslot
             wmenu="Weapon Slot/"

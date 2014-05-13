@@ -179,7 +179,7 @@ function spacecombat(byref atts as _fleet,ter as short) as short
     next
     f=com_display(player, attacker(),0,e_track_p(),e_track_v(),e_map(),e_last,mines_p(),mines_v(),mines_last)
     rlprint ""
-    flip
+    tScreen.update()
     do
 
         tScreen.set(0)
@@ -187,7 +187,7 @@ function spacecombat(byref atts as _fleet,ter as short) as short
         display_ship(0)
         f=com_display(player, attacker(),0,e_track_p(),e_track_v(),e_map(),e_last,mines_p(),mines_v(),mines_last)
         rlprint ""
-        flip
+        tScreen.update()
 
         key=""
         player.e.tick
@@ -219,7 +219,7 @@ function spacecombat(byref atts as _fleet,ter as short) as short
                 endif
                 'set__color( 11,0
                 'draw string(62*_fw1,5*_fh2), "Engine :"&player.engine &" ("&speed(0) &" MP)",,Font2,custom,@_col
-                'flip
+                'tScreen.update()
                 key=keyin("1234678"&key_ac &key_ra &key_dropshield &key_sc &key_ru &key__esc &key_drop &key_fi &key_ru &key_togglemanjets &key_cheat)
                 'tScreen.set(0)
                 if key=key_ac then
@@ -338,7 +338,7 @@ function spacecombat(byref atts as _fleet,ter as short) as short
                             display_ship(0)
                             f=com_display(player, attacker(),0,e_track_p(),e_track_v(),e_map(),e_last,mines_p(),mines_v(),mines_last)
                             'rlprint ""
-                            flip
+                            tScreen.update()
 
                             key=""
                         loop until t=-1 or w=0 or f=0
@@ -555,7 +555,7 @@ function spacecombat(byref atts as _fleet,ter as short) as short
     display_ship(1)
     rlprint ""
 
-    flip
+    tScreen.update()
     tScreen.set(1)
 
     return 0

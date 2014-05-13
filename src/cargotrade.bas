@@ -394,7 +394,7 @@ private function sick_bay(st as short=0,obe as short=0) as short
                         set__color(11,0)
                         cls
                         display_ship()
-                        flip
+                        tScreen.update()
                         tScreen.set(1)
                         if c<>0 then
                             do

@@ -8,6 +8,7 @@ Print __VERSION__
 Print "Built on FB."+__FB_VERSION__+", "+__TIME__+" "+__DATE__
 end scope
 
+
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
 #if not (defined(head) or defined(main))
@@ -37,11 +38,9 @@ end scope
 
 #Macro inc(section,file,comments)
 '#print #file "---" #comments
+#undef test
 #undef head
 #undef main
-#undef both
-#undef test
-#undef intest
 '#print section -=- file  -=- comments
 #define section
 #if section="both"

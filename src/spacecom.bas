@@ -1451,7 +1451,7 @@ function com_display(defender as _ship, attacker() as _ship,  marked as short, e
         set__color( _shipcolor,0)
         draw string(defender.c.x*_fw1,defender.c.y*_fh1),"@",,font1,custom,@_col
     endif
-    'flip
+    'tScreen.update()
     return last
 end function
 
@@ -1493,7 +1493,7 @@ function com_radio(defender as _ship, attacker() as _ship, e_track_p() as _cords
             cls
             osx=calcosx(player.c.x,1)
             com_display(player, attacker(),0,e_track_p(),e_track_v(),e_map(),e_last,mines_p(),mines_v(),mines_last)
-            flip
+            tScreen.update()
             no_key=cursor(p,-1,osx)
         loop until no_key=key__esc or no_key=key__enter
         if no_key=key__enter then attacker(friendly(a)).target=p
@@ -1642,7 +1642,7 @@ function com_gettarget(defender as _ship, wn as short, attacker() as _ship,marke
         cls
         display_ship(0)
         a=com_display(defender,attacker(),marked,e_track_p(),e_track_v(),e_map(),e_last,mines_p(),mines_v(),mines_last)
-        flip
+        tScreen.update()
         if last>1 then 'More than 1ships to target
             text="+/- to move, enter to select, esc to skip. "&last
             if list_e(marked)<100 then
@@ -1939,7 +1939,7 @@ function com_detonatemine(d as short,mines_p() as _cords, mines_v() as short, by
                 endif
             next
         next
-        flip
+        tScreen.update()
         sleep 50
     next
     if configflag(con_tiles)=1 then

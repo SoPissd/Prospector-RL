@@ -52,7 +52,7 @@ function launch_probe() As Short
         display_stars(1)
         display_ship(1)
         rlprint "Which direction?"
-        Flip
+        tScreen.update()
         d=getdirection(keyin())
         If d>0 Then
             lastprobe+=1
@@ -150,7 +150,7 @@ function move_probes() As Short
                     display_stars(1)
                     display_ship
                     rlprint ""
-                    Flip
+                    tScreen.update()
                 EndIf
             EndIf
 

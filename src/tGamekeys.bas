@@ -53,7 +53,7 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
     dim as string control
 
     if walking<>0 then sleep 50
-    flip
+    tScreen.update()
     if _test_disease=1 and allowed<>"" then allowed="#"&allowed
     if tVersion.gamerunning and allowed<>"" then allowed=allowed &" " ' gamerunning == player.dead>0
     do 

@@ -132,7 +132,7 @@ function wormhole_ani(target As _cords) As Short
             set__color( _shipcolor,0)
             draw_string((p(a).x-player.osx)*_fw1,( p(a).y-player.osy)*_fh1,"@",font1,_col)
         EndIf
-        Flip
+        tScreen.update()
         Sleep 50
 '        set__color( rnd_range(180,214),rnd_range(170,204))
 '        if p(a).x-player.osx>=0 and p(a).x-player.osx<=_mwx and p(a).y-player.osy>=0 and p(a).y-player.osy<=20 then
@@ -724,7 +724,7 @@ function scanning() As Short
             display_planetmap(mapslot,osx,1)
             dplanet(planets(mapslot),slot,scanned,mapslot)
             rlprint ""
-            Flip
+            tScreen.update()
             no_key=keyin(key_la & key_tala &" abcdefghijklmnopqrstuvwxyz" &key_east &key_west)
             If no_key=key_east Then osx+=1
             If no_key=key_west Then osx-=1
@@ -1205,13 +1205,13 @@ function explore_space() As Short
     location=lc_onship
     display_stars(1)
     display_ship
-    Flip
+    tScreen.update()
     tScreen.set(0)
     Cls
     bg_parent=bg_shipstarstxt
     display_stars(1)
     display_ship
-    Flip
+    tScreen.update()
     tScreen.set(0)
 #if __FB_DEBUG__
     If debug=10 Then
@@ -1316,7 +1316,7 @@ function explore_space() As Short
             display_ship(1)
             If planetcom>0 Then display_system(planetcom-1)
             rlprint ""
-            Flip
+            tScreen.update()
         
             'tScreen.set(1)
             Key=keyin(allowed,walking)
@@ -1623,7 +1623,7 @@ function explore_space() As Short
                 display_stars(2)
                 display_ship(1)
                 rlprint ""
-                Flip
+                tScreen.update()
                 Key=Cursor(p2,0,osx,osy)
 
 
@@ -1647,7 +1647,7 @@ function explore_space() As Short
                 display_stars(2)
                 display_ship(1)
                 rlprint ""
-                Flip
+                tScreen.update()
                 tScreen.set(1)
                 If Asc(Key)<65 Or Asc(Key)>122 Then Key=""
                 text=gettext((p2.x-osx)*_fw1,(p2.y-osy)*_fh1,16,Key,1)

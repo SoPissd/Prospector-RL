@@ -240,7 +240,7 @@ function explore_planet(from As _cords, orbit As Short) As _cords
     tScreen.set(0)
     set__color(11,0)
     Cls
-    Flip
+    tScreen.update()
     set__color(11,0)
     Cls
 #if __FB_DEBUG__
@@ -801,13 +801,13 @@ EndIf
     display_planetmap(slot,osx,0)
     ep_display ()
     display_awayteam()
-    Flip
+    tScreen.update()
     set__color(11,0)
     Cls
     display_planetmap(slot,osx,0)
     ep_display ()
     display_awayteam()
-    Flip
+    tScreen.update()
     
     
     If planets_flavortext(slot)<>"" Then
@@ -871,7 +871,7 @@ EndIf
             ep_display_clouds(cloudmap())
             walking=alerts()
             rlprint("")
-            Flip
+            tScreen.update()
         EndIf
         
         
@@ -901,7 +901,7 @@ EndIf
             equip_awayteam(slot)
             If awayteam.movetype=2 Or awayteam.movetype=3 Then allowed=allowed &key_ju
             If awayteam.movetype=4 Then allowed=allowed &key_te
-            Flip
+            tScreen.update()
             set__color(11,0)
             Cls
             display_planetmap(slot,osx,0)
@@ -924,7 +924,7 @@ EndIf
             display_awayteam()
             ep_display_clouds(cloudmap())
             rlprint("")
-            Flip
+            tScreen.update()
             
             tScreen.set(0)
             set__color(11,0)
@@ -934,7 +934,7 @@ EndIf
             display_awayteam()
             ep_display_clouds(cloudmap())
             rlprint("")
-            Flip
+            tScreen.update()
             
             If nextmap.m=0 Then Key=(keyin(allowed,walking))
             DbgLogExplorePlanet("&" & key)
@@ -946,7 +946,7 @@ EndIf
                 display_awayteam()
                 ep_display_clouds(cloudmap())
                 rlprint("")
-                Flip
+                tScreen.update()
             EndIf
             awayteam.oxygen=awayteam.oxygen-maximum(awayteam.oxydep*awayteam.helmet,tmap(awayteam.c.x,awayteam.c.y).oxyuse)-awayteam.leak*awayteam.helmet
             If awayteam.oxygen<=0 and (awayteam.helmet=1 or tmap(awayteam.c.x,awayteam.c.y).oxyuse>0) Then 
@@ -1060,7 +1060,7 @@ EndIf
                 If x-osx>=0 And x-osx<=_mwx And nightday(x)=2 Then draw_string((x-osx)*_fw1,21*_fh1+(_fh1-_fh2)/2-_fh1/2,Chr(193),Font2,_tcol)
             Next
             rlprint ""
-            Flip
+            tScreen.update()
             DbgLogExplorePlanet("drew everything again and flipped")
             'tScreen.set(1)
 

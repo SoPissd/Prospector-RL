@@ -741,7 +741,7 @@ function alienbomb(c As Short,slot As Short) As Short
                 EndIf
             Next
         Next
-        Flip
+        tScreen.update()
         Sleep 50
     Next
 

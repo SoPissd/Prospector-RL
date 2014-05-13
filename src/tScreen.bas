@@ -108,6 +108,11 @@ function rgbcol(r As Short,g As Short,b As Short) As integer
 	return i
 End Function
 
+function update() As Short
+    if Enabled<>0 then flip	
+	return 0
+End Function
+
 end namespace
 #define cut2bottom
 #endif'main

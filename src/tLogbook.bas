@@ -483,7 +483,7 @@ function logbook() as short
             if key=key_filter then last=lb_filter(lobk(),lobn(),lobc(),lobp(),last)
                 
         endif
-        flip
+        tScreen.update()
         key=keyin("123456789 " &key_sc &key__esc &key__enter &key_comment &key_walk &key_filter &"t",walking)
         a=getdirection(key)
         if a=5 then key=key__enter 

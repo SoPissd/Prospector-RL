@@ -1707,7 +1707,7 @@ function crew_menu(crew() as _crewmember, from as short, r as short=0,text as st
             if from<>0 then draw string (10,tScreen.y-_fh2),key_rename &" rename a member, s set Item, c clear, e toggle autoequip, esc exit",,font2,custom,@_col
         endif
         if r=1 then draw string (10,tScreen.y-_fh2),"installing augment "&text &": Enter to choose crewmember, esc to quit, a for all",,font2,custom,@_col
-        'flip
+        'tScreen.update()
         textbox(crew_bio(p),_mwx,1,20,15,1)
         tScreen.set(0)
         no_key=keyin(,1)
@@ -1730,7 +1730,7 @@ function crew_menu(crew() as _crewmember, from as short, r as short=0,text as st
     loop until no_key=key__esc or no_key=" "
     tScreen.set(0)
     cls
-    flip
+    tScreen.update()
     return 0
 end function
 

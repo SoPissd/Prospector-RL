@@ -391,7 +391,7 @@ function planet_cursor(p as _cords,mapslot as short,byref osx as short,shteam as
     else
         rlprint cords(p)&": "&"Unknown"
     endif
-    flip
+    tScreen.update()
     return key
 end function
 

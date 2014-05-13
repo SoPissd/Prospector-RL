@@ -651,7 +651,7 @@ function play_poker(st as short) as short
             pli=poker_next(pli,p())
             draw_poker_table(p(),,,rules)
             rlprint ""
-            flip
+            tScreen.update()
             if pli>0 then
                 if p(pli).fold=0 and p(pli).in=1 then
                     if pli=4 then

@@ -801,7 +801,7 @@ function post_mortemII(text as string) as short
             x+=len(header(i))*_fw2+_fw1
         next
         rlprint ""
-        flip
+        tScreen.update()
         key=keyin(,3)
         select case key
         case "1","a","A"
