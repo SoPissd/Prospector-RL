@@ -2,6 +2,11 @@
 
 'Cls
 On Error Goto errormessage
+scope
+#include "version.bi"
+Print __VERSION__
+Print "Built on FB."+__FB_VERSION__+", "+__TIME__+" "+__DATE__
+end scope
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -63,19 +68,9 @@ inc("both",	"tScreen.bas",				"wrap screen,screenset,locate,width,color so conso
 inc("both",	"tColor.bas",				"maps color codes to screen via palette")
 inc("both",	"version.bas",				"provides ErrorlogFilename and Errorscreen. same vars too")
 '
-Print
-Print "Prospector "&__VERSION__
-Print "Built "+__DATE__+" "+__TIME__
-Print "FB."+__FB_VERSION__
-Print
-DbgScreeninfo
-chdir exepath
-'
 'core
 '
-#print ready...
 inc("both",	"tRng.bas",					"rng with retrievable seed")
-#print ready...
 inc("both",	"tPng.bas",					"png load? save functions")
 '
 inc("both",	"kbinput.bas",				"keyplus,keyminus,Pressanykey,keyinput and consts for simple keys.")
@@ -100,12 +95,11 @@ inc("both",	"tTime.bas",				"")
 #print head
 #undef main
 #include "main.bi"
-#print headers loaded
 #print loading implementations
 #undef head
 #define main
 #include "main.bi"
-#print implementations loaded
+#print Make started
 #endif'main
 
 
@@ -115,10 +109,11 @@ inc("both",	"tTime.bas",				"")
 #ifdef main
 namespace tMain
 function init() as Integer
-	Print "Switching"
+	Print tModule.status()
 	Print
-	tError.ErrorNr= (Initgame()<> 0) or Prospector()
-	return 0
+	chdir exepath
+	tError.ErrorNr= Initgame() or Prospector()
+	return tError.ErrorNr
 end function
 end namespace'tMain
 #endif'main

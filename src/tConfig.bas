@@ -204,7 +204,7 @@ end function
 
 
 function load_config() as short
-    dim as short f,i,j
+    dim as short f,i,j,iLine
     dim as string text,rhs,lhs
 
     if fileexists("config.txt") then
@@ -212,7 +212,8 @@ function load_config() as short
         open "config.txt" for input as #f
         print "loading config";
         do
-            print ".";
+        	iLine +=1
+            if (iLine= (iLine\4)*4) then print ".";
             line input #f,text
             if instr(text,"#")=0 and len(text)>1 then
                 text=lcase(text)
@@ -305,7 +306,6 @@ function load_config() as short
 		endif
     endif
 
-	print
 	print
 	
     if configflag(con_tiles)=0 then

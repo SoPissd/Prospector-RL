@@ -83,7 +83,7 @@ function load_sounds() as short
     sounds(11)="land"
 	sounds(12)="pain"
 
-	print "Loading sounds:";
+	print "loading sounds";
    
 	#ifdef _FMODSOUND
 	   if fsound_init(48000,11,0)=0 then

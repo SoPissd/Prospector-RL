@@ -75,10 +75,16 @@ public function Register(aName as string,_
 	lastmodule+=1
 	modules(lastmodule)=amodule
 	'
-	? amodule.aName +".Init()"
+	'? amodule.aName +".Init()"
+	'? amodule.aName +" ";
 	amodule.fInit()
 	return 0
 End Function
+
+public function status() as string
+	return "" &lastmodule &" modules initialized."
+End Function
+
 
 '
 #endif'main

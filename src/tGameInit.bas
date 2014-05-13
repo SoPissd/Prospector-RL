@@ -927,14 +927,14 @@ function Initgame() as integer
 	load_keyset()
 	load_sounds()
 	tPalette.load_palette()
-	DbgScreeninfo
-	'DbgWeapdumpCSV
-	   
    	load_fonts()
 	load_tiles()
+	'
+	DbgScreeninfo
 	register()
 	setglobals
-    DbgTilesCSV
+	'DbgWeapdumpCSV
+    'DbgTilesCSV
     return 0   
 End function
 #define cut2bottom

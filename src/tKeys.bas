@@ -251,7 +251,7 @@ function load_keyset() as short
         close f
 
         for i=1 to b
-            print ".";
+        	if (i and 3)=0 then print ".";
             text=texts(i)
             if left(text,1)<>"#" and len(text)>0 then
                 lctext=lcase(text)

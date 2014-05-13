@@ -119,8 +119,6 @@ End Namespace
 	'
 	iErrConsole=freefile
 	open err for output as iErrConsole
-	print #iErrConsole,"console err!"
-	'close #f
 
 	#Define LogWarning(Text) Assert(tError.log_warning(__FILE__,__FUNCTION__,__LINE__,Text))						' disappears from release
 	tModule.register("tError",@tError.init()) ',@tError.load(),@tError.save())
@@ -128,6 +126,7 @@ End Namespace
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tError -=-=-=-=-=-=-=-
+	print #iErrConsole,"console err!"
 	? tError.log_warning("ok.log","fun",10,"txt")
 	LogWarning("warning")
 #endif'test
