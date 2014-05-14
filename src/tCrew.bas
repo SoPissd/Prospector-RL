@@ -65,6 +65,10 @@ Type _crewmember
     story(10) As Byte
 End Type
 
+Dim Shared crew(255) As _crewmember
+Dim Shared As Byte startingweapon
+Dim Shared crew_desig(16) As String
+
 
 declare function SetCaptainsprite(nr as Byte) as short
 declare function add_talent(cr as short, ta as short, value as single) as single
@@ -85,12 +89,13 @@ declare function bunk_multi() as single
 declare function changemoral(value as short, where as short) as short
 declare function is_passenger(i as short) as short
 
+declare function get_item_list(invit() as _items, invnit()as short,ty as short=0,ty2 as short=0,ty3 as short=0,ty4 as short=0,noequip as short=0) as short
+
 'private function character_name(byref gender as byte) as string
 'private function count_crew(crew() as _crewmember) as short
 'private function augment_text(c as _crewmember) as string
 'private function skill_text(c as _crewmember) as string
 'private function Crewblock() as string
-'private function get_item_list(invit() as _items, invnit()as short,ty as short=0,ty2 as short=0,ty3 as short=0,ty4 as short=0,noequip as short=0) as short
 'private function items_table() as string
 'private function item_assigned(i as short) as short
 'private function first_unused(i as short) as short
@@ -105,10 +110,6 @@ function init() as Integer
 end function
 end namespace'tCrew
 
-
-Dim Shared crew(255) As _crewmember
-
-Dim Shared As Byte startingweapon
 
 'Declare function best_crew(skill As Short,no As Short) As Short
 
@@ -1075,7 +1076,7 @@ function buy_weapon(st as short) as short
         cls
         display_ship()        
         rlprint ""
-        d=menu(bg_parent,weapons,help,2,2)
+        d=textmenu(bg_parent,weapons,help,2,2)
         tScreen.update()
         if d>=1 and d<=last then
             b=player.h_maxweaponslot
@@ -1089,7 +1090,7 @@ function buy_weapon(st as short) as short
             next
             wmenu=wmenu+"Exit"
             b=b+1            
-            c=menu(bg_parent,wmenu)
+            c=textmenu(bg_parent,wmenu)
             if c<b then
                 if player.weapons(c).desig<>"" and d<>5 then 
                     if not(askyn("Do you want to replace your "&player.weapons(c).desig &"(y/n)")) then c=b

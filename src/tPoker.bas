@@ -660,7 +660,7 @@ function play_poker(st as short) as short
                         for i=1 to 4
                             pot+=p(i).pot
                         next
-                        move=menu(bg_noflip,"Your bet (In pot: "& credits(pot*rules.bet) &"):/see(" & (highest_pot(p())-p(4).pot)*rules.bet & "Cr.)/raise(" & (highest_pot(p())+1-p(4).pot)*rules.bet & "Cr.)/fold","",24,2,1)
+                        move=textmenu(bg_noflip,"Your bet (In pot: "& credits(pot*rules.bet) &"):/see(" & (highest_pot(p())-p(4).pot)*rules.bet & "Cr.)/raise(" & (highest_pot(p())+1-p(4).pot)*rules.bet & "Cr.)/fold","",24,2,1)
                         if move=1 then p(4).bet=highest_pot(p())-p(4).pot
                         if move=2 then p(4).bet=highest_pot(p())+1-p(4).pot
                         if move=3 or move=-1 then p(4).fold=1

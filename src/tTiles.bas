@@ -76,6 +76,9 @@ Type _tile
     turnsonleavetext As String*512
 End Type
 
+Dim Shared gtiles(2048) As Any Ptr
+Dim Shared gt_no(4096) As Integer
+
 declare function load_tiles() as short
 declare function plant_name(ti as _tile) as string
 

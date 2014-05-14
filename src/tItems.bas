@@ -55,6 +55,14 @@ Type _items
 End Type
 
 
+Dim Shared item(25000) As _items
+Dim Shared lastitem As Integer=-1
+Dim Shared shopitem(20,30) As _items
+
+Dim Shared reward(11) As Single
+
+
+
 declare function calc_resrev() as short
 declare function findbest(t as short,p as short=0, m as short=0,id as short=0) as short
 declare function make_locallist(slot as short) as short
@@ -87,14 +95,6 @@ end function
 end namespace'tItems
 
 	
-Dim Shared item(25000) As _items
-Dim Shared lastitem As Integer=-1
-Dim Shared shopitem(20,30) As _items
-
-Dim Shared reward(11) As Single
-
-
-
 function calc_resrev() as short
     dim as short i
     static v as integer
@@ -831,7 +831,7 @@ end function
 
 function item_filter() as short
     dim a as short
-    a=menu(bg_parent,"Item type:/Transport/Ranged weapons/Armor/Close combat weapons/Medical supplies/Grenades/Artwork/Resources/Equipment/Ship equipment/All Other/None/Exit","",20,2)
+    a=textmenu(bg_parent,"Item type:/Transport/Ranged weapons/Armor/Close combat weapons/Medical supplies/Grenades/Artwork/Resources/Equipment/Ship equipment/All Other/None/Exit","",20,2)
     if a>11 then a=0
     if a<0 then a=0
     return a

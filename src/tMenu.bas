@@ -42,26 +42,13 @@ Enum backgrounds
 End Enum
 
 
-declare function menu(_
-		bg as short,te as string, he as string="", x as short=2, y as short=2, _
-	    blocked as short=0, markesc as short=0,st as short=-1,loca as short=1) as short
+declare function textmenu(bg as short,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=1) as short
 
-
-#endif'head
-#ifdef main
-'     -=-=-=-=-=-=-=- MAIN: tMenu -=-=-=-=-=-=-=-
-
-namespace ntMenu
-function init() as Integer
-	return 0
-end function
-end namespace'ntMenu
 
 Type tMenu
   declare constructor()
   declare destructor()
-  declare function menu(bg as short,te as string, he as string="", x as short=2, y as short=2, _
-	          blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as short
+  declare function go(bg as short,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as short
   declare function init() as short
   declare function before() as short
   declare function after() as short
@@ -102,18 +89,22 @@ Private:
     dim as any ptr logo
 End Type
 
-dim shared aMenu as tMenu
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tMenu -=-=-=-=-=-=-=-
+
+namespace ntMenu
+function init() as Integer
+	return 0
+end function
+end namespace'ntMenu
 
 Constructor tMenu()
 End Constructor
 
 Destructor tMenu()
 End Destructor
-
-function menu(bg as short,te as string, he as string="", x as short=2, y as short=2, _
-	          blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as short
-	return aMenu.Menu(bg,te,he,x,y,blocked,markesc,st,loca) 	          
-end function
 
 function tMenu.before() as short
 	dim as integer a
@@ -156,7 +147,7 @@ function tMenu.before() as short
             tCompany.display_stock
             tCompany.portfolio(17,2)
             rlprint ""
-        case bg_roulette
+        	case bg_roulette
             drawroulettetable
             display_ship
             rlprint ""
@@ -313,8 +304,7 @@ function tMenu.finish() as short
 End Function
 
 
-function tMenu.menu(sbg as short,ate as string, ahe as string="", sx as short=2, sy as short=2, _
-	          sblocked as short=0, smarkesc as short=0, sst as short=-1, sloca as short=0) as short
+function tMenu.go (sbg as short,ate as string, ahe as string="", sx as short=2, sy as short=2, sblocked as short=0, smarkesc as short=0, sst as short=-1, sloca as short=0) as short
     bg= sbg
     te= ate
     he= ahe
@@ -336,10 +326,13 @@ function tMenu.menu(sbg as short,ate as string, ahe as string="", sx as short=2,
     loop until e>0
     return finish()
 end function
-#define cut2bottom
+
+function textmenu(bg as short,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as short
+	dim aMenu as tMenu
+	return aMenu.go(bg,te,he,x,y,blocked,markesc,st,loca) 	          
+end function
+
 #endif'main
-
-
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: tMenu -=-=-=-=-=-=-=-
 	tModule.register("tMenu",@ntMenu.init()) ',@ntMenu.load(),@ntMenu.save())

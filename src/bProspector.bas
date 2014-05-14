@@ -1,9 +1,9 @@
-'main.
+'bProspector.
 
 'Cls
 On Error Goto errormessage
 scope
-#include "version.bi"
+#include "tVersion.bi"
 Print __VERSION__
 Print "Built on FB."+__FB_VERSION__+", "+__TIME__+" "+__DATE__
 end scope
@@ -62,18 +62,18 @@ inc("both",	"zlib.bi",					"")
 inc("head",	"tDefines.bas",				"head, basic true/false/null")
 inc("both",	"tModule.bas",				"the module loader. first init, then save/load")
 inc("main",	"tDefines.bas",				"main, register the unit")
-inc("both",	"debug.bas",				"debug macros or their null eqivalents. also include loading")
+inc("both",	"tDebug.bas",				"debug macros or their null eqivalents. also include loading")
 inc("both",	"tScreen.bas",				"wrap screen,screenset,locate,width,color so console code works too")
 inc("both",	"tColor.bas",				"maps color codes to screen via palette")
 inc("both",	"tConsole.bas",				"all the keyboard wrappers needed to trap for application close always")
-inc("both",	"version.bas",				"provides ErrorlogFilename and Errorscreen. same vars too")
+inc("both",	"tVersion.bas",				"provides ErrorlogFilename and Errorscreen. same vars too")
 '
 'core
 '
 inc("both",	"tRng.bas",					"rng with retrievable seed")
 inc("both",	"tPng.bas",					"png load? save functions")
 '
-inc("both",	"kbinput.bas",				"keyplus,keyminus,Pressanykey,keyinput and consts for simple keys.")
+inc("both",	"tKbinput.bas",				"keyplus,keyminus,Pressanykey,keyinput and consts for simple keys.")
 inc("both",	"tFile.bas",				"Openfile++, filetostring, stringtofile, logtofile and more utilities")
 inc("both",	"tUtils.bas",				"string helpers mostly. needs tests to be written")
 inc("both",	"tError.bas",				"Errorhandler messages for graphics and console. logging too")
@@ -93,12 +93,12 @@ inc("both",	"tTime.bas",				"")
 #print loading headers
 #define head
 #undef main
-#include "main.bi"
+#include "bProspector.bi"
 
 #print loading implementations
 #undef head
 #define main
-#include "main.bi"
+#include "bProspector.bi"
 
 #print Make started
 #endif'main

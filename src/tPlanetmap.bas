@@ -32,10 +32,11 @@
 Const max_maps=2047
 Dim Shared planetmap(60,20,max_maps) As Short
 
+declare function cursor(target as _cords,map as short,osx as short,osy as short=0,radius as short=0) as string
+
 declare function rnd_point(m as short=-1,w as short=-1,t as short=-1,vege as short=-1)as _cords
 declare function vege_per(slot as short) as single
 declare function display_item(i as integer,osx as short,slot as short) as short
-declare function cursor(target as _cords,map as short,osx as short,osy as short=0,radius as short=0) as string
 declare function display_planetmap(slot as short,osx as short,bg as byte) as short
 declare function fixstarmap() as short
 declare function changetile(x as short,y as short,m as short,t as short) as short

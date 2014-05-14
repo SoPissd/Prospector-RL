@@ -180,7 +180,7 @@ function buygoods(st as short) as short
     
     text=station_goods(st,0)
     set__color(11,0)
-    c=menu(bg_ship,text,"",2,3)
+    c=textmenu(bg_ship,text,"",2,3)
     if c<10 then
         m=basis(st).inv(c).v
         if basis(st).inv(c).v>0 then
@@ -298,7 +298,7 @@ function sellgoods(st as short) as short
         next
         set__color(11,0)
         if em>0 then
-            c=menu(bg_trading+st,text,,2,14)
+            c=textmenu(bg_trading+st,text,,2,14)
             if c>0 and c<=b then
                 if player.cargo(c).x>1 and player.cargo(c).x<25 then
                     ct=player.cargo(c).x-1

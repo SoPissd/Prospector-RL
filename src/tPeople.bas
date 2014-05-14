@@ -306,7 +306,7 @@ function has_questguy_want(i as short,byref t as short) as short
         next
         fl=20-cc
         if fl<0 then fl=0
-        cc=menu(bg_parent,text,,0,fl)
+        cc=textmenu(bg_parent,text,,0,fl)
         if cc>0 then 
             t=il(cc)
             return il(cc)

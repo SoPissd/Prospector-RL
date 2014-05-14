@@ -1,4 +1,4 @@
-'retirement.
+'tRetirement.
 '
 'namespace: tRetirement
 
@@ -21,13 +21,13 @@
 #endif'both
 '
 #ifdef intest
-'     -=-=-=-=-=-=-=- TEST: retirement -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- TEST: tRetirement -=-=-=-=-=-=-=-
 
 #undef intest
 #define test
 #endif'test
 #ifdef head
-'     -=-=-=-=-=-=-=- HEAD: retirement -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- HEAD: tRetirement -=-=-=-=-=-=-=-
 
 
 'private function tRetirement
@@ -40,7 +40,7 @@
 
 #endif'head
 #ifdef main
-'     -=-=-=-=-=-=-=- MAIN: retirement -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- MAIN: tRetirement -=-=-=-=-=-=-=-
 
 namespace tRetirement
 	
@@ -55,7 +55,7 @@ public function buytitle() as short
     dim as integer price
     dim as string title
     dim sameorbetter as byte
-    a=menu(bg_parent,"Buy title /Lord - 1,000 Cr./Baron - 5,000 Cr./Viscount - 10,000 Cr./Count 25,000 Cr./Marquees - 50,000 Cr./Duke - 100,000 Cr./Exit")
+    a=textmenu(bg_parent,"Buy title /Lord - 1,000 Cr./Baron - 5,000 Cr./Viscount - 10,000 Cr./Count 25,000 Cr./Marquees - 50,000 Cr./Duke - 100,000 Cr./Exit")
     if a>0 and a<7 then
         if a=1 then
             title="Lord"
@@ -98,7 +98,7 @@ end function
 
 
 
-public function retirement() as short
+public function Retirement() as short
     dim as short a,b
     dim price(9) as integer
     dim asset(9) as string
@@ -140,7 +140,7 @@ public function retirement() as short
     mtext=mtext &"back"
     htext=htext &"/"
     do
-        a=menu(bg_parent,"Retirement/ retire now/ buy assets/back")
+        a=textmenu(bg_parent,"tRetirement/ retire now/ buy assets/back")
         if a=1 then
             if askyn("Do you really want to retire now? (y/n)") then
                 if askyn("Are you sure? (y/n)") then 
@@ -150,7 +150,7 @@ public function retirement() as short
         endif
         if a=2 then
             do
-                b=menu(bg_parent,mtext,htext)
+                b=textmenu(bg_parent,mtext,htext)
                 
                 if b>0 and b<10 then
                     if assets(b-1)=0 or b=2 or b=1 then
@@ -611,9 +611,9 @@ End Namespace
 
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: retirement -=-=-=-=-=-=-=-
-	tModule.register("tRetirement",@tRetirement.init()) ',@retirement.load(),@retirement.save())
+	tModule.register("tRetirement",@tRetirement.init()) ',@tRetirement.load(),@tRetirement.save())
 #endif'main
 
 #ifdef test
-#print -=-=-=-=-=-=-=- TEST: retirement -=-=-=-=-=-=-=-
+#print -=-=-=-=-=-=-=- TEST: tRetirement -=-=-=-=-=-=-=-
 #endif'test

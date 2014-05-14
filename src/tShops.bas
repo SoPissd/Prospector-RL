@@ -485,7 +485,7 @@ function shop(sh as short,pmod as single,shopn as string) as short
     desc=desc &"/"
     display_ship()
     rlprint("")
-    c=menu(bg_parent,t,desc,2,2)
+    c=textmenu(bg_parent,t,desc,2,2)
     select case c
     case order
         place_shop_order(sh)
@@ -619,7 +619,7 @@ function mudds_shop() as short
     rlprint "An overweight gentleman greets you 'Welcome to Mudds Incredible Bargains' Do you wish to buy or sell?"
     do
         display_ship
-        a=menu(bg_parent,"Mudds Shop/Buy/Sell/Exit")
+        a=textmenu(bg_parent,"Mudds Shop/Buy/Sell/Exit")
         if a=1 then 
             do
                 b=shop(7,2.5,"Mudds Incredible Bargains")
@@ -646,7 +646,7 @@ DbgLogExplorePlanet("sell_alien: " &sh &"; lastcagedmonster: " &lastcagedmonster
         next
         t=t & "/Exit"
 DbgLogExplorePlanet("sell_alien: " & t)
-        c=menu(bg_parent,t)
+        c=textmenu(bg_parent,t)
         if c>0 and c<=lastcagedmonster then
             biodata=get_biodata(cagedmonster(c))
             select case sh
@@ -686,7 +686,7 @@ function botsanddrones_shop() as short
     do
     display_ship
     rlprint "Welcome to the Bot-Bin! This sectors most sophisticated 2nd hand robot store."
-    a=menu(bg_parent,"The Bot-bin/Buy/Sell/Exit")
+    a=textmenu(bg_parent,"The Bot-bin/Buy/Sell/Exit")
     if a=1 then 
         do
             b=shop(25,0.8,"The Bot-bin")

@@ -1,4 +1,4 @@
-'space.
+'tSpace.
 '
 'defines:
 'add_stations=2, add_stars=2, add_wormholes=2, add_ano=1,
@@ -21,13 +21,13 @@
 #endif'both
 '
 #ifdef intest
-'     -=-=-=-=-=-=-=- TEST: space -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- TEST: tSpace -=-=-=-=-=-=-=-
 
 #undef intest
 #define test
 #endif'test
 #ifdef head
-'     -=-=-=-=-=-=-=- HEAD: space -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- HEAD: tSpace -=-=-=-=-=-=-=-
 
 declare function add_stations() as short
 declare function add_stars() as short
@@ -54,7 +54,7 @@ declare function make_civilisation(slot as short,m as short) as short
 
 #endif'head
 #ifdef main
-'     -=-=-=-=-=-=-=- MAIN: space -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- MAIN: tSpace -=-=-=-=-=-=-=-
 
 namespace tSpace
 function init() as Integer
@@ -1902,10 +1902,10 @@ end function
 #endif'main
 
 #if (defined(main) or defined(test))
-'      -=-=-=-=-=-=-=- INIT: space -=-=-=-=-=-=-=-
-	tModule.register("tSpace",@tSpace.init()) ',@space.load(),@space.save())
+'      -=-=-=-=-=-=-=- INIT: tSpace -=-=-=-=-=-=-=-
+	tModule.register("tSpace",@tSpace.init()) ',@tSpace.load(),@tSpace.save())
 #endif'main
 
 #ifdef test
-#print -=-=-=-=-=-=-=- TEST: space -=-=-=-=-=-=-=-
+#print -=-=-=-=-=-=-=- TEST: tSpace -=-=-=-=-=-=-=-
 #endif'test

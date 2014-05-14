@@ -615,7 +615,7 @@ EndIf
 
             specialflag(2)=1
             rlprint "As you enter the lower atmosphere a powerful energy beam strikes your ship from the surface below! A planetery defense system has detected you!"
-            a=Menu(bg_parent,"Flee into:/Space/Below horizon")
+            a=textmenu(bg_parent,"Flee into:/Space/Below horizon")
             If a=1 Then
                 If skill_test(player.pilot(location),st_veryhard,"Pilot") Then
                     If skill_test(player.pilot(location),st_veryhard,"Pilot") Then

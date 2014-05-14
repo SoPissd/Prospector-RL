@@ -1,4 +1,4 @@
-'pirates.
+'ttPirates.
 '
 'defines:
 'clearfleetlist=1, set_fleet=5, friendly_pirates=0, join_fight=0,
@@ -20,13 +20,13 @@
 #endif'both
 '
 #ifdef intest
-'     -=-=-=-=-=-=-=- TEST: pirates -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- TEST: tPirates -=-=-=-=-=-=-=-
 
 #undef intest
 #define test
 #endif'test
 #ifdef head
-'     -=-=-=-=-=-=-=- HEAD: pirates -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- HEAD: tPirates -=-=-=-=-=-=-=-
 
 declare function clearfleetlist() as short
 declare function set_fleet(fl as _fleet) as short
@@ -49,7 +49,7 @@ declare function move_fleets() as short
 
 #endif'head
 #ifdef main
-'     -=-=-=-=-=-=-=- MAIN: pirates -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- MAIN: tPirates -=-=-=-=-=-=-=-
 
 namespace pirates
 function init() as Integer
@@ -94,12 +94,12 @@ function set_fleet(fl as _fleet) as short
 end function
 
 
-function friendly_pirates(f as short) as short
+function friendly_tPirates(f as short) as short
     dim as short a,b,i,mo,lastbay,r
     for i=1 to 10
         if player.cargo(i).x>=1 then lastbay+=1
     next
-    a=menu(bg_ship,"The pirate fleet hails you, demanding you drop all your cargo/Tell them you have no cargo/Drop some cargo/Drop all cargo/Offer money/Try to flee/Attack","",0,16)
+    a=textmenu(bg_ship,"The pirate fleet hails you, demanding you drop all your cargo/Tell them you have no cargo/Drop some cargo/Drop all cargo/Offer money/Try to flee/Attack","",0,16)
     select case a
     	case 1
         if getnextfreebay=1 or player.cargo(1).x<=0 then
@@ -121,7 +121,7 @@ function friendly_pirates(f as short) as short
         endif
     case 2
         do
-            b=menu(bg_ship,cargobay("Drop(" &mo & "Cr. dropped)/",0))
+            b=textmenu(bg_ship,cargobay("Drop(" &mo & "Cr. dropped)/",0))
             if b>=1 or b<=lastbay then
                 mo+=player.cargo(i).y
                 player.cargo(i).x=1
@@ -233,7 +233,7 @@ function join_fight(f as short) as short
     if f2<=6 then f2ty=8
     rlprint add_a_or_an(fname(fty),1) &" and "& add_a_or_an(fname(f2ty),0) &" are fighting here."
     q="On which side do you want to join the fight?/"& fname(fty) &f &":"&fty &"/" & fname(f2ty)  &f2 &":"&f2ty  & "/Ignore fight"
-    des=menu(bg_ship,q,"",0,18,1) 
+    des=textmenu(bg_ship,q,"",0,18,1) 
     if des=3 or des=-1 then return 0
     if des=1 then 'aggr1=On PCs side
         faggr=1
@@ -292,8 +292,8 @@ function meet_fleet(f as short)as short
             if q=1 and f>5 then
                 question="There is "&add_a_or_an(fname(fleet(f).ty),0) &" on an attack vector. Do you want to engage? (y/n)"
                 if fleet(f).ty=2 and fleet(f).con(15)<rnd_range(1,20) then
-                    'Friendly pirates
-                    q=friendly_pirates(f)
+                    'Friendly tPirates
+                    q=friendly_tPirates(f)
                     lastturncalled=tVersion.gameturn
                     display_stars(1)
                     display_ship
@@ -540,7 +540,7 @@ function ss_sighting(i as short) as short
     if fleet(i+1).con(2)>0 then
         select case fleet(fleet(i+1).con(2)).ty
             case is=2
-                text3=text3 &" Word on the station is pirates have attacked!"
+                text3=text3 &" Word on the station is tPirates have attacked!"
             case is=4
                 text3=text3 &" Word on the station is the pirate ship "& fleet(fn).mem(1).desig &" attacked!"
             case is=5
@@ -583,15 +583,15 @@ end function
 
 function update_targetlist()as short
     static lastcalled as short
-    dim as short b,piratesys
-    piratesys=random_pirate_system
-    if piratesys<0 then return 0
+    dim as short b,tPiratesys
+    tPiratesys=random_pirate_system
+    if tPiratesys<0 then return 0
     targetlist(1).x=player.c.x
     targetlist(1).y=player.c.y
     if frac(lastcalled/25)=0 then
-        targetlist(0).x=map(piratesys).c.x-30+rnd_range(0,60)
-        targetlist(0).y=map(piratesys).c.y-10+rnd_range(0,20)
-        targetlist(2)=map(piratesys).c
+        targetlist(0).x=map(tPiratesys).c.x-30+rnd_range(0,60)
+        targetlist(0).y=map(tPiratesys).c.y-10+rnd_range(0,20)
+        targetlist(2)=map(tPiratesys).c
         targetlist(3).x=rnd_range(0,sm_x)
         targetlist(3).y=rnd_range(0,sm_y)
         targetlist(4).x=rnd_range(0,sm_x)
@@ -670,10 +670,10 @@ function move_fleets() as short
                 if fleet(a).c.x=targetlist(fleet(a).t).x and fleet(a).c.y=targetlist(fleet(a).t).y then
                     if fleet(a).ty>5 and fleet(a).ty<8 then
                         if civ(fleet(a).ty-6).inte=2 then
-                            merctrade(fleet(a))
+                            tCompany.merctrade(fleet(a))
                         endif
                         if fleet(a).c.x=civ(fleet(a).ty-6).home.x and fleet(a).c.y=civ(fleet(a).ty-6).home.y then
-                            fleet(a)=unload_f(fleet(a),11)
+                            fleet(a)=tCompany.unload_f(fleet(a),11) 
                             fleet(a)=load_f(fleet(a),11)
                         endif
                     endif
@@ -691,7 +691,7 @@ function move_fleets() as short
                 for s=0 to 2
                     
                     if fleet(a).ty=1 or fleet(a).ty=3 then
-                        if fleet(a).c.x=basis(s).c.x and fleet(a).c.y=basis(s).c.y then merctrade(fleet(a))
+                        if fleet(a).c.x=basis(s).c.x and fleet(a).c.y=basis(s).c.y then tCompany.merctrade(fleet(a))
                     endif
                     if fleet(a).ty<>3 and fleet(a).ty<>1 then 'No Merchant or Patrol
                         if distance(fleet(a).c,basis(s).c)<12 then
@@ -717,7 +717,7 @@ end function
 
 
 function piratecrunch(fl as _fleet) as _fleet
-    'Turns pirates into bigger ship. 3 F=1C 3C=1D 3D=1B
+    'Turns tPirates into bigger ship. 3 F=1C 3C=1D 3D=1B
     dim r as _fleet
     dim as short ss,ts,a,i
     dim as string w,search(3)

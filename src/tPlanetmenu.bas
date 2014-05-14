@@ -122,7 +122,7 @@ function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _
                     basis(9).inv(a).v=rnd_range(1,8-a)
                 Next
             EndIf
-            trading(tmap(awayteam.c.x,awayteam.c.y).gives+1)
+            tCompany.trading(tmap(awayteam.c.x,awayteam.c.y).gives+1)
             player.lastvisit.s=tmap(awayteam.c.x,awayteam.c.y).gives+1
             player.lastvisit.t=tVersion.gameturn
         Else
@@ -461,7 +461,7 @@ function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _
                     basis(9).inv(a).v=0
                 Next
             EndIf
-            trading(9)
+            tCompany.trading(9)
         EndIf
 
     EndIf
@@ -1106,7 +1106,7 @@ function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _
                         Next
                         text=text+"Exit"
                         d=d+1
-                        e=Menu(bg_awayteam,text)
+                        e=textmenu(bg_awayteam,text)
                         If e<d Then
                             player.weapons(e)=(planets(slot).weapon(c))
                             b=1
@@ -1217,13 +1217,13 @@ function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _
             ' Alien Civs
             '
             If tmap(awayteam.c.x,awayteam.c.y).gives=301 Then
-                trading(11)
+                tCompany.trading(11)
                 player.lastvisit.s=tmap(awayteam.c.x,awayteam.c.y).gives+1
                 factionadd(0,6,-5)
             EndIf
 
             If tmap(awayteam.c.x,awayteam.c.y).gives=302 Then
-                trading(12)
+                tCompany.trading(12)
                 player.lastvisit.s=tmap(awayteam.c.x,awayteam.c.y).gives+1
                 factionadd(0,7,-5)
             EndIf
@@ -1440,7 +1440,7 @@ function ep_planetmenu(entrycords as _cords,slot As Short,shipfire() As _shipfir
         launch=entry+2
         text=text &"/Explore area/Launch"
         Do
-            a=Menu(bg_shiptxt,text)
+            a=textmenu(bg_shiptxt,text)
             Select Case a
             Case explore
             Case launch,-1

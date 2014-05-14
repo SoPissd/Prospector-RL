@@ -120,43 +120,6 @@ Enum RndItem
 
 End Enum
 
-Enum ShipType
-    ST_first
-    ST_PFighter
-    ST_PCruiser
-    ST_PDestroyer
-    ST_PBattleship
-    ST_lighttransport
-    ST_heavytransport
-    ST_merchantman
-    ST_armedmerchant
-    ST_CFighter
-    ST_CEscort
-    ST_Cbattleship
-    ST_AnneBonny
-    ST_BlackCorsair
-    st_hussar
-    st_blackwidow
-    st_adder
-    ST_civ1
-    ST_civ2
-    ST_AlienScoutShip
-    ST_spacespider
-    ST_livingsphere
-    ST_symbioticcloud
-    ST_hydrogenworm
-    ST_livingplasma
-    ST_starjellyfish
-    ST_cloudshark
-    ST_Gasbubble
-    ST_cloud
-    ST_Floater
-    st_spacestation
-    st_last
-End Enum
-
-Dim Shared piratenames(st_last) As String
-Dim Shared piratekills(st_last) As Integer
 Dim Shared questroll As Short
 Enum SHIELDDIR
     sd_front

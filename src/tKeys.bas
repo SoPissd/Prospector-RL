@@ -107,20 +107,22 @@ Dim Shared As String*3 key_extended="#"
 Dim Shared As String*3 key_accounting="\Ca"
 dim shared as string*3 key_optequip="e"
 
+
 function getdirection(key as string) as short
     dim d as short
-    if key=key_south then return 2
-    if key=key_north then return 8
-    if key=key_east then return 6
-    if key=key_west then return 4
-    if key=key_nw then return 7
-    if key=key_ne then return 9
-    if key=key_se then return 3
     if key=key_sw then return 1
-    if key=key__up then return 8
+    if key=key_south then return 2
+    if key=key_se then return 3
+    if key=key_west then return 4
+    if key=key_east then return 6
+    if key=key_nw then return 7
+    if key=key_north then return 8
+    if key=key_ne then return 9
+    '
     if key=key__dn then return 2
-    if key=key__rt then return 6
     if key=key__lt then return 4
+    if key=key__rt then return 6
+    if key=key__up then return 8
     return 0
 end function
 

@@ -24,25 +24,6 @@
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tPlayer -=-=-=-=-=-=-=-
 
-declare function addmoney(amount as integer,mt as byte) as short
-declare function settactics() as short
-declare function weapon_string() as string
-
-'private function randomname() as string
-
-#endif'head
-#ifdef main
-'     -=-=-=-=-=-=-=- MAIN: tPlayer -=-=-=-=-=-=-=-
-
-namespace tPlayer
-function init() as Integer
-	return 0
-end function
-end namespace'tPlayer
-
-
-#define cut2top
-
 
 Enum moneytype
     mt_startcash
@@ -65,6 +46,24 @@ Enum moneytype
 End Enum
 
 Dim Shared income(mt_last) As Integer
+
+declare function addmoney(amount as integer,mt as byte) as short
+declare function settactics() as short
+declare function weapon_string() as string
+
+'private function randomname() as string
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tPlayer -=-=-=-=-=-=-=-
+
+namespace tPlayer
+function init() as Integer
+	return 0
+end function
+end namespace'tPlayer
+
+
 
 
 function addmoney(amount as integer,mt as byte) as short
@@ -156,7 +155,7 @@ function settactics() as short
         text=text &"/"
     next
     text=text &"Exit"
-    a=menu(bg_awayteam,text,,,,1)
+    a=textmenu(bg_awayteam,text,,,,1)
     if a<7 then
         player.tactic=a-3
     endif

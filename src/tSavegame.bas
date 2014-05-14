@@ -137,7 +137,7 @@ function getfilename(iBg as short) as string
         a=dir()
     wend
     text=text &"/Exit"
-    c=menu(iBg,text,help,2,2)
+    c=textmenu(iBg,text,help,2,2)
     if c>0 and c<=24 then filename=n(c)
     return filename
 end function

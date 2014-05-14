@@ -80,7 +80,7 @@ Private function start_new_game(iBg as short=0) As Short
 
     text="/"&makehullbox(1,"data/ships.csv") &"|Comes with 3 Probes MKI/"&makehullbox(2,"data/ships.csv")&"|Comes with 2 combat drones and fully armored|You get one more choice at a talent if you take this ship/"&makehullbox(3,"data/ships.csv") &"|Comes with paid for cargo to collect on delivery/"&makehullbox(4,"data/ships.csv") &"|Comes with 5 veteran security team members/"&makehullbox(6,"data/ships.csv")&"|You will start as a pirate if you choose this option"
     If configflag(con_startrandom)=1 Then
-        b=Menu(iBg,"Choose ship/Scout/Long Range Fighter/Light Transport/Troop Transport/Pirate Cruiser/Random",text)
+        b=textMenu(iBg,"Choose ship/Scout/Long Range Fighter/Light Transport/Troop Transport/Pirate Cruiser/Random",text)
     Else
         b=rnd_range(1,4)
     EndIf
@@ -379,7 +379,7 @@ Private function mainmenu(ByRef iBg as short) as string
 		EndIf
 		if a=0 then a=1 
 		tConsole.ClearKeys()
-        a=Menu(iBg,aText,,40,_lines-iLines*_fh2/_fh1,,1,,a)
+        a=textMenu(iBg,aText,,40,_lines-iLines*_fh2/_fh1,,1,,a)
         If a=1 Then Key="2"
         If a=2 Then Key="1"
         If a=3 Then high_score(iBg,"")

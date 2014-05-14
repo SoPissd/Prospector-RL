@@ -1,4 +1,4 @@
-'compcolon.
+'tColony.
 '
 'defines:
 'score_planet=0, score_system=0, get_com_colon_candidate=0,
@@ -17,13 +17,13 @@
 #endif'both
 '
 #ifdef intest
-'     -=-=-=-=-=-=-=- TEST: compcolon -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- TEST: tColony -=-=-=-=-=-=-=-
 
 #undef intest
 #define test
 #endif'test
 #ifdef head
-'     -=-=-=-=-=-=-=- HEAD: compcolon -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- HEAD: tColony -=-=-=-=-=-=-=-
 
 declare function colonize_planet(st as short) as short
 declare function grow_colonies() as short
@@ -36,13 +36,13 @@ declare function grow_colonies() as short
 
 #endif'head
 #ifdef main
-'     -=-=-=-=-=-=-=- MAIN: compcolon -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- MAIN: ttColony -=-=-=-=-=-=-=-
 
-namespace compcolon
+namespace tColony
 function init() as Integer
 	return 0
 end function
-end namespace'compcolon
+end namespace'tColony
 
 
 #define cut2top
@@ -274,10 +274,10 @@ end function
 #endif'main
 
 #if (defined(main) or defined(test))
-'      -=-=-=-=-=-=-=- INIT: compcolon -=-=-=-=-=-=-=-
-	tModule.register("compcolon",@compcolon.init()) ',@compcolon.load(),@compcolon.save())
+'      -=-=-=-=-=-=-=- INIT: tColony -=-=-=-=-=-=-=-
+	tModule.register("tColony",@tColony.init()) ',@tColony.load(),@tColony.save())
 #endif'main
 
 #ifdef test
-#print -=-=-=-=-=-=-=- TEST: compcolon -=-=-=-=-=-=-=-
+#print -=-=-=-=-=-=-=- TEST: tColony -=-=-=-=-=-=-=-
 #endif'test

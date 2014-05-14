@@ -304,9 +304,9 @@ function foreignpolicy(c as short, i as byte) as short
         ad=ad+6/civ(c).phil
     endif
     t=t & "/Exit"
-    a=menu(bg_parent,t)
+    a=textmenu(bg_parent,t)
     if a<l then
-        b=menu(bg_parent,"What/Status/Declare war/Initiate peace talks/Exit")
+        b=textmenu(bg_parent,"What/Status/Declare war/Initiate peace talks/Exit")
         if a=1 then f=1
         if a=2 then f=2
         if a=3 then f=6+o
@@ -1229,7 +1229,7 @@ function communicate(e as _monster,mapslot as short,monslot as short) as short
                 rlprint "Thing's haven't worked out like i hoped they would."
             case else
                 rlprint "Do you have a credit to spare?"
-                a=menu(bg_awayteamtxt,"Response:/Offer credit/Offer job/Offer advice/Offer nothing")
+                a=textmenu(bg_awayteamtxt,"Response:/Offer credit/Offer job/Offer advice/Offer nothing")
                 select case a
                 case 1
                     if player.money>=1 then

@@ -1,4 +1,4 @@
-'crew.
+'tCrewfunctions.
 '
 'defines:
 'skill_test=94, can_learn_skill=2, best_crew=6, findartifact=4,
@@ -20,15 +20,23 @@
 #endif'both
 '
 #ifdef intest
-'     -=-=-=-=-=-=-=- TEST: crew -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- TEST: tCrewfunctions -=-=-=-=-=-=-=-
 
 #undef intest
 #define test
 #endif'test
 #ifdef head
-'     -=-=-=-=-=-=-=- HEAD: crew -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- HEAD: tCrewfunctions -=-=-=-=-=-=-=-
+
+'skill-test thresholds
+Const st_veryeasy=8
+Const st_easy=10
+Const st_average=12
+Const st_hard=14
+Const st_veryhard=16
 
 declare function skill_test(bonus as short,targetnumber as short,echo as string="") as short
+
 declare function can_learn_skill(ci as short,si as short) as short
 declare function best_crew(skill as short, no as short) as short
 declare function findartifact(v5 as short) as short
@@ -50,13 +58,13 @@ declare function hiring(st as short,byref hiringpool as short,hp as short) as sh
 
 #endif'head
 #ifdef main
-'     -=-=-=-=-=-=-=- MAIN: crew -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- MAIN: tCrewfunctions -=-=-=-=-=-=-=-
 
-namespace Crew1
+namespace tCrewfunctions
 function init() as Integer
 	return 0
 end function
-end namespace'Crew1
+end namespace'tCrewfunctions
 
 
 function skill_test(bonus as short,targetnumber as short,echo as string="") as short
@@ -417,7 +425,7 @@ function change_captain_appearance(x as short,y as short) as short
         endif
         text &= "Exit"
         put (x*_fw1-2-_tix,y*_fh1),gtiles(captain_sprite),trans
-        a=menu(bg_noflip,text,"",x,y)
+        a=textmenu(bg_noflip,text,"",x,y)
         select case a
         case 1
             rlprint ""
@@ -653,7 +661,7 @@ function add_member(a as short,skill as short) as short
                 text=text &"/Change captain details"
                 help=help &"/Change the appearance and bio details of your captain"
                 
-                i=menu(bg_randompictxt,text,help)
+                i=textmenu(bg_randompictxt,text,help)
                 if i=rask then
                     do
                         i=rnd_range(8,rask-1)
@@ -1087,7 +1095,7 @@ function hiring(st as short,byref hiringpool as short,hp as short) as short
     cls
 
     do
-        b=menu(bg_shiptxt,text,help)
+        b=textmenu(bg_shiptxt,text,help)
         if b>0 and b<ex then
             if meni(b)<=5 then 'hire Officer
                 select case rnd_range(1,150)
@@ -1408,10 +1416,10 @@ end function
 #endif'main
 
 #if (defined(main) or defined(test))
-'      -=-=-=-=-=-=-=- INIT: crew -=-=-=-=-=-=-=-
-	tModule.register("Crew1",@Crew1.init()) ',@crew.load(),@crew.save())
+'      -=-=-=-=-=-=-=- INIT: tCrewfunctions -=-=-=-=-=-=-=-
+	tModule.register("tCrewfunctions",@tCrewfunctions.init()) ',@tCrewfunctions.load(),@tCrewfunctions.save())
 #endif'main
 
 #ifdef test
-#print -=-=-=-=-=-=-=- TEST: crew -=-=-=-=-=-=-=-
+#print -=-=-=-=-=-=-=- TEST: tCrewfunctions -=-=-=-=-=-=-=-
 #endif'test

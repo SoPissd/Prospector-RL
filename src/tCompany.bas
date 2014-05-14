@@ -29,6 +29,7 @@
 #define test
 #endif'test
 
+
 namespace tCompany
 
 #ifdef head
@@ -56,6 +57,7 @@ End Type
 
 declare function company(st as short) as short
 declare function com_remove(attacker() as _ship, t as short,flag as short=0) as short
+
 declare function shares_value() as short
 declare function trading(st as short) as short
 declare function merctrade(byref f as _fleet) as short
@@ -80,12 +82,11 @@ Dim Shared companystats(5) As _company
 'private function cropstock() as short
 'private function display_stock() as short
 'private function stockmarket(st as short) as short
-'private function unload_f(f as _fleet, st as short) as _fleet
+declare function unload_f(f as _fleet, st as short) as _fleet
 
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tCompany -=-=-=-=-=-=-=-
-
 
 	
 public function init() as integer
@@ -103,7 +104,7 @@ public function init() as integer
     '
     Dim d_company As _company
     For a=0 To 4
-        tCompany.companystats(a)=d_company
+        companystats(a)=d_company
     Next
     '
     Dim d_share As _share
@@ -124,6 +125,7 @@ public function init() as integer
     '
 	return 0
 End Function
+
 
 
 private function pay_bonuses(st as short) as short
@@ -757,7 +759,7 @@ function getsharetype() as short
     b+=1
     if text<>"" then
         text="Company/"&text &"Exit"
-        a=menu(bg_parent,text,"",2,2)
+        a=textmenu(bg_parent,text,"",2,2)
         if a>0 and a<b then 
             return cn(a)
         else
@@ -876,9 +878,9 @@ function stockmarket(st as short) as short
     do
         last=display_stock
         portfolio(2,17)
-        a=menu(bg_stock,"/Buy/Sell/Exit","",2,12)
+        a=textmenu(bg_stock,"/Buy/Sell/Exit","",2,12)
         if a=1 then
-            b=menu(bg_parent,text &"/Exit",,2,2)
+            b=textmenu(bg_parent,text &"/Exit",,2,2)
             if b>0 and b<last+1 then
                 if cn(b)>0 then
                     rlprint "How many shares of "&companyname(cn(b))&" do you want to buy?"
@@ -921,7 +923,7 @@ function trading(st as short) as short
     if st<3 then
         do
             set__color(11,0)
-            a=menu(bg_trading+st," /Buy/Sell/Price development/Stock Market/Exit",,2,14)
+            a=textmenu(bg_trading+st," /Buy/Sell/Price development/Stock Market/Exit",,2,14)
             if a=1 then buygoods(st)
             if a=2 then sellgoods(st)
             if a=3 then showprices(st)
@@ -930,8 +932,8 @@ function trading(st as short) as short
     else
         do
             set__color(11,0)
-            if st<>10 then a=menu(bg_trading+st," /Buy/Sell/Exit",,2,14,,st)
-            if st=10 then a=menu(bg_trading+st," /Plunder/Leave behind/Exit",,2,14)
+            if st<>10 then a=textmenu(bg_trading+st," /Buy/Sell/Exit",,2,14,,st)
+            if st=10 then a=textmenu(bg_trading+st," /Plunder/Leave behind/Exit",,2,14)
             if a=1 then buygoods(st)
             if a=2 then sellgoods(st)
         loop until a=3
@@ -941,39 +943,8 @@ function trading(st as short) as short
     return 0
 end function
 
-
-
 #endif'main
-End Namespace
-
-#ifdef head
-	declare function com_remove(attacker() as _ship, t as short,flag as short=0) as short
-	declare function trading(st as short) as short
-	declare function merctrade(byref f as _fleet) as short
-	declare function unload_f(f as _fleet, st as short) as _fleet
-
-#else
-
-	'satisfy forward declarations
-	function com_remove(attacker() as _ship, t as short,flag as short=0) as short
-		return tCompany.com_remove(attacker(),t,flag)
-	End Function
-
-	function trading(st as short) as short
-		return tCompany.trading(st)
-	End Function
-	
-	function merctrade(byref f as _fleet) as short
-		return tCompany.merctrade(f)
-	End Function
-	
-	function unload_f(f as _fleet, st as short) as _fleet
-		return tCompany.unload_f(f,st)
-	End Function
-
-	tModule.Register("tCompany",@tCompany.Init())
-'	tModule.Register("tCompany",@tCompany.Init(),@tCompany.Load(),@tCompany.Save())
-#endif		
+end namespace
 
 
 #if (defined(main) or defined(test))
@@ -984,3 +955,4 @@ End Namespace
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tCompany -=-=-=-=-=-=-=-
 #endif'test
+

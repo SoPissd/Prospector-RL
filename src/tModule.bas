@@ -49,7 +49,7 @@ type _Module
 	fSave as tSaveFunction	
 End Type
 
-const _maxModules = 128
+const _maxModules = 128'+32
 
 dim shared modules(_maxModules) as _Module
 dim shared lastmodule as integer = 0

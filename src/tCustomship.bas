@@ -64,7 +64,7 @@ function delete_custom(pir as short) as short
         next
         last+=1
         men=men &"Exit"
-        c=menu(bg_parent,men,des)
+        c=textmenu(bg_parent,men,des)
         if c>0 and c<last then
             if askyn("do you really want to delete this ship design? (y/n)") then
                 lines(c)=lines(n)

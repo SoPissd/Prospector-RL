@@ -1,4 +1,4 @@
-'debug.
+'tDebug.
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -12,25 +12,13 @@
 #endif'both
 '
 #ifdef intest
-'     -=-=-=-=-=-=-=- TEST: debug -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- TEST: tDebug -=-=-=-=-=-=-=-
 
 #undef intest
 #define test
 #endif'test
 #ifdef head
-'     -=-=-=-=-=-=-=- HEAD: debug -=-=-=-=-=-=-=-
-
-
-
-#endif'head
-#ifdef main
-'     -=-=-=-=-=-=-=- MAIN: debug -=-=-=-=-=-=-=-
-
-namespace tDebug
-function init() as Integer
-	return 0
-end function
-end namespace'debug
+'     -=-=-=-=-=-=-=- HEAD: tDebug -=-=-=-=-=-=-=-
 
 
 ' validate target OS
@@ -41,7 +29,7 @@ end namespace'debug
 #endif
 
 
-#if __FB_DEBUG__
+#if __FB_Debug__
 
 	#ifdef __FB_WIN32__					'only under windows
 		#print Windows Debug mode
@@ -53,7 +41,7 @@ end namespace'debug
 	#endif
 	#endif
 
-	#define _DbgPrintCSVs 1				'print csv's?
+	#define _DbgPrintCSVs 0				'print csv's?
 	#define _DbgLogExplorePlanet 0
 	'
 	#define _DbgPrintMode 0
@@ -79,7 +67,7 @@ end namespace'debug
 		'
 		dim shared as Short _DbgLog
 		_DbgLog= freefile
-		open command(0)+".debug.txt" for output as #_DbgLog
+		open command(0)+".Debug.txt" for output as #_DbgLog
 		'
 		#Macro DbgPrint(text)
 			print #_DbgLog, __FUNCTION__ & "  " & text
@@ -123,7 +111,7 @@ end namespace'debug
 	#endif
 	#define _DbgOptLoadWin 0			'never in release			
 	#define _DbgOptLoadMLD 0		
-	#define _DbgPrintCSVs 1
+	#define _DbgPrintCSVs 0
 	'									'NOTICE!! these must be on their own line.  no IF x THEN DbgPrint()! 
 	#define DbgPrint(text)
 	#define DbgScreeninfo
@@ -132,76 +120,85 @@ end namespace'debug
 
 ' always
 
-#if _DbgOptLoadWin	<>1					'provide a substitute for debugbreak
+#if _DbgOptLoadWin	<>1					'provide a substitute for DebugBreak
 	'#print DebugBreak inactive
 	#define DebugBreak					'see.. nothing at all.  
 #else
 	#print DebugBreak enabled.
 #endif
 
-#Macro DimDebug(Value)					'use DimDebug to setup the var for debug mode only
-	#if __FB_DEBUG__
-	    dim as short debug=Value
+#Macro DimDebug(Value)					'use DimDebug to setup the var for Debug mode only
+	#if __FB_Debug__
+	    dim as short Debug=Value
 	#endif
 #EndMacro
 
 #Macro DimDebugL(Value)					'use DimDebugL to setup the var for either mode 
-	#if __FB_DEBUG__
-	    dim as short debug=Value
-	#else								' use dimDebugL for stuff like:  If <this> or debug then <dothat>
-	    dim as short debug=0
+	#if __FB_Debug__
+	    dim as short Debug=Value
+	#else								' use dimDebugL for stuff like:  If <this> or Debug then <dothat>
+	    dim as short Debug=0
 	#endif
 #EndMacro
 
+
+#if _DbgOptLoadWin = 1			
+	#print loading windows headers			
+	inc("main",	"windows.bi",			windows header mandatory for DebugBreak & console)
+#else
+#if _DbgOptLoadWin = 2			
+	#print loading winbase headers			
+	inc("main",	"winbase.bi",			windows header mandatory for DebugBreak & console)
+#endif							
+#endif							
+'
+#if _DbgOptLoadMLD = 1
+	#print loading memory leak detector			
+	'#include once "crt.bi"
+	'#ifdef __FB_WIN32__
+	''# inclib "msvcrt"
+	'#endif
+	''#include once "crt/string.bi"
+	''#include once "crt/math.bi"
+	''#include once "crt/time.bi"
+	''#include once "crt/wchar.bi"
+	''#include once "crt/ctype.bi"
+	''#include once "crt/stdlib.bi"
+	''#include once "crt/stdio.bi"
+	''#include once "crt/fcntl.bi"
+	''#include once "crt/errno.bi"
+	'#if defined(__FB_WIN32__) or defined(__FB_DOS__)
+	''# include once "crt/dir.bi"
+	'#endif
+	inc("main",	"fbmld.bi",				memory-leak-detector)
+#endif							
+
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tDebug -=-=-=-=-=-=-=-
+namespace tDebug
+function init() as Integer
+	return 0
+end function
+end namespace'tDebug
 #endif'main
 
 #if (defined(main) or defined(test))
-'      -=-=-=-=-=-=-=- INIT: debug -=-=-=-=-=-=-=-
-	tModule.register("debug",@tDebug.init()) ',@debug.load(),@debug.save())
-
-	#if _DbgOptLoadWin = 1			
-		#print loading windows headers			
-		inc("main",	"windows.bi",			windows header mandatory for debugbreak & console)
-	#else
-	#if _DbgOptLoadWin = 2			
-		#print loading winbase headers			
-		inc("main",	"winbase.bi",			windows header mandatory for debugbreak & console)
-	#endif							
-	#endif							
-	'
-	#if _DbgOptLoadMLD = 1
-		#print loading memory leak detector			
-		'#include once "crt.bi"
-		'#ifdef __FB_WIN32__
-		''# inclib "msvcrt"
-		'#endif
-		''#include once "crt/string.bi"
-		''#include once "crt/math.bi"
-		''#include once "crt/time.bi"
-		''#include once "crt/wchar.bi"
-		''#include once "crt/ctype.bi"
-		''#include once "crt/stdlib.bi"
-		''#include once "crt/stdio.bi"
-		''#include once "crt/fcntl.bi"
-		''#include once "crt/errno.bi"
-		'#if defined(__FB_WIN32__) or defined(__FB_DOS__)
-		''# include once "crt/dir.bi"
-		'#endif
-		inc("main",	"fbmld.bi",				memory-leak-detector)
-	#endif							
-
+'      -=-=-=-=-=-=-=- INIT: tDebug -=-=-=-=-=-=-=-
+	tModule.register("tDebug",@tDebug.init()) ',@tDebug.load(),@tDebug.save())
 #endif'main
 
 #ifdef test
-#print -=-=-=-=-=-=-=- TEST: debug -=-=-=-=-=-=-=-
+#print -=-=-=-=-=-=-=- TEST: tDebug -=-=-=-=-=-=-=-
 #endif'test
 
 
 ' cut 'n paste
 
-#if __FB_DEBUG__
+#if __FB_Debug__
 #endif
 
-#if __FB_DEBUG__
+#if __FB_Debug__
 #else
 #endif

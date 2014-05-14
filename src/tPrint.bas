@@ -43,6 +43,11 @@ Dim Shared As Byte _textlines
 
 declare function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for windows less than 60 tiles wide
 
+
+Const c_red=12
+Const c_gre=10
+Const c_yel=14
+
 declare function rlprint(t as string, col as short=11) as short
 
 'private function scrollup(b as short) as short

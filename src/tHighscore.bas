@@ -1,4 +1,4 @@
-'highscore.
+'tHighscore.
 '
 'defines:
 'income_expenses_html=0, income_expenses=1, space_mapbmp=0, get_death=0,
@@ -20,13 +20,13 @@
 #endif'both
 '
 #ifdef intest
-'     -=-=-=-=-=-=-=- TEST: highscore -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- TEST: tHighscore -=-=-=-=-=-=-=-
 
 #undef intest
 #define test
 #endif'test
 #ifdef head
-'     -=-=-=-=-=-=-=- HEAD: highscore -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- HEAD: tHighscore -=-=-=-=-=-=-=-
 
 declare function income_expenses() as string
 declare function score() as integer
@@ -49,7 +49,7 @@ declare function death_message(iBg as short,iShowMS as integer=0) as short
 
 #endif'head
 #ifdef main
-'     -=-=-=-=-=-=-=- MAIN: highscore -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- MAIN: tHighscore -=-=-=-=-=-=-=-
 
 namespace tHighscore
 function init() as Integer
@@ -997,10 +997,10 @@ end function
 #endif'main
 
 #if (defined(main) or defined(test))
-'      -=-=-=-=-=-=-=- INIT: highscore -=-=-=-=-=-=-=-
-	tModule.register("tHighscore",@tHighscore.init()) ',@highscore.load(),@highscore.save())
+'      -=-=-=-=-=-=-=- INIT: tHighscore -=-=-=-=-=-=-=-
+	tModule.register("tHighscore",@tHighscore.init()) ',@tHighscore.load(),@tHighscore.save())
 #endif'main
 
 #ifdef test
-#print -=-=-=-=-=-=-=- TEST: highscore -=-=-=-=-=-=-=-
+#print -=-=-=-=-=-=-=- TEST: tHighscore -=-=-=-=-=-=-=-
 #endif'test

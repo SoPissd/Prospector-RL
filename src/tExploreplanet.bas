@@ -1,4 +1,4 @@
-'exploreplanet.
+'tExploreplanet.
 '
 'defines:
 'earthquake=2, ep_areaeffects=1, ep_display_clouds=7, ep_dropitem=1,
@@ -21,13 +21,13 @@
 #endif'both
 '
 #ifdef intest
-'     -=-=-=-=-=-=-=- TEST: exploreplanet -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- TEST: tExploreplanet -=-=-=-=-=-=-=-
 
 #undef intest
 #define test
 #endif'test
 #ifdef head
-'     -=-=-=-=-=-=-=- HEAD: exploreplanet -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- HEAD: tExploreplanet -=-=-=-=-=-=-=-
 
 'Flag 28=techgoods delivered to star creatures
 Type _ae
@@ -69,13 +69,13 @@ declare function ep_jumppackjump() As Short
 
 #endif'head
 #ifdef main
-'     -=-=-=-=-=-=-=- MAIN: exploreplanet -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- MAIN: tExploreplanet -=-=-=-=-=-=-=-
 
-namespace exploreplanet
+namespace tExploreplanet
 function init() as Integer
 	return 0
 end function
-end namespace'exploreplanet
+end namespace'tExploreplanet
 
 
 function earthquake(t as _tile,dam as short)as _tile
@@ -2142,10 +2142,10 @@ End function
 #endif'main
 
 #if (defined(main) or defined(test))
-'      -=-=-=-=-=-=-=- INIT: exploreplanet -=-=-=-=-=-=-=-
-	tModule.register("exploreplanet",@exploreplanet.init()) ',@exploreplanet.load(),@exploreplanet.save())
+'      -=-=-=-=-=-=-=- INIT: tExploreplanet -=-=-=-=-=-=-=-
+	tModule.register("tExploreplanet",@tExploreplanet.init()) ',@tExploreplanet.load(),@tExploreplanet.save())
 #endif'main
 
 #ifdef test
-#print -=-=-=-=-=-=-=- TEST: exploreplanet -=-=-=-=-=-=-=-
+#print -=-=-=-=-=-=-=- TEST: tExploreplanet -=-=-=-=-=-=-=-
 #endif'test

@@ -64,7 +64,6 @@ Dim Shared As Byte _showrolls=0
 Dim Shared As Byte captainskill=-5
 Dim Shared As Byte wage=10
 
-Dim Shared As Byte com_cheat=0
 Dim Shared As Short sidebar
 dim shared as byte optoxy
 Dim Shared As UInteger uid
@@ -118,19 +117,13 @@ Dim Shared zeit As Integer
 Dim Shared stationroll As Short
 Dim Shared companyname(5) As String
 Dim Shared companynameshort(5) As String
-Dim Shared combatmap(60,20) As Byte
 
 
 Dim Shared makew(20,5) As Byte
 
-Dim Shared gtiles(2048) As Any Ptr
-Dim Shared stiles(9,68) As Any Ptr
-Dim Shared shtiles(7,4) As Any Ptr
-Dim Shared gt_no(4096) As Integer
 Dim Shared scr As Any Ptr
 
 Dim Shared rlprintline As Byte
-Dim Shared bestaltdir(9,1) As Byte
 Dim Shared piratebase(_NoPB) As Short 'Mapnumber of piratebase
 Dim Shared atmdes(16) As String
 
@@ -159,9 +152,6 @@ Dim Shared shop_order(2) As Short
 Dim Shared lastprobe As Short
 
 Dim Shared endstory As String
-Dim Shared crew_desig(16) As String
-Dim Shared ammotypename(4) As String
-
 Dim Shared As String bountyquestreason(6)
 
 Dim Shared As Short just_run

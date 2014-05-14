@@ -44,10 +44,14 @@ Type _weap
     shutdown As Byte
 End Type
 
-declare function make_weap_helptext(w as _weap) as string
-declare function weapon_text(w as _weap) as string
+Dim Shared As _weap wsinv(20) 
 
-'private function make_weapon(a as short) as _weap
+Dim Shared ammotypename(4) As String
+
+declare function make_weapon(a as short) as _weap
+declare function weapon_text(w as _weap) as string
+declare function make_weap_helptext(w as _weap) as string
+
 'private function count_and_make_weapons(st as short) as short
 'private function starting_turret() as _weap
 
@@ -63,9 +67,6 @@ end namespace'tWeapon
 
 
 #define cut2top
-
-
-Dim Shared As _weap wsinv(20) 
 
 'Type _ammotype
 '    made As Byte
@@ -241,7 +242,7 @@ function starting_turret() as _weap
         help=help &make_weap_helptext(weapon(i))
     next
     m=m &"Cancel"
-    i=menu(bg_parent,m,help,20,2)
+    i=textmenu(bg_parent,m,help,20,2)
     if i<0 or i=12 then return weapon(0)
     return weapon(i)
 end function

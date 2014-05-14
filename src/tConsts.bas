@@ -35,19 +35,6 @@ end namespace'tConsts
 
 #define cut2top
 
-
-Const c_red=12
-Const c_gre=10
-Const c_yel=14
-
-'skill-test thresholds
-Const st_veryeasy=8
-Const st_easy=10
-Const st_average=12
-Const st_hard=14
-Const st_veryhard=16
-
-
 Const show_energy=0
 Const show_dangerous=0
 Const Show_NPCs=0			'shows pirates and mercs
@@ -68,7 +55,6 @@ Const show_allitems=0
 Const easy_fights=0
 Const show_eventp=0 		'Show eventplanets
 Const show_mapnr=0
-Const show_enemyships=0
 Const show_mnr=0
 Const show_wormholes=0
 Const rev_map=0

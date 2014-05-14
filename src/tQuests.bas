@@ -1,4 +1,4 @@
-'quests.
+'tQuests.
 '
 'defines:
 'eris_doesnt_like_your_ship=0, eris_finds_apollo=1, getunusedplanet=0,
@@ -21,13 +21,13 @@
 #endif'both
 '
 #ifdef intest
-'     -=-=-=-=-=-=-=- TEST: quests -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- TEST: tQuests -=-=-=-=-=-=-=-
 
 #undef intest
 #define test
 #endif'test
 #ifdef head
-'     -=-=-=-=-=-=-=- HEAD: quests -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- HEAD: tQuests -=-=-=-=-=-=-=-
 
 declare function eris_finds_apollo() as short
 declare function give_bountyquest(employer as short) as short
@@ -52,13 +52,13 @@ declare function eris_does() as short
 
 #endif'head
 #ifdef main
-'     -=-=-=-=-=-=-=- MAIN: quests -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- MAIN: tQuests -=-=-=-=-=-=-=-
 
-namespace quests
+namespace tQuests
 function init() as Integer
 	return 0
 end function
-end namespace'quests
+end namespace'tQuests
 
 
 function eris_doesnt_like_your_ship() as short
@@ -1439,10 +1439,10 @@ end function
 #endif'main
 
 #if (defined(main) or defined(test))
-'      -=-=-=-=-=-=-=- INIT: quests -=-=-=-=-=-=-=-
-	tModule.register("quests",@quests.init()) ',@quests.load(),@quests.save())
+'      -=-=-=-=-=-=-=- INIT: tQuests -=-=-=-=-=-=-=-
+	tModule.register("tQuests",@tQuests.init()) ',@tQuests.load(),@tQuests.save())
 #endif'main
 
 #ifdef test
-#print -=-=-=-=-=-=-=- TEST: quests -=-=-=-=-=-=-=-
+#print -=-=-=-=-=-=-=- TEST: tQuests -=-=-=-=-=-=-=-
 #endif'test

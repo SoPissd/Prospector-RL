@@ -109,7 +109,7 @@ function lb_filter(lobk() as string, lobn() as short, lobc() as short,lobp() as 
     dim as short c,i,j,f,cc,c2,last2
     last=lb_listmake(lobk(),lobn(),lobc(),lobp())
     last2=last
-    c=menu(bg_logbook,"Filter & Sort/Distance from base/Distance from ship/Spectral type/Systems with unexplored planets/Systems with gas giants/Systems with asteroid belts/Exit")
+    c=textmenu(bg_logbook,"Filter & Sort/Distance from base/Distance from ship/Spectral type/Systems with unexplored planets/Systems with gas giants/Systems with asteroid belts/Exit")
     if c=1 then
         do
             f=0
@@ -141,7 +141,7 @@ function lb_filter(lobk() as string, lobn() as short, lobc() as short,lobp() as 
         loop until f=0 or cc>1000
     endif
     if c=3 then 
-        c2=menu(bg_logbook,"Spectral type:/"&spectralname(1) &"/"&spectralname(2) &"/"&spectralname(3) &"/"&spectralname(4) &"/"&spectralname(5) &"/"&spectralname(6) &"/"&spectralname(7) &"/"& spectralname(8) & "/Exit",,20,2)
+        c2=textmenu(bg_logbook,"Spectral type:/"&spectralname(1) &"/"&spectralname(2) &"/"&spectralname(3) &"/"&spectralname(4) &"/"&spectralname(5) &"/"&spectralname(6) &"/"&spectralname(7) &"/"& spectralname(8) & "/Exit",,20,2)
         if c2>0 and c2<=8 then
             for i=1 to last
                 if map(lobn(i)).spec<>c2 then
@@ -306,7 +306,7 @@ function bioreport(slot as short) as short
     next
     t=t &"Exit"
     do
-    loop until menu(bg_awayteam,t,h)
+    loop until textmenu(bg_awayteam,t,h)
     return 0
 end function
 

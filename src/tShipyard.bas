@@ -298,7 +298,7 @@ function used_ships() as short
             htext=htext &makehullbox(s.h_no,"data/ships.csv") &"/"
         next
         mtext=mtext &"Bargain bin/Sell equipment/Exit"
-        a=menu(bg_shiptxt,mtext,htext,2,2)
+        a=textmenu(bg_shiptxt,mtext,htext,2,2)
         if a>=1 and a<=8 then
             if buy_ship(a,desig(a),price(a)) then
                 usedship(a).x=yourshiphull
@@ -336,7 +336,7 @@ function change_armor(st as short) as short
     help=help &"Polymers, reinforced with carbon nanotubes.| "&player.h_maxhull*2 &" max armor, at "& player.h_maxhull*2^2 &" cost /"
     help=help &"Carbon arranged in a diamond like structure.| "&player.h_maxhull*2.5 &" max armor, at "& player.h_maxhull*2.5^2 &" cost /"
     if artflag(21)=2 then help=help &"Armor made out of pure neutronium.| "&player.h_maxhull*3 &" max armor, at "& player.h_maxhull*3^2 &" cost /"
-    a=menu(bg_ship,text,help)
+    a=textmenu(bg_ship,text,help)
     if a>0 and a<e then
         if a=player.armortype then
             rlprint "You already have that armortype"
@@ -387,10 +387,10 @@ function ship_design(where as byte) as short
     price(8)=10
     incr(8)=5
     if where=sy_blackmarket then
-        a=menu(bg_awayteam,"Choose shiptype/Small Ship/Medium Ship/Big Ship/Huge Ship/Exit")
+        a=textmenu(bg_awayteam,"Choose shiptype/Small Ship/Medium Ship/Big Ship/Huge Ship/Exit")
         ex=5
     else
-        a=menu(bg_ship,"Choose shiptype/Small Ship/Medium Ship/Exit")
+        a=textmenu(bg_ship,"Choose shiptype/Small Ship/Medium Ship/Exit")
         ex=3
     endif
     if a>0 and a<ex then
@@ -513,7 +513,7 @@ function custom_ships(where as byte) as short
             next
         endif
         men=men &"Exit"
-        c=menu(bg_parent,men,des)
+        c=textmenu(bg_parent,men,des)
         if c=1 then ship_design(where)
         if c=2 then delete_custom(where)
         if c>2 and c<last then
@@ -613,7 +613,7 @@ function shipyard(where as byte) as short
     men=men &"Exit"
     des=des &"/"
     do 
-        c=menu(bg_shiptxt,men,des)
+        c=textmenu(bg_shiptxt,men,des)
         if c<last then buy_ship(st(c),ds(c),pr(c))
         if c=armor then change_armor(0)
         if c=designshop then custom_ships(where)
@@ -654,7 +654,7 @@ function change_loadout() as short
     endif
     text=text &"/Exit"
     
-    a=menu(bg_ship,text,help)
+    a=textmenu(bg_ship,text,help)
     if a>0 and a<ex then
         if a=player.loadout+1 then
             rlprint "You already have that loadout"
@@ -709,7 +709,7 @@ function shipupgrades(st as short) as short
 
     help=help &"Change type of ammo used for missile weapons."
     do 
-        c=menu(bg_parent,"Ship Upgrades:/Sensors,Shields & Engines/Weapons & Modules/Change Loadout/Change Armortype/Exit")
+        c=textmenu(bg_parent,"Ship Upgrades:/Sensors,Shields & Engines/Weapons & Modules/Change Loadout/Change Armortype/Exit")
 '            mtext="Sensors/" 
 '            for i=1 to 15
 '                mtext=mtext &shopitem(i,20).desig &space(_swidth-len(trim(shopitem(i,20).desig))-len(credits(shopitem(i,20).price))) &credits(shopitem(i,20).price) &" Cr./"
@@ -857,7 +857,7 @@ function buy_engine() as short
         hetxt &="/Adds 3 pts to movement"
         if player.manjets=3 then hetxt &="|You already have these maneuvering jets."
     
-        d=menu(bg_parent,metxt,hetxt)
+        d=textmenu(bg_parent,metxt,hetxt)
         if d<6 and d<=player.h_maxengine then
             if d<player.engine then rlprint "You already have a better engine."
             if d=player.engine then rlprint "You already have this engine."

@@ -339,7 +339,7 @@ private function sick_bay(st as short=0,obe as short=0) as short
         cls
         display_ship()
         rlprint ""
-        a=menu(bg_parent,n &"/ Buy supplies / Treat crewmembers/ Buy crew augments/Exit")
+        a=textmenu(bg_parent,n &"/ Buy supplies / Treat crewmembers/ Buy crew augments/Exit")
         if a=1 then
             shop(21+st,1,"Medical Supplies")
         endif
@@ -377,7 +377,7 @@ private function sick_bay(st as short=0,obe as short=0) as short
                 cls
                 display_ship()
                 rlprint ""
-                b=menu(bg_parent,"Augments/"&augn(0)&"Exit","/"&augd(0))
+                b=textmenu(bg_parent,"Augments/"&augn(0)&"Exit","/"&augd(0))
                 if b>0 and b<=lastaug then
                     do
                         c=showteam(0,1,augn(b)&c)
@@ -496,7 +496,7 @@ private function customize_item() as short
         set__color(11,0)
         cls
         display_ship()
-        a=menu(bg_awayteam,"Customize item/Increase accuracy/Add camo/Add imp. Camo/Acidproof/Exit")
+        a=textmenu(bg_awayteam,"Customize item/Increase accuracy/Add camo/Add imp. Camo/Acidproof/Exit")
         set__color(11,0)
         cls
         display_ship()

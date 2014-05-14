@@ -912,7 +912,7 @@ function spacestation(st As Short) As _ship
         mtext=mtext &"/Leave station"
         display_ship()
         bg_parent=bg_shiptxt
-        a=Menu(bg_shiptxt,mtext,,,,,1)
+        a=textMenu(bg_shiptxt,mtext,,,,,1)
         If a=1 Then
             If quarantine<8 Then
                 tCompany.company(st)
@@ -946,7 +946,7 @@ function spacestation(st As Short) As _ship
                     EndIf
                     mtext &= "/Exit"
 
-                    b=Menu(bg_shiptxt,mtext)
+                    b=textMenu(bg_shiptxt,mtext)
                     If b=1 Then shipyard(basis(st).shop(sh_shipyard))
                     If b=2 Then shipupgrades(st)
                     'if b= then towingmodules
@@ -984,7 +984,7 @@ function spacestation(st As Short) As _ship
         If a=6 Then hiring(st,hiringpool,4)
         If a=7 Then
             If quarantine<7 Then
-                trading(st)
+                tCompany.trading(st)
             Else
                 rlprint "you are under quarantine and not allowed to enter there"
             EndIf
@@ -1375,7 +1375,7 @@ function explore_space() As Short
             EndIf
             
             if key=key_optequip then
-                a=menu(bg_shiptxt,"When choosing armor/optimize protection/balanced/optimize oxygen")
+                a=textmenu(bg_shiptxt,"When choosing armor/optimize protection/balanced/optimize oxygen")
                 if a=1 then 
                     awayteam.optoxy=0
                     rlprint "Now optimizing protection"

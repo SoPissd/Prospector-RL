@@ -193,11 +193,11 @@ function casino(staked as short=0, st as short=-1) as short
         cls
         display_ship(0)
         drawroulettetable()
-        a=menu(bg_parent,menustring)
+        a=textmenu(bg_parent,menustring)
         if a=1 then
         do 
             drawroulettetable()
-            b=menu(bg_roulette,"Roulette:/Bet on Number/Bet on Pair/Bet on Impair/Bet on Rouge/Bet on Noir/Don't play")
+            b=textmenu(bg_roulette,"Roulette:/Bet on Number/Bet on Pair/Bet on Impair/Bet on Rouge/Bet on Noir/Don't play")
             if b<>6 then 
                 drawroulettetable()
                 if b=1 then 

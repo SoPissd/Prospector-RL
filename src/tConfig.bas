@@ -352,7 +352,7 @@ function configuration(iBg as short) as short
             end select
         next
         text=text &"/Exit"
-        c=menu(iBg,text,,,,1)
+        c=textmenu(iBg,text,,,,1)
         select case c
         case con_sound,con_captainsprite
             configflag(c)+=1
@@ -365,7 +365,7 @@ function configuration(iBg as short) as short
             _volume=getnumber(0,4,_volume)
             set_volume(_volume)
         case con_res
-            d=menu(bg_randompic,"Resolution/Tiles/Text/Lines/Classic look: "& onoff(configflag(con_customfonts))&" (overrides if on)/Exit")
+            d=textmenu(bg_randompic,"Resolution/Tiles/Text/Lines/Classic look: "& onoff(configflag(con_customfonts))&" (overrides if on)/Exit")
             if d=1 then
                 rlprint "Set graphic font height:(8-28)"
                 _fohi1=Getnumber(8,28,_fohi1)

@@ -913,7 +913,7 @@ sub register()
 	    Open "register" For Output As f
 	    Print #f,"0"
 	    Print #f,""
-	    If Menu(bg_randompic,"Autonaming:/Standard/Babylon 5 Shipnames")=2 Then
+	    If textmenu(bg_randompic,"Autonaming:/Standard/Babylon 5 Shipnames")=2 Then
 	        Print #f,"b5shipnames.txt"
 	    EndIf
 	    Close #f

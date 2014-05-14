@@ -1157,8 +1157,8 @@ function dialog_effekt(effekt as string,p() as short,e as _monster, fl as short)
                 basis(10).inv(i).v=0
                 basis(10).inv(i).p=0
             next
-            fleet(fl)=unload_f(fleet(fl),10)
-            trading(10)
+            fleet(fl)=tCompany.unload_f(fleet(fl),10)
+            tCompany.trading(10)
             fleet(fl)=load_f(fleet(fl),10)
         endif
     endif
@@ -1302,7 +1302,7 @@ function node_menu(no as short,node() as _dialognode,e as _monster, fl as short,
     'if qgindex>0 then text=text &"/Bye."
     if flag>0 then
         do
-            c=menu(bg_shiptxt,text,,0,20-flag,1)
+            c=textmenu(bg_shiptxt,text,,0,20-flag,1)
         loop until c>=0
         rlprint adapt_nodetext(node(no).option(c).answer,e,fl,qgindex),15
         DbgPrint("you choose "&node(no).option(c).no &":"&c) ',11)

@@ -348,7 +348,7 @@ function ep_radio(ByRef nextlanding As _cords,ByRef ship_landing As Short, shipf
             Next
             DbgPrint(b &" Rover found.")
             if c>1 then
-                b=menu(bg_awayteamtxt,mtext,"",2,2)
+                b=textmenu(bg_awayteamtxt,mtext,"",2,2)
                 if b>0 then b=roverlist(b)
             endif
             if c=1 then b=roverlist(1)
@@ -625,7 +625,7 @@ function space_radio() As Short
             text=text &"/Cancel"
             y=(20*_fh1-(lc+1)*_fh2)/_fh1
             If y<0 Then y=0
-            i=Menu(bg_ship,text,"",0,y)
+            i=textmenu(bg_ship,text,"",0,y)
             If i=lc+1 Then Return 0
             i=contacts(i)
         EndIf

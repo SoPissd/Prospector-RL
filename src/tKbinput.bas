@@ -1,4 +1,4 @@
-'kbinput.
+'tKbinput.
 '
 'defines:
 'keyplus=8, keyminus=8, keyinput=0, Pressanykey=4
@@ -16,13 +16,13 @@
 #endif'both
 '
 #ifdef intest
-'     -=-=-=-=-=-=-=- TEST: kbinput -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- TEST: tKbinput -=-=-=-=-=-=-=-
 
 #undef intest
 #define test
 #endif'test
 #ifdef head
-'     -=-=-=-=-=-=-=- HEAD: kbinput -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- HEAD: tKbinput -=-=-=-=-=-=-=-
 
 declare function keyplus(key as string) as short
 declare function keyminus(key as string) as short
@@ -30,10 +30,9 @@ declare function keyinput(allowed as string="") as string
 
 #endif'head
 #ifdef main
-'     -=-=-=-=-=-=-=- MAIN: kbinput -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- MAIN: tKbinput -=-=-=-=-=-=-=-
 
 namespace tKbinput
-	
 function init() as Integer
 	return 0
 end function
@@ -77,10 +76,10 @@ end function
 #endif'main
 
 #if (defined(main) or defined(test))
-'      -=-=-=-=-=-=-=- INIT: kbinput -=-=-=-=-=-=-=-
-	tModule.register("tKbinput",@tKbinput.init()) ',@kbinput.load(),@kbinput.save())
+'      -=-=-=-=-=-=-=- INIT: tKbinput -=-=-=-=-=-=-=-
+	tModule.register("tKbinput",@tKbinput.init()) ',@tKbinput.load(),@tKbinput.save())
 #endif'main
 
 #ifdef test
-#print -=-=-=-=-=-=-=- TEST: kbinput -=-=-=-=-=-=-=-
+#print -=-=-=-=-=-=-=- TEST: tKbinput -=-=-=-=-=-=-=-
 #endif'test

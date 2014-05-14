@@ -321,7 +321,7 @@ function spacecombat(byref atts as _fleet,ter as short) as short
                                                 reward(3)=reward(3)+attacker(t).money
                                                 piratekills(attacker(t).st)+=1
                                                 piratekills(0)+=attacker(t).money
-                                                com_remove(attacker(),t)
+                                                tCompany.com_remove(attacker(),t)
                                                 t=0
                                                 'no_key=keyin
                                             endif
@@ -472,7 +472,7 @@ function spacecombat(byref atts as _fleet,ter as short) as short
                     if skill_test(attacker(a).pilot(0),st_average+player.pilot(0)) then
                         rlprint "The Merchant got away!",10
                         fleet(255).mem(a)=attacker(a)
-                        com_remove(attacker(),a,1)
+                        tCompany.com_remove(attacker(),a,1)
                     else
                         rlprint "The Merchant didn't get away",12
                         attacker(a).c.x=60
@@ -587,7 +587,7 @@ function playerfightfleet(f as short) as short
         total=total+basis(10).inv(a).v
     next 
     'rlprint ""&total
-    if total>0 and player.dead=0 then trading(10)
+    if total>0 and player.dead=0 then tCompany.trading(10)
     if player.dead=-1 then player.dead=0
     if player.dead>0 then
         for a=1 to 128

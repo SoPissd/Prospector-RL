@@ -25,6 +25,45 @@
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tShip -=-=-=-=-=-=-=-
 
+Enum ShipType
+    ST_first
+    ST_PFighter
+    ST_PCruiser
+    ST_PDestroyer
+    ST_PBattleship
+    ST_lighttransport
+    ST_heavytransport
+    ST_merchantman
+    ST_armedmerchant
+    ST_CFighter
+    ST_CEscort
+    ST_Cbattleship
+    ST_AnneBonny
+    ST_BlackCorsair
+    st_hussar
+    st_blackwidow
+    st_adder
+    ST_civ1
+    ST_civ2
+    ST_AlienScoutShip
+    ST_spacespider
+    ST_livingsphere
+    ST_symbioticcloud
+    ST_hydrogenworm
+    ST_livingplasma
+    ST_starjellyfish
+    ST_cloudshark
+    ST_Gasbubble
+    ST_cloud
+    ST_Floater
+    st_spacestation
+    st_last
+End Enum
+
+Dim Shared piratenames(st_last) As String
+Dim Shared piratekills(st_last) As Integer
+
+
 Enum shipequipment
     se_navcom
     se_ECM
@@ -135,6 +174,13 @@ Type _ship
     mcol As Short
 End Type
 
+Dim Shared foundsomething As Integer
+Dim Shared alliance(7) As Byte
+
+Dim Shared player As _ship
+Dim Shared empty_ship As _ship
+
+
 declare function makehullbox(t as short,file as string) as string
 declare function max_hull(s as _ship) as short
 declare function shipstatsblock() as string
@@ -154,17 +200,7 @@ end function
 end namespace'tShip
 
 
-#define cut2top
-
-
 'declare function best_crew(skill as short, no as short) as short
-
-Dim Shared foundsomething As Integer
-Dim Shared alliance(7) As Byte
-
-
-Dim Shared player As _ship
-Dim Shared empty_ship As _ship
 
 function _ship.tractor() As Byte
     Dim As Byte i,t

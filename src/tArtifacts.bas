@@ -223,7 +223,7 @@ function artifact(c as short) as short
         text=text+"exit"
         d=d+1
         do 
-        f=menu(bg_awayteam,text)
+        f=textmenu(bg_awayteam,text)
             if player.weapons(f).desig<>"" then 
                 if askyn("do you want to replace that weapon? (y/n)") then 
                     player.weapons(f)=make_weapon(66)

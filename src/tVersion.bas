@@ -40,7 +40,7 @@
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: version -=-=-=-=-=-=-=-
 '
-#include "version.bi"
+#include "tVersion.bi"
 '
 Declare function savegame(crash as short=0)As Short
 
