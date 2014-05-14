@@ -77,7 +77,7 @@ inc("both",	"kbinput.bas",				"keyplus,keyminus,Pressanykey,keyinput and consts 
 inc("both",	"tFile.bas",				"Openfile++, filetostring, stringtofile, logtofile and more utilities")
 inc("both",	"tUtils.bas",				"string helpers mostly. needs tests to be written")
 inc("both",	"tError.bas",				"Errorhandler messages for graphics and console. logging too")
-inc("both",	"tGraphics.bas",			"background and bmp loading. calcosx")
+inc("both",	"tGraphics.bas",			"background and bmp loading.")
 '
 inc("both",	"tCoords.bas",				"")
 inc("both",	"tAstar.bas",				"")
@@ -92,13 +92,14 @@ inc("both",	"tTime.bas",				"")
 
 #print loading headers
 #define head
-#print head
 #undef main
 #include "main.bi"
+
 #print loading implementations
 #undef head
 #define main
 #include "main.bi"
+
 #print Make started
 #endif'main
 

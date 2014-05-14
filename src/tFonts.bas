@@ -150,8 +150,11 @@ function load_fonts() as short
 
     if tScreen.y<>_lines*_fh1 then tScreen.y=_lines*_fh1
     _textlines=fix((22*_fh1)/_fh2)+fix((tScreen.y-_fh1*22)/_fh2)-1
+
     tScreen.x=_mwx*_fw1+25*_fw2
     tScreen.res()
+    tScreen.set()
+
 #if __FB_DEBUG__
     if debug=1 then print #f,"Made screen"
 #endif
@@ -207,9 +210,11 @@ function load_fonts() as short
 
     if tScreen.y<>_lines*_fh1 then tScreen.y=_lines*_fh1
     _textlines=fix((22*_fh1)/_fh2)+fix((tScreen.y-_fh1*22)/_fh2)-1
+    
     tScreen.x=_mwx*_fw1+25*_fw2
     tScreen.res(tScreen.GFX_WINDOWED OR tScreen.GFX_ALWAYS_ON_TOP)
     tScreen.res()
+    
     sidebar=(_mwx+1)*_fw1+_fw2
 
 #if __FB_DEBUG__

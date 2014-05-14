@@ -60,6 +60,14 @@
 #define test
 #endif'test
 
+
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tConsole -=-=-=-=-=-=-=-
+declare function LogOut(aText as string,fileno as integer=0) as integer
+declare function ErrOut(aText as String) as Integer
+#endif'head
+
+
 namespace tConsole
 
 #ifdef head
@@ -345,6 +353,19 @@ End Function
 #endif'main
 
 End Namespace
+
+
+#if defined(main)
+
+function LogOut(aText as string,fileno as integer=0) as integer
+	return tConsole.LogWrite(aText,fileno)
+End Function
+
+function ErrOut(aText as String) as Integer
+	return tConsole.ErrorLog(aText)
+End Function
+#endif'main
+
 
 #if (defined(main) or defined(test))
 	' -=-=-=-=-=-=-=- INIT: tConsole -=-=-=-=-=-=-=-

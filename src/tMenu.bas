@@ -62,8 +62,10 @@ Type tMenu
   declare destructor()
   declare function menu(bg as short,te as string, he as string="", x as short=2, y as short=2, _
 	          blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as short
+  declare function init() as short
   declare function before() as short
   declare function after() as short
+  declare function finish() as short
 Private:
     ' 0= headline 1=first entry
     dim as short blen
@@ -211,20 +213,9 @@ function tMenu.after() as short
 end function
 	          
 
-function tMenu.menu(sbg as short,ate as string, ahe as string="", sx as short=2, sy as short=2, _
-	          sblocked as short=0, smarkesc as short=0, sst as short=-1, sloca as short=0) as short
+function tMenu.init() as short
 	dim as integer a
-    bg= sbg
-    te= ate
-    he= ahe
-    x= sx
-    y= sy
-    blocked= sblocked
-    markesc= smarkesc
-    st= sst
-    loca= sloca
-
-    if bg<0 then
+	if bg<0 then
 	    backpic=-bg
 	    bg=bg_title
     else
@@ -297,14 +288,12 @@ function tMenu.menu(sbg as short,ate as string, ahe as string="", sx as short=2,
     'if hw>longesthelp then hw=longesthelp
     ofx=x+4+(longest*_fw2/_fw1)
     e=0
-    do
-    	before()
-    	
-		tConsole.ClearKeys
-        if player.dead=0 then key=keyin(,96+c)
-        
-    	after()
-    loop until e>0 
+    return e
+End Function
+
+
+function tMenu.finish() as short
+	dim as integer a
     if key=key__esc and markesc=1 then e=-asc(key__esc)
     
     set__color( 0,0)
@@ -316,14 +305,40 @@ function tMenu.menu(sbg as short,ate as string, ahe as string="", sx as short=2,
     cls
     tScreen.set(1)
     if logo <> 0 then
-      ImageDestroy(Logo)
+		ImageDestroy(Logo)
     EndIf
 '	ClearKeys()
 '? #fErrOut,e
-    return e
+	return e
+End Function
+
+
+function tMenu.menu(sbg as short,ate as string, ahe as string="", sx as short=2, sy as short=2, _
+	          sblocked as short=0, smarkesc as short=0, sst as short=-1, sloca as short=0) as short
+    bg= sbg
+    te= ate
+    he= ahe
+    x= sx
+    y= sy
+    blocked= sblocked
+    markesc= smarkesc
+    st= sst
+    loca= sloca
+
+   	e=init()
+    do
+    	e=before()
+    	
+		tConsole.ClearKeys
+        if player.dead=0 then key=keyin(,96+c)
+        
+    	e=after()
+    loop until e>0
+    return finish()
 end function
 #define cut2bottom
 #endif'main
+
 
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: tMenu -=-=-=-=-=-=-=-

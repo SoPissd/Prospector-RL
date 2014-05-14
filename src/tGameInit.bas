@@ -923,12 +923,12 @@ end sub
 
 
 function Initgame() as integer
-	check_filestructure()
 	load_config()
-	load_keyset()
-	load_sounds()
 	tPalette.load_palette()
    	load_fonts()
+	check_filestructure()
+	load_keyset()
+	load_sounds()
 	load_tiles()
 	'
 	DbgScreeninfo

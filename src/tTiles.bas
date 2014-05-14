@@ -1,7 +1,7 @@
 'tTiles.
 '
 'defines:
-'load_tiles_msg=0, load_tiles=1, plant_name=1
+''=0, load_tiles=1, plant_name=1
 '
 
 'needs [head|main|both] defined,
@@ -79,8 +79,6 @@ End Type
 declare function load_tiles() as short
 declare function plant_name(ti as _tile) as string
 
-'private function load_tiles_msg() as short
-
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tTiles -=-=-=-=-=-=-=-
@@ -106,10 +104,8 @@ Dim Shared tmap(60,20) As _tile
 
 function load_tiles_msg() as short
     tScreen.set(1)
-    locate 1,1
-    print "Loading tiles:.."
-    tScreen.set(0)    
-    cls
+    print "."; 
+    tScreen.set(0)
     return 0
 end function
 
@@ -120,6 +116,8 @@ function load_tiles() as short
 		return 0
 	EndIf
     '
+    tScreen.set(1)
+    print "Loading tiles.";
 	load_tiles_msg()
     
 	showtiles=0
@@ -136,6 +134,7 @@ function load_tiles() as short
         sleep 1500
         return 0
     endif
+	load_tiles_msg()
 
     bload "graphics/ships.bmp"
     for y=0 to _tiy*16 step _tiy
@@ -146,10 +145,10 @@ function load_tiles() as short
             get (x,y)-(x+_tix-1,y+_tiy-1),stiles(sx,sy)
             sx+=1
         next
-        draw string (24*9,y),""&sy
+        'draw string (24*9,y),""&sy
     next
     
-	load_tiles_msg()
+	'load_tiles_msg()
     bload "graphics/ships2.bmp"
     for y=0 to _tiy*16 step _tiy
         sx=1
@@ -159,10 +158,11 @@ function load_tiles() as short
             get (x,y)-(x+_tix-1,y+_tiy-1),stiles(sx,sy)
             sx+=1
         next
-        draw string (24*9,y),""&sy
+        'draw string (24*9,y),""&sy
     next
-
 	load_tiles_msg()
+
+	'load_tiles_msg()
     bload "graphics/ships3.bmp"
     for y=0 to _tiy*16 step _tiy
         sx=1
@@ -172,10 +172,11 @@ function load_tiles() as short
             get (x,y)-(x+_tix-1,y+_tiy-1),stiles(sx,sy)
             sx+=1
         next
-        draw string (24*10,y),""&sy
+        'draw string (24*10,y),""&sy
     next
-
 	load_tiles_msg()
+
+
     bload "graphics/drifting.bmp"
     for y=0 to _tiy*16 step _tiy
         sx=1
@@ -185,10 +186,10 @@ function load_tiles() as short
             get (x,y)-(x+_tix-1,y+_tiy-1),stiles(sx,sy)
             sx+=1
         next
-        draw string (24*10,y),""&sy
+        'draw string (24*10,y),""&sy
     next
-
-	load_tiles_msg()
+    load_tiles_msg()
+    
     bload "graphics/shield.bmp"
     for x=0 to 7
         for y=0 to 4
@@ -196,11 +197,12 @@ function load_tiles() as short
             get (x*16,y*16)-((x+1)*16-1,(y+1)*16-1),shtiles(x,y)
         next
     next
+    print ".";
     
     'Clear tile
     gtiles(0)=imagecreate(_tix,_tiy,rgba(0,0,0,255))
     
-	load_tiles_msg()
+	'load_tiles_msg()
     a=1
     n=1
     bload "graphics/space.bmp"
@@ -213,8 +215,8 @@ function load_tiles() as short
             n+=1
         next
     next
-    
-	load_tiles_msg()
+    load_tiles_msg()
+
     n=75
     bload "graphics/weapons.bmp"
     y=0
@@ -241,9 +243,8 @@ function load_tiles() as short
         a+=1
         n+=1
     next
+    load_tiles_msg()
 
-    
-	load_tiles_msg()
     n=101
     bload "graphics/land.bmp"
     for y=0 to _tiy*16 step _tiy
@@ -255,8 +256,7 @@ function load_tiles() as short
             n+=1
         next
     next
-
-	load_tiles_msg()
+    load_tiles_msg()
     n=750
     bload "graphics/critters3.bmp"
     for y=0 to _tiy*10 step _tiy
@@ -267,8 +267,7 @@ function load_tiles() as short
         a+=1
         n+=1
     next
-
-	load_tiles_msg()
+    load_tiles_msg()
     n=800
     bload "graphics/critters2.bmp"
     for y=0 to _tiy*10 step _tiy
@@ -279,11 +278,10 @@ function load_tiles() as short
             a+=1
             n+=1
         next
-        draw string (x,y),""&n-1
+        'draw string (x,y),""&n-1
     next
-    if showtiles=1 then sleep
+    load_tiles_msg()
 
-	load_tiles_msg()
     n=990
     bload "graphics/player.bmp"
     for y=0 to _tiy*2 step _tiy
@@ -295,9 +293,8 @@ function load_tiles() as short
             n+=1
         next
     next
-
-
-	load_tiles_msg()
+    load_tiles_msg()
+    
     n=1000
     bload "graphics/critters.bmp"
     for y=0 to _tiy*4 step _tiy
@@ -309,8 +306,8 @@ function load_tiles() as short
             n+=1
         next
     next
-
-	load_tiles_msg()
+    load_tiles_msg()
+    
     n=1500
     bload "graphics/characters.bmp"
     for y=0 to _tiy*1 step _tiy
@@ -322,12 +319,14 @@ function load_tiles() as short
             n+=1
         next
     next
+    load_tiles_msg()
+
 
     n=1600
     'Space tiles
     cls
     bload "graphics/planetmap.bmp"
-	load_tiles_msg()
+	'load_tiles_msg()
     
     for y=0 to _tiy*4 step _tiy
         for x=0 to _tix*5 step _tix
@@ -338,9 +337,8 @@ function load_tiles() as short
             n+=1
         next
     next
+    load_tiles_msg()
 
-
-	load_tiles_msg()
     n=1750
     bload "graphics/spacestations.bmp"
     for x=0 to _tix*11 step _tix
@@ -350,8 +348,7 @@ function load_tiles() as short
         a+=1
         n+=1
     next
-
-	load_tiles_msg()
+    load_tiles_msg()
     n=2001
     bload "graphics/items.bmp"
     for y=0 to _tiy*6 step _tiy
@@ -363,8 +360,7 @@ function load_tiles() as short
             n+=1
         next
     next
-
-	load_tiles_msg()
+    load_tiles_msg()
     n=2500
     bload "graphics/walls.bmp"
     for y=0 to _tiy*13 step _tiy
@@ -376,9 +372,8 @@ function load_tiles() as short
             n+=1
         next
     next
+    load_tiles_msg()
 
-
-	load_tiles_msg()
     n=3001
     bload "graphics/portals.bmp"
     y=0
@@ -389,12 +384,14 @@ function load_tiles() as short
         a+=1
         n+=1
     next
+    load_tiles_msg()
 
     bload "graphics/missing.bmp"
     gtiles(2048)=imagecreate(_tix,_tiy)
     get (x,y)-(x+_tix-1,y+_tiy-1),gtiles(2048)
 
-	load_tiles_msg()    
+    load_tiles_msg()
+    print
     return 0
 end function
 
