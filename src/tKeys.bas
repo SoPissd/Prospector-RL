@@ -42,13 +42,6 @@ end function
 end namespace'tKeys
 
 
-'dim shared as FB.image ptr TITLEFONT
-Dim Shared As Any Ptr TITLEFONT
-Dim Shared As Any Ptr FONT1,FONT2
-
-Dim Shared displaytext(255) As String
-Dim Shared dtextcol(255) As Short
-
 Dim Shared As String*3 key_testspacecombat="\Cy"
 Dim Shared As String*3 key_manual="?"
 Dim Shared As String*3 key_messages="m"

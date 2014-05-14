@@ -196,6 +196,7 @@ function teleport(from As _cords,map As Short) As _cords
 End function
 
 
+
 function explore_planet(from As _cords, orbit As Short) As _cords
     DimDebug(0)
     Dim As Single a,b,c,d,e,f,g,x,y,sf,sf2,vismod

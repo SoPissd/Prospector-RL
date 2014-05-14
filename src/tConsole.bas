@@ -15,6 +15,11 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tConsole -=-=-=-=-=-=-=-
+#include "fbGfx.bi"
+#include "zlib.bi"
+#include "File.bi"
+
+#undef intest
 #undef both
 #define head
 #undef main
@@ -26,6 +31,30 @@
 #define head
 #include "tScreen.bas"
 #include "tColor.bas"
+#include "tPng.bas"
+#undef main
+#include "tConsole.bas"
+#include "tFonts.bas"
+#define main
+#define head
+#include "tFile.bas"
+#include "tGraphics.bas"
+#include "tRng.bas"
+#define head
+#include "tCoords.bas"
+#include "tMath.bas"
+#include "tPrint.bas"
+#include "Version.bas"
+#include "tUtils.bas"
+#include "tError.bas"
+#include "tSound.bas"
+#include "tStars.bas"
+#include "tConfig.bas"
+#include "tMenu.bas"
+#undef head
+#include "tConsole.bas"
+#include "tFonts.bas"
+#undef main
 
 #undef intest
 #define test
@@ -239,11 +268,12 @@ type tGetMouse
 End Type
 
 dim shared Lastmouse as tGetMouse
+
 type tConfirmClose As Function() as Integer
 type tProcesskey As Function(aKey as string) as Integer
 type tProcessmouse As Function(ByRef aMouse as tGetMouse) as Integer
 type tProcessaction As Function(iAction as Integer) as Integer
-
+	
 type tMainloopParams
 	dim KeyProc as tProcesskey
 	dim MouseProc as tProcessmouse
@@ -251,6 +281,7 @@ type tMainloopParams
 	dim ConfirmClose as tConfirmClose
 	dim Processaction as tProcessaction
 End Type
+
 
 'define function tProcesskey(aKey as string) as Integer
 'define function tProcessmouse(ByRef aMouse as tGetMouse) as Integer
@@ -260,13 +291,13 @@ function mainloop(ByRef aParams as tMainloopParams) as Integer
 	dim as integer iChanged
 	dim as integer iCmd
 	dim as string aKey
-   	while Closing=0
+   	while Closing=0 and (iCmd<> -1)
    		if iCmd=0 then
 			aKey=tConsole.aInKey()
 			if closing=1 then 
 				'close	
 				if aParams.ConfirmClose<>null then
-					if aParams.ConfirmClose(aKey)<>0 then
+					if aParams.ConfirmClose()<>0 then
 						closing=0
 					EndIf
 				endif
@@ -283,7 +314,7 @@ function mainloop(ByRef aParams as tMainloopParams) as Integer
 			EndIf
    		EndIf
 		'
-		if iCmd=0 and NoMouse=0 then
+		if iCmd=0 and aParams.NoMouse=0 then
 	        getmouse mx, my, mwheel, mbuttons, mclip
 	        if Lastmouse.mx<>mx or Lastmouse.my<>my or Lastmouse.mwheel<>mwheel or Lastmouse.mclip<>mclip then
 				Lastmouse.mx= mx  
@@ -299,16 +330,16 @@ function mainloop(ByRef aParams as tMainloopParams) as Integer
 		'
 		if iCmd<>0 then
 			'processkey	
-			if aParams.tProcessaction<>null then
-				iCmd=aParams.tProcessaction(iCmd)
+			if aParams.Processaction<>null then
+				iCmd=aParams.Processaction(iCmd)
 			else
 				iCmd=0
 			endif
-		EndIf		
+		EndIf
 		'
 		sleep(1)
    	Wend
-   	return closing=0
+   	return closing
 End Function
 
 #endif'main
@@ -323,12 +354,35 @@ End Namespace
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tConsole -=-=-=-=-=-=-=-
 	print #tConsole.fErrOut,"#fErrOut: error console open as #" &tConsole.fErrOut &"!"
-	dim as tConsole.tMainloopParams aParams
+	dim shared as tConsole.tMainloopParams aParams
 	
 	function keypress(aKey as string) as Integer
 		? aKey
+		if aKey="5" then
+			return 3			
+		EndIf
+		return 0
+	End Function
+	
+	function keypress2(aKey as string) as Integer
+		? "@@@ " &aKey &" @@@"
+		if aKey="5" then
+			return 5			
+		EndIf
+		return 0
+	End Function
+	
+	function Processaction(iAction as Integer) as Integer
+		if iAction=3 then
+			aParams.KeyProc= @keypress2			
+		EndIf
+		if iAction=5 then
+			aParams.KeyProc= @keypress			
+		EndIf
+		return 0
 	End Function
 	
 	aParams.KeyProc= @keypress 
+	aParams.Processaction= @Processaction 
 	tConsole.mainloop(aParams)
 #endif'test

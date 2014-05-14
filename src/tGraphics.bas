@@ -40,27 +40,6 @@ end function
 end namespace'tGraphics
 
 
-#define cut2top
-
-
-Enum backgrounds
-    bg_title
-    bg_noflip
-    bg_ship
-    bg_shiptxt
-    bg_shipstars
-    bg_shipstarstxt
-    bg_awayteam
-    bg_awayteamtxt
-    bg_logbook
-    bg_randompic
-    bg_randompictxt
-    bg_stock
-    bg_roulette
-    bg_trading
-End Enum
-
-
 function background(fn as string) as integer
     static last as string
     static firstcall as byte
@@ -138,20 +117,6 @@ End function
 #EndMacro
 
 '
-
-Dim Shared As Byte _mwx=30
-
-function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for windows less than 60 tiles wide
-    dim osx as short
-    osx=x-_mwx/2
-    if wrap>0 then
-        if osx<0 then osx=0
-        if osx>60-_mwx then osx=60-_mwx
-    endif
-    if _mwx=60 then osx=0
-    return osx
-end function
-
 
 #define cut2bottom
 #endif'main

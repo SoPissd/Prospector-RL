@@ -24,29 +24,47 @@
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tMenu -=-=-=-=-=-=-=-
 
+Enum backgrounds
+    bg_title
+    bg_noflip
+    bg_ship
+    bg_shiptxt
+    bg_shipstars
+    bg_shipstarstxt
+    bg_awayteam
+    bg_awayteamtxt
+    bg_logbook
+    bg_randompic
+    bg_randompictxt
+    bg_stock
+    bg_roulette
+    bg_trading
+End Enum
+
+
 declare function menu(_
 		bg as short,te as string, he as string="", x as short=2, y as short=2, _
 	    blocked as short=0, markesc as short=0,st as short=-1,loca as short=1) as short
 
 
-Dim Shared _last_title_pic As Byte=14
-
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tMenu -=-=-=-=-=-=-=-
 
-namespace tMenu
+namespace ntMenu
 function init() as Integer
 	return 0
 end function
-end namespace'tMenu
+end namespace'ntMenu
 
-
-#define cut2top
-
-
-function menu(bg as short,te as string, he as string="", x as short=2, y as short=2, _
+Type tMenu
+  declare constructor()
+  declare destructor()
+  declare function menu(bg as short,te as string, he as string="", x as short=2, y as short=2, _
 	          blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as short
+  declare function before() as short
+  declare function after() as short
+Private:
     ' 0= headline 1=first entry
     dim as short blen
     dim as string text,help
@@ -68,6 +86,143 @@ function menu(bg as short,te as string, he as string="", x as short=2, y as shor
     dim tlen as short
     dim longest as short
     dim as short ofx,l2,longestbox,longesthelp,backpic,offset
+    '
+    dim bg as short
+    dim te as string 
+    dim he as string="" 
+    dim x as short=2 
+    dim y as short=2 
+    dim blocked as short=0 
+    dim markesc as short=0
+    dim st as short=-1
+    dim loca as short=0
+    '
+    dim as any ptr logo
+End Type
+
+dim shared aMenu as tMenu
+
+Constructor tMenu()
+End Constructor
+
+Destructor tMenu()
+End Destructor
+
+function menu(bg as short,te as string, he as string="", x as short=2, y as short=2, _
+	          blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as short
+	return aMenu.Menu(bg,te,he,x,y,blocked,markesc,st,loca) 	          
+end function
+
+function tMenu.before() as short
+	dim as integer a
+    if bg<>bg_noflip then
+        tScreen.set(0)
+        set__color(15,0)
+        cls
+        select case bg
+        case bg_title
+       		background(backpic &".bmp")
+            if logo<>NULL then
+                put (39,69),logo,trans
+            else
+                draw string(26,26),"PROSPECTOR",,titlefont,custom,@_col
+            endif
+        case bg_ship
+            display_ship
+        case bg_shiptxt
+            display_ship
+            rlprint ""
+        case bg_shipstars
+            display_stars(1)
+            display_ship
+        case bg_shipstarstxt
+            display_stars(1)
+            display_ship
+            rlprint ""
+        case bg_awayteam
+            display_awayteam(0)
+        case bg_awayteamtxt
+            display_awayteam(0)
+            rlprint ""
+        case bg_randompic
+            background(backpic &".bmp")
+        case bg_randompictxt
+            background(backpic &".bmp")
+            rlprint ""
+        case bg_stock
+            display_ship
+            tCompany.display_stock
+            tCompany.portfolio(17,2)
+            rlprint ""
+        case bg_roulette
+            drawroulettetable
+            display_ship
+            rlprint ""
+        case is>=bg_trading
+            display_ship()
+            displaywares(bg-bg_trading)
+        end select
+    endif
+    set__color( 15,0)
+    draw string(x*_fw1,y*_fh1), lines(0)&space(3),,font2,custom,@_col
+    
+    for a=1 to c
+        if loca=a then 
+            if hfl=1 and loca<=c and helps(a)<>"" then blen=textbox(helps(a),ofx,2,hw,15,1,,,offset)
+            set__color( 15,5)
+        else
+            set__color( 11,0)
+        endif
+        draw string(x*_fw1,y*_fh1+a*_fh2),shrt(a) &") "& lines(a),,font2,custom,@_col
+    next
+    
+    if bg<>bg_noflip then 
+        tScreen.update()
+    else
+        rlprint ""
+    endif
+	return 0
+end function
+
+function tMenu.after() as short
+	dim as integer a
+    if hfl=1 then 
+        for a=1 to blen
+            set__color( 0,0)
+            draw string(ofx*_fw1,y*_fh1+(a-1)*_fh2), space(hw),,font2,custom,@_col
+        next
+    endif
+    if getdirection(key)=8 then loca=loca-1
+    if getdirection(key)=2 then loca=loca+1
+    if help<>"" then
+        if key="+" then offset+=1
+        if key="-" then offset-=1
+    endif
+    if loca<1 then loca=c
+    if loca>c then loca=1
+    if key=key__enter then e=loca
+    for a=0 to c
+        if key=lcase(shrt(a)) then loca=a
+    next
+'        if player.dead<>0 then e=c
+'        if key=key__esc then e=-27
+    if key=key__esc or player.dead<>0 then e=c
+	return e
+end function
+	          
+
+function tMenu.menu(sbg as short,ate as string, ahe as string="", sx as short=2, sy as short=2, _
+	          sblocked as short=0, smarkesc as short=0, sst as short=-1, sloca as short=0) as short
+	dim as integer a
+    bg= sbg
+    te= ate
+    he= ahe
+    x= sx
+    y= sy
+    blocked= sblocked
+    markesc= smarkesc
+    st= sst
+    loca= sloca
 
     if bg<0 then
 	    backpic=-bg
@@ -76,7 +231,6 @@ function menu(bg as short,te as string, he as string="", x as short=2, y as shor
 	    backpic=rnd_range(1,_last_title_pic)
     endif
     
-    dim as any ptr logo
     if bg=bg_title then
         logo= bmp_load("graphics/prospector.bmp")
     endif
@@ -113,11 +267,13 @@ function menu(bg as short,te as string, he as string="", x as short=2, y as shor
     b=0
     for a=0 to c
         shrt(a)=chr(96+b+a)
-        if getdirection(lcase(shrt(a)))>0 or getdirection(lcase(shrt(a)))>0 or val(shrt(a))>0 or ucase(shrt(a))=ucase(key_awayteam) then
+        if getdirection(lcase(shrt(a)))>0 _ 'or getdirection(lcase(shrt(a)))>0 _
+        or val(shrt(a))>0 or ucase(shrt(a))=ucase(key_awayteam) then
             do 
                 b+=1
                 shrt(a)=chr(96+b+a)
-            loop until getdirection(lcase(shrt(a)))=0 and getdirection(shrt(a))=0 and val(shrt(a))=0
+            loop until getdirection(lcase(shrt(a)))=0 _
+            		and getdirection(shrt(a))=0 and val(shrt(a))=0
         endif
         if len(trim(lines(a)))>longest then longest=len(trim(lines(a)))
     next
@@ -141,100 +297,16 @@ function menu(bg as short,te as string, he as string="", x as short=2, y as shor
     'if hw>longesthelp then hw=longesthelp
     ofx=x+4+(longest*_fw2/_fw1)
     e=0
-    do        
-        if bg<>bg_noflip then
-            tScreen.set(0)
-            set__color(15,0)
-            cls
-            select case bg
-            case bg_title
-           		background(backpic &".bmp")
-                if logo<>NULL then
-                    put (39,69),logo,trans
-                else
-                    draw string(26,26),"PROSPECTOR",,titlefont,custom,@_col
-                endif
-            case bg_ship
-                display_ship
-            case bg_shiptxt
-                display_ship
-                rlprint ""
-            case bg_shipstars
-                display_stars(1)
-                display_ship
-            case bg_shipstarstxt
-                display_stars(1)
-                display_ship
-                rlprint ""
-            case bg_awayteam
-                display_awayteam(0)
-            case bg_awayteamtxt
-                display_awayteam(0)
-                rlprint ""
-            case bg_randompic
-                background(backpic &".bmp")
-            case bg_randompictxt
-                background(backpic &".bmp")
-                rlprint ""
-            case bg_stock
-                display_ship
-                tCompany.display_stock
-                tCompany.portfolio(17,2)
-                rlprint ""
-            case bg_roulette
-                drawroulettetable
-                display_ship
-                rlprint ""
-            case is>=bg_trading
-                display_ship()
-                displaywares(bg-bg_trading)
-            end select
-        endif
-        set__color( 15,0)
-        draw string(x*_fw1,y*_fh1), lines(0)&space(3),,font2,custom,@_col
-        
-        for a=1 to c
-            if loca=a then 
-                if hfl=1 and loca<=c and helps(a)<>"" then blen=textbox(helps(a),ofx,2,hw,15,1,,,offset)
-                set__color( 15,5)
-            else
-                set__color( 11,0)
-            endif
-            draw string(x*_fw1,y*_fh1+a*_fh2),shrt(a) &") "& lines(a),,font2,custom,@_col
-        next
-        
-        if bg<>bg_noflip then 
-            tScreen.update()
-        else
-            rlprint ""
-        endif
-
+    do
+    	before()
+    	
 		tConsole.ClearKeys
         if player.dead=0 then key=keyin(,96+c)
         
-        if hfl=1 then 
-            for a=1 to blen
-                set__color( 0,0)
-                draw string(ofx*_fw1,y*_fh1+(a-1)*_fh2), space(hw),,font2,custom,@_col
-            next
-        endif
-        if getdirection(key)=8 then loca=loca-1
-        if getdirection(key)=2 then loca=loca+1
-        if help<>"" then
-            if key="+" then offset+=1
-            if key="-" then offset-=1
-        endif
-        if loca<1 then loca=c
-        if loca>c then loca=1
-        if key=key__enter then e=loca
-        for a=0 to c
-            if key=lcase(shrt(a)) then loca=a
-        next
-'        if player.dead<>0 then e=c
-'        if key=key__esc then e=-27
-        if key=key__esc or player.dead<>0 then e=c
+    	after()
     loop until e>0 
     if key=key__esc and markesc=1 then e=-asc(key__esc)
+    
     set__color( 0,0)
     for a=0 to c
         locate y+a,x
@@ -255,7 +327,7 @@ end function
 
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: tMenu -=-=-=-=-=-=-=-
-	tModule.register("tMenu",@tMenu.init()) ',@tMenu.load(),@tMenu.save())
+	tModule.register("tMenu",@ntMenu.init()) ',@ntMenu.load(),@ntMenu.save())
 #endif'main
 
 #ifdef test

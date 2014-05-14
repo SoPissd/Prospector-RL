@@ -24,6 +24,25 @@
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tPrint -=-=-=-=-=-=-=-
 
+Dim Shared As UByte _FH1
+Dim Shared As UByte _FH2
+Dim Shared As UByte _FW1
+Dim Shared As UByte _FW2
+Dim Shared As UByte _TFH
+Dim Shared As Byte _mwx=30
+
+'dim shared as FB.image ptr TITLEFONT
+Dim Shared As Any Ptr TITLEFONT
+Dim Shared As Any Ptr FONT1,FONT2
+
+Dim Shared displaytext(255) As String
+Dim Shared dtextcol(255) As Short
+
+Dim Shared As Byte _lines=25
+Dim Shared As Byte _textlines
+
+declare function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for windows less than 60 tiles wide
+
 declare function rlprint(t as string, col as short=11) as short
 
 'private function scrollup(b as short) as short
@@ -38,9 +57,6 @@ function init() as Integer
 	return 0
 end function
 end namespace'tPrint
-
-Dim Shared As Byte _lines=25
-Dim Shared As Byte _textlines
 
 function scrollup(b as short) as short
     dim as short a,c
@@ -77,6 +93,7 @@ end function
 
 
 function rlprint(t as string, col as short=11) as short
+	dim as Integer no_key
     dim as short a,b,c,delay
     dim text as string
     dim wtext as string
@@ -171,7 +188,7 @@ function rlprint(t as string, col as short=11) as short
                     set__color( 14,1)
                     if displaytext(firstline+winh+1)<>"" then
                         draw string((winw+1)*_fw2,tScreen.y-_fh2), chr(25),,font2,custom,@_col
-                        no_key=keyin
+                        no_key=tConsole.iGetKey() 'keyin
                     endif
                 loop until displaytext(_textlines+1)=""
             endif
@@ -194,6 +211,18 @@ function rlprint(t as string, col as short=11) as short
     locate 24,1
     set__color( 11,0)
     return 0
+end function
+
+
+function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for windows less than 60 tiles wide
+    dim osx as short
+    osx=x-_mwx/2
+    if wrap>0 then
+        if osx<0 then osx=0
+        if osx>60-_mwx then osx=60-_mwx
+    endif
+    if _mwx=60 then osx=0
+    return osx
 end function
 
 #endif'main

@@ -24,6 +24,8 @@
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tFonts -=-=-=-=-=-=-=-
 
+Dim Shared As UByte _fohi1, _fohi2
+
 declare function load_font(fontdir as string,byref fh as ubyte) as ubyte ptr
 declare function load_fonts() as short
 declare function draw_border(xoffset as short) as short
@@ -85,9 +87,10 @@ end function
 
 
 function load_fonts() as short
-    DimDebugL(0)'1
+    'DimDebugL(0)'1
     dim as short a,f
     dim as integer depth
+    dim as integer debug
 
 #if __FB_DEBUG__
     if debug=1 then

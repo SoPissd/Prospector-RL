@@ -24,6 +24,30 @@
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tStars -=-=-=-=-=-=-=-
 
+
+Type _stars
+    c As _cords
+    spec As Byte
+    ti_no As UInteger
+    discovered As Byte
+    planets(1 To 9) As Short
+    desig As String*12
+    comment As String*60
+End Type
+
+Dim shared as ubyte wormhole=8
+dim shared as ubyte laststar=90
+
+Dim Shared map(laststar+wormhole+1) As _stars
+
+Const lastspecial=46
+
+Dim Shared specialplanet(lastspecial) As Short
+Dim Shared specialplanettext(lastspecial,1) As String
+Dim Shared spdescr(lastspecial) As String
+Dim Shared specialflag(lastspecial) As Byte
+
+
 declare function is_special(m as short) as short
 declare function UpdateMapSize(size as short) as Short
 declare function sysfrommap(a as short)as short
@@ -41,27 +65,6 @@ end function
 end namespace'tStars
 
 
-#define cut2top
-
-
-Type _stars
-    c As _cords
-    spec As Byte
-    ti_no As UInteger
-    discovered As Byte
-    planets(1 To 9) As Short
-    desig As String*12
-    comment As String*60
-End Type
-
-Dim Shared map(laststar+wormhole+1) As _stars
-
-Dim Shared specialplanet(lastspecial) As Short
-Dim Shared specialplanettext(lastspecial,1) As String
-Dim Shared spdescr(lastspecial) As String
-Dim Shared specialflag(lastspecial) As Byte
-
-
 function is_special(m as short) as short
     dim a as short
     for a=0 to lastspecial
@@ -69,7 +72,6 @@ function is_special(m as short) as short
     next
     return 0
 end function    
-
 
 
 function UpdateMapSize(size as short) as Short

@@ -40,7 +40,6 @@ end function
 end namespace'tKbinput
 
 
-Dim Shared As UByte _FH1,_FH2,_FW1,_FW2,_TFH
 
 Const key__esc = 	Chr(27)
 Const key__enter =	Chr(13)

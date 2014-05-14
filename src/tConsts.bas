@@ -83,7 +83,6 @@ Const show_eq=0 			'Show earthquakes
 Const dbshow_factionstatus=0
 Const lstcomit=56
 Const lstcomty=20 			'Last common item
-Const lastspecial=46
 Const make_vault=0
 Const addpyramids=0
 Const com_log=0

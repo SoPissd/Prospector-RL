@@ -277,7 +277,7 @@ function ttest() as Integer
 	?
 	? "zapped temp-file "+fn
 	kill fn
-	return Pressanykey(0)	
+	return tConsole.Pressanykey(0)	
 End Function
 ttest()
 #endif 

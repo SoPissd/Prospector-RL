@@ -37,7 +37,6 @@ declare function minimum(a as double,b as double) as double
 declare function nearest(byval c as _cords, byval b as _cords,rollover as byte=0) as single
 declare function farthest(c as _cords, b as _cords) as single
 declare function fill_rect(r as _rect,wall as short, flor as short,map() as short) as short
-declare function movepoint(byval c as _cords, a as short, eo as short=0, border as short=0) as _cords
 
 'private function C_to_F(c as single) as single
 'private function find_high(list() as short,last as short, start as short=1) as short
@@ -65,10 +64,6 @@ Type vector
         y As Integer
         Declare Constructor(x As Integer, y As Integer)
 End Type
-
-Dim Shared As UByte sm_x=75
-Dim Shared As UByte sm_y=50
-
 
 Type _sym_matrix
         xm As Integer
@@ -492,86 +487,6 @@ function rndrectwall(r as _rect,d as short=5) as _cords
     return p
 end function
 
-
-function movepoint(byval c as _cords, a as short, eo as short=0, border as short=0) as _cords
-    dim p as _cords
-    dim as short x,y
-    dim f as integer
-    if border=0 then
-        x=60
-        y=20
-    else
-        x=sm_x
-        y=sm_y
-    endif
-        
-    if a=5 then
-        a=rnd_range(1,8)
-        if a=5 then a=9
-    endif
-    p=c
-    if a=1 then
-        c.x=c.x-1
-        c.y=c.y+1
-    endif
-    if a=2 then
-        c.x=c.x
-        c.y=c.y+1
-    endif
-    if a=3 then
-        c.x=c.x+1
-        c.y=c.y+1
-    endif
-    if a=4 then
-        c.x=c.x-1
-        c.y=c.y
-    endif
-    if a=6 then
-        c.x=c.x+1
-        c.y=c.y
-    endif
-    if a=7 then
-        c.x=c.x-1
-        c.y=c.y-1
-    endif
-    if a=8 then
-        c.x=c.x
-        c.y=c.y-1
-    endif
-    if a=9 then
-        c.x=c.x+1
-        c.y=c.y-1
-    endif
-    if eo=0 then
-        if c.x<0 then c.x=0
-        if c.x>x then c.x=x
-        if c.y<0 then c.y=0
-        if c.y>y then c.y=y
-    endif
-    if eo=1 then
-        if c.x<0 then c.x=x
-        if c.x>x then c.x=0
-        if c.y<0 then c.y=y
-        if c.y>y then c.y=0
-    endif
-    if eo=2 then
-        if c.x<0 or c.x>x then c=p
-        if c.y<0 or c.y>y then c=p
-    endif
-    if eo=3 then
-        if c.y<0 then c.y=0
-        if c.y>y then c.y=y
-        if c.x<0 then c.x=x
-        if c.x>x then c.x=0
-    endif
-    if eo=4 then
-        if c.y<0 then c.y=0
-        if c.y>20 then c.y=20
-        if c.x<0 then c.x=x
-        if c.x>x then c.x=0
-    endif
-    return c
-end function
 
 #define cut2bottom
 #endif'main

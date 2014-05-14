@@ -57,7 +57,22 @@ Enum config
 End Enum
 
 
-declare function explored_percentage_string() as string
+Dim Shared _last_title_pic As Byte=14
+
+Dim Shared As Byte _volume=2
+
+Dim Shared As Byte _tix=24
+Dim Shared As Byte _tiy=24
+
+Dim Shared As Byte gt_mwx=40
+
+Dim Shared As Byte _teamcolor=15
+Dim Shared As Byte _shipcolor=14
+
+Dim Shared As Byte configflag(con_end-1)
+Dim Shared As String configname(con_end-1)
+Dim Shared As String configdesc(con_end-1)
+
 declare function save_config(oldtiles as short) as short
 declare function load_config() as short
 declare function configuration(iBg as short=0) as short
@@ -82,27 +97,6 @@ end namespace'tConfig
 'Declare function SetCaptainsprite(nr as byte) as short
 'Declare function menu(bg as byte,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1) as short
 
-Dim Shared As UByte _fohi1, _fohi2
-Dim Shared As Byte _volume=2
-
-
-Dim Shared vismask(sm_x,sm_y) As Byte
-Dim Shared spacemap(sm_x,sm_y) As Short
-
-Dim shared as ubyte wormhole=8
-dim shared as ubyte laststar=90
-
-Dim Shared As Byte _tix=24
-Dim Shared As Byte _tiy=24
-
-Dim Shared As Byte gt_mwx=40
-
-Dim Shared As Byte _teamcolor=15
-Dim Shared As Byte _shipcolor=14
-
-Dim Shared As Byte configflag(con_end-1)
-
-Dim Shared As String configname(con_end-1)
 configname(con_tiles)="tiles"
 configname(con_gtmwx)="gtmwx"
 configname(con_classic)="classic"
@@ -131,7 +125,6 @@ configname(con_restart)="restart"
 
 '
 
-Dim Shared As String configdesc(con_end-1)
 configdesc(con_showrolls)="/ Show rolls:"
 configdesc(con_chosebest)="/ Always chose best item:"
 configdesc(con_sound)="/ Sound effects:"
@@ -159,21 +152,6 @@ configdesc(con_customfonts)="/ Customfonts:"
 configdesc(con_damscream)="/ Damage scream:"
 
 '
-
-function explored_percentage_string() as string
-    dim as short x,y,ex
-    for x=0 to sm_x
-        for y=0 to sm_y
-            if spacemap(x,y)>0 then ex+=1
-        next
-    next
-    if ex<(sm_x*sm_y) then
-        return "Explored {15}"&ex &"{11} parsec ({15}"& int(ex/(sm_x*sm_y)*100) &" %{11} of the sector)"
-    else
-        return "Explored the complete sector."
-    endif
-end function
-
 
 function save_config(oldtiles as short) as short
     dim as short f,i
@@ -429,7 +407,6 @@ function configuration(iBg as short) as short
     return save_config(oldtiles)
 end function
 
-#define cut2bottom
 #endif'main
 
 #if (defined(main) or defined(test))
