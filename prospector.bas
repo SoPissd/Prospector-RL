@@ -1,35 +1,25 @@
 'prospector.
 '
 #define makesound   ' can also use " fbc -d makesound " .. thats better, actually
-
-'Cls
-On Error Goto errormessage
-scope
-#include "src/uVersion.bi"
-Print __VERSION__
-Print "Built on FB."+__FB_VERSION__+", "+__TIME__+" "+__DATE__
-end scope
-
-'build the core pieces  
-#include once "src/bFoundation.bas"
+# define justcore 
+#include once "src/bFoundation.bas"	'build the core pieces  
 
 'build module 'build' for types, head and main
-#if 1
+#ifndef buildjustcore
 	'#ifdef modulename - leads to interpretations errors. dont use substitution here.
-	make("src/bProspector.bi")
-	
-	#print Building application...
-	#define main
-#else
-	#print Building core...
-	#undef main
+	#define phase1
+'	#define phase2
+		make("src/bProspector.bi")
+	#undef phase1
+'		make("src/bProspector.bi")
+	#undef phase2
 #endif
 
 '
 	
 namespace tMain
-#ifdef main
-	#print full
+#ifndef buildjustcore
+	#print Building application...
 	function init(iAction as integer) as Integer
 		Print tModule.status()
 		Print
@@ -37,7 +27,7 @@ namespace tMain
 		return tModule.Run(iAction)
 	end function
 #else
-	#print core
+	#print Building core...
 	function init(iAction as integer) as Integer
 		Print tModule.status()
 		Print

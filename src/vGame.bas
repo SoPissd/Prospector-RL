@@ -53,7 +53,7 @@ function updatefps(iAction as Integer) as integer
 	iTime=1000/iTime
 	if not tScreen.isGraphic then
 		tScreen.pushpos()
-	    tScreen.xy(40,3,"" & iTime)
+	    tScreen.xy(70,1,"" & iTime)
 		tScreen.poppos()
 	endif
 	return iAction

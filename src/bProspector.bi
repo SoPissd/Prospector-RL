@@ -1,16 +1,30 @@
-#if 1
-#define gbasics
-#define ccommerce
-#define ddisplay
-#define pplanet
-#define ggame
-#define sspace
-#define wworldgen
-#define vapp
-#define vfinal
-#define xvars
-#else
-#define gbasics
+#ifdef phase1
+	#define gbasics
+#endif
+#ifdef phase2
+	#define xvars
+	#define ccommerce
+	#define ddisplay
+	#define pplanet
+	#define ggame
+	#define sspace
+	#define wworldgen
+	#define vapp
+	#define vfinal
+#endif
+
+#ifdef other
+	#define gbasics
+	#define ccommerce
+	#define ddisplay
+	#define pplanet
+	#define ggame
+	#define sspace
+	#define wworldgen
+	#define vapp
+	#define vfinal
+	#define xvars
+	#define gbasics
 #endif
 '
 '

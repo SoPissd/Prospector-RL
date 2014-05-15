@@ -41,24 +41,16 @@
 #define test
 #endif 
 
-
 #undef intest
 #define test
 #endif'test
+
+namespace tFile	
+
+
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tFile -=-=-=-=-=-=-=-
 
-
-'private function = Close(#fileno)
-'private function private Openerror(filename as string, fileno as integer, filemode as tFileOpenMode) as integer
-'private function ttest() as Integer
-
-#endif'head
-#ifdef main
-'     -=-=-=-=-=-=-=- MAIN: tFile -=-=-=-=-=-=-=-
-
-namespace tFile	
-	
 Enum tFileOpenMode
 	fmInput
 	fmOutput
@@ -69,6 +61,32 @@ End Enum
 	
 dim lastfn as String
 dim FileError as String
+
+declare function Closefile(ByRef fileno as integer) as integer
+'private function Openerror(filename as string, fileno as integer, filemode as tFileOpenMode) as integer
+declare function Openfile(filename as string, ByRef fileno as integer, filemode as tFileOpenMode=fmInput) as integer
+declare function OpenInput(filename as string,ByRef fileno as integer) as integer
+declare function OpenOutput(filename as string,ByRef fileno as integer) as integer
+declare function OpenAppend(filename as string,ByRef fileno as integer) as integer
+declare function OpenBinary(filename as string,ByRef fileno as integer) as integer
+declare function OpenLogfile(filename as string, ByRef fileno as integer, kbsizelimit as integer=0) as integer
+declare function filetostring overload (fileno as integer) as String
+declare function filetostring overload (filename as string) as String
+declare function stringtofile overload (fileno as integer,text as string) as integer
+declare function stringtofile overload (filename as string,text as string) as integer
+declare function Assertpath(folder as string) as integer
+declare function Countlines(filename as string,nonblank as integer=1) as integer
+
+declare function Filesize(filename as string) as integer
+declare function FilesizeInMb(filename as string) as string
+	
+'private function = Close(#fileno)
+'private function private Openerror(filename as string, fileno as integer, filemode as tFileOpenMode) as integer
+'private function ttest() as Integer
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tFile -=-=-=-=-=-=-=-
 
 public function Init(iAction as integer) as integer
 	lastfn=""
@@ -232,6 +250,16 @@ public function Filesize(filename as string) as integer
 	return -1
 end function
 
+function FilesizeInMb(filename as string) as string
+	Dim as Integer size
+	Dim as string asize
+	size= Filesize(filename) \ 1024
+	asize="" &size
+	size=len(asize)-(3-1)
+	asize=mid(asize,1,size)+"."+mid(asize,size,3)
+	if size<1 then asize="0"+asize
+	return asize
+End Function
 
 public function Countlines(filename as string,nonblank as integer=1) as integer
 	'counts non-blank lines by default

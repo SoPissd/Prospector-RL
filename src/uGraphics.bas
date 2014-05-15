@@ -145,7 +145,7 @@ End function
 end namespace'tGraphics
 
 #ifdef main
-#print -=-=-=-=-=-=-=- MAIN: tGraphics -=-=-=-=-=-=-=-
+'#print -=-=-=-=-=-=-=- MAIN: tGraphics -=-=-=-=-=-=-=-
 #Macro draw_string(ds_x,ds_y,ds_text,ds_font,ds_col)
 	Draw String(ds_x,ds_y),ds_text,,ds_font,custom,@ds_col
 #EndMacro

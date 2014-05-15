@@ -87,9 +87,9 @@ function locEOL() as _cords
     dim as short y,x,a,winh,firstline
     dim as _cords p
 	if tScreen.isGraphic then
-?"	    winh=fix((tScreen.y-_fh1*22)/_fh2)-1"
+'?"	    winh=fix((tScreen.y-_fh1*22)/_fh2)-1"
 	    winh=fix((tScreen.y-_fh1*22)/_fh2)-1
-?winh
+'?winh
 	    do
 	        firstline+=1
 	    loop until firstline*_fh2>=22*_fh1

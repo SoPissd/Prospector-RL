@@ -134,30 +134,25 @@ function Viewfile(filename as string,nlines as integer=4096) as short
     set__color( 15,0)
     
     if tFile.Openinput(filename,f)>0 then
-        do
-            line input #f,lines(c)
-            'while len(lines(c))>80
-            '    text=lines(c)
-            '    lastspace=80
-            '    do
-            '        lastspace=lastspace-1
-            '    loop until mid(text,lastspace,1)=" "
-            '    lines(c)=left(text,lastspace)
-            '    lines(c+1)=mid(text,lastspace+1,(len(text)-lastspace+1))
-            '    c=c+1
-            'wend
-            c=c+1
-
-        loop until eof(f) or c>nlines
-        
-        tFile.Closefile(f)
         ViewArray(Lines(),c)
-    else
-        locate 10,10
-ErrOut("Couldnt open " + filename)
-        print "Couldnt open " + filename
     endif
-	uConsole.ClearKeys()
+    do
+        line input #f,lines(c)
+        'while len(lines(c))>80
+        '    text=lines(c)
+        '    lastspace=80
+        '    do
+        '        lastspace=lastspace-1
+        '    loop until mid(text,lastspace,1)=" "
+        '    lines(c)=left(text,lastspace)
+        '    lines(c+1)=mid(text,lastspace+1,(len(text)-lastspace+1))
+        '    c=c+1
+        'wend
+        c=c+1
+    loop until eof(f) or c>nlines
+    tFile.Closefile(f)
+    '
+    ViewArray(Lines(),c)
     return 0
 end function
 
