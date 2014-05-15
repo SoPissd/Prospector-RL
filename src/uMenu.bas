@@ -227,6 +227,7 @@ function uMenu.init() as short
 	'LogOut("uMenu.init()")
 	dim as integer a
 
+    cls
 	if tScreen.isGraphic then
 		if bg<0 then
 		    backpic=-bg

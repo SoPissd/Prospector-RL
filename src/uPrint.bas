@@ -59,10 +59,10 @@ declare function rlprint(t as string, col as short=11) as short
 
 namespace tPrint
 function init(iAction as integer) as integer
-	_FH1=8
-	_FH2=8
-	_FW1=8
-	_FW2=8
+	_FH1=24
+	_FH2=16
+	_FW1=16
+	_FW2=16
 	_mwx=60
 	return 0
 end function
@@ -125,18 +125,18 @@ function rlprint(t as string, col as short=11) as short
     static curline as single
     static lastmessage as string
     static lastmessagecount as short
-if tScreen.isGraphic then
+'if tScreen.isGraphic then
     firstline=fix((22*_fh1)/_fh2)
     winw=fix(((_fw1*_mwx+1))/_fw2)
     winh=fix((tScreen.y-_fh1*22-_fh2)/_fh2)
-else
-	_fh1=8
-	_fh2=8
-    winw=(width() and &hFFFF)' gives screen/console width
-    winh=(width() shr (4*4)) ' gives screen/console height
-    firstline=22
-    _lines=winh
-endif
+'else
+''	_fh1=8
+'	_fh2=8
+'    winw=(width() and &hFFFF)' gives screen/console width
+'    winh=(width() shr (4*4)) ' gives screen/console height
+'    firstline=22
+'    _lines=winh
+'endif
     if t<>"" then
 '    firstline=0
 '    do
