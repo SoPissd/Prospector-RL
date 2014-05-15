@@ -27,11 +27,14 @@
 Type uMenu
   declare constructor()
   declare destructor()
-  declare function go(bg as short,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as short
+  '
   declare function init() as short
   declare function before() as short
   declare function after() as short
   declare function finish() as short
+  '
+  declare function menu() as short
+  declare function go(bg as short,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as short
 Private:
     ' 0= headline 1=first entry
     dim as short blen
@@ -339,12 +342,12 @@ function uMenu.finish() as short
 	        'locate y+a,x
 	        draw string(x*_fw1,y*_fh1+a*_fh2), space(longest),,font2,custom,@_col
 	    next
-	    set__color( 11,0)
-	    cls
-	    tScreen.set(1)
-	    if logo <> 0 then
-			ImageDestroy(Logo)
-	    EndIf
+'	    set__color( 11,0)
+'	    cls
+'		tScreen.set(1)
+'	    if logo <> 0 then
+'			ImageDestroy(Logo)
+'	    EndIf
 	else
 		tScreen.pushpos()
 	    for a=0 to c
@@ -356,27 +359,10 @@ function uMenu.finish() as short
 End Function
 
 
-function uMenu.go(sbg as short,ate as string, ahe as string="", sx as short=2, sy as short=2, sblocked as short=0, smarkesc as short=0, sst as short=-1, sloca as short=0) as short
+function uMenu.menu() as short
+	if (uConsole.Closing<>0) then return 0
 	dim bGraphic as Short
 	bGraphic=tScreen.isGraphic
-	'if tScreen.isGraphic then
-	'	LogOut("tScreen.isGraphic")
-	'else
-	'	cls
-	'	LogOut("tScreen.isConsole")
-	'endif
-    bg= sbg
-    te= ate
-    he= ahe
-    x= sx
-    y= sy
-    blocked= sblocked
-    markesc= smarkesc
-    st= sst
-    loca= sloca
-	'LogOut("x,y " &x &"," &y)
-
-	if (uConsole.Closing<>0) then return 0
    	e=init()
    	if e=0 then
 	    while (uConsole.Closing=0) and (e=0)	
@@ -394,6 +380,27 @@ function uMenu.go(sbg as short,ate as string, ahe as string="", sx as short=2, s
    	else
 	    return e
    	EndIf
+End Function
+
+function uMenu.go(sbg as short,ate as string, ahe as string="", sx as short=2, sy as short=2, sblocked as short=0, smarkesc as short=0, sst as short=-1, sloca as short=0) as short
+	'if tScreen.isGraphic then
+	'	LogOut("tScreen.isGraphic")
+	'else
+	'	cls
+	'	LogOut("tScreen.isConsole")
+	'endif
+    bg= sbg
+    te= ate
+    he= ahe
+    x= sx
+    y= sy
+    blocked= sblocked
+    markesc= smarkesc
+    st= sst
+    loca= sloca
+	'LogOut("x,y " &x &"," &y)
+	
+	return menu()
 end function
 
 function textmenu overload (bg as short,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as short

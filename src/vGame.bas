@@ -215,8 +215,7 @@ End function
 'end function
 
 function run(iAction as Integer) as Integer
-?"function run(iAction as Integer) as Integer"
-
+	'?"function run(iAction as Integer) as Integer"
     while (uConsole.Closing=0) and (iAction=0)
 	    iAction= mainmenu(iAction)
     wend
