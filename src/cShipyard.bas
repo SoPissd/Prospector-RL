@@ -59,7 +59,7 @@ declare function shipupgrades(st as short) as short
 '     -=-=-=-=-=-=-=- MAIN: tShipyard -=-=-=-=-=-=-=-
 
 namespace tShipyard
-function init() as Integer
+function init(iAction as integer) as integer
     shipyardname(sy_military)="SHI Vessels Division ltd."
     shipyardname(sy_civil)="Eridiani Exploratory Craft ltd."
     shipyardname(sy_pirates)="Lost and Found"

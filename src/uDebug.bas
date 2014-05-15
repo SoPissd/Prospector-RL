@@ -98,7 +98,13 @@
 	dim as String driver 
 	Screeninfo w,h,depth,bpp,pitch,rate,driver
 	print "Screeninfo:"
+	print "w, h, depth, bpp, pitch, rate, driver"
 	write w,h,depth,bpp,pitch,rate,driver
+	dim as Integer cw,ch
+    ch=(width() shr (4*4)) ' gives screen/console height
+    cw=(width() and &hFFFF)
+	print "Console: x,y: ";cw;",";ch
+
 	End Sub	
 	
 #else
@@ -178,7 +184,7 @@
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tDebug -=-=-=-=-=-=-=-
 namespace tDebug
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tDebug

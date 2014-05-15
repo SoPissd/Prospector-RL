@@ -41,7 +41,7 @@ declare function factionadd(a as short,b as short, add as short) as short
 '     -=-=-=-=-=-=-=- MAIN: tFaction -=-=-=-=-=-=-=-
 
 namespace tFaction
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tFaction

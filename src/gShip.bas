@@ -61,6 +61,8 @@ Enum ShipType
     st_last
 End Enum
 
+Dim Shared shiptypes(20) As String
+
 Dim Shared piratenames(st_last) As String
 Dim Shared piratekills(st_last) As Integer
 
@@ -107,6 +109,7 @@ Type _ship
     Declare function science(onship As Short) As Short
     Declare function doctor(onship As Short) As Short
     declare function ammo() as short
+	declare function bestcrew(s1 As Short,s2 As Short) As Short
 
     pipilot As Short
     pigunner As Short
@@ -197,7 +200,7 @@ declare function gethullspecs(t as short,file as string) as _ship
 '     -=-=-=-=-=-=-=- MAIN: tShip -=-=-=-=-=-=-=-
 
 namespace tShip
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tShip
@@ -245,24 +248,32 @@ function _ship.diop() As Byte
     EndIf
 End function
 
+function _ship.bestcrew(s1 As Short,s2 As Short) As Short
+#if defined(best_crew)
+    Return best_crew(s1,s2)
+#else    
+    Return 0
+#endif
+End function
+
 function _ship.pilot(onship As Short) As Short
     If pipilot<>0 Then Return pipilot
-    Return best_crew(0,1)
+    Return bestcrew(0,1)
 End function
 
 function _ship.gunner(onship As Short) As Short
     If pigunner<>0 Then Return pigunner
-    Return best_crew(1,h_maxweaponslot)
+    Return bestcrew(1,h_maxweaponslot)
 End function
 
 function _ship.science(onship As Short) As Short
     If piscience<>0 Then Return piscience
-    Return best_crew(2,h_maxsensors)
+    Return bestcrew(2,h_maxsensors)
 End function
 
 function _ship.doctor(onship As Short) As Short
     If pidoctor<>0 Then Return pidoctor
-    Return best_crew(3,12)
+    Return bestcrew(3,12)
 End function
 
 function _ship.movepoints(mjs As Short) As Short

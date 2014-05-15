@@ -32,7 +32,7 @@ declare function check_item_filter(t as short,f as short) as short
 '     -=-=-=-=-=-=-=- MAIN: tItem -=-=-=-=-=-=-=-
 
 namespace tItem
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tItem

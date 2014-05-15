@@ -185,7 +185,7 @@ End Type
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tCards -=-=-=-=-=-=-=-
 
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 
@@ -633,7 +633,7 @@ function cardobj.LoadCards (cards As String) As Integer
 	Dim ret As Integer = TRUE
 	
    If Len(cards) > 0 Then
-	   _cards = bmp_load(cards)
+	   _cards = tGraphics.bmp_load(cards)
 	   If _cards = NULL Then
 		   ret = FALSE
 	   EndIf

@@ -69,7 +69,7 @@ declare function merc_dis(fl as short,byref goal as short) as short
 '     -=-=-=-=-=-=-=- MAIN: tFleet -=-=-=-=-=-=-=-
 
 namespace tFleet
-function init() as Integer
+function init(iAction as integer) as integer
 	empty_fleet.del=1
 	return 0
 end function

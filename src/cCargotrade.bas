@@ -47,13 +47,13 @@ declare function pirateupgrade() as short
 '     -=-=-=-=-=-=-=- MAIN: cargotrade -=-=-=-=-=-=-=-
 
 namespace cargotrade
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'cargotrade
 
 
-private function load_s(s as _ship, good as short, st as short) as short
+function load_s(s as _ship, good as short, st as short) as short
     dim as short bay,result,a
     for a=1 to 25
         if s.cargo(a).x=1 and bay=0 then bay=a

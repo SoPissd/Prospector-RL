@@ -35,10 +35,6 @@
 
 Dim Shared combatmap(60,20) As Byte
 
-Dim Shared stiles(9,68) As Any Ptr
-Dim Shared shtiles(7,4) As Any Ptr
-Dim Shared bestaltdir(9,1) As Byte
-
 Dim Shared As Byte com_cheat=0
 Const show_enemyships=0
 
@@ -81,7 +77,7 @@ declare function com_mindist(s as _ship) as short
 '     -=-=-=-=-=-=-=- MAIN: tSpacecombatfunctions -=-=-=-=-=-=-=-
 
 namespace tSpacecombatfunctions
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tSpacecombatfunctions
@@ -1117,7 +1113,7 @@ function com_getweapon() as short
     do
         display_ship_weapons(m)
         rlprint ""
-        no_key=tConsole.Keyinput(key__esc & key__enter &key__up &key__lt &key__dn &key__rt &"+-123456789")
+        no_key=uConsole.Keyinput(key__esc & key__enter &key__up &key__lt &key__dn &key__rt &"+-123456789")
 '        no_key=keyin(key__esc & key__enter &key__up &key__lt &key__dn &key__rt &"+-123456789")
         if keyplus(no_key) then m+=1
         if keyminus(no_key) then m-=1
@@ -1182,7 +1178,7 @@ function com_gettarget(defender as _ship, wn as short, attacker() as _ship,marke
                 text="Mine "&com_wstring(defender.weapons(wn),distance(list_c(marked),defender.c))
             endif
             if text<>"" then rlprint text
-            key=tConsole.Keyinput("+-"&key__esc &key__enter) ',1)
+            key=uConsole.Keyinput("+-"&key__esc &key__enter) ',1)
 '            key=keyin("+-"&key__esc &key__enter,1)
             if keyplus(key) then marked+=1
             if keyminus(key) then marked-=1
@@ -1256,7 +1252,7 @@ function com_dropmine(defender as _ship,mines_p() as _cords,mines_v() as short,b
         return 0
     endif
     rlprint "Dropping "&item(mine).desig &" Direction?"
-    key=tConsole.Keyinput("12345678")
+    key=uConsole.Keyinput("12345678")
 '    key=keyin("12345678")
     a=getdirection(key)
     if a>0 then

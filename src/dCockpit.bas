@@ -27,7 +27,7 @@
 declare function show_dotmap(x1 as short, y1 as short) as short
 declare function show_minimap(xx as short,yy as short) as short
 declare function show_wormholemap(j as short=0) as short
-declare function messages() as short
+'declare function messages() as short
 
 
 #endif'head
@@ -35,7 +35,7 @@ declare function messages() as short
 '     -=-=-=-=-=-=-=- MAIN: tCockpit -=-=-=-=-=-=-=-
 
 namespace tCockpit
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tCockpit
@@ -317,22 +317,22 @@ end function
 '    no_key=keyin
 
 
-function messages() as short
-    dim as short a,ll
-    screenshot(1)
-    ll=_lines*_fh1/_fh2
-    set__color( 15,0)
-    cls
-    for a=1 to ll
-        locate a,1
-        set__color( dtextcol(a),0)
-        draw string (0,a*_fh2), displaytext(a),,font2,custom,@_col
-    next
-    no_key=keyin(,1)
-    cls
-    screenshot(2)
-    return 0
-end function
+'function messages() as short
+'    dim as short a,ll
+'    screenshot(1)
+'    ll=_lines*_fh1/_fh2
+'    set__color( 15,0)
+'    cls
+'    for a=1 to ll
+'        locate a,1
+'        set__color( dtextcol(a),0)
+'        draw string (0,a*_fh2), displaytext(a),,font2,custom,@_col
+'    next
+'    no_key=keyin(,1)
+'    cls
+'    screenshot(2)
+'    return 0
+'end function
 
 
 #define cut2bottom

@@ -33,7 +33,7 @@ declare function casino(staked as short=0, st as short=-1) as short
 '     -=-=-=-=-=-=-=- MAIN: tCasino -=-=-=-=-=-=-=-
 
 namespace tCasino
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tCasino

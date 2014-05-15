@@ -84,7 +84,7 @@ declare function play_poker(st as short) as short
 '     -=-=-=-=-=-=-=- MAIN: tPoker -=-=-=-=-=-=-=-
 
 namespace tPoker
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tPoker

@@ -48,7 +48,7 @@ namespace tPalette
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tPalette -=-=-=-=-=-=-=-
 
-declare function init() as Integer
+declare function init(iAction as integer) as integer
 declare function load_palette(filename as string="p.pal") as short
 
 
@@ -56,7 +56,7 @@ declare function load_palette(filename as string="p.pal") as short
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tPalette -=-=-=-=-=-=-=-
 
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 End Function
 

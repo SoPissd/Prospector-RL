@@ -50,7 +50,7 @@ declare function space_radio() As Short
 '     -=-=-=-=-=-=-=- MAIN: tRadio -=-=-=-=-=-=-=-
 
 namespace tRadio
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tRadio

@@ -78,7 +78,7 @@ declare function has_questguy_want(i as short,byref t as short) as short
 '     -=-=-=-=-=-=-=- MAIN: tPeople -=-=-=-=-=-=-=-
 
 namespace tPeople
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tPeople

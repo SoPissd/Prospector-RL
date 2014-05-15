@@ -76,6 +76,11 @@ Type _tile
     turnsonleavetext As String*512
 End Type
 
+Dim Shared stiles(9,68) As Any Ptr
+Dim Shared shtiles(7,4) As Any Ptr
+Dim Shared bestaltdir(9,1) As Byte
+
+
 Dim Shared gtiles(2048) As Any Ptr
 Dim Shared gt_no(4096) As Integer
 
@@ -94,7 +99,7 @@ declare function plant_name(ti as _tile) as string
 '     -=-=-=-=-=-=-=- MAIN: tTiles -=-=-=-=-=-=-=-
 
 namespace tTiles
-function init() as Integer
+function init(iAction as integer) as integer
 	dim as uinteger a
 	for a=1 to 512
 	    tiles(a).movecost=1

@@ -26,7 +26,7 @@
 
 declare function gettext(x as short, y as short, ml as short, text as string,pixel as short=0) as string
 declare function getnumber(a as integer,b as integer, e as integer) as integer
-declare function askyn(q as string,col as short=11,sure as short=0) as short
+'declare function askyn(q as string,col as short=11,sure as short=0) as short
 
 
 #endif'head
@@ -35,7 +35,7 @@ declare function askyn(q as string,col as short=11,sure as short=0) as short
 '     -=-=-=-=-=-=-=- MAIN: tInput -=-=-=-=-=-=-=-
 
 namespace tInput
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tInput
@@ -150,7 +150,8 @@ function getnumber(a as integer,b as integer, e as integer) as integer
             
             set__color( 11,1)
             draw string (33*_fw1,21*_fh1),chr(195),,font1,custom,@_col
-            key=keyin(key__up &key__dn &key__rt &key__lt &"1234567890+-"&key__esc &key__enter)
+            key=uConsole.keyinput(key__up &key__dn &key__rt &key__lt &"1234567890+-"&key__esc &key__enter)
+'            key=keyin(key__up &key__dn &key__rt &key__lt &"1234567890+-"&key__esc &key__enter)
             if keyplus(key) then c=c+1
             if keyminus(key) then c=c-1
             if key=key__enter then d=1
@@ -169,30 +170,6 @@ function getnumber(a as integer,b as integer, e as integer) as integer
     return c
 end function    
 
-
-function askyn(q as string,col as short=11,sure as short=0) as short
-    dim a as short
-    dim key as string*1
-    rlprint (q,col)
-    do
-        key=keyin
-        displaytext(_lines-1)=displaytext(_lines-1)&key
-        if key <>"" then 
-            rlprint ""
-            if configflag(con_anykeyno)=0 and key<>key_yes then key="N"
-        endif
-    loop until key="N" or key="n" or key=" " or key=key__esc or key=key__enter or key=key_yes  
-    
-    if key=key_yes or key=key__enter then a=-1
-    if key<>key_yes and sure=1 then a=askyn("Are you sure? Let me ask that again:" & q)
-    if key=key_yes then 
-        rlprint "Yes.",15
-    else
-        rlprint "No.",15
-    endif
-    return a
-end function
-#define cut2bottom
 #endif'main
 
 #if (defined(main) or defined(test))

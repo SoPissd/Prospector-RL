@@ -27,7 +27,7 @@
 '     -=-=-=-=-=-=-=- MAIN: tVars -=-=-=-=-=-=-=-
 
 namespace tVars
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tVars
@@ -64,7 +64,6 @@ Dim Shared As Byte _showrolls=0
 Dim Shared As Byte captainskill=-5
 Dim Shared As Byte wage=10
 
-Dim Shared As Short sidebar
 dim shared as byte optoxy
 Dim Shared As UInteger uid
 Dim Shared As Short ranoutoffuel
@@ -89,7 +88,6 @@ Dim Shared adislastenemy As Short, adisdeadcounter As Short,adisloctime As Short
 Dim Shared standardphrase(sp_last-1,2) As String
 Dim Shared talent_desc(29) As String
 
-Dim Shared _swidth As Byte=35'Length of line in a shop
 Dim Shared lastapwp As Short
 Dim Shared currapwp As Short
 Dim Shared apdiff As Short
@@ -119,7 +117,6 @@ Dim Shared companyname(5) As String
 Dim Shared companynameshort(5) As String
 
 
-Dim Shared makew(20,5) As Byte
 
 Dim Shared scr As Any Ptr
 
@@ -130,7 +127,6 @@ Dim Shared atmdes(16) As String
 
 Dim Shared patrolmod As Short
 
-Dim Shared shiptypes(20) As String
 Dim Shared awayteamcomp(4) As Byte
 
 Dim Shared lastplanet As Short
@@ -141,7 +137,6 @@ Dim Shared firstwaypoint As Short
 Dim Shared firststationw As Short
 Dim Shared lastfleet As Short
 Dim Shared alienattacks As Integer
-Dim Shared lastdrifting As Short=16
 Dim Shared liplanet As Short 'last input planet
 Dim Shared whtravelled As Short
 Dim Shared whplanet As Short
@@ -151,7 +146,6 @@ Dim Shared tacdes(6) As String
 Dim Shared shop_order(2) As Short
 Dim Shared lastprobe As Short
 
-Dim Shared endstory As String
 Dim Shared As String bountyquestreason(6)
 
 Dim Shared As Short just_run

@@ -25,46 +25,62 @@
 #define test
 #endif'test
 
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tModule -=-=-=-=-=-=-=-
+declare function LogOut(aText as string,fileno as integer=0) as integer
+declare function ErrOut(aText as String) as Integer
+#endif'head
+
 namespace tModule
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
-type tInitFunction As Function() As Integer
-type tSaveFunction As Function(fileno as Integer) As Integer
-
-type _Module
+type _Module											'the module now registering
 	aName as string
-	fInit as tInitFunction	
-	fLoad as tSaveFunction	
-	fSave as tSaveFunction	
+	fInit as tActionmethod	
+	fLoad as tActionmethod	
+	fSave as tActionmethod	
 End Type
 
-const _maxModules = 128'+32
+const _maxModules = 128+32
 
 dim shared modules(_maxModules) as _Module
 dim shared lastmodule as integer = 0
+
+Dim as tActionmethod	 	RunMethod					'this runs as 'the main program' 
+Dim as tErrormethod 		ErrorMethod					'error handler (passed in)
+
+Dim as tTextIntegermethod 	LogoutMethod				'logfilewriter methods
+Dim as tTextmethod 			ErrLogMethod
 
 #endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tModule -=-=-=-=-=-=-=-
 
+declare function LogWrite(aText as string,fileno as integer=0) as integer
+declare function ErrorLog(aText as string) as integer
 
-'private function tModule
-'private function tModule
+declare function Run(iAction as integer) as Integer		'used as 'the run method'
 
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tModule -=-=-=-=-=-=-=-
+dim shared as integer fLogOut							'file-handles to system consoles
+dim shared as integer fErrOut
 
-public function Init() as integer
-	return 0
+
+public function Init(iAction as integer) as integer
+	fErrOut=freefile
+	open err for output as fErrOut
+	fLogOut= fErrOut
+	return 0 'ErrorNr
 End Function
 
 
 public function Register(aName as string,_
-	fInit as tInitFunction =null,_	
-	fLoad as tSaveFunction =null,_	
-	fSave as tSaveFunction =null) as integer
+	fInit as tActionmethod =null,_	
+	fLoad as tActionmethod =null,_	
+	fSave as tActionmethod =null) as integer
 	'
 	Dim amodule As _Module
 	amodule.aName	=aName
@@ -77,18 +93,57 @@ public function Register(aName as string,_
 	'
 	'? amodule.aName +".Init()"
 	'? amodule.aName +" ";
-	amodule.fInit()
-	return 0
+	'tError.ErrorNr= 	
+	return amodule.fInit(0)
 End Function
 
+function LogWrite(aText as string,fileno as integer=0) as integer
+	if fileno<=0 then fileno=fLogOut
+	if fileno>0 then 
+		print #fileno, aText
+		return len(aText)
+	else
+		return 0
+	EndIf
+End Function
+
+function ErrorLog(aText as string) as integer
+	return LogWrite(aText,fErrOut)	
+End Function
+
+'
 public function status() as string
 	return "" &lastmodule &" modules initialized."
 End Function
 
+function Run(iAction as integer) as Integer
+	if RunMethod<>null then
+?"		return RunMethod(iAction)"
+		return RunMethod(iAction)
+	elseif ErrorMethod<>null then
+?"		return ErrorMethod()"
+		return ErrorMethod()
+	else 
+?"		return 0"
+		return 0
+	EndIf
+End Function
 
 '
 #endif'main
 end namespace
+
+#ifdef main
+
+function LogOut(aText as string,fileno as integer=0) as integer
+	return tModule.LogWrite(aText,fileno)
+End Function
+
+function ErrOut(aText as String) as Integer
+	return tModule.ErrorLog(aText)
+End Function
+#endif'main
+
 
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: tModule -=-=-=-=-=-=-=-
@@ -97,4 +152,5 @@ end namespace
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tModule -=-=-=-=-=-=-=-
+	print #tModule.fErrOut,"#fErrOut: error console open as #" &tModule.fErrOut &"!"
 #endif'test

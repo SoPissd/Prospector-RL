@@ -21,13 +21,11 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tDefines -=-=-=-=-=-=-=-
-
 #undef intest
 #define test
 #endif'test
-#ifdef head
-'     -=-=-=-=-=-=-=- HEAD: tDefines -=-=-=-=-=-=-=-
-#print head
+#ifdef types
+'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 
 'Define True/False values.
 #Ifndef FALSE
@@ -40,14 +38,20 @@
     #Define NULL 0
 #EndIf
 
+type tErrorMethod As Function() As Integer
+type tActionmethod As Function(iAction as integer) As Integer
+type tTextmethod As Function(aText as string) As Integer
+type tTextIntegermethod As Function(aText as string,iAction as integer) As Integer
 
+#endif'types
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tDefines -=-=-=-=-=-=-=-
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tDefines -=-=-=-=-=-=-=-
-#print main
 
 namespace tDefines
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tDefines
@@ -56,7 +60,6 @@ end namespace'tDefines
 
 #if defined(main)
 '      -=-=-=-=-=-=-=- INIT: tDefines -=-=-=-=-=-=-=-
-	#print main2
 	tModule.register("tDefines",@tDefines.init()) ',@tDefines.load(),@tDefines.save())
 #endif'main
 

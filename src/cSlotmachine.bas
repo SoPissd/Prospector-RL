@@ -32,7 +32,7 @@ declare function play_slot_machine() as short
 '     -=-=-=-=-=-=-=- MAIN: tSlotmachine -=-=-=-=-=-=-=-
 
 namespace tSlotmachine
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tSlotmachine

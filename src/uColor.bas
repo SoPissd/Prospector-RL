@@ -95,7 +95,7 @@ namespace tColor
 
 Dim Shared palete(255) As UInteger
 
-public function Init() as integer
+public function Init(iAction as integer) as integer
 	dim as integer i,r,g,b
 	restore DefaultPallete
 	for i= 0 to 255
@@ -196,7 +196,7 @@ End Function
 
 #endif
 
-#define cut2bottom
+
 #endif'main
 
 #if (defined(main) or defined(test))

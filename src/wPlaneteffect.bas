@@ -33,7 +33,7 @@ declare function ep_planeteffect(shipfire() As _shipfire, ByRef sf As Single,lav
 '     -=-=-=-=-=-=-=- MAIN: tPlaneteffect -=-=-=-=-=-=-=-
 
 namespace tPlaneteffect
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tPlaneteffect

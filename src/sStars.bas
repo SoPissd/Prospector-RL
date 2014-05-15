@@ -33,8 +33,6 @@ Type _stars
     comment As String*60
 End Type
 
-Dim shared as ubyte wormhole=8
-dim shared as ubyte laststar=90
 
 Dim Shared map(laststar+wormhole+1) As _stars
 
@@ -60,7 +58,7 @@ declare function orbitfrommap(a as short) as short
 '     -=-=-=-=-=-=-=- MAIN: tStars -=-=-=-=-=-=-=-
 
 namespace tStars
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tStars

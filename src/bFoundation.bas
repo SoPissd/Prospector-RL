@@ -10,7 +10,7 @@ end scope
 
 	#undef inc
 	#Macro inc(file,comments)
-		'#print -=- file  -=- comments
+'		#print -=- file  -=- comments
 		#include file
 	#EndMacro
 	

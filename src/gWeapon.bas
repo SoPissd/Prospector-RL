@@ -46,6 +46,7 @@ End Type
 Dim Shared As _weap wsinv(20) 
 
 Dim Shared ammotypename(4) As String
+Dim Shared makew(20,5) As Byte
 #endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tWeapon -=-=-=-=-=-=-=-
@@ -62,7 +63,7 @@ declare function make_weap_helptext(w as _weap) as string
 '     -=-=-=-=-=-=-=- MAIN: tWeapon -=-=-=-=-=-=-=-
 
 namespace tWeapon
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tWeapon
@@ -244,7 +245,8 @@ function starting_turret() as _weap
         help=help &make_weap_helptext(weapon(i))
     next
     m=m &"Cancel"
-    i=textmenu(bg_parent,m,help,20,2)
+    i=textmenu(0,m,help,20,2)
+'    i=textmenu(bg_parent,m,help,20,2)
     if i<0 or i=12 then return weapon(0)
     return weapon(i)
 end function
@@ -302,3 +304,4 @@ end function
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tWeapon -=-=-=-=-=-=-=-
 #endif'test
+

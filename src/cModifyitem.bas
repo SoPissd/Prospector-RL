@@ -23,16 +23,14 @@
 #endif'test
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tModifyitem -=-=-=-=-=-=-=-
-
-
-'private function modify_item(i as _items,nomod as byte) as _items
+declare function modify_item(i as _items,nomod as byte) as _items
 
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tModifyitem -=-=-=-=-=-=-=-
 
 namespace tModifyitem
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tModifyitem

@@ -46,7 +46,7 @@
 #ifdef main
 	#print full
 	namespace tMain
-	function init() as Integer
+	function init(iAction as integer) as integer
 		Print tModule.status()
 		Print
 		chdir exepath
@@ -58,12 +58,12 @@
 #else
 	#print core
 	namespace tMain
-	function init() as Integer
+	function init(iAction as integer) as integer
 		Print tModule.status()
 		Print
 		chdir exepath
 		? "nothing"
-		tConsole.pressanykey
+		uConsole.pressanykey
 		return tError.ErrorNr
 	end function
 	end namespace'tMain

@@ -43,7 +43,7 @@ declare function a_star(path() as _cords, start as _cords,goal as _cords,map() a
 '     -=-=-=-=-=-=-=- MAIN: tAstar -=-=-=-=-=-=-=-
 
 namespace tAstar
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tAstar

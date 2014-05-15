@@ -44,7 +44,7 @@ declare function display_stars(bg as short=0) as short
 '     -=-=-=-=-=-=-=- MAIN: tSpacecombatmap -=-=-=-=-=-=-=-
 
 namespace tSpacecombatmap
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tSpacecombatmap

@@ -70,7 +70,7 @@ End Enum
 dim lastfn as String
 dim FileError as String
 
-public function init() As integer
+public function Init(iAction as integer) as integer
 	lastfn=""
 	FileError=""
 	return 0
@@ -277,7 +277,7 @@ function ttest() as Integer
 	?
 	? "zapped temp-file "+fn
 	kill fn
-	return tConsole.Pressanykey(0)	
+	return uConsole.Pressanykey(0)	
 End Function
 ttest()
 #endif 

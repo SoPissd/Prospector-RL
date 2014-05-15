@@ -24,7 +24,7 @@
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tKeys -=-=-=-=-=-=-=-
 
-declare function getdirection(key as string) as short
+'declare function getdirection(key as string) as short
 declare function load_key(byval t2 as string,byref n as string="") as string
 declare function load_keyset() as short
 declare function keybindings(allowed as string="") as short
@@ -36,95 +36,10 @@ declare function keybindings(allowed as string="") as short
 '     -=-=-=-=-=-=-=- MAIN: tKeys -=-=-=-=-=-=-=-
 
 namespace tKeys
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tKeys
-
-
-Dim Shared As String*3 key_testspacecombat="\Cy"
-Dim Shared As String*3 key_manual="?"
-Dim Shared As String*3 key_messages="m"
-Dim Shared As String*3 key_configuration="="
-Dim Shared As String*3 key_autoinspect="I"
-Dim Shared As String*3 key_autopickup="P"
-Dim Shared As String*3 key_shipstatus="@"
-Dim Shared As String*3 key_equipment="E"
-Dim Shared As String*3 key_tactics="T"
-Dim Shared As String*3 key_awayteam="A"
-Dim Shared As String*3 key_quest="Q"
-Dim Shared As String*3 key_tow="t"
-Dim Shared As String*3 key_autoexplore="#"
-Dim Shared As String*3 key_standing="\Cs"
-
-Dim Shared As String*3 key_la="l"
-Dim Shared As String*3 key_tala="\Cl"
-Dim Shared As String*3 key_sc="s"
-Dim Shared As String*3 key_save="S"
-Dim Shared As String*3 key_quit="q"
-'dim shared as string*3 key_D="D"
-'dim shared as string*3 key_G="G"
-Dim Shared As String*3 key_report="R"
-Dim Shared As String*3 key_rename="C\r"
-Dim Shared As String*3 key_dock="d"
-Dim Shared As String*3 key_comment="c"
-Dim Shared As String*3 key_dropshield="s"
-Dim Shared As String*3 key_inspect="i"
-Dim Shared As String*3 key_ex="x"
-Dim Shared As String*3 key_ra="r"
-Dim Shared As String*3 key_te="t"
-Dim Shared As String*3 key_ju="j"
-Dim Shared As String*3 key_co="c"
-Dim Shared As String*3 key_of="o"
-Dim Shared As String*3 key_gr="g"
-Dim Shared As String*3 key_fi="f"
-Dim Shared As String*3 key_autofire="F"
-Dim Shared As String*3 key_he="h"
-Dim Shared As String*3 key_walk="w"
-Dim Shared As String*3 key_pickup=","
-Dim Shared As String*3 key_drop="D"
-Dim Shared As String*3 key_oxy="O"
-Dim Shared As String*3 key_close="C"
-Dim Shared As Byte _autopickup
-Dim Shared As String*3 key_ac="a"
-Dim Shared As String*3 key_ru="R"
-
-Dim Shared As String*3 key_wait="5"
-Dim Shared As String*3 key_layfire="f"
-Dim Shared As String*3 key_portal="<"
-Dim Shared As String*3 key_logbook="L"
-Dim Shared As String*3 key_togglehpdisplay="\Ch"
-Dim Shared As String*3 key_yes="y"
-Dim Shared As String*3 key_wormholemap="W"
-Dim Shared As String*3 key_togglemanjets="M"
-Dim Shared As String*3 key_cheat="?"
-Dim Shared As String*3 key_pageup="?"
-Dim Shared As String*3 key_pagedown="?"
-Dim Shared As String*3 no_key
-Dim Shared As String*3 key_mfile="?"
-Dim Shared As String*3 key_filter="f"
-Dim Shared As String*3 key_extended="#"
-Dim Shared As String*3 key_accounting="\Ca"
-dim shared as string*3 key_optequip="e"
-
-
-function getdirection(key as string) as short
-    dim d as short
-    if key=key_sw then return 1
-    if key=key_south then return 2
-    if key=key_se then return 3
-    if key=key_west then return 4
-    if key=key_east then return 6
-    if key=key_nw then return 7
-    if key=key_north then return 8
-    if key=key_ne then return 9
-    '
-    if key=key__dn then return 2
-    if key=key__lt then return 4
-    if key=key__rt then return 6
-    if key=key__up then return 8
-    return 0
-end function
 
 
 function save_keyset() as short
@@ -459,7 +374,8 @@ function keybindings(allowed as string="") as short
         set__color( 11,0)
         draw string (4*_fw2,5*_fh2),"@",,FONT2,custom,@_col
 
-        no_key=keyin
+        no_key=uConsole.keyinput()
+'        no_key=keyin
         o=c
         if getdirection(no_key)=8 then c-=1
         if getdirection(no_key)=2 then c+=1

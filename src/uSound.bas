@@ -37,7 +37,7 @@ declare function play(iSound As Short,iRepeats As Short=1,iDelay As Short=0) as 
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tSound -=-=-=-=-=-=-=-
 
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 

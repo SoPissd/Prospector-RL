@@ -35,7 +35,7 @@ declare function explore_planet(from As _cords, orbit As Short) As _cords
 '     -=-=-=-=-=-=-=- MAIN: tExplore -=-=-=-=-=-=-=-
 
 namespace tExplore
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tExplore

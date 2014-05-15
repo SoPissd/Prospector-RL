@@ -60,7 +60,7 @@ declare function rndwall(r as _rect) as short
 '     -=-=-=-=-=-=-=- MAIN: tCoords -=-=-=-=-=-=-=-
 
 namespace tCoords
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tCoords

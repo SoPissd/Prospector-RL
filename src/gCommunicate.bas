@@ -38,7 +38,7 @@ declare function communicate(e as _monster,mapslot as short,monslot as short) as
 '     -=-=-=-=-=-=-=- MAIN: tCommunicate -=-=-=-=-=-=-=-
 
 namespace tCommunicate
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tCommunicate

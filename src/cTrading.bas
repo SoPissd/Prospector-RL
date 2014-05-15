@@ -45,7 +45,7 @@ declare function buysitems(desc as string,ques as string, ty as short, per as si
 '     -=-=-=-=-=-=-=- MAIN: tTrading -=-=-=-=-=-=-=-
 
 namespace tTrading
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tTrading

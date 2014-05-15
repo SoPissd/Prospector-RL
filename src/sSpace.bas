@@ -57,7 +57,7 @@ declare function make_civilisation(slot as short,m as short) as short
 '     -=-=-=-=-=-=-=- MAIN: tSpace -=-=-=-=-=-=-=-
 
 namespace tSpace
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tSpace

@@ -33,7 +33,7 @@ declare function date_string() as string
 '     -=-=-=-=-=-=-=- MAIN: tTime -=-=-=-=-=-=-=-
 
 namespace tTime
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tTime

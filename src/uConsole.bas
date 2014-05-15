@@ -1,6 +1,6 @@
-'tConsole.
+'uConsole.
 '
-'namespace: tConsole
+'namespace: uConsole
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -14,7 +14,7 @@
 #endif'both
 '
 #ifdef intest
-'     -=-=-=-=-=-=-=- TEST: tConsole -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- TEST: uConsole -=-=-=-=-=-=-=-
 #include "fbGfx.bi"
 #include "zlib.bi"
 #include "File.bi"
@@ -33,7 +33,7 @@
 #include "tColor.bas"
 #include "tPng.bas"
 #undef main
-#include "tConsole.bas"
+#include "uConsole.bas"
 #include "tFonts.bas"
 #define main
 #define head
@@ -52,7 +52,7 @@
 #include "tConfig.bas"
 #include "tMenu.bas"
 #undef head
-#include "tConsole.bas"
+#include "uConsole.bas"
 #include "tFonts.bas"
 #undef main
 
@@ -84,18 +84,19 @@ End Type
 
 #endif'types
 #ifdef head
-'     -=-=-=-=-=-=-=- HEAD: tConsole -=-=-=-=-=-=-=-
-declare function LogOut(aText as string,fileno as integer=0) as integer
-declare function ErrOut(aText as String) as Integer
+'     -=-=-=-=-=-=-=- HEAD: uConsole -=-=-=-=-=-=-=-
 #endif'head
 
 
-namespace tConsole
+namespace uConsole
 
 #ifdef head
-'     -=-=-=-=-=-=-=- HEAD: tConsole -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- HEAD: uConsole -=-=-=-=-=-=-=-
 
 dim shared as integer Closing
+dim shared as integer bIdling
+Dim shared as tActionmethod IdleMethod
+
 
 Const xk= Chr(255)
 Const key__close = 	xk & "k"
@@ -112,24 +113,12 @@ declare function Pressanykey(aRow as Integer=2,aCol as Integer=0,aFg as Integer=
 declare function ClearKeys() as integer
 declare function keyinput(allowed as string="") as string
 
-
-dim shared as integer fLogOut
-dim shared as integer fErrOut
-
-declare function LogWrite(aText as string,fileno as integer=0) as integer
-declare function ErrorLog(aText as string) as integer
-	
-
 #endif'head
 #ifdef main
-'     -=-=-=-=-=-=-=- MAIN: tConsole -=-=-=-=-=-=-=-
+'     -=-=-=-=-=-=-=- MAIN: uConsole -=-=-=-=-=-=-=-
 
-function init() As integer
+function init(iAction as integer) as integer
 	Closing=0
-	'
-	fErrOut=freefile
-	open err for output as fErrOut
-	fLogOut= fErrOut
 	return 0
 End function
 
@@ -163,7 +152,7 @@ function aProcessKey(aKey as String) as String
 '	?"aProcessKey(" &aKey &",len=" &len(aKey) &")",asc(mid(akey,2,1))
 	if akey= key__close then
 		Closing=1
-		print fErrOut,"received close command"		
+		'ErrOut("received close command")		
 	EndIf 
 	return aKey	
 End Function
@@ -186,22 +175,35 @@ function iInKey() as Integer
     return aKey2i(aKey)
 End Function	
 
+function Idle(iAction as integer=0) as integer
+	if IdleMethod<>null then
+		iAction= IdleMethod(bIdling)
+		if bIdling=0 then
+			bIdling= 1
+		endif
+	endif
+	'?"sleep(1)"
+	sleep(1)
+	return iAction
+End Function	
+
 function iGetKey(iMilliSeconds as integer=0) as integer
-	ClearKeys()
-	if iMilliSeconds=0 then
-		return iProcessKey(GetKey())
-	EndIf
 	dim as integer i,j,n
 	dim as double iUpTo
-	iUpTo=iMilliSeconds/1000+Timer()
 	dim as string aKey
-	do while (Timer()<iUpTo)
+	ClearKeys()
+	if iMilliSeconds>0 then
+		iUpTo=iMilliSeconds/1000+Timer()
+	EndIf
+	bIdling= 0
+	do while (Closing=0) and ((iMilliSeconds=0) or (Timer()<iUpTo))
 		'print #tKbinput.fErrOut,iUpTo-Timer()
 		aKey=aInKey()
 		if aKey<>"" then
-'? aKey2i(aKey), akey
+			'? aKey2i(aKey), akey
 			return aKey2i(aKey)
-		sleep(1)
+		else
+			Idle()
 		EndIf
 	Loop
 	return 0	
@@ -216,6 +218,7 @@ End Function
 
 function ClearKeys() as integer
 	do while iInKey()<>0: loop
+	if (Closing=0) then Idle()
 	return 0	
 End Function
 
@@ -231,7 +234,7 @@ function Pressanykey(aRow as Integer=2,aCol as Integer=0,aFg as Integer=0,aBg as
 	Wend
 	tScreen.loc(aRow,aCol)
 	Print "Press any key to exit";
-	do while aInkey<>"": loop
+	ClearKeys
 	key=iGetKey()
 	?
 	return key
@@ -243,29 +246,12 @@ function keyinput(allowed as string="") as string
     dim as String aKey
 	ClearKeys
     do        
-		aKey=tConsole.aGetKey()
-    loop until (aKey<>"" and allowed="") or (instr(allowed,aKey)>0) 
+		aKey=aGetKey()
+    loop until (Closing<>0) or (aKey<>"" and allowed="") or (instr(allowed,aKey)>0) 
     return aKey
 end function
 
 '
-
-function LogWrite(aText as string,fileno as integer=0) as integer
-	if fileno<=0 then fileno=fLogOut
-	if fileno>0 then 
-		print #fileno, aText
-		return len(aText)
-	else
-		return 0
-	EndIf
-End Function
-
-function ErrorLog(aText as string) as integer
-	return LogWrite(aText,fErrOut)	
-End Function
-
-'
-
 
 'dim shared as integer iWheel 
 '
@@ -296,14 +282,23 @@ End Function
 'define function tProcesskey(aKey as string) as Integer
 'define function tProcessmouse(ByRef aMouse as tGetMouse) as Integer
 
+'function uMenu.updateposition(iAction as Integer) as integer
+'	if not tScreen.isGraphic then
+'		tScreen.pushpos()
+'	    tScreen.xy(ofx,3,"" & loca)
+'		tScreen.poppos()
+'	endif
+'	return 0
+'end function
+
 function mainloop(ByRef aParams as tMainloopParams) as Integer
     dim as integer mx, my, mwheel, mbuttons, mclip 
-	dim as integer iChanged
 	dim as integer iCmd
 	dim as string aKey
+	bIdling= 0
    	while Closing=0 and (iCmd<> -1)
    		if iCmd=0 then
-			aKey=tConsole.aInKey()
+			aKey=uConsole.aInKey()
 			if closing=1 then 
 				'close	
 				if aParams.ConfirmClose<>null then
@@ -321,6 +316,8 @@ function mainloop(ByRef aParams as tMainloopParams) as Integer
 				if aParams.KeyProc<>null then
 					iCmd=aParams.KeyProc(aKey)
 				endif
+			else
+				Idle()
 			EndIf
    		EndIf
 		'
@@ -357,27 +354,14 @@ End Function
 End Namespace
 
 
-#if defined(main)
-
-function LogOut(aText as string,fileno as integer=0) as integer
-	return tConsole.LogWrite(aText,fileno)
-End Function
-
-function ErrOut(aText as String) as Integer
-	return tConsole.ErrorLog(aText)
-End Function
-#endif'main
-
-
 #if (defined(main) or defined(test))
-	' -=-=-=-=-=-=-=- INIT: tConsole -=-=-=-=-=-=-=-
-	tModule.register("tConsole",@tConsole.init()) ',@tConsole.load(),@tConsole.save())
+	' -=-=-=-=-=-=-=- INIT: uConsole -=-=-=-=-=-=-=-
+	tModule.register("uConsole",@uConsole.init()) ',@uConsole.load(),@uConsole.save())
 #endif'main
 
 #ifdef test
-#print -=-=-=-=-=-=-=- TEST: tConsole -=-=-=-=-=-=-=-
-	print #tConsole.fErrOut,"#fErrOut: error console open as #" &tConsole.fErrOut &"!"
-	dim shared as tConsole.tMainloopParams aParams
+#print -=-=-=-=-=-=-=- TEST: uConsole -=-=-=-=-=-=-=-
+	dim shared as uConsole.tMainloopParams aParams
 	
 	function keypress(aKey as string) as Integer
 		? aKey
@@ -407,5 +391,5 @@ End Function
 	
 	aParams.KeyProc= @keypress 
 	aParams.Processaction= @Processaction 
-	tConsole.mainloop(aParams)
+	uConsole.mainloop(aParams)
 #endif'test

@@ -87,14 +87,14 @@ Dim Shared companystats(5) As _company
 'private function stockmarket(st as short) as short
 declare function unload_f(f as _fleet, st as short) as _fleet
 
-declare function init() as integer
+declare function init(iAction as integer) as integer
 
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tCompany -=-=-=-=-=-=-=-
 
 	
-public function init() as integer
+public function Init(iAction as integer) as integer
 	dim a as Integer
     '
     combon(0).base=10 'Planets Landed on

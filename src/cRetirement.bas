@@ -39,12 +39,26 @@
 'private function es_part1() as string
 
 #endif'head
+
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tRetirement -=-=-=-=-=-=-=-
+function paystuff(price as integer) as integer
+    if player.money<price then
+        rlprint "you dont have enough money",c_yel
+        return 0
+    else
+        player.money=player.money-price 'Paystuff
+        return -1
+    endif
+end function
+#endif'main
+
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tRetirement -=-=-=-=-=-=-=-
 
 namespace tRetirement
 	
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 
@@ -55,7 +69,7 @@ public function buytitle() as short
     dim as integer price
     dim as string title
     dim sameorbetter as byte
-    a=textmenu(bg_parent,"Buy title /Lord - 1,000 Cr./Baron - 5,000 Cr./Viscount - 10,000 Cr./Count 25,000 Cr./Marquees - 50,000 Cr./Duke - 100,000 Cr./Exit")
+    a=textmenu("Buy title /Lord - 1,000 Cr./Baron - 5,000 Cr./Viscount - 10,000 Cr./Count 25,000 Cr./Marquees - 50,000 Cr./Duke - 100,000 Cr./Exit")
     if a>0 and a<7 then
         if a=1 then
             title="Lord"
@@ -140,7 +154,7 @@ public function Retirement() as short
     mtext=mtext &"back"
     htext=htext &"/"
     do
-        a=textmenu(bg_parent,"tRetirement/ retire now/ buy assets/back")
+        a=textmenu("tRetirement/ retire now/ buy assets/back")
         if a=1 then
             if askyn("Do you really want to retire now? (y/n)") then
                 if askyn("Are you sure? (y/n)") then 
@@ -150,7 +164,7 @@ public function Retirement() as short
         endif
         if a=2 then
             do
-                b=textmenu(bg_parent,mtext,htext)
+                b=textmenu(mtext,htext)
                 
                 if b>0 and b<10 then
                     if assets(b-1)=0 or b=2 or b=1 then

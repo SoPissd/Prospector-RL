@@ -32,7 +32,7 @@ declare function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin a
 '     -=-=-=-=-=-=-=- MAIN: tMakeitem -=-=-=-=-=-=-=-
 
 namespace tMakeitem
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tMakeitem

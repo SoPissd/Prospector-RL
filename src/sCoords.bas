@@ -25,11 +25,6 @@
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
-Dim Shared As UByte sm_x=75
-Dim Shared As UByte sm_y=50
-
-Dim Shared vismask(sm_x,sm_y) As Byte
-Dim Shared spacemap(sm_x,sm_y) As Short
 
 Dim Shared apwaypoints(1024) As _cords
 Dim Shared usedship(8) As _cords
@@ -43,6 +38,7 @@ Type _driftingship extends _cords
     start As _cords
 End Type
 
+Dim Shared lastdrifting As Short=16
 Dim Shared drifting(128) As _driftingship
 #endif'types
 
@@ -57,7 +53,7 @@ declare function explored_percentage_string() as string
 '     -=-=-=-=-=-=-=- MAIN: tCoords -=-=-=-=-=-=-=-
 
 namespace nsCoords
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tCoords

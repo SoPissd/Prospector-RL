@@ -34,7 +34,7 @@ declare function save_bones(t as short) as short
 '     -=-=-=-=-=-=-=- MAIN: tBones -=-=-=-=-=-=-=-
 
 namespace tBones
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tBones

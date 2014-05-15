@@ -25,14 +25,14 @@
 '     -=-=-=-=-=-=-=- HEAD: tRumors -=-=-=-=-=-=-=-
 
 
-'private function get_rumor(i as short=18) as string
+Declare function get_rumor(i as short=18) as string
 
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tRumors -=-=-=-=-=-=-=-
 
 namespace tRumors
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tRumors
@@ -78,7 +78,7 @@ function get_rumor(i as short=18) as string
     end select
 end function
 
-#define cut2bottom
+
 #endif'main
 
 #if (defined(main) or defined(test))

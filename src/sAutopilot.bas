@@ -32,7 +32,7 @@ declare function ap_astar(start as _cords,ende as _cords,diff as short) as short
 '     -=-=-=-=-=-=-=- MAIN: tAutopilot -=-=-=-=-=-=-=-
 
 namespace tAutopilot
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tAutopilot

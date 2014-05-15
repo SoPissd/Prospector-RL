@@ -30,22 +30,20 @@ end scope
 namespace tMain
 #ifdef main
 	#print full
-	function init() as Integer
+	function init(iAction as integer) as Integer
 		Print tModule.status()
 		Print
 		chdir exepath
-		tError.ErrorNr= Initgame() or Prospector()
-		return tError.ErrorNr
+		return tModule.Run(iAction)
 	end function
-	
 #else
 	#print core
-	function init() as Integer
+	function init(iAction as integer) as Integer
 		Print tModule.status()
 		Print
 		chdir exepath
 		? "nothing"
-		tConsole.pressanykey
+		uConsole.pressanykey
 		return tError.ErrorNr
 	end function
 	

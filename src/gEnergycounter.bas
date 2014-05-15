@@ -36,7 +36,7 @@ End Type
 '     -=-=-=-=-=-=-=- MAIN: tEnergycounter -=-=-=-=-=-=-=-
 
 namespace tEnergycounter
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tEnergycounter

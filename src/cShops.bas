@@ -39,7 +39,7 @@ declare function makemudsshop(slot as short, x1 as short, y1 as short)  as short
 '     -=-=-=-=-=-=-=- MAIN: tShops -=-=-=-=-=-=-=-
 
 namespace tShops
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tShops

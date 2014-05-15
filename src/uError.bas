@@ -31,7 +31,7 @@ namespace tError
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tError -=-=-=-=-=-=-=-
 
-declare function init() As integer
+declare function init(iAction as integer) as integer
 
 'private function log_error(text as string) As integer
 'private function log_warning(aFile as string, aFunct as string, iLine as integer, text as string) as integer
@@ -45,8 +45,10 @@ Dim as integer ErrorNr=0
 Dim as integer ErrorLn=0
 Dim as String ErrText
 
+declare function Errorhandler() As integer
 
-function init() As integer
+function init(iAction as integer) as integer
+	tModule.ErrorMethod= @Errorhandler
 	ErrorNr=0
 	ErrorLn=0
 	ErrText=""
@@ -91,24 +93,24 @@ End function
 function Errorhandler() As integer
 	'to file
 	if tError.ErrorNr=0 and tError.ErrText="" then
-		if tConsole.fErrOut>0 then
-			print #tConsole.fErrOut,"All done."
-			close #tConsole.fErrOut
+		if tModule.fErrOut>0 then
+			print #tModule.fErrOut,"All done."
+			close #tModule.fErrOut
 		endif
 		return 0
 	EndIf
-	if tConsole.fErrOut>0 and tError.ErrText="" then
-		print #tConsole.fErrOut,ErrText
+	if tModule.fErrOut>0 and tError.ErrText="" then
+		print #tModule.fErrOut,ErrText
 	endif
 	log_error(ErrText)
 	'to current screen
 	tVersion.Errorscreen(ErrText,ErrorLn=0)
-	tConsole.Pressanykey()
-	if tScreen.Enabled then
+	uConsole.Pressanykey()
+	if tScreen.IsGraphic then
 		'to console
 		tScreen.mode(0)
 		tVersion.Errorscreen(tError.ErrText,ErrorLn=0)
-		tConsole.Pressanykey()		
+		uConsole.Pressanykey()		
 	EndIf
 	return 0
 End function

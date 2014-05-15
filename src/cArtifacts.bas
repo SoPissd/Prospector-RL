@@ -37,7 +37,7 @@ declare function artifact(c as short) as short
 '     -=-=-=-=-=-=-=- MAIN: tArtifacts -=-=-=-=-=-=-=-
 
 namespace tArtifacts
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tArtifacts

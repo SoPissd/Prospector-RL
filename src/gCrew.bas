@@ -86,7 +86,6 @@ declare function equipment_value() as integer
 declare function list_inventory() as string
 declare function captain_sprite() as short
 declare function haggle_(way as string) as single
-declare function paystuff(price as integer) as integer
 declare function buy_weapon(st as short) as short
 declare function bunk_multi() as single
 declare function changemoral(value as short, where as short) as short
@@ -108,7 +107,7 @@ declare function Crewblock() as string
 '     -=-=-=-=-=-=-=- MAIN: tCrew -=-=-=-=-=-=-=-
 
 namespace tCrew
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tCrew
@@ -1032,17 +1031,6 @@ end function
 function haggle_(way as string) as single
     if lcase(way)="up" then return (1+crew(1).talents(2)/10)
     if lcase(way)="down" then return (1-crew(1).talents(2)/10)
-end function
-
-
-function paystuff(price as integer) as integer
-    if player.money<price then
-        rlprint "you dont have enough money",c_yel
-        return 0
-    else
-        player.money=player.money-price 'Paystuff
-        return -1
-    endif
 end function
 
 

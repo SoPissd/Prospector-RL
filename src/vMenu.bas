@@ -24,23 +24,6 @@
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 
-Enum backgrounds
-    bg_title
-    bg_noflip
-    bg_ship
-    bg_shiptxt
-    bg_shipstars
-    bg_shipstarstxt
-    bg_awayteam
-    bg_awayteamtxt
-    bg_logbook
-    bg_randompic
-    bg_randompictxt
-    bg_stock
-    bg_roulette
-    bg_trading
-End Enum
-
 Type tMenu
   declare constructor()
   declare destructor()
@@ -96,7 +79,7 @@ declare function textmenu(bg as short,te as string, he as string="", x as short=
 '     -=-=-=-=-=-=-=- MAIN: tMenu -=-=-=-=-=-=-=-
 
 namespace ntMenu
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'ntMenu
@@ -320,7 +303,7 @@ function tMenu.go (sbg as short,ate as string, ahe as string="", sx as short=2, 
     do
     	e=before()
     	
-		tConsole.ClearKeys
+		uConsole.ClearKeys
         if player.dead=0 then key=keyin(,96+c)
         
     	e=after()

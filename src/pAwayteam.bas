@@ -55,7 +55,7 @@ declare function showteam(from as short, r as short=0,text as string="") as shor
 '     -=-=-=-=-=-=-=- MAIN: tAwayteam -=-=-=-=-=-=-=-
 
 namespace tAwayteam
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tAwayteam

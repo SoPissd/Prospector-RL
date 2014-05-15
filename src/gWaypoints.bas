@@ -45,7 +45,7 @@ declare function add_p(queue() as _pfcords,p as _pfcords) as short
 '     -=-=-=-=-=-=-=- MAIN: tWaypoints -=-=-=-=-=-=-=-
 
 namespace tWaypoints
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tWaypoints

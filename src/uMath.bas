@@ -77,7 +77,7 @@ declare function fill_rect(r as _rect,wall as short, flor as short,map() as shor
 '     -=-=-=-=-=-=-=- MAIN: tMath -=-=-=-=-=-=-=-
 
 namespace tMath
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tMath

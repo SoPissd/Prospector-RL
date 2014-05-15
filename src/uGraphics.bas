@@ -21,31 +21,59 @@
 #undef intest
 #define test
 #endif'test
+
+namespace tGraphics
+
+#ifdef types
+'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+
+dim shared backgrounds as integer= 14
+dim shared iBg as integer= 0
+
+#endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tGraphics -=-=-=-=-=-=-=-
-
-declare function background(fn as string) as integer
+declare function Randombackground() as integer
 declare function bmp_load( ByRef filename As String ) As Any Ptr
 
+declare function background overload (bg as integer=0) as integer
+declare function background overload (fn as string) as integer
 'private function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for windows less than 60 tiles wide
 
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tGraphics -=-=-=-=-=-=-=-
 
-namespace tGraphics
-function init() as Integer
+
+function init(iAction as integer) as integer
 	return 0
 end function
-end namespace'tGraphics
 
 
-function background(fn as string) as integer
+function Randombackground() as integer
+	iBg=rnd_range(1,backgrounds)
+	return iBg
+end function
+
+function background overload (bg as integer=0) as integer
+	if bg<=0 then 
+    	return background(iBg &".bmp")
+    else
+    	return background(bg &".bmp")
+	endif
+end function
+
+
+function background overload (fn as string) as integer
     static last as string
     static firstcall as byte
     Dim As Integer filenum, bmpwidth, bmpheight,x,y
     static As Any Ptr img
     cls
+    if fn="" then
+    	Randombackground
+    	return background(iBg)    	
+    EndIf
     fn="graphics/"&fn
     '' open BMP file
     filenum = FreeFile()
@@ -112,13 +140,15 @@ End function
 
 '
 
+'
+#endif'main
+end namespace'tGraphics
+
+#ifdef main
+#print -=-=-=-=-=-=-=- MAIN: tGraphics -=-=-=-=-=-=-=-
 #Macro draw_string(ds_x,ds_y,ds_text,ds_font,ds_col)
 	Draw String(ds_x,ds_y),ds_text,,ds_font,custom,@ds_col
 #EndMacro
-
-'
-
-#define cut2bottom
 #endif'main
 
 #if (defined(main) or defined(test))

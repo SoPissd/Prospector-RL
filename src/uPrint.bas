@@ -29,7 +29,7 @@ Dim Shared As UByte _FH2
 Dim Shared As UByte _FW1
 Dim Shared As UByte _FW2
 Dim Shared As UByte _TFH
-Dim Shared As Byte _mwx=30
+Dim Shared As Byte _mwx=60
 
 'dim shared as FB.image ptr TITLEFONT
 Dim Shared As Any Ptr TITLEFONT
@@ -58,7 +58,12 @@ declare function rlprint(t as string, col as short=11) as short
 '     -=-=-=-=-=-=-=- MAIN: tPrint -=-=-=-=-=-=-=-
 
 namespace tPrint
-function init() as Integer
+function init(iAction as integer) as integer
+	_FH1=8
+	_FH2=8
+	_FW1=8
+	_FW2=8
+	_mwx=60
 	return 0
 end function
 end namespace'tPrint
@@ -81,16 +86,23 @@ function locEOL() as _cords
     'puts cursor at end of last displayline
     dim as short y,x,a,winh,firstline
     dim as _cords p
-    winh=fix((tScreen.y-_fh1*22)/_fh2)-1
-    do
-        firstline+=1
-    loop until firstline*_fh2>=22*_fh1
-
+	if tScreen.isGraphic then
+?"	    winh=fix((tScreen.y-_fh1*22)/_fh2)-1"
+	    winh=fix((tScreen.y-_fh1*22)/_fh2)-1
+?winh
+	    do
+	        firstline+=1
+	    loop until firstline*_fh2>=22*_fh1
+	else
+		winh= width() shr (4*4)
+	EndIf
     y=firstline+winh
     for a=firstline+winh to firstline step -1
-        if displaytext(a+1)="" then y=a
+        if (a+1>lbound(displaytext)) then exit for
+        if (displaytext(a+1)="") then y=a
     next
-    x=len(displaytext(y))+1
+    if y>lbound(displaytext) then y=lbound(displaytext)
+    x=len(displaytext(y))+1		
     p.x=x
     p.y=y
     return p
@@ -113,9 +125,18 @@ function rlprint(t as string, col as short=11) as short
     static curline as single
     static lastmessage as string
     static lastmessagecount as short
+if tScreen.isGraphic then
     firstline=fix((22*_fh1)/_fh2)
     winw=fix(((_fw1*_mwx+1))/_fw2)
     winh=fix((tScreen.y-_fh1*22-_fh2)/_fh2)
+else
+	_fh1=8
+	_fh2=8
+    winw=(width() and &hFFFF)' gives screen/console width
+    winh=(width() shr (4*4)) ' gives screen/console height
+    firstline=22
+    _lines=winh
+endif
     if t<>"" then
 '    firstline=0
 '    do
@@ -126,7 +147,9 @@ function rlprint(t as string, col as short=11) as short
         firstline=22
         winh=_lines-22
     endif
+?"curline=locEOL.y+1"
     curline=locEOL.y+1
+?"=",curline
     for a=0 to len(t)
         if mid(t,a,1)<>"|" then text=text & mid(t,a,1)
     next
@@ -193,7 +216,7 @@ function rlprint(t as string, col as short=11) as short
                     set__color( 14,1)
                     if displaytext(firstline+winh+1)<>"" then
                         draw string((winw+1)*_fw2,tScreen.y-_fh2), chr(25),,font2,custom,@_col
-                        no_key=tConsole.iGetKey() 'keyin
+                        no_key=uConsole.iGetKey() 'keyin
                     endif
                 loop until displaytext(_textlines+1)=""
             endif
@@ -209,9 +232,9 @@ function rlprint(t as string, col as short=11) as short
         set__color( 0,0)
         'draw string(0,(b-firstline)*_fh2+22*_fh1), space(winw),,font2,custom,@_col
         draw string(0,b*_fh2), space(winw),,font2,custom,@_col
-        set__color( dtextcol(b),0)
+        if b<ubound(dtextcol) then set__color( dtextcol(b),0)
         'draw string(0,(b-firstline)*_fh2+22*_fh1), displaytext(b),,font2,custom,@_col
-        draw string(0,b*_fh2), displaytext(b),,font2,custom,@_col
+        if b<ubound(displaytext) then draw string(0,b*_fh2), displaytext(b),,font2,custom,@_col
     next
     locate 24,1
     set__color( 11,0)
@@ -229,6 +252,34 @@ function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for window
     if _mwx=60 then osx=0
     return osx
 end function
+
+
+function askyn(q as string,col as short=11,sure as short=0) as short
+    dim key as string '*1
+    rlprint (q,col)
+    do
+        key=uConsole.keyinput()
+? key        
+'        key=keyin
+        displaytext(_lines-1) &= key
+        if key <>"" then 
+			rlprint ""
+			'if configflag(con_anykeyno)=0 and not isKeyYes(key) then key="N"
+        endif
+    loop until (uConsole.Closing<>0) or (isKeyNo(key)) or isKeyYes(key)  
+    
+    if isKeyYes(key) then 
+	    if (sure=1) then 
+			return askyn("Are you sure? Let me ask that again:" & q,0)    	
+	    EndIf
+        rlprint "Yes.",15
+        return -1
+    else
+        rlprint "No.",15
+        return 0
+    endif
+end function
+
 
 #endif'main
 

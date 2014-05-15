@@ -33,7 +33,7 @@ declare function gasgiant_fueling(p As Short, orbit As Short, sys As Short) As S
 '     -=-=-=-=-=-=-=- MAIN: tFuel -=-=-=-=-=-=-=-
 
 namespace tFuel
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tFuel

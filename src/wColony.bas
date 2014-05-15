@@ -39,7 +39,7 @@ declare function grow_colonies() as short
 '     -=-=-=-=-=-=-=- MAIN: ttColony -=-=-=-=-=-=-=-
 
 namespace tColony
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tColony

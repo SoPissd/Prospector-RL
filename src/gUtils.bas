@@ -42,7 +42,7 @@ declare function play_sound(iSound As Short,iRepeats As Short=1,iDelay As Short=
 '     -=-=-=-=-=-=-=- MAIN: tUtils -=-=-=-=-=-=-=-
 
 namespace gUtils
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tUtils
@@ -131,8 +131,6 @@ function play_sound(iSound As Short,iRepeats As Short=1,iDelay As Short=0) as sh
 End function
 
 
-
-#define cut2bottom
 #endif'main
 
 #if (defined(main) or defined(test))

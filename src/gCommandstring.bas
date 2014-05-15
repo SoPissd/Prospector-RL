@@ -48,7 +48,7 @@ Dim Shared comstr As _commandstring
 '     -=-=-=-=-=-=-=- MAIN: tCommandstring -=-=-=-=-=-=-=-
 
 namespace tCommandstring
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tCommandstring

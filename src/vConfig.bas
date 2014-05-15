@@ -25,133 +25,21 @@
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tConfig -=-=-=-=-=-=-=-
 
-Enum config
-    con_empty
-    con_res
-    con_tiles
-    con_gtmwx
-    con_classic
-    con_showvis
-    con_captainsprite
-    con_transitem
-    con_onbar
-    con_sysmaptiles
-    con_customfonts
-    con_chosebest
-    con_autosale
-    con_showrolls
-    con_sound
-    con_warnings
-    con_damscream
-    con_volume
-    con_anykeyno
-    con_diagonals
-    con_altnum
-    con_easy
-    con_minsafe
-    con_startrandom
-    con_autosave
-    con_savescumming
-    con_restart
-    con_end
-End Enum
-
-
-Dim Shared _last_title_pic As Byte=14
-
-Dim Shared As Byte _volume=2
-
-Dim Shared As Byte _tix=24
-Dim Shared As Byte _tiy=24
-
-Dim Shared As Byte gt_mwx=40
-
-Dim Shared As Byte _teamcolor=15
-Dim Shared As Byte _shipcolor=14
-
-Dim Shared As Byte configflag(con_end-1)
-Dim Shared As String configname(con_end-1)
-Dim Shared As String configdesc(con_end-1)
-
 declare function save_config(oldtiles as short) as short
 declare function load_config() as short
-declare function configuration(iBg as short=0) as short
-
+declare function configuration() as short
 
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tConfig -=-=-=-=-=-=-=-
 
 namespace tConfig
-function init() as Integer
+function init(iAction as integer) as integer
+	configflag(con_restart)=1
 	return 0
 end function
 end namespace'tConfig
 
-
-#define cut2top
-
-'Declare function getnumber(a as integer,b as integer, e as integer) as integer
-
-'Declare function UpdateMapSize(size as short) as Short
-'Declare function SetCaptainsprite(nr as byte) as short
-'Declare function menu(bg as byte,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1) as short
-
-configname(con_tiles)="tiles"
-configname(con_gtmwx)="gtmwx"
-configname(con_classic)="classic"
-configname(con_showvis)="showvis"
-configname(con_transitem)="transitem"
-configname(con_onbar)="onbar"
-configname(con_captainsprite)="captainsprite"
-configname(con_sysmaptiles)="sysmaptiles"
-configname(con_customfonts)="customfonts"
-configname(con_chosebest)="chosebest"
-configname(con_autosale)="autosale"
-configname(con_sound)="sound"
-configname(con_showrolls)="rolls"
-configname(con_warnings)="warnings"
-configname(con_damscream)="damscream"
-configname(con_volume)="volume"
-configname(con_anykeyno)="anykeyno"
-configname(con_diagonals)="digonals"
-configname(con_altnum)="altnum"
-configname(con_easy)="easy"
-configname(con_minsafe)="minsafe"
-configname(con_startrandom)="startrandom"
-configname(con_autosave)="autosave"
-configname(con_savescumming)="savescumming"
-configname(con_restart)="restart"
-
-'
-
-configdesc(con_showrolls)="/ Show rolls:"
-configdesc(con_chosebest)="/ Always chose best item:"
-configdesc(con_sound)="/ Sound effects:"
-configdesc(con_diagonals)="/ Automatically chose diagonal:"
-configdesc(con_autosale)="/ Always sell all:"
-configdesc(con_startrandom)="/ Start with random ship:"
-configdesc(con_autosave)="/ Autosave on entering station:"
-configdesc(con_minsafe)="/ Minimum safe distance to pirate planets:"
-configdesc(con_anykeyno)="/ Any key counts as no on yes-no questions:"
-configdesc(con_restart)="/ Return to start menu on death:"
-configdesc(con_warnings)="/ Navigational Warnings(Gasclouds & 1HP landings):"
-configdesc(con_tiles)="/ Graphic tiles:"
-configdesc(con_easy)="/ Easy start:"
-configdesc(con_volume)="/ Volume (0-4):"
-configdesc(con_res)="/ Resolution:"
-configdesc(con_showvis)="/ Underlay for visible tiles:"
-configdesc(con_onbar)="/ Starmap on bar:"
-configdesc(con_classic)="/ Classic look:"
-configdesc(con_altnum)="/ Alternative Numberinput:"
-configdesc(con_transitem)="/ Transparent Items:"
-configdesc(con_gtmwx)="/ Main window width(tile mode):"
-configdesc(con_savescumming)="/ Savescumming:"
-configdesc(con_sysmaptiles)="/ Use tiles for system map:"
-configdesc(con_customfonts)="/ Customfonts:"
-configdesc(con_damscream)="/ Damage scream:"
-
-'
 
 function save_config(oldtiles as short) as short
     dim as short f,i
@@ -303,7 +191,7 @@ end function
 
 
 
-function configuration(iBg as short) as short
+function configuration() as short
     dim text as string
     dim onoff(1) as string
     dim offon(1) as string
@@ -324,9 +212,6 @@ function configuration(iBg as short) as short
     sprite(1)="White"
     sprite(2)=" Red "
 '    screenshot(1)
-	if iBg=0 then
-		iBg= -rnd_range(1,_last_title_pic)
-	EndIf
 
     do
         if configflag(con_customfonts)=1 then
@@ -352,7 +237,7 @@ function configuration(iBg as short) as short
             end select
         next
         text=text &"/Exit"
-        c=textmenu(iBg,text,,,,1)
+        c=textmenu(text,,,,1)
         select case c
         case con_sound,con_captainsprite
             configflag(c)+=1
@@ -402,7 +287,7 @@ function configuration(iBg as short) as short
         end select
 
     loop until c=con_end or c=-1
-    if tVersion.gamerunning=1 then SetCaptainsprite(configflag(con_captainsprite))
+'fail    if tVersion.gamerunning=1 then SetCaptainsprite(configflag(con_captainsprite))
 '    screenshot(2)
     return save_config(oldtiles)
 end function

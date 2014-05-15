@@ -113,7 +113,7 @@ declare function getplanet(sys as short,forcebar as byte=0) as short
 '     -=-=-=-=-=-=-=- MAIN: tPlanet -=-=-=-=-=-=-=-
 
 namespace tPlanet
-function init() as Integer
+function init(iAction as integer) as integer
     dim i as short
 	For i=0 To max_maps
 	    planets(i).darkness=5

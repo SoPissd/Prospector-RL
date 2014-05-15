@@ -25,9 +25,10 @@
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tSavegame -=-=-=-=-=-=-=-
 
-declare function count_savegames() as short
-declare function getfilename(iBg as short) as string
-declare function load_game(filename as string) as short
+'declare function count_savegames() as short
+'declare function getfilename(iBg as short) as string
+'declare function load_game(filename as string) as short
+'declare function from_savegame(iBg as integer) As integer
 
 #ifndef savegame 'allow this to be a forward
 declare function savegame(crash as short=0) as short
@@ -38,9 +39,11 @@ declare function savegame(crash as short=0) as short
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tSavegame -=-=-=-=-=-=-=-
+declare function from_savegame(iBg as integer) As integer
 
 namespace tSavegame
-function init() as Integer
+function init(iAction as integer) as integer
+	tGame.pFrom_savegame= @from_savegame
 	return 0
 end function
 end namespace'tSavegame
@@ -137,7 +140,7 @@ function getfilename(iBg as short) as string
         a=dir()
     wend
     text=text &"/Exit"
-    c=textmenu(iBg,text,help,2,2)
+    c=textmenu(text,help,2,2)
     if c>0 and c<=24 then filename=n(c)
     return filename
 end function
@@ -459,6 +462,9 @@ function savegame(crash as short=0) as short
     return back
 end function
 
+'
+'
+'
 
 function load_game(filename as string) as short
     dim from as short
@@ -777,7 +783,32 @@ function load_game(filename as string) as short
     return 0
 end function
 
-#define cut2bottom
+function from_savegame(iBg as integer) As integer
+    Dim As Short c
+	dim no_key as string
+    c=count_savegames
+    set__color(11,0)
+    Cls
+    If c=0 Then
+        rlprint "No Saved Games"
+        no_key=uConsole.keyinput() 
+'        no_key=keyin 
+    Else
+        load_game(getfilename(iBg))
+        If player.desig="" Then 
+        else
+            player.dead=0
+            civ_adapt_tiles(0)
+            civ_adapt_tiles(1)
+            If savefrom(0).map>0 Then
+                landing(0)
+            EndIf
+		    Return 2' iAction==from_savegame
+        endif
+    EndIf
+    Return 0
+End function
+
 #endif'main
 
 #if (defined(main) or defined(test))

@@ -34,7 +34,7 @@ declare function make_spacemap(iBg as short=0) as short
 '     -=-=-=-=-=-=-=- MAIN: tWorldgen -=-=-=-=-=-=-=-
 
 namespace tWorldgen
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tWorldgen
@@ -64,8 +64,7 @@ function create_spacemap(iBg as short=0) as short
     endif
     tScreen.set(1)
 	if iBg<0 then iBg=-iBg else iBg=0
-	if iBg=0 then iBg=rnd_range(1,_last_title_pic)
-    background(iBg &".bmp")
+	if iBg=0 then tGraphics.Randombackground()
     
     set__color 1,1
     for a=0 to 3
@@ -334,8 +333,7 @@ function make_spacemap(iBg as short=0) as short
     endif
     tScreen.set(1)
 	if iBg<0 then iBg=-iBg else iBg=0
-	if iBg=0 then iBg=rnd_range(1,_last_title_pic)
-    background(iBg &".bmp")
+	if iBg=0 then tGraphics.Randombackground() 
     
     set__color 1,1
     for a=0 to 3

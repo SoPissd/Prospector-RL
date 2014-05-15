@@ -37,7 +37,7 @@ declare function ep_atship() As Short
 '     -=-=-=-=-=-=-=- MAIN: tAutoexplore -=-=-=-=-=-=-=-
 
 namespace tAutoexplore
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tAutoexplore

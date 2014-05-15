@@ -48,12 +48,13 @@ type tAction As Function as Integer
 namespace tVersion
 	
 Dim Shared Gamerunning as byte =0
-Dim Shared logerror as byte =1
-Dim Shared gameturn As UInteger =0
+Dim Shared Gamescore As UInteger =0
+Dim Shared Gameturn As UInteger =0
 Dim Shared Gamedesig as string 
-dim Shared Savegamemethod as tAction
+dim Shared SavegameMethod as tAction
+Dim Shared logerror as byte =1
 
-public function Init() as integer
+public function Init(iAction as integer) as integer
 	Gamedesig	=""
 	Gamerunning	=0
 	gameturn	=0
@@ -84,7 +85,7 @@ End function
 public function Errorscreen(text as string,suppress as integer=0) As integer
 	dim as integer irow=10
 	
-	if tScreen.Enabled then
+	if tScreen.IsGraphic then
 		tScreen.set(1,1)
 		Cls
 		tScreen.loc(irow,10)
@@ -114,7 +115,7 @@ public function Errorscreen(text as string,suppress as integer=0) As integer
 		endif
 		'
 		if __EMAIL__<>"" then
-			if tScreen.Enabled then
+			if tScreen.IsGraphic then
 				irow+=1
 				tScreen.loc(irow,10)
 			else
@@ -122,7 +123,7 @@ public function Errorscreen(text as string,suppress as integer=0) As integer
 			Print __EMAIL__
 		endif
 		'
-		if tScreen.Enabled then
+		if tScreen.IsGraphic then
 		    tScreen.rgbcol(255,255,255)
 			If gamerunning=1 Then 
 				irow+=2

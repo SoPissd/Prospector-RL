@@ -32,7 +32,7 @@ declare function keyin(byref allowed as string="" , blocked as short=0)as string
 '     -=-=-=-=-=-=-=- MAIN: tGamekeys -=-=-=-=-=-=-=-
 
 namespace tGamekeys
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tGamekeys

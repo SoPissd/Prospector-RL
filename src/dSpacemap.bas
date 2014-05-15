@@ -36,7 +36,7 @@ declare function make_vismask(c as _cords, sight as short,m as short,ad as short
 '     -=-=-=-=-=-=-=- MAIN: tSpacemap -=-=-=-=-=-=-=-
 
 namespace tSpacemap
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tSpacemap

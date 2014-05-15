@@ -35,7 +35,7 @@ declare function Initgame() as integer
 '     -=-=-=-=-=-=-=- MAIN: tGameinit -=-=-=-=-=-=-=-
 
 namespace tGameinit
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tGameinit
@@ -155,10 +155,11 @@ End function
 function setglobals() as short
     dim as short a,b,c,d,f        
     dim as string text
+    dim iAction as integer
     '
     ' Variables
     '
-    tCompany.init()
+    iAction=tCompany.init(0)
     wage=10
     
     
@@ -174,7 +175,7 @@ function setglobals() as short
     shopname(3) ="Space'n'Stuff"
     shopname(4) ="YeOlde Weapons Locker"
     
-	tShipyard.init()
+	iAction=tShipyard.init(0)
 	    
     moduleshopname(ms_energy)="OBE High Energy Research Lab"
     moduleshopname(ms_projectile)="SHI Weapons Division ltd."

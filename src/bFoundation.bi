@@ -1,12 +1,6 @@
 'bFoundation.bi
 'include to build sound, debug and all the utilities. include dependencies.  
 
-	#undef inc
-	#Macro inc(file,comments)
-	'#print -=- file  -=- comments
-	#include file
-	#EndMacro
-'
 	inc("uSound.bi",				"first, include the sound drivers")
 	inc("fbGfx.bi",					"")
 	inc("file.bi",					"")
@@ -56,6 +50,7 @@
 	inc("uPrint.bas",				"")
 	inc("uTextbox.bas",				"")
 	inc("uViewfile.bas",			"")
+	inc("uMenu.bas",				"")
 
 	#undef types
 	#undef head

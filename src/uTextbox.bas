@@ -34,7 +34,7 @@ declare function textbox(text as string,x as short,y as short,w as short,_
 '     -=-=-=-=-=-=-=- MAIN: tTextbox -=-=-=-=-=-=-=-
 
 namespace tTextbox
-function init() as Integer
+function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tTextbox

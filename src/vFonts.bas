@@ -29,7 +29,7 @@ Type FONTTYPE
   As Any Ptr dataptr
 End Type
 
-Dim Shared As UByte _fohi1, _fohi2
+Dim Shared As Short sidebar
 
 #endif'types
 #ifdef head
@@ -45,7 +45,8 @@ declare function draw_border(xoffset as short) as short
 '     -=-=-=-=-=-=-=- MAIN: tFonts -=-=-=-=-=-=-=-
 
 namespace tFonts
-function init() as Integer
+function init(iAction as integer) as integer
+	'load_fonts() 
 	return 0
 end function
 end namespace'tFonts
