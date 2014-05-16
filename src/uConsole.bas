@@ -63,25 +63,6 @@
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
-type tGetMouse
-    dim as integer mx, my, mwheel, mbuttons, mclip	
-End Type
-
-dim shared Lastmouse as tGetMouse
-
-type tConfirmClose As Function() as Integer
-type tProcesskey As Function(aKey as string) as Integer
-type tProcessmouse As Function(ByRef aMouse as tGetMouse) as Integer
-type tProcessaction As Function(iAction as Integer) as Integer
-	
-type tMainloopParams
-	dim KeyProc as tProcesskey
-	dim MouseProc as tProcessmouse
-	dim NoMouse as short
-	dim ConfirmClose as tConfirmClose
-	dim Processaction as tProcessaction
-End Type
-
 #endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: uConsole -=-=-=-=-=-=-=-
@@ -119,6 +100,7 @@ declare function keyinput(allowed as string="") as string
 
 function init(iAction as integer) as integer
 	Closing=0
+	bIdling=0
 	return 0
 End function
 
@@ -187,6 +169,7 @@ function Idle(iAction as integer=0) as integer
 	return iAction
 End Function	
 
+
 function iGetKey(iMilliSeconds as integer=0) as integer
 	dim as integer i,j,n
 	dim as double iUpTo
@@ -208,6 +191,7 @@ function iGetKey(iMilliSeconds as integer=0) as integer
 	Loop
 	return 0	
 End Function
+
 
 function aGetKey(iMilliSeconds as integer=0) as String
 	dim as Integer iKey= iGetKey(iMilliSeconds)
@@ -251,109 +235,9 @@ function keyinput(allowed as string="") as string
     return aKey
 end function
 
-'
-
-'dim shared as integer iWheel 
-'
-'function mouseconsole(mx as integer, my as integer, mwheel as integer, mbuttons as integer) as integer
-'	LogWrite("mouseconsole: " &mx &", " &my &", " &mwheel-iWheel &", " &mbuttons)
-'	iWheel= mwheel	
-'	return 0	
-'End Function
-'
-'function mousegraphic(mx as integer, my as integer, mwheel as integer, mbuttons as integer) as integer
-'	dim as integer x,y
-'	x=pos()
-'	y=csrlin()	
-'	locate 10,10
-'	? x,y,mx, my, mwheel-iWheel, mbuttons
-'	iWheel= mwheel	
-'	locate x,y
-'	return 0	
-'End Function
-'
-'        
-'        if mclip=-1 then
-'        	mouseconsole(mx, my, mwheel, mbuttons)
-'        else
-'        	mousegraphic(mx, my, mwheel, mbuttons)
-'        EndIf
-
-'define function tProcesskey(aKey as string) as Integer
-'define function tProcessmouse(ByRef aMouse as tGetMouse) as Integer
-
-'function uMenu.updateposition(iAction as Integer) as integer
-'	if not tScreen.isGraphic then
-'		tScreen.pushpos()
-'	    tScreen.xy(ofx,3,"" & loca)
-'		tScreen.poppos()
-'	endif
-'	return 0
-'end function
-
-function mainloop(ByRef aParams as tMainloopParams) as Integer
-    dim as integer mx, my, mwheel, mbuttons, mclip 
-	dim as integer iCmd
-	dim as string aKey
-	bIdling= 0
-   	while Closing=0 and (iCmd<> -1)
-   		if iCmd=0 then
-			aKey=uConsole.aInKey()
-			if closing=1 then 
-				'close	
-				if aParams.ConfirmClose<>null then
-					if aParams.ConfirmClose()<>0 then
-						closing=0
-					EndIf
-				endif
-				if closing=1 then 
-					continue while
-				endif
-			EndIf
-			'
-			if aKey<>"" then
-				'processkey	
-				if aParams.KeyProc<>null then
-					iCmd=aParams.KeyProc(aKey)
-				endif
-			else
-				Idle()
-			EndIf
-   		EndIf
-		'
-		if iCmd=0 and aParams.NoMouse=0 then
-	        getmouse mx, my, mwheel, mbuttons, mclip
-	        if Lastmouse.mx<>mx or Lastmouse.my<>my or Lastmouse.mwheel<>mwheel or Lastmouse.mclip<>mclip then
-				Lastmouse.mx= mx  
-				Lastmouse.my= my 
-				Lastmouse.mwheel= mwheel 
-				Lastmouse.mclip= mclip
-				'mousechanged()        	
-				if aParams.MouseProc<>null then
-					iCmd=aParams.MouseProc(Lastmouse)
-				endif
-	        EndIf 
-		EndIf
-		'
-		if iCmd<>0 then
-			'processkey	
-			if aParams.Processaction<>null then
-				iCmd=aParams.Processaction(iCmd)
-			else
-				iCmd=0
-			endif
-		EndIf
-		'
-		sleep(1)
-   	Wend
-   	return closing
-End Function
 
 #endif'main
-
 End Namespace
-
-
 #if (defined(main) or defined(test))
 	' -=-=-=-=-=-=-=- INIT: uConsole -=-=-=-=-=-=-=-
 	tModule.register("uConsole",@uConsole.init()) ',@uConsole.load(),@uConsole.save())
@@ -361,35 +245,36 @@ End Namespace
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: uConsole -=-=-=-=-=-=-=-
-	dim shared as uConsole.tMainloopParams aParams
-	
-	function keypress(aKey as string) as Integer
-		? aKey
-		if aKey="5" then
-			return 3			
-		EndIf
-		return 0
-	End Function
-	
-	function keypress2(aKey as string) as Integer
-		? "@@@ " &aKey &" @@@"
-		if aKey="5" then
-			return 5			
-		EndIf
-		return 0
-	End Function
-	
-	function Processaction(iAction as Integer) as Integer
-		if iAction=3 then
-			aParams.KeyProc= @keypress2			
-		EndIf
-		if iAction=5 then
-			aParams.KeyProc= @keypress			
-		EndIf
-		return 0
-	End Function
-	
-	aParams.KeyProc= @keypress 
-	aParams.Processaction= @Processaction 
-	uConsole.mainloop(aParams)
+'redo with uMainloop for testing
+''	dim shared as uConsole.tMainloopParams aParams
+'	
+'	function keypress(aKey as string) as Integer
+'		? aKey
+'		if aKey="5" then
+'			return 3			
+'		EndIf
+'		return 0
+'	End Function
+'	
+'	function keypress2(aKey as string) as Integer
+'		? "@@@ " &aKey &" @@@"
+'		if aKey="5" then
+'			return 5			
+'		EndIf
+'		return 0
+'	End Function
+'	
+'	function CmdProc(iAction as Integer) as Integer
+'		if iAction=3 then
+'			aParams.KeyProc= @keypress2			
+'		EndIf
+'		if iAction=5 then
+'			aParams.KeyProc= @keypress			
+'		EndIf
+'		return 0
+'	End Function
+'	
+'	aParams.KeyProc= @keypress 
+'	aParams.CmdProc= @CmdProc 
+'	uConsole.mainloop(aParams)
 #endif'test

@@ -46,24 +46,74 @@ function updatefps(iAction as Integer) as integer
 '?"updatefps"
 	dim dtime as double 
 	dim itime as integer
+	dim atime as string
 	dTime=lasttime 
 	lasttime=Timer() 
 	dTime=lasttime-dTime
 	iTime=dTime*1000
 	iTime=1000/iTime
+	if iTime>=1000 then iTime=999
+	aTime="" & iTime
+	while len(aTime)<3 aTime= "0"+aTime
 	if not tScreen.isGraphic then
 		tScreen.pushpos()
-	    tScreen.xy(70,1,"" & iTime)
+	    tScreen.xy(70,1,aTime)
 		tScreen.poppos()
 	endif
 	return iAction
 end function
 
+'type 
+'	dim InitProc(ByRef Sender as tBasicloop) as Integer
+'	dim ConfirmClose(ByRef Sender as tBasicloop) as Integer
+'	dim CmdProc(ByRef Sender as tBasicloop) as Integer
+'	dim KeyProc(ByRef Sender as tBasicloop) as Integer
+'	dim MouseProc(ByRef Sender as tBasicloop) as Integer
+
+'Declare function InitProc(ByRef Sender as tBasicloop) as Integer
+'Declare function ConfirmClose(ByRef Sender as tBasicloop) as Integer
+'Declare function CmdProc(ByRef Sender as tBasicloop) as Integer
+'Declare function KeyProc(ByRef Sender as tBasicloop) as Integer
+'Declare function MouseProc(ByRef Sender as tBasicloop) as Integer
+
+dim Game as tMainloop
+
+function InitProc(ByRef Sender as tBasicloop) as Integer
+	return 0
+End Function
+	
+function ExitProc(ByRef Sender as tBasicloop) as Integer
+	return 0
+End Function
+	
+function ConfirmClose(ByRef Sender as tBasicloop) as Integer
+	return 0
+End Function
+	
+function CmdProc(ByRef Sender as tBasicloop) as Integer
+	return 0
+End Function
+	
+function KeyProc(ByRef Sender as tBasicloop) as Integer
+	return 0
+End Function
+	
+function MouseProc(ByRef Sender as tBasicloop) as Integer
+	return 0
+End Function
+
 
 function init(iAction as integer) as integer
 	lasttime= Timer()
 	uConsole.IdleMethod= @updatefps
-'	tScreen.res
+	'
+	Game.InitProc= InitProc
+	Game.ExitProc= ExitProc
+	Game.ConfirmClose= ConfirmClose
+	Game.CmdProc= CmdProc
+	Game.KeyProc= KeyProc
+	Game.MouseProc= MouseProc
+	Game.run()	 
 	return 0
 end function
 
@@ -192,7 +242,7 @@ Private function mainmenu(a as integer) as integer
 		EndIf
 		if a=0 then a=1							'first choice by default 
 
-		LogOut("_lines,_fh2,_fh1 " &_lines &", " &_fh2 &", " &_fh1 &", " &a)
+		LogOut("_lines,_fh2,_fh1 " &_lines &", " &_fh2 &", " &_fh1 &";" &a)
 		if _fh1>0 then
 	        a=textmenu(aText,,40,_lines-iLines*_fh2/_fh1,,1,,a)
 		else

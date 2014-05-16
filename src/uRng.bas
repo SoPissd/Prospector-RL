@@ -1,11 +1,22 @@
 'tRng.
 '
-'defines:
-'rnd_range=1622
+'rng with retrievable seed
+'algo from https://en.wikipedia.org/wiki/Random_number_generation
 '
+'m_w = <choose-initializer>;    /* must not be zero, nor 0x464fffff */
+'m_z = <choose-initializer>;    /* must not be zero, nor 0x9068ffff */
+' 
+'uint get_random()
+'{
+'    m_z = 36969 * (m_z & 65535) + (m_z >> 16);
+'    m_w = 18000 * (m_w & 65535) + (m_w >> 16);
+'    return (m_z << 16) + m_w;  /* 32-bit result */
+'}
 
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
+
+'outputs 32bit but maintains
+'random pool with a 64 bit state 
+
 #if not (defined(types) or defined(head) or defined(main))
 #define intest
 #define both

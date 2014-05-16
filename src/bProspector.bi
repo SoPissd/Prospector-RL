@@ -1,16 +1,20 @@
 #ifdef phase1
 	#define gbasics
+	' these are all the units i could 'sneak' under vGame.bas without introducing more dependencies
+	' some of the are essential, some of them are just containers to isolate something, even nothing
+	' has all saving/loading/configuring/menuing/graphic/tiles. even retirement, highscore and more.
+	' it could become a dll to rely on the foundation.
 #endif
 #ifdef phase2
-	#define xvars
-	#define ccommerce
-	#define ddisplay
-	#define pplanet
-	#define ggame
-	#define sspace
-	#define wworldgen
-	#define vapp
-	#define vfinal
+	#define xvars		'leftover global vars and types
+	#define ccommerce	'commerce
+	#define ddisplay	'display
+	#define pplanet		'planetside awayteam
+	#define ggame		'game fundamentals
+	#define sspace		'space travel and combat
+	#define wworldgen	'universe and planet generation
+	#define vapp		'-empty group-
+	#define vfinal		'
 #endif
 
 #ifdef other
@@ -33,6 +37,7 @@
 '
 'basics
 '
+inc("dCards.bas",				"Playing card rendering")
 inc("vSettings.bas",			"Saved settings and keys assembled here for early save/load inclusion")
 inc("sStars.bas",				"Stellar map, resized based on save/load")
 inc("vInput.bas",				"gettext & getnumber")
@@ -54,7 +59,6 @@ inc("cCargo.bas",				"strings for cargo")
 inc("cCustomship.bas",			"delete_custom")
 inc("cRumors.bas",				"get_rumor")
 inc("cStockmarket.bas",			"just a template")
-'
 inc("vGame.bas",				"game menu. gives about 1/3rd the units a workout without anything on top")
 #endif
 
@@ -100,7 +104,6 @@ inc("cTrading.bas",				"")
 '
 'display
 '
-inc("dCards.bas",				"")
 inc("dCockpit.bas",				"")
 inc("dLogbook.bas",				"")
 inc("dParty.bas",				"")
@@ -184,10 +187,10 @@ inc("wWorldgen.bas",			"")
 '
 'overall
 '
-inc("vPlayer.bas",				"")
-inc("vSavegame.bas",			"")
-inc("vGameinit.bas",			"")
-inc("vGamekeys.bas",			"")
-'inc("vMenu.bas",				"")
+inc("vPlayer.bas",				"player functions. the type long ago declared as _ship in Ship.bas")
+inc("vSavegame.bas",			"universe and player ... via compression")
+inc("vGameinit.bas",			"final initialization coordination")
+inc("vGamekeys.bas",			"'legacy' action-wiring")
+'inc("vMenu.bas",				"menu with graphics as before, for reference. should wind up with an override maybe")
 #endif
 

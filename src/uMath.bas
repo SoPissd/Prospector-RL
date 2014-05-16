@@ -59,8 +59,6 @@ declare function find_low(list() as short,last as short,start as short=1) as sho
 declare function content(r as _rect,tile as short,map()as short) as integer
 declare function maximum(a as double,b as double) as double
 declare function minimum(a as double,b as double) as double
-declare function nearest(byval c as _cords, byval b as _cords,rollover as byte=0) as single
-declare function farthest(c as _cords, b as _cords) as single
 declare function fill_rect(r as _rect,wall as short, flor as short,map() as short) as short
 
 'private function C_to_F(c as single) as single
@@ -393,41 +391,6 @@ function line_in_points(b as _cords,c as _cords,p() as _cords) as short
 end function
 
 
-function nearest(byval c as _cords, byval b as _cords,rollover as byte=0) as single
-    ' Moves B towards C, or C away from B
-    dim direction as short
-    if rollover=1 then
-        if abs(c.x-b.x)>30 then swap c,b
-    endif
-    if c.x>b.x and c.y>b.y then direction=3
-    if c.x>b.x and c.y=b.y then direction=6
-    if c.x>b.x and c.y<b.y then direction=9
-    
-    if c.x=b.x and c.y>b.y then direction=2
-    if c.x=b.x and c.y<b.y then direction=8
-    
-    if c.x<b.x and c.y=b.y then direction=4
-    if c.x<b.x and c.y<b.y then direction=7
-    if c.x<b.x and c.y>b.y then direction=1
-            
-    return direction
-end function
-
-
-function farthest(c as _cords, b as _cords) as single
-    dim direction as short
-    if c.x>b.x and c.y>b.y then direction=3
-    if c.x>b.x and c.y=b.y then direction=6
-    if c.x>b.x and c.y<b.y then direction=9
-    
-    if c.x=b.x and c.y>b.y then direction=8
-    if c.x=b.x and c.y<b.y then direction=2
-    
-    if c.x<b.x and c.y=b.y then direction=4
-    if c.x<b.x and c.y<b.y then direction=7
-    if c.x<b.x and c.y>b.y then direction=1
-    return direction
-end function
 
 
 function fill_rect(r as _rect,wall as short, flor as short,map() as short) as short

@@ -138,96 +138,98 @@ function rlprint(t as string, col as short=11) as short
 '    _lines=winh
 'endif
     if t<>"" then
-'    firstline=0
-'    do
-'        firstline+=1
-'    loop until firstline*_fh2>=22*_fh1
-'
-    if _fh1=_fh2 then
-        firstline=22
-        winh=_lines-22
+	'    firstline=0
+	'    do
+	'        firstline+=1
+	'    loop until firstline*_fh2>=22*_fh1
+	'
+	    if _fh1=_fh2 then
+	        firstline=22
+	        winh=_lines-22
+	    endif
+	'?"curline=locEOL.y+1"
+	    curline=locEOL.y+1
+	'?"=",curline
+	    for a=0 to len(t)
+	        if mid(t,a,1)<>"|" then text=text & mid(t,a,1)
+	    next
+	    
+	    if text<>"" and len(text)<winw-4 then
+	        if lastmessage=t then
+	            a=curline-1
+	            lastmessagecount+=1
+	            if len(displaytext(a))<winw-4 then
+	                displaytext(a)=text &"(x"&lastmessagecount &")"
+	                t=""
+	            else
+	                displaytext(a)=text
+	                displaytext(a+1)="(x"&lastmessagecount &")"
+	                t=""
+	            endif
+	            text=""
+	        else
+	            lastmessage=t
+	            lastmessagecount=1
+	        endif
+	    endif
+	
+	    'draw string (61*_fw1,firstline*_fh2),"*",,font1,custom,@_col
+	    'draw string (61*_fw1,(firstline+winh)*_fh2),"*",,font1,custom,@_col
+	    'find offset
+	    'if offset=0 then offset=firstline
+	
+	    if text<>"" then
+	        while displaytext(curline)<>""
+	            curline+=1
+	        wend
+	        for a=0 to len(text)
+	            words(b)=words(b)&mid(text,a,1)
+	            if mid(text,a,1)=" " then b+=1
+	        next
+	        for a=0 to b
+	            if instr(ucase(words(a)),"\C")>0 then
+	                words(a)="Ctrl-"&right(trim(words(a)),1) &" "
+	            endif
+	        next
+	        for a=0 to b
+	            if len(displaytext(curline+tlen))+len(words(a))>=winw then
+	                displaytext(curline+tlen)=trim(displaytext(curline+tlen))
+	                tlen+=1
+	            endif
+	            displaytext(curline+tlen)=displaytext(curline+tlen)&words(a)
+	            dtextcol(curline+tlen)=col
+	        next
+	
+	        if curline+tlen>firstline+winh then
+	            if tlen<winh then
+	                scrollup(tlen-1)
+	            else
+	                do
+	                    scrollup(winh-2)
+	                    for b=firstline to firstline+winh
+	                        set__color( 0,0)
+	                        'draw string(0,(b-firstline)*_fh2+22*_fh1), space(winw),,font2,custom,@_col
+	                        draw string(0,b*_fh2), space(winw),,font2,custom,@_col
+	                        set__color( dtextcol(b),0)
+	                        draw string(0,b*_fh2), displaytext(b),,font2,custom,@_col
+	                        'draw string(0,(b-firstline)*_fh2+22*_fh1), displaytext(b),,font2,custom,@_col
+	                    next
+	                    set__color( 14,1)
+	                    if displaytext(firstline+winh+1)<>"" then
+	                        draw string((winw+1)*_fw2,tScreen.y-_fh2), chr(25),,font2,custom,@_col
+	                        no_key=uConsole.iGetKey() 'keyin
+	                    endif
+	                loop until displaytext(_textlines+1)=""
+	            endif
+	        else
+	            if curline=firstline+winh then scrollup(0)
+	        endif
+	        while displaytext(_textlines+1)<>""
+	            scrollup(0)
+	        wend
+	    endif
     endif
-?"curline=locEOL.y+1"
-    curline=locEOL.y+1
-?"=",curline
-    for a=0 to len(t)
-        if mid(t,a,1)<>"|" then text=text & mid(t,a,1)
-    next
-    if text<>"" and len(text)<winw-4 then
-        if lastmessage=t then
-            a=curline-1
-            lastmessagecount+=1
-            if len(displaytext(a))<winw-4 then
-                displaytext(a)=text &"(x"&lastmessagecount &")"
-                t=""
-            else
-                displaytext(a)=text
-                displaytext(a+1)="(x"&lastmessagecount &")"
-                t=""
-            endif
-            text=""
-        else
-            lastmessage=t
-            lastmessagecount=1
-        endif
-    endif
-
-    'draw string (61*_fw1,firstline*_fh2),"*",,font1,custom,@_col
-    'draw string (61*_fw1,(firstline+winh)*_fh2),"*",,font1,custom,@_col
-    'find offset
-    'if offset=0 then offset=firstline
-
-    if text<>"" then
-        while displaytext(curline)<>""
-            curline+=1
-        wend
-        for a=0 to len(text)
-            words(b)=words(b)&mid(text,a,1)
-            if mid(text,a,1)=" " then b+=1
-        next
-        for a=0 to b
-            if instr(ucase(words(a)),"\C")>0 then
-                words(a)="Ctrl-"&right(trim(words(a)),1) &" "
-            endif
-        next
-        for a=0 to b
-            if len(displaytext(curline+tlen))+len(words(a))>=winw then
-                displaytext(curline+tlen)=trim(displaytext(curline+tlen))
-                tlen+=1
-            endif
-            displaytext(curline+tlen)=displaytext(curline+tlen)&words(a)
-            dtextcol(curline+tlen)=col
-        next
-
-        if curline+tlen>firstline+winh then
-            if tlen<winh then
-                scrollup(tlen-1)
-            else
-                do
-                    scrollup(winh-2)
-                    for b=firstline to firstline+winh
-                        set__color( 0,0)
-                        'draw string(0,(b-firstline)*_fh2+22*_fh1), space(winw),,font2,custom,@_col
-                        draw string(0,b*_fh2), space(winw),,font2,custom,@_col
-                        set__color( dtextcol(b),0)
-                        draw string(0,b*_fh2), displaytext(b),,font2,custom,@_col
-                        'draw string(0,(b-firstline)*_fh2+22*_fh1), displaytext(b),,font2,custom,@_col
-                    next
-                    set__color( 14,1)
-                    if displaytext(firstline+winh+1)<>"" then
-                        draw string((winw+1)*_fw2,tScreen.y-_fh2), chr(25),,font2,custom,@_col
-                        no_key=uConsole.iGetKey() 'keyin
-                    endif
-                loop until displaytext(_textlines+1)=""
-            endif
-        else
-            if curline=firstline+winh then scrollup(0)
-        endif
-        while displaytext(_textlines+1)<>""
-            scrollup(0)
-            wend
-        endif
-    endif
+    
     for b=firstline to firstline+winh
         set__color( 0,0)
         'draw string(0,(b-firstline)*_fh2+22*_fh1), space(winw),,font2,custom,@_col
@@ -256,10 +258,10 @@ end function
 
 function askyn(q as string,col as short=11,sure as short=0) as short
     dim key as string '*1
-    rlprint (q,col)
+'    rlprint (q,col)
     do
         key=uConsole.keyinput()
-? key        
+'? key        
 '        key=keyin
         displaytext(_lines-1) &= key
         if key <>"" then 

@@ -25,6 +25,9 @@
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+
+'compiles for different types of coordinates
+
 Type _cords
     s As Short '
     p As Short '
@@ -52,6 +55,11 @@ End Type
 declare function cords(c As _cords) As String
 declare function distance(first as _cords, last as _cords,rollover as byte=0) as single
 declare function sort_by_distance(c as _cords,p() as _cords,l() as short,last as short) as short
+
+declare function nearest(byval c as _cords, byval b as _cords,rollover as byte=0) as single
+declare function farthest(c as _cords, b as _cords) as single
+declare function furthest(list() as _cords,last as short, a as _cords,b as _cords) as short
+
 declare function rndwallpoint(r as _rect, w as byte) as _cords
 declare function rndwall(r as _rect) as short
 
@@ -136,6 +144,42 @@ function furthest(list() as _cords,last as short, a as _cords,b as _cords) as sh
 end function
 
 '
+
+function nearest(byval c as _cords, byval b as _cords,rollover as byte=0) as single
+    ' Moves B towards C, or C away from B
+    dim direction as short
+    if rollover=1 then
+        if abs(c.x-b.x)>30 then swap c,b
+    endif
+    if c.x>b.x and c.y>b.y then direction=3
+    if c.x>b.x and c.y=b.y then direction=6
+    if c.x>b.x and c.y<b.y then direction=9
+    
+    if c.x=b.x and c.y>b.y then direction=2
+    if c.x=b.x and c.y<b.y then direction=8
+    
+    if c.x<b.x and c.y=b.y then direction=4
+    if c.x<b.x and c.y<b.y then direction=7
+    if c.x<b.x and c.y>b.y then direction=1
+            
+    return direction
+end function
+
+
+function farthest(c as _cords, b as _cords) as single
+    dim direction as short
+    if c.x>b.x and c.y>b.y then direction=3
+    if c.x>b.x and c.y=b.y then direction=6
+    if c.x>b.x and c.y<b.y then direction=9
+    
+    if c.x=b.x and c.y>b.y then direction=8
+    if c.x=b.x and c.y<b.y then direction=2
+    
+    if c.x<b.x and c.y=b.y then direction=4
+    if c.x<b.x and c.y<b.y then direction=7
+    if c.x<b.x and c.y>b.y then direction=1
+    return direction
+end function
 
 '
 
