@@ -71,9 +71,18 @@ dim shared Lastmouse as tGetMouse
 
 '
 
-type tBasicloop
+type tMainloop Extends Object
 	declare constructor()
 	declare destructor()
+	declare function run(iAction as Integer) as Integer
+	declare function KeyProc as integer
+	declare function MouseProc as integer
+	declare Virtual function DoInitProc() as integer
+	declare Virtual function DoConfirmClose() as integer
+	declare Virtual function DoCmdProc() as integer
+	declare Virtual function DoKeyProc() as integer
+	declare Virtual function DoMouseProc() as integer
+	dim as short NoMouseChecks 
 	dim as string aKey
     dim as integer mx 
     dim as integer my
@@ -85,23 +94,7 @@ type tBasicloop
 	dim as short bIdling
 End Type
 
-type tNotification As Function(ByRef Sender as tBasicloop) as Integer
-	
-type tMainloop extends tBasicloop
-	declare constructor()
-	declare destructor()
-	declare function run(iAction as Integer) as Integer
-	'use uConsole for Idleproc
-	dim InitProc as tNotification
-	dim ConfirmClose as tNotification
-	dim CmdProc as tNotification
-	dim KeyProc as tNotification
-	dim MouseProc as tNotification
-	dim NoMouseChecks as short
-End Type
-
 '
-
 #endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: uMainloop -=-=-=-=-=-=-=-
@@ -160,76 +153,88 @@ End function
 '	return 0
 'end function
 
+#endif'main
+End Namespace
+
+#ifdef main
+
 constructor tMainloop()
 End Constructor
 
 destructor tMainloop()	
 End Destructor
 
+function tMainloop.DoInitProc as integer
+	return iCmd '- 0 to accept, -1 to abort
+End Function
+function tMainloop.DoConfirmClose as integer
+	return 0 '- 0 to accept, -1 to ignore the close signal
+End Function
+function tMainloop.DoCmdProc as integer
+	return iCmd ' next no-command
+End Function
+function tMainloop.DoKeyProc as integer
+	return iCmd ' next no-command
+End Function
+function tMainloop.DoMouseProc as integer
+	return iCmd 'nochange
+End Function
+
+function tMainloop.MouseProc as integer
+    getmouse mx, my, mwheel, mbuttons, mclip
+    if Lastmouse.mx<>mx or Lastmouse.my<>my or Lastmouse.mwheel<>mwheel or Lastmouse.mclip<>mclip then
+		Lastmouse.mx= mx  
+		Lastmouse.my= my 
+		Lastmouse.mwheel= mwheel 
+		Lastmouse.mclip= mclip
+		return DoMouseProc
+    EndIf 
+	return iCmd 'nochange
+End Function
+
+function tMainloop.KeyProc as integer
+	aKey=uConsole.aInKey()  			
+	if uConsole.Closing<>0 and DoConfirmClose<>0 then uConsole.Closing=0
+	return iCmd 'nochange
+End Function
+
 function tMainloop.run(iAction as Integer) as Integer
 	'this loop distibutes mouse and keyboard events via the Method vars. codes coming back from these handlers 
 	'are taken as commands and passed into another callback method.the loop uses the global console idle handler
 	' to use, dim an instance, set the methods and run.
-	if InitProc<>null then
-		iCmd=InitProc(This)
-	EndIf  
-   	while Closing=0 and (iCmd<> -1)
+	'DoInitProc
+	iCmd=iAction
+	iCmd=DoInitProc
+   	while uConsole.Closing=0 and (iCmd<> -1)
+		
+		' icmd=0 	- find something to do, idle as needed
+		' icmd=-1 	- abort the main loop
+		
    		if iCmd=0 then
-			aKey=uMainloop.aInKey()
-			if closing=1 then 
-				'close	
-				if ConfirmClose<>null then
-					if ConfirmClose(This)<>0 then
-						closing=0
-					EndIf
-				endif
-				if closing=1 then 
-					continue while
-				endif
-			EndIf
-			'
-			if aKey<>"" then
-				'processkey	
-				if KeyProc<>null then
-					iCmd=KeyProc(This) 'looks as Sender.aKey to set sender.iCmd
-				endif
-			else
-				Idle()
-			EndIf
+   			iCmd=KeyProc()	'sets aKey
+			if uConsole.Closing=1 then continue while
    		EndIf
-		'
+
+   		if iCmd=0 and aKey<>"" then
+			iCmd=DoKeyProc
+   		EndIf
+   		
 		if iCmd=0 and NoMouseChecks=0 then
-	        getmouse mx, my, mwheel, mbuttons, mclip
-	        if Lastmouse.mx<>mx or Lastmouse.my<>my or Lastmouse.mwheel<>mwheel or Lastmouse.mclip<>mclip then
-				Lastmouse.mx= mx  
-				Lastmouse.my= my 
-				Lastmouse.mwheel= mwheel 
-				Lastmouse.mclip= mclip
-				'mousechanged()        	
-				if MouseProc<>null then
-					iCmd=MouseProc(This)
-				endif
-	        EndIf 
+			iCmd= MouseProc()
 		EndIf
-		'
+		
 		if iCmd<>0 then
-			'processkey	
-			if CmdProc<>null then
-				iCmd=CmdProc(This)
-			else
-				iCmd=0
-			endif
+			iCmd= DoCmdProc()
+		else
+			uConsole.Idle()
 		EndIf
 		'
-		sleep(1)
    	Wend
-   	return closing
+   	return uConsole.Closing
 End Function
 
+
 #endif'main
-
-End Namespace
-
 
 #if (defined(main) or defined(test))
 	' -=-=-=-=-=-=-=- INIT: uMainloop -=-=-=-=-=-=-=-

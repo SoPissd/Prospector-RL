@@ -32,6 +32,9 @@ declare function credits(cr As Integer) As String
 declare function screenshot(a as short) as short
 declare function play_sound(iSound As Short,iRepeats As Short=1,iDelay As Short=0) as short
 
+declare function textmenu overload (bg as short,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=1) as short
+declare function textmenu overload (            te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=1) as short
+
 'private function Texttofile(text as string) as string
 'private function lev_minimum( a As Integer, b As Integer, c As Integer ) As Integer
 'private function fuzzymatch( s As String, t As String ) As single
@@ -129,6 +132,17 @@ function play_sound(iSound As Short,iRepeats As Short=1,iDelay As Short=0) as sh
 		EndIf
 	#EndIf
 End function
+
+
+function textmenu overload (bg as short,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as short
+	dim aMenu as tMainmenu
+	return aMenu.go(bg,te,he,x,y,blocked,markesc,st,loca) 	          
+end function
+
+function textmenu overload (te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as short
+	dim aMenu as tMainmenu
+	return aMenu.go(0,te,he,x,y,blocked,markesc,st,loca) 	          
+end function
 
 
 #endif'main

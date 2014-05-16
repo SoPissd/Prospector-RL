@@ -248,6 +248,7 @@ end function
 function keybindings(allowed as string="") as short
     dim as short f,a,b,d,x,y,c,ls,lk,cl(99),colflag(99),lastcom,changed,fg,bg,o
     dim as _cords cc,ncc
+    dim as short di
     dim as string keys(99),nkeys(99),varn(99),exl(99),coml(99),comn(99),comdes(99),text,newkey,text2
     if not fileexists("keybindings.txt") then
         save_keyset
@@ -376,11 +377,12 @@ function keybindings(allowed as string="") as short
 
         no_key=uConsole.keyinput()
 '        no_key=keyin
+		di=uConsole.getdirection()'(no_key)
         o=c
-        if getdirection(no_key)=8 then c-=1
-        if getdirection(no_key)=2 then c+=1
-        if getdirection(no_key)=4 then c-=20
-        if getdirection(no_key)=6 then c+=20
+        if di=8 then c-=1
+        if di=2 then c+=1
+        if di=4 then c-=20
+        if di=6 then c+=20
         if c<1 then c=lk
         if c>lk then c=1
         'c=(cc.x-1)*20+cc.y

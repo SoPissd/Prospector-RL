@@ -24,17 +24,17 @@
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 
-Type uMenu
+Type tMainmenu Extends Object
   declare constructor()
   declare destructor()
   '
-  declare function init() as short
-  declare function before() as short
-  declare function after() as short
-  declare function finish() as short
+  declare virtual function init() as integer
+  declare virtual function before() as integer
+  declare virtual function after() as integer
+  declare virtual function finish() as integer
   '
-  declare function menu() as short
-  declare function go(bg as short,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as short
+  declare function menu() as integer
+  declare function go(bg as short,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as integer
 Private:
     ' 0= headline 1=first entry
     dim as short blen
@@ -76,9 +76,6 @@ End Type
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: uMenu -=-=-=-=-=-=-=-
 
-declare function textmenu overload (bg as short,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=1) as short
-declare function textmenu overload (            te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=1) as short
-
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: uMenu -=-=-=-=-=-=-=-
@@ -89,13 +86,13 @@ function init(iAction as integer) as integer
 end function
 end namespace'nuMenu
 
-Constructor uMenu()
+Constructor tMainmenu()
 End Constructor
 
-Destructor uMenu()
+Destructor tMainmenu()
 End Destructor
 
-function uMenu.before() as short
+function tMainmenu.before() as integer
 	'LogOut("uMenu.before()")
 	dim as integer i
 	dim as string a
@@ -184,7 +181,7 @@ function uMenu.before() as short
 	return 0
 end function
 
-function uMenu.after() as short
+function tMainmenu.after() as integer
 	'LogOut("uMenu.after()")
 	dim as integer a
 	if tScreen.isGraphic then
@@ -203,8 +200,8 @@ function uMenu.after() as short
 			tScreen.poppos()
 	    endif
 	EndIf
-    if getdirection(key)=8 then loca=loca-1
-    if getdirection(key)=2 then loca=loca+1
+    if uConsole.getdirection(key)=8 then loca=loca-1
+    if uConsole.getdirection(key)=2 then loca=loca+1
     if help<>"" then
         if key="+" then offset+=1
         if key="-" then offset-=1
@@ -226,7 +223,7 @@ end function
 	          
 
 
-function uMenu.init() as short
+function tMainmenu.init() as integer
 	'LogOut("uMenu.init()")
 	dim as integer a
 
@@ -279,13 +276,13 @@ function uMenu.init() as short
     b=0
     for a=0 to c
         shrt(a)=chr(96+b+a)
-        if getdirection(lcase(shrt(a)))>0 _ 'or getdirection(lcase(shrt(a)))>0 _
+        if uConsole.getdirection(lcase(shrt(a)))>0 _ 'or getdirection(lcase(shrt(a)))>0 _
         or val(shrt(a))>0 then 'or ucase(shrt(a))=ucase(key_awayteam) then
             do 
                 b+=1
                 shrt(a)=chr(96+b+a)
-            loop until getdirection(lcase(shrt(a)))=0 _
-            		and getdirection(shrt(a))=0 and val(shrt(a))=0
+            loop until uConsole.getdirection(lcase(shrt(a)))=0 _
+            		and uConsole.getdirection(shrt(a))=0 and val(shrt(a))=0
         endif
         if len(trim(lines(a)))>longest then longest=len(trim(lines(a)))
     next
@@ -331,7 +328,7 @@ function uMenu.init() as short
 End Function
 
 
-function uMenu.finish() as short
+function tMainmenu.finish() as integer
 	'LogOut("uMenu.finish()")
 	dim as integer a
     if key=key__esc and markesc=1 then e=-uConsole.aKey2i(key__esc)
@@ -359,30 +356,23 @@ function uMenu.finish() as short
 End Function
 
 
-function uMenu.menu() as short
-	if (uConsole.Closing<>0) then return 0
+function tMainmenu.menu() as integer
 	dim bGraphic as Short
-	bGraphic=tScreen.isGraphic
-   	e=init()
-   	if e=0 then
-	    while (uConsole.Closing=0) and (e=0)	
-	    	e=before()    		
-			key=uConsole.keyinput() 'key=keyin(,96+c)        
-	    	e=after()
-	    	'changed modes?
-	    	if bGraphic<>tScreen.isGraphic then
-				bGraphic=tScreen.isGraphic 		
-   				e=init()
-			   	if e<>0 then return e
-		   	EndIf
-	    wend
-	    return finish()
-   	else
-	    return e
-   	EndIf
+	bGraphic=not tScreen.isGraphic
+    while (uConsole.Closing=0) and (e=0)	
+    	'changed modes?
+    	if bGraphic<>tScreen.isGraphic then
+			bGraphic=tScreen.isGraphic 		
+			e=init()
+	   	EndIf
+	   	if e=0 then e=before()    		
+	   	if e=0 then key=uConsole.keyinput() 'key=keyin(,96+c)        
+	   	if e=0 then e=after()
+    wend
+    return finish()
 End Function
 
-function uMenu.go(sbg as short,ate as string, ahe as string="", sx as short=2, sy as short=2, sblocked as short=0, smarkesc as short=0, sst as short=-1, sloca as short=0) as short
+function tMainmenu.go(sbg as short,ate as string, ahe as string="", sx as short=2, sy as short=2, sblocked as short=0, smarkesc as short=0, sst as short=-1, sloca as short=0) as integer
 	'if tScreen.isGraphic then
 	'	LogOut("tScreen.isGraphic")
 	'else
@@ -403,15 +393,6 @@ function uMenu.go(sbg as short,ate as string, ahe as string="", sx as short=2, s
 	return menu()
 end function
 
-function textmenu overload (bg as short,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as short
-	dim aMenu as uMenu
-	return aMenu.go(bg,te,he,x,y,blocked,markesc,st,loca) 	          
-end function
-
-function textmenu overload (te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as short
-	dim aMenu as uMenu
-	return aMenu.go(0,te,he,x,y,blocked,markesc,st,loca) 	          
-end function
 
 #endif'main
 

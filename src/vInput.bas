@@ -150,10 +150,12 @@ function getnumber(a as integer,b as integer, e as integer) as integer
             
             set__color( 11,1)
             draw string (33*_fw1,21*_fh1),chr(195),,font1,custom,@_col
+            
             key=uConsole.keyinput(key__up &key__dn &key__rt &key__lt &"1234567890+-"&key__esc &key__enter)
+            
 '            key=keyin(key__up &key__dn &key__rt &key__lt &"1234567890+-"&key__esc &key__enter)
-            if keyplus(key) then c=c+1
-            if keyminus(key) then c=c-1
+            if uConsole.keyplus(key) then c=c+1
+            if uConsole.keyminus(key) then c=c-1
             if key=key__enter then d=1
             if key=key__esc then d=2
             buffer=buffer+key

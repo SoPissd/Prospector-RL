@@ -28,6 +28,29 @@ namespace tGame
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tGame -=-=-=-=-=-=-=-
 
+type tGameloop extends tMainloop
+	declare constructor()
+	declare destructor()
+	declare function run(iAction as Integer) as Integer
+	declare function KeyProc() as integer
+	declare function MouseProc()as integer
+	declare function DoInitProc() as integer override
+	declare function DoConfirmClose() as integer override
+	declare function DoCmdProc() as integer override
+	declare function DoKeyProc() as integer override
+	declare function DoMouseProc() as integer override
+end type
+
+type tGamemenu extends tMainmenu
+	declare constructor()
+	declare destructor()
+	declare virtual function init() as integer override
+	declare virtual function before() as integer override
+	declare virtual function after() as integer override
+	declare virtual function finish() as integer override
+end type
+
+
 Dim as tActionmethod pStart_new_game
 Dim as tActionmethod pFrom_savegame
 Dim as tActionmethod pPlay_game
@@ -54,7 +77,9 @@ function updatefps(iAction as Integer) as integer
 	iTime=1000/iTime
 	if iTime>=1000 then iTime=999
 	aTime="" & iTime
-	while len(aTime)<3 aTime= "0"+aTime
+	while len(aTime)<3 
+		aTime= "0"+aTime
+	Wend
 	if not tScreen.isGraphic then
 		tScreen.pushpos()
 	    tScreen.xy(70,1,aTime)
@@ -63,60 +88,63 @@ function updatefps(iAction as Integer) as integer
 	return iAction
 end function
 
-'type 
-'	dim InitProc(ByRef Sender as tBasicloop) as Integer
-'	dim ConfirmClose(ByRef Sender as tBasicloop) as Integer
-'	dim CmdProc(ByRef Sender as tBasicloop) as Integer
-'	dim KeyProc(ByRef Sender as tBasicloop) as Integer
-'	dim MouseProc(ByRef Sender as tBasicloop) as Integer
-
-'Declare function InitProc(ByRef Sender as tBasicloop) as Integer
-'Declare function ConfirmClose(ByRef Sender as tBasicloop) as Integer
-'Declare function CmdProc(ByRef Sender as tBasicloop) as Integer
-'Declare function KeyProc(ByRef Sender as tBasicloop) as Integer
-'Declare function MouseProc(ByRef Sender as tBasicloop) as Integer
-
 dim Game as tMainloop
-
-function InitProc(ByRef Sender as tBasicloop) as Integer
-	return 0
-End Function
-	
-function ExitProc(ByRef Sender as tBasicloop) as Integer
-	return 0
-End Function
-	
-function ConfirmClose(ByRef Sender as tBasicloop) as Integer
-	return 0
-End Function
-	
-function CmdProc(ByRef Sender as tBasicloop) as Integer
-	return 0
-End Function
-	
-function KeyProc(ByRef Sender as tBasicloop) as Integer
-	return 0
-End Function
-	
-function MouseProc(ByRef Sender as tBasicloop) as Integer
-	return 0
-End Function
 
 
 function init(iAction as integer) as integer
 	lasttime= Timer()
 	uConsole.IdleMethod= @updatefps
 	'
-	Game.InitProc= InitProc
-	Game.ExitProc= ExitProc
-	Game.ConfirmClose= ConfirmClose
-	Game.CmdProc= CmdProc
-	Game.KeyProc= KeyProc
-	Game.MouseProc= MouseProc
-	Game.run()	 
 	return 0
 end function
 
+
+'
+'
+'
+
+constructor tGameloop()
+end constructor
+
+destructor tGameloop()
+end destructor
+		
+		' icmd=0 	- find something to do, idle as needed
+		' icmd=-1 	- abort the main loop
+
+function tGameloop.DoInitProc() as integer
+	return Base.DoInitProc()
+end function
+function tGameloop.DoConfirmClose() as integer
+	return Base.DoConfirmClose()
+end function
+function tGameloop.DoCmdProc() as integer
+	return Base.DoCmdProc()
+end function
+function tGameloop.DoKeyProc() as integer
+	return Base.DoKeyProc()
+end function
+function tGameloop.DoMouseProc() as integer
+	return Base.DoMouseProc()
+end function
+
+'
+
+function tGamemenu.init() as integer
+	return Base.init()
+end function
+function tGamemenu.before() as integer
+	return Base.before()
+end function
+function tGamemenu.after() as integer
+	return Base.after()
+end function
+function tGamemenu.finish() as integer
+	return Base.finish()
+end function
+
+	
+	
 
 Private function mainmenuactions(ByRef iAction as integer, ByRef aText as String) as integer
     If iAction=0 Then  

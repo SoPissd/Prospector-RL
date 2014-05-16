@@ -268,9 +268,9 @@ function askyn(q as string,col as short=11,sure as short=0) as short
 			rlprint ""
 			'if configflag(con_anykeyno)=0 and not isKeyYes(key) then key="N"
         endif
-    loop until (uConsole.Closing<>0) or (isKeyNo(key)) or isKeyYes(key)  
+    loop until (uConsole.Closing<>0) or (uConsole.isKeyNo(key)) or uConsole.isKeyYes(key)  
     
-    if isKeyYes(key) then 
+    if uConsole.isKeyYes(key) then 
 	    if (sure=1) then 
 			return askyn("Are you sure? Let me ask that again:" & q,0)    	
 	    EndIf

@@ -284,9 +284,7 @@ End Function
 '#else
 ''load_palette()
 '#endif		
-
-
-#endif'test
+'#endif'test
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tColor -=-=-=-=-=-=-=-

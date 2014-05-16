@@ -40,7 +40,7 @@ end namespace'tViewfile
 'type tLines() as string   
 
 function ViewArray(lines() as string,nlines as integer) as short
-    dim as Integer height, pheight, xwidth, i
+    dim as Integer height, pheight, xwidth, i, di
     dim as Integer offset, offsetx 
     dim as Integer iwid, longest 
     dim col(nlines) as short
@@ -90,19 +90,20 @@ function ViewArray(lines() as string,nlines as integer) as short
         key=uConsole.keyinput() '("12346789 ")
 '            key=keyin("12346789 ",1)
 		'
-        if key="2" or key=key__dn then 
-	        offset=offset+1
-        elseif key="8" or key=key__up then 
-			offset=offset-1
-        elseif key="4" or key=key__lt then 
-			offsetx=offsetx-1
-        elseif key="6" or key=key__rt then 
-	        offsetx=offsetx+1
-        elseif keyplus(key)  then 
-            offset=offset+(height-1)
-        elseif keyminus(key)  then 
-            offset=offset-(height-1)
-        EndIf
+		di=uConsole.getdirection(key)
+        if 	   di=2 then
+        	offset=offset+1
+        elseif di=8 then
+        	offset=offset-1
+        elseif di=4 then
+        	offsetx=offsetx-1
+        elseif di=6 then
+        	offsetx=offsetx+1
+        elseif uConsole.keyplus(key) then
+        	offset=offset+(height-1)
+        elseif uConsole.keyminus(key) then
+        	offset=offset-(height-1)
+        endif
 		'
         if offset<0 then 
 			offset=0
@@ -110,7 +111,7 @@ function ViewArray(lines() as string,nlines as integer) as short
             offset=nlines
 '        elseif offset>nlines-height then 
 '            offset=nlines-height
-        EndIf
+        endif
 		'
         if (offsetx<0) then 
 			offsetx=0
@@ -120,7 +121,7 @@ function ViewArray(lines() as string,nlines as integer) as short
             offsetx=longest-xwidth
         EndIf
 		'
-    loop until uConsole.Closing<>0 or key=key__esc or key=key__enter or key=" "
+    loop until uConsole.Closing<>0 or uConsole.keyonwards(key)
     return 0
 End Function
 

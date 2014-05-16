@@ -66,6 +66,49 @@
 #endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: uConsole -=-=-=-=-=-=-=-
+
+'some key-constants
+'see http://www.freebasic.net/wiki/wikka.php?wakka=KeyPgInkey
+
+Const key__esc= 		Chr(27)
+Const key__enter=		Chr(13)
+Const key__space=		Chr(32)
+Const key__tab=			Chr(9)
+Const key__backspace=	Chr(8)
+
+Const xk= Chr(255)
+Const key__close = 	xk & "k"		'Close window / Alt-F4
+
+Const key__ul = 	xk & "G"		'Up Left / Home
+Const key__up = 	xk & "H"		'Up
+Const key__ur = 	xk & "I"		'Up Right / PgUp
+
+Const key__lt = 	xk & "K"		'Left
+Const key__ct = 	xk & "L"		'Center / here
+Const key__rt= 		xk & "M"		'Right
+
+Const key__dl = 	xk & "O"		'Down Left / End
+Const key__dn = 	xk & "P"		'Down		
+Const key__dr = 	xk & "Q"		'Down Right / PgDn
+
+'needs more numpad keys
+'list fkeys by name?
+
+Const key__Ins= 	xk & "P"		'Insert		
+Const key__Del= 	xk & "P"		'Delete		
+
+
+'these are the configurable directions for getdirection below 
+Dim Shared As String*3 key_nw="7"
+Dim Shared As String*3 key_north="8"
+Dim Shared As String*3 key_ne="9"
+Dim Shared As String*3 key_west="4"
+Dim Shared As String*3 key_here="5"
+Dim Shared As String*3 key_east="6"
+Dim Shared As String*3 key_sw="1"
+Dim Shared As String*3 key_south="2"
+Dim Shared As String*3 key_se="3"
+
 #endif'head
 
 
@@ -74,13 +117,12 @@ namespace uConsole
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: uConsole -=-=-=-=-=-=-=-
 
+dim shared as string		LastKey
 dim shared as integer 		Closing
 dim shared as integer 		bIdling
 Dim shared as tActionmethod IdleMethod
 
-
-Const xk= Chr(255)
-Const key__close = 	xk & "k"
+'
 
 declare function iInKey() as Integer
 declare function iGetKey(iMilliSeconds as integer=0) as integer
@@ -93,41 +135,16 @@ declare function aKey2i(aKey as String) as Integer
 declare function Pressanykey(aRow as Integer=2,aCol as Integer=0,aFg as Integer=0,aBg as Integer=0) as Integer
 declare function ClearKeys() as integer
 
-declare function keyaccept(ByRef aKey as string,const allowed as string="") as short
-declare function keyinput(const allowed as string="") as string
+declare function keyaccept(ByRef aKey as string,allowed as string="") as short
+declare function keyinput(allowed as string="") as string
 
-'declare function keyinput(allowed as string="") as string
+declare function isKeyYes(aKey as string="") as short
+declare function isKeyNo(aKey as string="") as short
+declare function keyplus(aKey as string="") as short
+declare function keyminus(aKey as string="") as short
+declare function keyonwards(aKey as string="") as short
 
-
-Const key__esc = 	Chr(27)
-Const key__enter =	Chr(13)
-Const key__space =	Chr(32)
-
-Const xk= Chr(255)
-Const key__up = 	xk & "H"
-Const key__dn = 	xk & "P"
-Const key__rt= 		xk & "M"
-Const key__lt = 	xk & "K"
-
-Dim Shared As String*3 key_nw="7"
-Dim Shared As String*3 key_north="8"
-Dim Shared As String*3 key_ne="9"
-Dim Shared As String*3 key_west="4"
-Dim Shared As String*3 key_east="6"
-Dim Shared As String*3 key_sw="1"
-Dim Shared As String*3 key_south="2"
-Dim Shared As String*3 key_se="3"
-
-
-declare function isKeyYes(aKey as string) as short
-declare function isKeyNo(aKey as string) as short
-declare function keyplus(key as string) as short
-declare function keyminus(key as string) as short
-
-declare function getdirection(key as string) as short
-
-
-
+declare function getdirection(aKey as string="") as short 
 
 #endif'head
 #ifdef main
@@ -170,7 +187,9 @@ End Function
 '
 
 function aProcessKey(aKey as String) as String
-	'and that's is, recognize a single command
+	'everything runs through here.
+	'and that's it, keep a copy and recognize a single command
+	LastKey= aKey
 	if akey= key__close then
 		Closing=1
 		'ErrOut("received close command")		
@@ -210,6 +229,7 @@ End Function
 '
 
 function aInKey() as String
+	'everything runs through here.
 	return aProcessKey(Inkey())
 End Function
 
@@ -244,12 +264,11 @@ End Function
 
 function aGetKey(iMilliSeconds as integer=0) as String
 	dim as Integer iKey= iGetKey(iMilliSeconds)
-'?ikey
 	return iKey2a(iKey)
 End Function
 
 '
-'
+' now that we can, lets get some keys. any keys at all :)
 '
 
 function ClearKeys() as integer
@@ -276,13 +295,35 @@ function Pressanykey(aRow as Integer=2,aCol as Integer=0,aFg as Integer=0,aBg as
 	return key
 End function
 
+'
+' lets optionally restrict the input to sets of keys defined as comma-delimited lists of keys 
+'
 
-function keyaccept(ByRef aKey as string,const allowed as string="") as short
-	'validates against a comma delimited list of keys
+function validateaccept(ByRef allowed as string) as short
+	'validates a comma delimited list of keys	
+	if len(allowed)<=1 then return 0
+	dim as integer i,n
+	n=len(allowed)
+	i=1
+	while i<n
+		if mid(allowed,i,1)=xk then i+=1 'whatever it is, the next char is now included.
+		i+=1
+		if i=n then continue while
+		if mid(allowed,i,1)<>"," then
+			allowed=mid(allowed,1,i-1)+","+mid(allowed,i,1)
+			n+=1			
+		EndIf			
+		if mid(allowed,i,1)="," then i+=1 'that's just what we wanted
+	Wend 
+    return 0 
+end function
+
+function keyaccept(ByRef aKey as string,allowed as string="") as short
+	validateaccept(allowed)'validates against a comma delimited list of keys
     return (aKey<>"" and (allowed="" or allowed="," or (instr(","+allowed,","+aKey)>0))) 
 end function
 
-function keyinput(const allowed as string="") as string
+function keyinput(allowed as string="") as string
 	'accepts a comma delimited list of keys to accept. or it just takes any.
     dim as String aKey
 	ClearKeys
@@ -293,42 +334,49 @@ function keyinput(const allowed as string="") as string
 end function
 
 '
-'
+' and lets allow keys to be categorized after the fact.
 '
 
-function isKeyYes(aKey as string) as short
+function isKeyYes(aKey as string="") as short
+	if aKey="" then aKey=LastKey
 	return keyaccept(aKey,key__enter+",y,Y, ")	
 End Function
 
-function isKeyNo(aKey as string) as short
+function isKeyNo(aKey as string="") as short
+	if aKey="" then aKey=LastKey
 	return keyaccept(aKey,key__esc+",n,N")	
 End Function
 
-function keyplus(key as string) as short
+function keyplus(aKey as string="") as short
+	if aKey="" then aKey=LastKey
 	return keyaccept(aKey,key__up+","+key__lt+","+key_south+",+")	
 end function
 
-function keyminus(key as string) as short
+function keyminus(aKey as string="") as short
+	if aKey="" then aKey=LastKey
 	return keyaccept(aKey,key__dn+","+key__rt+","+key_north+",-")	
 end function
 
-function getdirection(key as string) as short
-    dim d as short
-    if key=key_sw then return 1
-    if key=key_south then return 2
-    if key=key_se then return 3
-    if key=key_west then return 4
-    
-    if key=key_east then return 6
-    if key=key_nw then return 7
-    if key=key_north then return 8
-    if key=key_ne then return 9
-    '
-    if key=key__dn then return 2
-    if key=key__lt then return 4
-    if key=key__rt then return 6
-    if key=key__up then return 8
-    return 0
+function keyonwards(aKey as string="") as short
+	if aKey="" then aKey=LastKey
+	return keyaccept(aKey,key__esc+","+key__backspace+","+key__enter+", ")	
+end function
+
+function getdirection(aKey as string="") as short
+	if aKey="" then aKey=LastKey
+	'
+    if keyaccept(aKey,key__ul+","+key_nw)		then return 7
+    if keyaccept(aKey,key__up+","+key_north)	then return 8
+    if keyaccept(aKey,key__ur+","+key_ne)		then return 9
+
+    if keyaccept(aKey,key__lt+","+key_west) 	then return 4
+    if keyaccept(aKey,key__ct+","+key_here) 	then return 5
+    if keyaccept(aKey,key__rt+","+key_east)		then return 6
+
+    if keyaccept(aKey,key__dl+","+key_sw) 		then return 1
+    if keyaccept(aKey,key__dn+","+key_south) 	then return 2
+    if keyaccept(aKey,key__dr+","+key_se) 		then return 3
+    return 0 
 end function
 
 #endif'main
