@@ -68,13 +68,20 @@
 '     -=-=-=-=-=-=-=- HEAD: uConsole -=-=-=-=-=-=-=-
 
 'some key-constants
-'see http://www.freebasic.net/wiki/wikka.php?wakka=KeyPgInkey
+'http://www.freebasic.net/wiki/wikka.php?wakka=KeyPgInkey
+'http://www.freebasic.net/wiki/wikka.php?wakka=GfxScancodes
 
+Const key__bell=		Chr(7)	'\a
+Const key__backspace=	Chr(8)	'\b
+Const key__tab=			Chr(9)	'\t
+Const key__lfeed=		Chr(10)	'\n
+Const key__vtab=		Chr(11)	'\v
+Const key__ffeed=		Chr(12)	'\f
+Const key__enter=		Chr(13)	'\r
 Const key__esc= 		Chr(27)
-Const key__enter=		Chr(13)
 Const key__space=		Chr(32)
-Const key__tab=			Chr(9)
-Const key__backspace=	Chr(8)
+Const key__dquote=		Chr(34)	'"
+Const key__squote=		Chr(39)	''
 
 Const xk= Chr(255)
 Const key__close = 	xk & "k"		'Close window / Alt-F4
@@ -99,15 +106,15 @@ Const key__Del= 	xk & "P"		'Delete
 
 
 'these are the configurable directions for getdirection below 
-Dim Shared As String*3 key_nw="7"
-Dim Shared As String*3 key_north="8"
-Dim Shared As String*3 key_ne="9"
-Dim Shared As String*3 key_west="4"
-Dim Shared As String*3 key_here="5"
-Dim Shared As String*3 key_east="6"
-Dim Shared As String*3 key_sw="1"
-Dim Shared As String*3 key_south="2"
-Dim Shared As String*3 key_se="3"
+Dim Shared As String*3 key_sw		="1"
+Dim Shared As String*3 key_south	="2"
+Dim Shared As String*3 key_se		="3"
+Dim Shared As String*3 key_west		="4"
+Dim Shared As String*3 key_here		="5"
+Dim Shared As String*3 key_east		="6"
+Dim Shared As String*3 key_nw		="7"
+Dim Shared As String*3 key_north	="8"
+Dim Shared As String*3 key_ne		="9"
 
 #endif'head
 
@@ -123,6 +130,10 @@ dim shared as integer 		bIdling
 Dim shared as tActionmethod IdleMethod
 
 '
+
+declare function dTimer() as double			'prevent wrap-around errors
+'
+declare function EventPending() as short	'0 if nothing pending, 1 has buffered
 
 declare function iInKey() as Integer
 declare function iGetKey(iMilliSeconds as integer=0) as integer
@@ -155,6 +166,28 @@ function init(iAction as integer) as integer
 	bIdling=0
 	return 0
 End function
+
+'
+' deal with the wrap-around timer
+'
+
+dim dDays as integer=0		'incidentally track the number of days running
+dim dLastTime as double=0	'to track a wrap-around, keep the last value here
+
+function dTimer() as double
+	dim dTime as double= Timer()					'pin down current time 
+	if (dTime<dLastTime) and (dLastTime>0) then dDays +=1	'got a wraparound!
+	dLastTime= dTimer+ dDays*24*60*60						'adjust the timer
+End function
+
+'
+'
+'
+
+function EventPending() as short		'0 if nothing pending, 1 has buffered
+	result = Screenevent(0)
+End Function
+
 
 '
 'freely convert between one of each form of key-expression
@@ -245,11 +278,11 @@ function iGetKey(iMilliSeconds as integer=0) as integer
 	dim as string aKey
 	ClearKeys()
 	if iMilliSeconds>0 then
-		iUpTo=iMilliSeconds/1000+Timer()
+		iUpTo=iMilliSeconds/1000+uConsole.dTimer()
 	EndIf
 	bIdling= 0
-	do while (Closing=0) and ((iMilliSeconds=0) or (Timer()<iUpTo))
-		'print #tKbinput.fErrOut,iUpTo-Timer()
+	do while (Closing=0) and ((iMilliSeconds=0) or (uConsole.dTimer()<iUpTo))
+		'print #tKbinput.fErrOut,iUpTo-uConsole.dTimer()
 		aKey=aInKey()
 		if aKey<>"" then
 			'? aKey2i(aKey), akey
@@ -362,20 +395,41 @@ function keyonwards(aKey as string="") as short
 	return keyaccept(aKey,key__esc+","+key__backspace+","+key__enter+", ")	
 end function
 
-function getdirection(aKey as string="") as short
+function getdirection(aKey as string="", bJustNumpad as short=0) as short
+	'bJustNumpad=0 -- test both
+	'bJustNumpad=1 -- test just numpad keys for directionality
+	'bJustNumpad=2 -- test just custom movement keys for directionality
+	
 	if aKey="" then aKey=LastKey
+	if (bJustNumpad=0) then bJustNumpad= 3
 	'
-    if keyaccept(aKey,key__ul+","+key_nw)		then return 7
-    if keyaccept(aKey,key__up+","+key_north)	then return 8
-    if keyaccept(aKey,key__ur+","+key_ne)		then return 9
-
-    if keyaccept(aKey,key__lt+","+key_west) 	then return 4
-    if keyaccept(aKey,key__ct+","+key_here) 	then return 5
-    if keyaccept(aKey,key__rt+","+key_east)		then return 6
-
-    if keyaccept(aKey,key__dl+","+key_sw) 		then return 1
-    if keyaccept(aKey,key__dn+","+key_south) 	then return 2
-    if keyaccept(aKey,key__dr+","+key_se) 		then return 3
+	if (bJustNumpad and 1) then 
+	    if keyaccept(aKey,key__ul)		then return 7
+	    if keyaccept(aKey,key__up)		then return 8
+	    if keyaccept(aKey,key__ur)		then return 9
+	
+	    if keyaccept(aKey,key__lt) 		then return 4
+	    if keyaccept(aKey,key__ct) 		then return 5
+	    if keyaccept(aKey,key__rt)		then return 6
+	
+	    if keyaccept(aKey,key__dl) 		then return 1
+	    if keyaccept(aKey,key__dn) 		then return 2
+	    if keyaccept(aKey,key__dr) 		then return 3
+	endif
+	'
+	if (bJustNumpad and 2) then 
+	    if keyaccept(aKey,key_nw)		then return 7
+	    if keyaccept(aKey,key_north)	then return 8
+	    if keyaccept(aKey,key_ne)		then return 9
+	
+	    if keyaccept(aKey,key_west) 	then return 4
+	    if keyaccept(aKey,key_here) 	then return 5
+	    if keyaccept(aKey,key_east)		then return 6
+	
+	    if keyaccept(aKey,key_sw) 		then return 1
+	    if keyaccept(aKey,key_south) 	then return 2
+	    if keyaccept(aKey,key_se) 		then return 3
+	endif
     return 0 
 end function
 

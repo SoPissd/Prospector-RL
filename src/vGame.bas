@@ -71,7 +71,7 @@ function updatefps(iAction as Integer) as integer
 	dim itime as integer
 	dim atime as string
 	dTime=lasttime 
-	lasttime=Timer() 
+	lasttime=uConsole.dTimer() 
 	dTime=lasttime-dTime
 	iTime=dTime*1000
 	iTime=1000/iTime
@@ -92,7 +92,7 @@ dim Game as tMainloop
 
 
 function init(iAction as integer) as integer
-	lasttime= Timer()
+	lasttime= uConsole.dTimer()
 	uConsole.IdleMethod= @updatefps
 	'
 	return 0
@@ -143,8 +143,6 @@ function tGamemenu.finish() as integer
 	return Base.finish()
 end function
 
-	
-	
 
 Private function mainmenuactions(ByRef iAction as integer, ByRef aText as String) as integer
     If iAction=0 Then  
