@@ -922,7 +922,7 @@ end sub
 
 function Initgame() as integer
 	load_config()
-	tPalette.load_palette()
+	tColor.load_palette()
    	load_fonts()
 	check_filestructure()
 	load_keyset()

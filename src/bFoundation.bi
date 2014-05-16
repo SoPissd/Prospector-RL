@@ -29,7 +29,7 @@
 	inc("uDebug.bas",				"debug macros or their null eqivalents. also include loading")
 	inc("uScreen.bas",				"wrap screen,screenset,locate,width,color so console code works too")
 	inc("uColor.bas",				"maps color codes to screen via palette")
-	inc("uConsole.bas",				"all the keyboard wrappers, idle and application close support")
+	inc("uConsole.bas",				"all the key and keyboard wrappers, idle and application close support")
 	inc("uVersion.bas",				"provides ErrorlogFilename and Errorscreen. same vars too")
 '
 	inc("uRng.bas",					"rng with retrievable seed")
@@ -47,7 +47,6 @@
 
 	inc("uTime.bas",				"display_time, date_string")	
 	inc("uSound.bas",				"define 'makesound' and the sound methods will start to use the dll code. else they do nothing.")
-	inc("uKbinput.bas",				"keyplus,keyminus,Pressanykey,keyinput and consts for simple keys.")
 	inc("uPalette.bas",				"parse a text-file into uColor's palette")
 	inc("uPrint.bas",				"rlprints to graphics console, screen-info, some input")
 	inc("uTextbox.bas",				"Draws a box with text?")

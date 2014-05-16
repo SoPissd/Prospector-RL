@@ -74,8 +74,8 @@ namespace uConsole
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: uConsole -=-=-=-=-=-=-=-
 
-dim shared as integer Closing
-dim shared as integer bIdling
+dim shared as integer 		Closing
+dim shared as integer 		bIdling
 Dim shared as tActionmethod IdleMethod
 
 
@@ -92,7 +92,42 @@ declare function aKey2i(aKey as String) as Integer
 
 declare function Pressanykey(aRow as Integer=2,aCol as Integer=0,aFg as Integer=0,aBg as Integer=0) as Integer
 declare function ClearKeys() as integer
-declare function keyinput(allowed as string="") as string
+
+declare function keyaccept(ByRef aKey as string,const allowed as string="") as short
+declare function keyinput(const allowed as string="") as string
+
+'declare function keyinput(allowed as string="") as string
+
+
+Const key__esc = 	Chr(27)
+Const key__enter =	Chr(13)
+Const key__space =	Chr(32)
+
+Const xk= Chr(255)
+Const key__up = 	xk & "H"
+Const key__dn = 	xk & "P"
+Const key__rt= 		xk & "M"
+Const key__lt = 	xk & "K"
+
+Dim Shared As String*3 key_nw="7"
+Dim Shared As String*3 key_north="8"
+Dim Shared As String*3 key_ne="9"
+Dim Shared As String*3 key_west="4"
+Dim Shared As String*3 key_east="6"
+Dim Shared As String*3 key_sw="1"
+Dim Shared As String*3 key_south="2"
+Dim Shared As String*3 key_se="3"
+
+
+declare function isKeyYes(aKey as string) as short
+declare function isKeyNo(aKey as string) as short
+declare function keyplus(key as string) as short
+declare function keyminus(key as string) as short
+
+declare function getdirection(key as string) as short
+
+
+
 
 #endif'head
 #ifdef main
@@ -104,6 +139,8 @@ function init(iAction as integer) as integer
 	return 0
 End function
 
+'
+'freely convert between one of each form of key-expression
 '
 
 function iKey2a(iKey as Integer) as String
@@ -129,22 +166,47 @@ function aKey2i(aKey as String) as Integer
 End Function	
 
 '
+' scan the key-input stream character by character looking for special keys
+'
 
 function aProcessKey(aKey as String) as String
-'	?"aProcessKey(" &aKey &",len=" &len(aKey) &")",asc(mid(akey,2,1))
+	'and that's is, recognize a single command
 	if akey= key__close then
 		Closing=1
 		'ErrOut("received close command")		
 	EndIf 
+	'?"aProcessKey(" &aKey &",len=" &len(aKey) &")",asc(mid(akey,2,1))
 	return aKey	
 End Function
 
 function iProcessKey(iKey as Integer) as Integer
+	'for the int version, convert and process
 	dim as string aKey
     aKey=aProcessKey(iKey2a(iKey))
 	return iKey	
 End Function
 
+'
+' waiting for key-input we run into the idle-concept.
+' the code in this unit works together to let you use the IdleMethod(bIdling) parameter
+' to recognize that you're idling for the first time. use that for screen updates.
+' nothing needs to happen once bIdling is true but you could update a performance counter. 
+'
+
+function Idle(iAction as integer=0) as integer
+	if IdleMethod<>null then
+		iAction= IdleMethod(bIdling)
+		if bIdling=0 then
+			bIdling= 1
+		endif
+	endif
+	sleep(1)		'lets the operating system have all the time it needs/wants to show 0% cpu use.
+	return iAction	'interpreted as a key
+End Function
+
+
+'
+' wrappers for the built-in key-getters.  make sure to always use them!
 '
 
 function aInKey() as String
@@ -156,19 +218,6 @@ function iInKey() as Integer
     aKey= aInKey()
     return aKey2i(aKey)
 End Function	
-
-function Idle(iAction as integer=0) as integer
-	if IdleMethod<>null then
-		iAction= IdleMethod(bIdling)
-		if bIdling=0 then
-			bIdling= 1
-		endif
-	endif
-	'?"sleep(1)"
-	sleep(1)
-	return iAction
-End Function	
-
 
 function iGetKey(iMilliSeconds as integer=0) as integer
 	dim as integer i,j,n
@@ -199,6 +248,9 @@ function aGetKey(iMilliSeconds as integer=0) as String
 	return iKey2a(iKey)
 End Function
 
+'
+'
+'
 
 function ClearKeys() as integer
 	do while iInKey()<>0: loop
@@ -225,16 +277,59 @@ function Pressanykey(aRow as Integer=2,aCol as Integer=0,aFg as Integer=0,aBg as
 End function
 
 
-function keyinput(allowed as string="") as string
-'    DimDebugL(0)'1
+function keyaccept(ByRef aKey as string,const allowed as string="") as short
+	'validates against a comma delimited list of keys
+    return (aKey<>"" and (allowed="" or allowed="," or (instr(","+allowed,","+aKey)>0))) 
+end function
+
+function keyinput(const allowed as string="") as string
+	'accepts a comma delimited list of keys to accept. or it just takes any.
     dim as String aKey
 	ClearKeys
     do        
 		aKey=aGetKey()
-    loop until (Closing<>0) or (aKey<>"" and allowed="") or (instr(allowed,aKey)>0) 
+    loop until (Closing<>0) or keyaccept(aKey,allowed) 
     return aKey
 end function
 
+'
+'
+'
+
+function isKeyYes(aKey as string) as short
+	return keyaccept(aKey,key__enter+",y,Y, ")	
+End Function
+
+function isKeyNo(aKey as string) as short
+	return keyaccept(aKey,key__esc+",n,N")	
+End Function
+
+function keyplus(key as string) as short
+	return keyaccept(aKey,key__up+","+key__lt+","+key_south+",+")	
+end function
+
+function keyminus(key as string) as short
+	return keyaccept(aKey,key__dn+","+key__rt+","+key_north+",-")	
+end function
+
+function getdirection(key as string) as short
+    dim d as short
+    if key=key_sw then return 1
+    if key=key_south then return 2
+    if key=key_se then return 3
+    if key=key_west then return 4
+    
+    if key=key_east then return 6
+    if key=key_nw then return 7
+    if key=key_north then return 8
+    if key=key_ne then return 9
+    '
+    if key=key__dn then return 2
+    if key=key__lt then return 4
+    if key=key__rt then return 6
+    if key=key__up then return 8
+    return 0
+end function
 
 #endif'main
 End Namespace
