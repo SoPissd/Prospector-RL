@@ -35,6 +35,10 @@ declare function first_lc(t as string) as string
 declare function first_uc(t as string) as string
 declare function roman(i as integer) as string
 
+declare function Pad(iLen as integer, aVal as string, aPad as string=" ") as string
+declare function PadLeading(iLen as integer, aVal as string, aPad as string=" ") as string
+declare function LeadingZero(iLen as integer, iVal as integer, aPad as string="0") as string
+
 declare function html_color(c as string, indent as short=0, wid as short=0) as string
 declare function text_to_html(text as string) as string
 
@@ -54,6 +58,31 @@ end namespace'tUtils
 
 
 #define cut2top
+
+'
+
+function Pad(iLen as integer, aVal as string, aPad as string=" ") as string
+	if iLen<0 then 
+		'pad before
+		while len(aVal)<iLen 
+			aVal= aPad+aVal
+		Wend
+	else
+		'pad after
+		while len(aVal)<iLen 
+			aVal += aPad
+		Wend
+	EndIf
+	return aVal
+end function
+
+function PadLeading(iLen as integer, aVal as string, aPad as string=" ") as string
+	return Pad(-iLen,aVal,aPad)
+end function
+
+function LeadingZero(iLen as integer, iVal as integer, aPad as string="0") as string
+	return Pad(-iLen,"" & iVal,aPad)
+end function
 
 '
 

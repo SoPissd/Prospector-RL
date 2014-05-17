@@ -137,11 +137,11 @@ function getnumber(a as integer,b as integer, e as integer) as integer
     
             if c<10 then 
                 set__color( 1,11)
-                print "0" &c
-                tScreen.draw2c(30*_fw1,21*_fh1,"0"&c)
+                print LeadingZero(2,c)				'???
+                tScreen.draw2c(30*_fw1,21*_fh1,LeadingZero(2,c))
             else
                 set__color( 1,11)
-                tScreen.draw2c(30*_fw1,21*_fh1,""&c)
+                tScreen.draw2c(30*_fw1,21*_fh1,""&c) '???
             endif
             
             locate 22,32

@@ -62,27 +62,14 @@ Dim as tActionmethod pPlay_game
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tGame -=-=-=-=-=-=-=-
 
-dim shared Fps as integer
 dim shared Fpsshow as short =1
-dim shared Fpstime as double
-
 function Fpsupdate(iAction as Integer) as integer
 	'?"updatefps"
-	dim dtime as double 
-	dim itime as integer
 	dim atime as string
-	dTime=Fpstime 
-	Fpstime=uConsole.dTimer() 
-	dTime=Fpstime-dTime
-	iTime=dTime*1000
-	Fps=1000/iTime
 	'
 	if Fpsshow then
-		if Fps>=1000 then Fps=999
-		aTime="" & Fps
-		while len(aTime)<3 
-			aTime= "0"+aTime
-		Wend
+		
+		aTime=LeadingZero(3,uConsole.Fps)
 		if not tScreen.isGraphic then
 			tScreen.pushpos()
 		    tScreen.xy(70,1,aTime)
@@ -92,12 +79,10 @@ function Fpsupdate(iAction as Integer) as integer
 	return iAction
 end function
 
-dim Game as tMainloop
-
+'
 
 function init(iAction as integer) as integer
 	tModule.RunMethod= @tGame.run 'here is where the magic happens as main runs module runs game.run(0)
-	Fpstime= uConsole.dTimer()
 	uConsole.IdleMethod= @Fpsupdate
 	'
 	return 0
@@ -285,16 +270,6 @@ function mainmenu(a as integer) as integer
     return a
 End function
 
-
-'function updateposition() as integer
-'	if not tScreen.isGraphic then
-'		tScreen.pushpos()
-'	    tScreen.xy(ofx,3,"" & loca)
-'		tScreen.poppos()
-'	endif
-'	return 0
-'end function
-
 function run(iAction as Integer) as Integer
 	?"function run(iAction as Integer) as Integer"
     while (uConsole.Closing=0) and (iAction=0)
@@ -303,6 +278,7 @@ function run(iAction as Integer) as Integer
 	'Pressanykey
 	return iAction
 end function
+
 
 #endif'main
 end namespace'tGame

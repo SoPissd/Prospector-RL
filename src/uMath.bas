@@ -180,7 +180,7 @@ function round_str(i As Double,c As Short) As String
     Else
         t=t &"."
     EndIf
-    If digits<c Then t= t &String(c-digits,"0")
+    If digits<c Then t &= String(c-digits,"0")
     Return t
 End function
 

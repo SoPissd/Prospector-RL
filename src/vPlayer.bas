@@ -119,13 +119,13 @@ function randomname() as string
     d=d+1
     if d=0 then d=1
     if d>9999 then d=1
-    if d<10 then desig=desig & "0"
-    if d<100 then desig=desig & "0"
-    if d<1000 then desig=desig & "0"
+    desig= Pad(desig,4,"0") &d &suf  'add trailing zeroes, #, suffix
+	    'if d<10 then desig=desig & "0"
+	    'if d<100 then desig=desig & "0"
+	    'if d<1000 then desig=desig & "0"
+	    'desig=desig &d &suf
 
-    desig=desig &d &suf
     if lines(ra)<>"" and count>0 then desig=lines(ra)
-
     f=freefile
 
     open "register" for output as f

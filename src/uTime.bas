@@ -49,16 +49,8 @@ function display_time(t As UInteger,form As Byte=0) As String
     d=Fix(h/24)
     h=h-d*24
     m=t-h*60-d*24*60
-    If h<10 Then
-        hs="0"& h
-    Else
-        hs=""& h
-    EndIf
-    If m<10 Then
-        ms="0"&m
-    Else
-        ms=""&m
-    EndIf
+    hs=LeadingZero(2,h)
+    ms=LeadingZero(2,m)
     Select Case form
     Case 0
         If d>0 Then
