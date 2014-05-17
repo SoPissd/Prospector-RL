@@ -58,15 +58,15 @@ function gettext(x as short, y as short, ml as short, text as string,pixel as sh
     do             
         key=""
         set__color( 11,0)
-        draw string (x,y), text &"_ ",,font2,custom,@_col
+        tScreen.draw2c(x,y, text &"_ ")
         do
             do
                 sleep 1
                 lasttimer+=1
                 if lasttimer>100 then
-                    draw string (x,y), text &"  ",,font2,custom,@_col
+                    tScreen.draw2c(x,y, text &"  ")
                 else
-                    draw string (x,y), text &"_ ",,font2,custom,@_col
+                    tScreen.draw2c(x,y, text &"_ ")
                 endif
                 if lasttimer>200 then lasttimer=0
             loop until screenevent(@evkey)
@@ -120,36 +120,36 @@ function getnumber(a as integer,b as integer, e as integer) as integer
         
         set__color( 11,1)
         for i=1 to 61
-            draw string (i*_fw1,21*_fh1),chr(196),,font1,custom,@_col
+            tScreen.draw1c(i*_fw1,21*_fh1,chr(196))
         next
         set__color( 11,11)
-        draw string (28*_fw1,21*_fh1),space(5),,font1,custom,@_col
+        tScreen.draw1c(28*_fw1,21*_fh1,space(5))
         c=a
         if e>0 then c=e
         do 
             set__color( 11,1)
             
-            draw string (27*_fw1,22*_fh1),chr(180),,font1,custom,@_col
+            tScreen.draw1c(27*_fw1,22*_fh1,chr(180))
             set__color( 5,11)
             
-            draw string (29*_fw1,21*_fh1),"-",,font1,custom,@_col
+            tScreen.draw1c(29*_fw1,21*_fh1,"-")
             print "-"
     
             if c<10 then 
                 set__color( 1,11)
                 print "0" &c
-                draw string (30*_fw1,21*_fh1),"0"&c,,font2,custom,@_col
+                tScreen.draw2c(30*_fw1,21*_fh1,"0"&c)
             else
                 set__color( 1,11)
-                draw string (30*_fw1,21*_fh1),""&c,,font2,custom,@_col
+                tScreen.draw2c(30*_fw1,21*_fh1,""&c)
             endif
             
             locate 22,32
             set__color( 5,11)        
-            draw string (32*_fw1,21*_fh1),"+",,font1,custom,@_col
+            tScreen.draw1c(32*_fw1,21*_fh1,"+")
             
             set__color( 11,1)
-            draw string (33*_fw1,21*_fh1),chr(195),,font1,custom,@_col
+            tScreen.draw1c(33*_fw1,21*_fh1,chr(195))
             
             key=uConsole.keyinput(key__up &key__dn &key__rt &key__lt &"1234567890+-"&key__esc &key__enter)
             

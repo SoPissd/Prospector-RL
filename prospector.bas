@@ -1,7 +1,10 @@
 'prospector.
 '
 #define makesound   ' can also use " fbc -d makesound " .. thats better, actually
-# define justcore 
+# define justcore
+
+'
+ 
 #include once "src/bFoundation.bas"	'build the core pieces  
 
 'build module 'build' for types, head and main
@@ -39,7 +42,6 @@ namespace tMain
 	
 #endif'special
 end namespace'tMain
-
 
 '
 'main

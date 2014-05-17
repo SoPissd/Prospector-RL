@@ -55,7 +55,8 @@ function scroll_bar(offset as short,linetot as short,lineshow as short,winhigh a
             set__color(0,0)
         end if
 
-        draw string(x,y+(i)*_fh2),chr(178),,font2,custom,@_col
+        tScreen.draw2c(x,y+(i)*_fh2,chr(178)) '"¦"
+        'draw string(x,y+(i)*_fh2),chr(178),,font2,custom,@_col
     next
     return 0
 end function
@@ -105,7 +106,10 @@ function textbox(text as string,x as short,y as short,w as short,_
     for p=0 to wcount
 
         if words(p)="|" then 'New line
-            if op=0 and lcount-offset>=0  and (lcount-offset)<=maxlines then draw string((x)+xw*_fw2,y+(lcount-offset)*_fh2),space(w-xw),,font2,custom,@_col
+            if op=0 and lcount-offset>=0  and (lcount-offset)<=maxlines then 
+				tScreen.draw2c((x)+xw*_fw2,y+(lcount-offset)*_fh2,space(w-xw))
+				'draw string((x)+xw*_fw2,y+(lcount-offset)*_fh2),space(w-xw),,font2,custom,@_col
+            EndIf
             lcount=lcount+1
             xw=0
         endif
@@ -116,11 +120,15 @@ function textbox(text as string,x as short,y as short,w as short,_
 
         if words(p)<>"|" and not(Left(trim(words(p)),1)="{" and Right(trim(words(p)),1)="}") then 'Print word
             if xw+len(words(p))>w then 'Newline
-                if op=0 and lcount-offset>=0 and (lcount-offset)<=maxlines then draw string((x)+xw*_fw2,y+(lcount-offset)*_fh2),space(w-xw),,font2,custom,@_col
+                if op=0 and lcount-offset>=0 and (lcount-offset)<=maxlines then 
+                	tScreen.draw2c((x)+xw*_fw2,y+(lcount-offset)*_fh2,space(w-xw))
+                EndIf
                 lcount=lcount+1
                 xw=0
             endif
-            if op=0 and lcount-offset>=0 and (lcount-offset)<=maxlines then draw string((x)+xw*_fw2,y+(lcount-offset)*_fh2),words(p),,font2,custom,@_col
+            if op=0 and lcount-offset>=0 and (lcount-offset)<=maxlines then 
+               	tScreen.draw2c((x)+xw*_fw2,y+(lcount-offset)*_fh2,words(p))          	
+            EndIf
             xw=xw+len(words(p))
             if xw>longestline then longestline=xw
         endif
@@ -139,15 +147,15 @@ function textbox(text as string,x as short,y as short,w as short,_
         else
             set__color(14,0,0)
         endif
-        draw string(x+w*_fw2-_fw2,y),chr(24),,font2,custom,@_col
-        draw string(x+w*_fw2-_fw2,y+_fh2),"-",,font2,custom,@_col
+        tScreen.draw2c(x+w*_fw2-_fw2,y						,chr(24))
+        tScreen.draw2c(x+w*_fw2-_fw2,y+_fh2					,"-")
         if offset+maxlines<linecount-1 then
             set__color(14,0)
         else
             set__color(14,0,0)
         endif
-        draw string(x+w*_fw2-_fw2,y+maxlines*_fh2-_fh2),"+",,font2,custom,@_col
-        draw string(x+w*_fw2-_fw2,y+maxlines*_fh2),chr(25),,font2,custom,@_col
+        tScreen.draw2c(x+w*_fw2-_fw2,y+maxlines*_fh2-_fh2	,"+")
+        tScreen.draw2c(x+w*_fw2-_fw2,y+maxlines*_fh2		,chr(25))
 
         DbgPrint("LC:" &linecount &"ML:"&maxlines)
         scroll_bar(offset,linecount,maxlines,maxlines-4,x+w*_fw2-_fw2,y+2*_fh2,14)

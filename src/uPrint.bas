@@ -32,8 +32,8 @@ Dim Shared As UByte _TFH
 Dim Shared As Byte _mwx=60
 
 'dim shared as FB.image ptr TITLEFONT
-Dim Shared As Any Ptr TITLEFONT
-Dim Shared As Any Ptr FONT1,FONT2
+
+
 
 Dim Shared displaytext(255) As String
 Dim Shared dtextcol(255) As Short
@@ -208,15 +208,18 @@ function rlprint(t as string, col as short=11) as short
 	                    scrollup(winh-2)
 	                    for b=firstline to firstline+winh
 	                        set__color( 0,0)
+	                        tScreen.draw2c(0,b*_fh2, space(winw))
 	                        'draw string(0,(b-firstline)*_fh2+22*_fh1), space(winw),,font2,custom,@_col
-	                        draw string(0,b*_fh2), space(winw),,font2,custom,@_col
+	                        'draw string(0,b*_fh2), space(winw),,font2,custom,@_col
 	                        set__color( dtextcol(b),0)
-	                        draw string(0,b*_fh2), displaytext(b),,font2,custom,@_col
+	                        tScreen.draw2c(0,b*_fh2, displaytext(b))
+	                        'draw string(0,b*_fh2), displaytext(b),,font2,custom,@_col
 	                        'draw string(0,(b-firstline)*_fh2+22*_fh1), displaytext(b),,font2,custom,@_col
 	                    next
 	                    set__color( 14,1)
 	                    if displaytext(firstline+winh+1)<>"" then
-	                        draw string((winw+1)*_fw2,tScreen.y-_fh2), chr(25),,font2,custom,@_col
+	                        tScreen.draw2c((winw+1)*_fw2,tScreen.y-_fh2, chr(25)) 'Ctrl-Y???
+	                        'draw string((winw+1)*_fw2,tScreen.y-_fh2), chr(25),,font2,custom,@_col
 	                        no_key=uConsole.iGetKey() 'keyin
 	                    endif
 	                loop until displaytext(_textlines+1)=""
@@ -233,10 +236,11 @@ function rlprint(t as string, col as short=11) as short
     for b=firstline to firstline+winh
         set__color( 0,0)
         'draw string(0,(b-firstline)*_fh2+22*_fh1), space(winw),,font2,custom,@_col
-        draw string(0,b*_fh2), space(winw),,font2,custom,@_col
+        'draw string(0,b*_fh2), space(winw),,font2,custom,@_col
+        tScreen.draw2c(0,b*_fh2, space(winw))
         if b<ubound(dtextcol) then set__color( dtextcol(b),0)
         'draw string(0,(b-firstline)*_fh2+22*_fh1), displaytext(b),,font2,custom,@_col
-        if b<ubound(displaytext) then draw string(0,b*_fh2), displaytext(b),,font2,custom,@_col
+        if b<ubound(displaytext) then tScreen.draw2c(0,b*_fh2, displaytext(b))
     next
     locate 24,1
     set__color( 11,0)

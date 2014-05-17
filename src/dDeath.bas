@@ -54,7 +54,7 @@ function messages() as short
     for a=1 to ll
         locate a,1
         set__color( dtextcol(a),0)
-        draw string (0,a*_fh2), displaytext(a),,font2,custom,@_col
+        tScreen.draw2c(0,a*_fh2, displaytext(a))
     next
     no_key=uConsole.keyinput()
 '    no_key=keyin(,1)
@@ -204,11 +204,12 @@ function death_message(iBg as short,iShowMS as integer=0) as short
             do 
                 a=a-1
             loop until mid(text,a,1)=" "        
-            draw_string (5*_fw1,(_lines*_fh1)/2-(4*_fh1)+b*(tScreen.y/15),left(text,a),TITLEFONT,_tcol)
+            tScreen.drawtt(5*_fw1,(_lines*_fh1)/2-(4*_fh1)+b*(tScreen.y/15),left(text,a))
             text=mid(text,a,(len(text)-a+1))
             b=b+1
         wend
-        draw_string (5*_fw1,(_lines*_fh1)/2-(4*_fh1)+b*(tScreen.y/15),text,TITLEFONT,_tcol)
+        'draw_string (5*_fw1,(_lines*_fh1)/2-(4*_fh1)+b*(tScreen.y/15),text,TITLEFONT,_tcol)
+        tScreen.drawtt(5*_fw1,(_lines*_fh1)/2-(4*_fh1)+b*(tScreen.y/15),text)',TITLEFONT,_tcol)
         
     endif
     

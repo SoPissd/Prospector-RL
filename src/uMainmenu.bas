@@ -146,7 +146,7 @@ function tMainmenu.before() as integer
     'endif
 	if tScreen.isGraphic then
 	    set__color( 15,0)
-	    draw string(x*_fw1,y*_fh1), lines(0)&space(3),,font2,custom,@_col    
+	    tScreen.draw2c(x*_fw1, y*_fh1, lines(0)&space(3))    
 	    for i=1 to c
 	        if loca=i then 
 	            if hfl=1 and loca<=c and helps(i)<>"" then blen=textbox(helps(i),ofx,2,hw,15,1,,,offset)
@@ -154,7 +154,7 @@ function tMainmenu.before() as integer
 	        else
 	            set__color( 11,0)
 	        endif
-	        draw string(x*_fw1,y*_fh1+i*_fh2),shrt(i) &") "& lines(i),,font2,custom,@_col
+	        tScreen.draw2c(x*_fw1,y*_fh1+i*_fh2,shrt(i) &") "& lines(i))
 	    next
 	else
 		tScreen.pushpos()
@@ -183,41 +183,51 @@ end function
 
 function tMainmenu.after() as integer
 	'LogOut("uMenu.after()")
-	dim as integer a
+	dim as integer i
+	dim as integer iDir
 	if tScreen.isGraphic then
 	    if hfl=1 then 
-	        for a=1 to blen
+	        for i=1 to blen
 	            set__color( 0,0)
-	            draw string(ofx*_fw1,y*_fh1+(a-1)*_fh2), space(hw),,font2,custom,@_col
+	            tScreen.draw2c(ofx*_fw1,y*_fh1+(i-1)*_fh2, space(hw))
 	        next
 	    endif
 	else
 	    if hfl=1 then 
 			tScreen.pushpos()
-	        for a=1 to blen
-			    tScreen.xy(ofx,y+a-1,space(hw))
+	        for i=1 to blen
+			    tScreen.xy(ofx,y+i-1,space(hw))
 	        next
 			tScreen.poppos()
 	    endif
 	EndIf
-    if uConsole.getdirection(key)=8 then loca=loca-1
-    if uConsole.getdirection(key)=2 then loca=loca+1
-    if help<>"" then
+	'
+    iDir=uConsole.getdirection(key)
+    if iDir =8 then
+		loca=loca-1 
+    elseif iDir =2 then 
+    	loca=loca+1
+    elseif help<>"" then
         if key="+" then offset+=1
         if key="-" then offset-=1
     endif
 
+    for i=0 to c
+        if lcase(key)=lcase(shrt(i)) then			'select with lower case
+			loca=i
+			if (c<26) and (key=ucase(key)) then key=key__enter	'select and go with upper case up to 26 choices
+			exit for
+        EndIf
+    next
+    
     if loca<1 then loca=c
     if loca>c then loca=1
 
     if key=key__enter then e=loca
-
-    for a=0 to c
-        if key=lcase(shrt(a)) then loca=a
-    next
-'        if player.dead<>0 then e=c
     if key=key__esc then e= uConsole.aKey2i(key__esc)
-'    if key=key__esc or player.dead<>0 then e=c
+    
+'   if player.dead<>0 then e=c
+'   if key=key__esc or player.dead<>0 then e=c
 	return e
 end function
 	          
@@ -337,7 +347,7 @@ function tMainmenu.finish() as integer
 	    set__color( 0,0)
 	    for a=0 to c
 	        'locate y+a,x
-	        draw string(x*_fw1,y*_fh1+a*_fh2), space(longest),,font2,custom,@_col
+	        tScreen.draw2c(x*_fw1,y*_fh1+a*_fh2, space(longest))
 	    next
 '	    set__color( 11,0)
 '	    cls

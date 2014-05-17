@@ -78,6 +78,8 @@ Const key__lfeed=		Chr(10)	'\n
 Const key__vtab=		Chr(11)	'\v
 Const key__ffeed=		Chr(12)	'\f
 Const key__enter=		Chr(13)	'\r
+Const key__colbrk=		Chr(14)	'	'Column Break
+Const key__shftin=		Chr(15)	'	'Shift In
 Const key__esc= 		Chr(27)
 Const key__space=		Chr(32)
 Const key__dquote=		Chr(34)	'"
@@ -155,7 +157,7 @@ declare function keyplus(aKey as string="") as short
 declare function keyminus(aKey as string="") as short
 declare function keyonwards(aKey as string="") as short
 
-declare function getdirection(aKey as string="") as short 
+declare function getdirection(aKey as string="", bJustNumpad as short=0) as short 
 
 #endif'head
 #ifdef main
@@ -177,7 +179,8 @@ dim dLastTime as double=0	'to track a wrap-around, keep the last value here
 function dTimer() as double
 	dim dTime as double= Timer()					'pin down current time 
 	if (dTime<dLastTime) and (dLastTime>0) then dDays +=1	'got a wraparound!
-	dLastTime= dTimer+ dDays*24*60*60						'adjust the timer
+	dLastTime= dTime + dDays*24*60*60						'adjust the timer
+	return dLastTime
 End function
 
 '
@@ -185,7 +188,7 @@ End function
 '
 
 function EventPending() as short		'0 if nothing pending, 1 has buffered
-	result = Screenevent(0)
+	return Screenevent(0)
 End Function
 
 

@@ -44,12 +44,11 @@ end type
 type tGamemenu extends tMainmenu
 	declare constructor()
 	declare destructor()
-	declare virtual function init() as integer override
-	declare virtual function before() as integer override
-	declare virtual function after() as integer override
-	declare virtual function finish() as integer override
+	declare function init() as integer override
+	declare function before() as integer override
+	declare function after() as integer override
+	declare function finish() as integer override
 end type
-
 
 Dim as tActionmethod pStart_new_game
 Dim as tActionmethod pFrom_savegame
@@ -63,27 +62,32 @@ Dim as tActionmethod pPlay_game
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tGame -=-=-=-=-=-=-=-
 
-dim shared lasttime as double
+dim shared Fps as integer
+dim shared Fpsshow as short =1
+dim shared Fpstime as double
 
-function updatefps(iAction as Integer) as integer
-'?"updatefps"
+function Fpsupdate(iAction as Integer) as integer
+	'?"updatefps"
 	dim dtime as double 
 	dim itime as integer
 	dim atime as string
-	dTime=lasttime 
-	lasttime=uConsole.dTimer() 
-	dTime=lasttime-dTime
+	dTime=Fpstime 
+	Fpstime=uConsole.dTimer() 
+	dTime=Fpstime-dTime
 	iTime=dTime*1000
-	iTime=1000/iTime
-	if iTime>=1000 then iTime=999
-	aTime="" & iTime
-	while len(aTime)<3 
-		aTime= "0"+aTime
-	Wend
-	if not tScreen.isGraphic then
-		tScreen.pushpos()
-	    tScreen.xy(70,1,aTime)
-		tScreen.poppos()
+	Fps=1000/iTime
+	'
+	if Fpsshow then
+		if Fps>=1000 then Fps=999
+		aTime="" & Fps
+		while len(aTime)<3 
+			aTime= "0"+aTime
+		Wend
+		if not tScreen.isGraphic then
+			tScreen.pushpos()
+		    tScreen.xy(70,1,aTime)
+			tScreen.poppos()
+		endif
 	endif
 	return iAction
 end function
@@ -92,8 +96,9 @@ dim Game as tMainloop
 
 
 function init(iAction as integer) as integer
-	lasttime= uConsole.dTimer()
-	uConsole.IdleMethod= @updatefps
+	tModule.RunMethod= @tGame.run 'here is where the magic happens as main runs module runs game.run(0)
+	Fpstime= uConsole.dTimer()
+	uConsole.IdleMethod= @Fpsupdate
 	'
 	return 0
 end function
@@ -249,7 +254,7 @@ load_fonts()
 '#endif
 End Function
 
-Private function mainmenu(a as integer) as integer
+function mainmenu(a as integer) as integer
 	dim key as string
 	dim no_key as string
 	dim aText as string
@@ -291,7 +296,7 @@ End function
 'end function
 
 function run(iAction as Integer) as Integer
-	'?"function run(iAction as Integer) as Integer"
+	?"function run(iAction as Integer) as Integer"
     while (uConsole.Closing=0) and (iAction=0)
 	    iAction= mainmenu(iAction)
     wend
@@ -305,7 +310,6 @@ end namespace'tGame
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: tGame -=-=-=-=-=-=-=-
 	tModule.register("tGame",@tGame.init()) ',@tGame.load(),@tGame.save())
-	tModule.RunMethod= @tGame.run 'here is where the magic happens
 #endif'main
 
 #ifdef test
