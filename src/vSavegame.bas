@@ -418,6 +418,7 @@ function savegame(crash as short=0) as short
     tFile.Closefile(f)
     ?
 
+#ifdef makezlib
     'Overwrites large save file with compressed save file. but skills if file is empty
     if fname<>"savegames/empty.sav" then
         if tFile.Openbinary(fname,f)=0 then
@@ -456,6 +457,7 @@ function savegame(crash as short=0) as short
         
     endif
     'Done with compressed file stuff
+#endif    
 
     'set__color( 14,0)
     'cls
@@ -506,6 +508,7 @@ function load_game(filename as string) as short
         fname="savegames/"&filename
         print "loading"&fname;
 
+#ifdef makezlib
         if (filename <> "savegames/empty.sav") _	'makes sure we dont load the uncompressed empty
         and (tFile.OpenBinary(fname,f)>0) then		'Starting the uncompress
 
@@ -542,10 +545,9 @@ function load_game(filename as string) as short
             else
             	'not compressed
             endif
-    	endif
-
+    endif
         'Ending uncompress
-
+#endif    
 
 		if (tFile.OpenBinary(fname,f)>0) then
 		endif
@@ -782,6 +784,7 @@ function load_game(filename as string) as short
 	DbgFleetsCSV
     return 0
 end function
+
 
 function from_savegame(iBg as integer) As integer
     Dim As Short c

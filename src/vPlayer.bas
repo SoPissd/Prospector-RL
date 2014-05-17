@@ -119,7 +119,7 @@ function randomname() as string
     d=d+1
     if d=0 then d=1
     if d>9999 then d=1
-    desig= Pad(desig,4,"0") &d &suf  'add trailing zeroes, #, suffix
+    desig= Pad(4,desig,"0") &d &suf  'add trailing zeroes, #, suffix
 	    'if d<10 then desig=desig & "0"
 	    'if d<100 then desig=desig & "0"
 	    'if d<1000 then desig=desig & "0"

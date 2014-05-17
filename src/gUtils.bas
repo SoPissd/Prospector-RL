@@ -29,11 +29,16 @@
 
 declare function add_a_or_an(t as string,beginning as short) as string
 declare function credits(cr As Integer) As String
-declare function screenshot(a as short) as short
 declare function play_sound(iSound As Short,iRepeats As Short=1,iDelay As Short=0) as short
 
 declare function textmenu overload (bg as short,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=1) as short
 declare function textmenu overload (            te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=1) as short
+
+'
+declare function screenshot(a as short) as short
+#ifndef makezlib
+declare function savepng(byref filename as string ="",byval image as any ptr =0,byval save_alpha as integer =0) as integer
+#endif
 
 'private function Texttofile(text as string) as string
 'private function lev_minimum( a As Integer, b As Integer, c As Integer ) As Integer
@@ -114,12 +119,23 @@ function screenshot_nextfilename(fname as String, ext as String, force as short)
 	return a
 End function
 
+'
 
 function screenshot(a as short) as short
+#ifdef makezlib
     savepng( screenshot_nextfilename("summary/" + tVersion.Gamedesig, ".png", 0), 0, 1) 'player.desig
+#else    
+#endif    
     return 0
 end function
 
+#ifndef makezlib
+function savepng(byref filename as string ="",byval image as any ptr =0,byval save_alpha as integer =0) as integer
+	return 0	
+End Function
+#endif    
+
+'
 
 function play_sound(iSound As Short,iRepeats As Short=1,iDelay As Short=0) as short
 	#IfNDef _sound

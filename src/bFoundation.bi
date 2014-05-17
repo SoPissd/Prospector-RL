@@ -9,7 +9,9 @@
 	inc("uSound.bi",				"first, include the sound drivers")
 	inc("fbGfx.bi",					"")
 	inc("file.bi",					"")
+#ifdef makezlib	
 	inc("zlib.bi",					"")
+#endif
 '
 	#undef both
 	#undef test
@@ -37,7 +39,9 @@
 	inc("uVersion.bas",				"provides ErrorlogFilename and Errorscreen. same vars too")
 '
 	inc("uRng.bas",					"rng with retrievable seed")
+#ifdef makezlib	
 	inc("uPng.bas",					"png load? save functions")
+#endif
 '
 	inc("uFile.bas",				"Openfile++, filetostring, stringtofile, logtofile and more utilities")
 	inc("uUtils.bas",				"string helpers mostly. needs tests to be written")

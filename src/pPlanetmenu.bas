@@ -873,7 +873,7 @@ function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _
                             display_awayteam()
                             rlprint ""
                             no_key=keyin
-                            p2=movepoint(awayteam.c,getdirection(no_key))
+                            p2=movepoint(awayteam.c,uConsole.getdirection(no_key))
                             If tmap(p2.x,p2.y).walktru=0 Then awayteam.c=p2
                         Loop Until no_key=key__esc Or Not(skill_test(player.science(location),st_easy))
                         awayteam.c=p1

@@ -1004,8 +1004,8 @@ EndIf
                 EndIf
             Else
                 If rnd_range(1,100)<110+countdeadofficers(awayteam.hpmax) Then
-                    awayteam.c=movepoint(awayteam.c,getdirection(Key),3)
-                    If getdirection(Key)<>0 Then
+                    awayteam.c=movepoint(awayteam.c,uConsole.getdirection(Key),3)
+                    If uConsole.getdirection(Key)<>0 Then
                         Key=""
                     EndIf
                 Else
@@ -1147,7 +1147,7 @@ EndIf
                 If Key<>key_autoexplore Then
                     rlprint "Direction? (0 for autoexplore)"
                     no_key=keyin
-                    walking=getdirection(no_key)
+                    walking=uConsole.getdirection(no_key)
                 Else
                     no_key="0"
                 EndIf

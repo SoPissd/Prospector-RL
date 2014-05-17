@@ -352,7 +352,7 @@ function ep_dropitem() As Short
             Case Is=77
                 display_awayteam()
                 rlprint "Where do you want to drop the "&item(c).desig &"?"
-                d=getdirection(keyin)
+                d=uConsole.getdirection(keyin)
                 If d<>-1 Or 5 Then
                     item(c).w=movepoint(awayteam.c,d)
                     If tmap(item(c).w.x,item(c).w.y).shootable<>0 Then
@@ -1546,6 +1546,7 @@ function grenade(from As _cords,map As Short) As _cords
     Dim As Single dx,dy,x,y,launcher
     Dim As Short a,ex,r,t,osx
     Dim As String Key
+    dim as integer iDir
     Dim As _cords p,pts(60*20)
 
     target.x=from.x
@@ -1570,39 +1571,40 @@ function grenade(from As _cords,map As Short) As _cords
     Else
         rlprint "Choose direction"
         Key=keyin("12346789"&" "&key__esc)
-        If getdirection(Key)=0 Then
+        iDir=uConsole.getdirection(Key)
+        If iDir=0 Then
             ex=1
         Else
             r=3-planets(map).grav
-            If getdirection(Key)=1 Then
+            If iDir=1 Then
                 dx=-.7
                 dy=.7
             EndIf
-            If getdirection(Key)=2 Then
+            If iDir=2 Then
                 dx=0
                 dy=1
             EndIf
-            If getdirection(Key)=3 Then
+            If iDir=3 Then
                 dx=.7
                 dy=.7
             EndIf
-            If getdirection(Key)=4 Then
+            If iDir=4 Then
                 dx=-1
                 dy=0
             EndIf
-            If getdirection(Key)=6 Then
+            If iDir=6 Then
                 dx=1
                 dy=0
             EndIf
-            If getdirection(Key)=7 Then
+            If iDir=7 Then
                 dx=-.7
                 dy=-.7
             EndIf
-            If getdirection(Key)=8 Then
+            If iDir=8 Then
                 dx=0
                 dy=-1
             EndIf
-            If getdirection(Key)=9 Then
+            If iDir=9 Then
                 dx=.7
                 dy=-.7
             EndIf
@@ -1805,7 +1807,7 @@ function ep_fire(mapmask() As Byte,Key As String,ByRef autofire_target As _cords
         If Key=key_fi Then rlprint "Fire direction ("& key_wait &" to chose target. "&key_layfire &" to divide fire)?"
         If Key=key_autofire Then rlprint "Fire direction?"
         no_key=keyin
-        autofire_dir=getdirection(no_key)
+        autofire_dir=uConsole.getdirection(no_key)
     EndIf
     For a=1 To 128'awayteam.hp
         If crew(a).hp>0 And crew(a).onship=0 Then
@@ -2112,7 +2114,7 @@ function ep_jumppackjump() As Short
         If planets(slot).depth=0 Or slot=specialplanet(9) Or slot=specialplanet(4) Or slot=specialplanet(3) Then
             b=rnd_range(1,4)+rnd_range(1,4)-planets(slot).grav
             rlprint "Direction?"
-            d=getdirection(keyin())
+            d=uConsole.getdirection(keyin())
             If d=4 Then d=d+1
             If b<2 Then b=2
             For a=1 To b

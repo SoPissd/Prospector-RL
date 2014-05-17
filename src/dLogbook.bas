@@ -485,7 +485,7 @@ function logbook() as short
         endif
         tScreen.update()
         key=keyin("123456789 " &key_sc &key__esc &key__enter &key_comment &key_walk &key_filter &"t",walking)
-        a=getdirection(key)
+        a=uConsole.getdirection(key)
         if a=5 then key=key__enter 
         
         

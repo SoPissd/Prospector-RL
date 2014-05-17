@@ -352,11 +352,11 @@ function spacecombat(byref atts as _fleet,ter as short) as short
                 endif
 
 
-                if getdirection(key)<>0 then
-                    player.di=getdirection(key)
+                if uConsole.getdirection(key)<>0 then
+                    player.di=uConsole.getdirection(key)
 
                     old=player.c
-                    player.c=movepoint(player.c,getdirection(key))
+                    player.c=movepoint(player.c,uConsole.getdirection(key))
                     e_last=com_add_e_track(player,e_track_p(),e_track_v(),e_map(),e_last)
 
                     if combatmap(player.c.x,player.c.y)>0 and rnd_Range(1,6)+rnd_range(1,6)+player.pilot(0)<combatmap(player.c.x,player.c.y)*2 then

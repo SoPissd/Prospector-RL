@@ -361,9 +361,9 @@ end function
 
 
 function showprices(st as short) as short
-    dim as short a,b,highest,relhigh(9),relative
+    dim as short a,b,sHighest,relhigh(9),sRelative
     do
-        highest=0
+        sHighest=0
         for a=0 to 9
             relhigh(a)=0
         next
@@ -383,16 +383,16 @@ function showprices(st as short) as short
         for b=1 to 11
             draw string ((b*5)*_fw2+15*_fw2,a*_fh2),credits(goods_prices(a,b,st)),,font2,custom,@_col
             if goods_prices(a,b,st)>relhigh(a) then relhigh(a)=goods_prices(a,b,st)
-            if goods_prices(a,b,st)>highest then highest=goods_prices(a,b,st) 
+            if goods_prices(a,b,st)>sHighest then sHighest=goods_prices(a,b,st) 
         next
     next
-    if relative=0 then
+    if sRelative=0 then
         for a=1 to 9
             for b=0 to 10
                 set__color( a+8,0)
-                line (b*(5*_fw2)+15*_fw2,(highest-goods_prices(a,b,st))/20+20*_fh2+a)-((b+1)*(5*_fw2)+15*_fw2,(highest-goods_prices(a,b+1,st))/20+20*_fh2+a)
+                line (b*(5*_fw2)+15*_fw2,(sHighest-goods_prices(a,b,st))/20+20*_fh2+a)-((b+1)*(5*_fw2)+15*_fw2,(sHighest-goods_prices(a,b+1,st))/20+20*_fh2+a)
             next
-            draw string (0,(highest-goods_prices(a,0,st))/21+20*_fh2+a*2),goodsname(a) &":",,font2,custom,@_tcol
+            draw string (0,(sHighest-goods_prices(a,0,st))/21+20*_fh2+a*2),goodsname(a) &":",,font2,custom,@_tcol
             
         next
     else
@@ -406,10 +406,10 @@ function showprices(st as short) as short
         next
 
     endif
-    rlprint "a: absolute, r: relative, esq to quit."
+    rlprint "a: absolute, r: sRelative, esq to quit."
     no_key=keyin
-    if no_key="a" then relative=0
-    if no_key="r" then relative=1
+    if no_key="a" then sRelative=0
+    if no_key="r" then sRelative=1
     loop until no_key=key__esc
     return 0
 end function

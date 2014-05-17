@@ -1115,8 +1115,8 @@ function com_getweapon() as short
         rlprint ""
         no_key=uConsole.Keyinput(key__esc & key__enter &key__up &key__lt &key__dn &key__rt &"+-123456789")
 '        no_key=keyin(key__esc & key__enter &key__up &key__lt &key__dn &key__rt &"+-123456789")
-        if keyplus(no_key) then m+=1
-        if keyminus(no_key) then m-=1
+        if uConsole.keyplus(no_key) then m+=1
+        if uConsole.keyminus(no_key) then m-=1
         if m<1 then m=lastslot
         if m>lastslot then m=1
     loop until no_key=key__esc or no_key=key__enter
@@ -1180,8 +1180,8 @@ function com_gettarget(defender as _ship, wn as short, attacker() as _ship,marke
             if text<>"" then rlprint text
             key=uConsole.Keyinput("+-"&key__esc &key__enter) ',1)
 '            key=keyin("+-"&key__esc &key__enter,1)
-            if keyplus(key) then marked+=1
-            if keyminus(key) then marked-=1
+            if uConsole.keyplus(key) then marked+=1
+            if uConsole.keyminus(key) then marked-=1
             if key=key__enter then return list_e(marked)
             if key=key__esc or ex>last then return -1
 
@@ -1254,7 +1254,7 @@ function com_dropmine(defender as _ship,mines_p() as _cords,mines_v() as short,b
     rlprint "Dropping "&item(mine).desig &" Direction?"
     key=uConsole.Keyinput("12345678")
 '    key=keyin("12345678")
-    a=getdirection(key)
+    a=uConsole.getdirection(key)
     if a>0 then
         p=movepoint(defender.c,a)
         if item(mine).ty=40 then

@@ -139,8 +139,6 @@ End function
 
 
 '
-
-'
 #endif'main
 end namespace'tGraphics
 

@@ -90,8 +90,8 @@ function wormhole_navigation() As Short
         d=Int(distance(player.c,map(wi(pl)).c))
         rlprint "Wormhole at "&map(wi(pl)).c.x &":"& map(wi(pl)).c.y &". Distance "&d &" Parsec."
         Key=keyin
-        If keyplus(Key) Then pl=pl+1
-        If keyminus(Key) Then pl=pl-1
+        If uConsole.keyplus(Key) Then pl=pl+1
+        If uConsole.keyminus(Key) Then pl=pl-1
         If pl<1 Then pl=wormhole
         If pl>wormhole Then pl=1
         set__color( 11,0)
@@ -246,7 +246,7 @@ function move_ship(Key As String) As _ship
         If player.weapons(a).made=86 Then hydrogenscoop+=2
     Next
     If walking=0 Then
-        a=getdirection(Key)
+        a=uConsole.getdirection(Key)
     Else
         If walking<10 Then a=walking
     EndIf
@@ -1371,7 +1371,7 @@ function explore_space() As Short
 
             If Key=key_walk Then
                 Key=keyin
-                walking=getdirection(Key)
+                walking=uConsole.getdirection(Key)
             EndIf
             
             if key=key_optequip then

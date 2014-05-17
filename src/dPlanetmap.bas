@@ -259,7 +259,7 @@ function cursor(target as _cords,map as short,osx as short,osy as short=0,radius
     endif
     set__color( 11,0)
     p2=target
-    target=movepoint(target,getdirection(key),eo,border)
+    target=movepoint(target,uConsole.getdirection(key),eo,border)
     if radius>0 and distance(target,awayteam.c)>radius then target=p2
     return key
 end function
@@ -2081,7 +2081,7 @@ function makeplanetmap(a as short,orbit as short,spect as short) as short
     for b=0 to planets(a).life
 #if __FB_DEBUG__
         if debug=99 then 
-			DbgPrint("chance:" &b &(planets(a).life+1)*3)
+			DbgPrint("chance:" & b & "." & (planets(a).life+1)*3 )
         EndIf
 #endif
         if rnd_range(1,100)<(planets(a).life+1)*3 then 

@@ -53,7 +53,7 @@ function launch_probe() As Short
         display_ship(1)
         rlprint "Which direction?"
         tScreen.update()
-        d=getdirection(keyin())
+        d=uConsole.getdirection(keyin())
         If d>0 Then
             lastprobe+=1
             If lastprobe>100 Then lastprobe=1

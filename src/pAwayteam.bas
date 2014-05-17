@@ -1206,8 +1206,8 @@ function ep_checkmove(ByRef old As _cords,Key As String) As Short
 
 
     If awayteam.movetype<tmap(awayteam.c.x,awayteam.c.y).walktru And configflag(con_diagonals)=0 Then
-        awayteam.c=movepoint(old,bestaltdir(getdirection(Key),0),3)
-        If awayteam.movetype<tmap(awayteam.c.x,awayteam.c.y).walktru Then awayteam.c=movepoint(old,bestaltdir(getdirection(Key),1))
+        awayteam.c=movepoint(old,bestaltdir(uConsole.getdirection(Key),0),3)
+        If awayteam.movetype<tmap(awayteam.c.x,awayteam.c.y).walktru Then awayteam.c=movepoint(old,bestaltdir(uConsole.getdirection(Key),1))
     EndIf
     If tmap(awayteam.c.x,awayteam.c.y).walktru>awayteam.movetype Then '1= can swim 2= can fly 3=can swim and fly 4= can teleport
         awayteam.c=old
@@ -1378,8 +1378,8 @@ function ep_communicateoffer(Key As String) As Short
         rlprint "direction?"
         Do
             dkey=keyin
-        Loop Until getdirection(dkey)>0 Or dkey=key__esc
-        p2=movepoint(awayteam.c,getdirection(dkey))
+        Loop Until uConsole.getdirection(dkey)>0 Or dkey=key__esc
+        p2=movepoint(awayteam.c,uConsole.getdirection(dkey))
     EndIf
     Locate p2.y+1,p2.x+1
     If Key=key_co And planetmap(p2.x,p2.y,slot)=190 Then
@@ -1711,8 +1711,8 @@ function crew_menu(crew() as _crewmember, from as short, r as short=0,text as st
         textbox(crew_bio(p),_mwx,1,20,15,1)
         tScreen.set(0)
         no_key=keyin(,1)
-        if keyplus(no_key) or getdirection(no_key)=2 then p+=1
-        if keyminus(no_key) or getdirection(no_key)=8 then p-=1
+        if uConsole.keyplus(no_key) or uConsole.getdirection(no_key)=2 then p+=1
+        if uConsole.keyminus(no_key) or uConsole.getdirection(no_key)=8 then p-=1
         if no_key=key_rename then
             tScreen.set(1)
             if p<6 then

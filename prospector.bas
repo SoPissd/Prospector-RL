@@ -1,28 +1,48 @@
 'prospector.
 '
-#define makesound   ' can also use " fbc -d makesound " .. thats better, actually
-# define justcore
-
+'clear all flags, for reference.
+'dont mess up "fbc -d options"  
+#undef buildjustcore
+#undef buildjustbasic
+#undef makesound
+#undef makezlib
+'
+'set needed flags
+'#define buildjustcore
+'#define buildjustbasic
+'
+'options
+#define makesound   
+'#define makezlib 
 '
  
 #include once "src/bFoundation.bas"	'build the core pieces  
 
 'build module 'build' for types, head and main
-#ifndef buildjustcore
+#ifdef buildjustcore
+	#print built just core.
+#else
 	'#ifdef modulename - leads to interpretations errors. dont use substitution here.
-	#define phase1
-'	#define phase2
+	#ifdef buildjustbasic
+		#print build just basic...
+		#define phase1
 		make("src/bProspector.bi")
-	#undef phase1
-'		make("src/bProspector.bi")
-	#undef phase2
-#endif
+		#undef phase1
+	#else
+		#print build everything...
+		#define phase1
+		#define phase2
+		make("src/bProspector.bi")
+		#undef phase1
+		#undef phase2
+	#endif'justbasic
+#endif'buildjustcore
 
 '
 	
 namespace tMain
 #ifndef buildjustcore
-	#print Building application...
+	#print Make application
 	function init(iAction as integer) as Integer
 		Print tModule.status()
 		Print
@@ -30,7 +50,7 @@ namespace tMain
 		return tModule.Run(iAction)
 	end function
 #else
-	#print Building core...
+	#print Make core
 	function init(iAction as integer) as Integer
 		Print tModule.status()
 		Print

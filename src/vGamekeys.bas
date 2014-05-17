@@ -279,7 +279,7 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
                 rlprint text
             next
         endif
-        if len(allowed)>0 and key<>key__esc and key<>key__enter and getdirection(key)=0 then
+        if len(allowed)>0 and key<>key__esc and key<>key__enter and uConsole.getdirection(key)=0 then
             if instr(allowed,key)=0 and walking=0 then 
                 'keybindings(allowed)
                 key=""

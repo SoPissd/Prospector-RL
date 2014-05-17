@@ -583,15 +583,15 @@ function adapt_nodetext(t as string, e as _monster,fl as short,qgindex as short=
     dim word(128) as string
     dim stword(128) as string
     dim r as string
-    dim as string himher(1),hishers(1),heshe(1),relative(8)
-    relative(0)="brother"
-    relative(1)="sister"
-    relative(2)="father"
-    relative(3)="mother"
-    relative(4)="uncle"
-    relative(5)="aunt"
-    relative(6)="grandmother"
-    relative(7)="grandfather"
+    dim as string himher(1),hishers(1),heshe(1),aRelative(8)
+    aRelative(0)="brother"
+    aRelative(1)="sister"
+    aRelative(2)="father"
+    aRelative(3)="mother"
+    aRelative(4)="uncle"
+    aRelative(5)="aunt"
+    aRelative(6)="grandmother"
+    aRelative(7)="grandfather"
     himher(0)="her"
     himher(1)="him"
     hishers(0)="hers"
@@ -644,7 +644,7 @@ function adapt_nodetext(t as string, e as _monster,fl as short,qgindex as short=
         if word(i)="<MONEY>" and qgindex>0 then word(i)=credits(questguy(questguy(qgindex).flag(1)).loan)
         if word(i)="<DRUG>" and qgindex>0 then
         endif
-        if word(i)="<RELATIVE>" and qgindex>0 then word(i)=relative(questguy(qgindex).flag(2))
+        if word(i)="<RELATIVE>" and qgindex>0 then word(i)=aRelative(questguy(qgindex).flag(2))
         if word(i)="<CORP>" and qgindex>0 then 
             if questguy(qgindex).flag(6)=0 then
                 if questguy(qgindex).job-9>0 and questguy(qgindex).job-9<=4 then word(i)=companyname(questguy(qgindex).job-9) 

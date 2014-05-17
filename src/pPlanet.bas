@@ -570,8 +570,8 @@ function getplanet(sys as short,forcebar as byte=0) as short
             display_system(sys,,p)
             key=""
             key=keyin
-            if keyplus(key) or key=key_east or key=key_north then p=nextplan(p,sys)
-            if keyminus(key) or key=key_west or key=key_south then p=prevplan(p,sys)
+            if uConsole.keyplus(key) or key=key_east or key=key_north then p=nextplan(p,sys)
+            if uConsole.keyminus(key) or key=key_west or key=key_south then p=prevplan(p,sys)
             if key=key_comment then
                 if map(sys).planets(p)>0 then
                     rlprint "Enter comment on planet: "

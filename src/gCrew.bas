@@ -81,7 +81,7 @@ declare function crew_bio(i as short) as string
 declare function crew_html(c as _crewmember) as string
 declare function crew_text(c as _crewmember) as string
 declare function low_morale_message() as short
-declare function countdeadofficers(max as short) as short
+declare function countdeadofficers(sMax as short) as short
 declare function equipment_value() as integer
 declare function list_inventory() as string
 declare function captain_sprite() as short
@@ -669,7 +669,7 @@ function Crewblock() as string
 end function
 
 
-function countdeadofficers(max as short) as short
+function countdeadofficers(sMax as short) as short
     dim r as short
     dim all as short
     dim a as short
@@ -678,8 +678,8 @@ function countdeadofficers(max as short) as short
     for a=2 to 6
         if crew(a).hp<=0 and crew(1).onship=0 then o+=1
     next
-    if max>=7 then
-        for a=7 to max
+    if sMax>=7 then
+        for a=7 to sMax
             if crew(a).hp>0 and crew(1).onship=0 then r+=1
         next
     else
@@ -1115,16 +1115,16 @@ end function
 
 
 function bunk_multi() as single
-    dim as short b,here,max
-    max=(player.h_maxcrew+player.crewpod)+player.cryo
+    dim as short b,here,sMax
+    sMax=(player.h_maxcrew+player.crewpod)+player.cryo
     for b=1 to 128
         if crew(b).hp>0 then here+=1
     next
-    if here<=max then
+    if here<=sMax then
         player.bunking=1
         return 1
     else
-        return 1+here/(max*3)
+        return 1+here/(sMax*3)
     endif
 end function
 

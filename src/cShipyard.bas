@@ -121,7 +121,7 @@ function poolandtransferweapons(s1 As _ship,s2 As _ship) As Short
         textbox(help,2,8,25,11,1)
         set__color( 15,0)
         Key=keyin()
-        crs=movepoint(crs,getdirection(Key))
+        crs=movepoint(crs,uConsole.getdirection(Key))
         If crs.x<0 Then crs.x=1
         If crs.x>1 Then crs.x=0
         If crs.y<1 Then crs.y=5
