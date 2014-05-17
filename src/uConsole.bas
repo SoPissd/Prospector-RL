@@ -129,6 +129,10 @@ namespace uConsole
 dim shared as string		LastKey
 dim shared as integer 		Closing
 dim shared as integer 		bIdling
+Dim shared as integer		Fps			'most recent fps
+Dim shared as double		Fpstime		'time of most recent fps
+
+
 Dim shared as tActionmethod IdleMethod
 
 '
@@ -164,8 +168,10 @@ declare function getdirection(aKey as string="", bJustNumpad as short=0) as shor
 '     -=-=-=-=-=-=-=- MAIN: uConsole -=-=-=-=-=-=-=-
 
 function init(iAction as integer) as integer
-	Closing=0
-	bIdling=0
+	Closing=0			'e.g. run, no reason to exit 
+	bIdling=0			'e.g. am not and have not been idling (yet)
+	Fpstime=dTimer()	'makes the first fps value 'right'er
+	'dLastTime= n/a 	'no need to set/reset this. it tracks overall run-time, not 'a run'. 
 	return 0
 End function
 
@@ -184,8 +190,38 @@ function dTimer() as double
 End function
 
 '
+' waiting for key-input we run into the idle-concept.
+' the code in this unit works together to let you use the IdleMethod(bIdling) parameter
+' to recognize that you're idling for the first time. use that for screen updates.
+' nothing needs to happen once bIdling is true but you could update a performance counter. 
 '
+
+sub Fpsupdate()
+	'?"updatefps"
+	dim dtime as double 
+	dTime=Fpstime 
+	Fpstime=uConsole.dTimer() 
+	dTime=Fpstime-dTime
+	Fps=1000/(dTime*1000)
+	if Fps>=1000 then Fps=999
+end sub
+
+function Idle(iAction as integer=0) as integer
+	Fpsupdate()
+	if IdleMethod<>null then
+		iAction= IdleMethod(bIdling)
+		if bIdling=0 then
+			bIdling= 1
+		endif
+	endif
+	sleep(1)		'lets the operating system have all the time it needs/wants to show 0% cpu use.
+	return iAction	'interpreted as a key
+End Function
+
+
 '
+' check to see if something is pending at all.
+'   screenevent needs to get used by inkey if we want to track get/loose focus in the app
 
 function EventPending() as short		'0 if nothing pending, 1 has buffered
 	return Screenevent(0)
@@ -240,25 +276,6 @@ function iProcessKey(iKey as Integer) as Integer
     aKey=aProcessKey(iKey2a(iKey))
 	return iKey	
 End Function
-
-'
-' waiting for key-input we run into the idle-concept.
-' the code in this unit works together to let you use the IdleMethod(bIdling) parameter
-' to recognize that you're idling for the first time. use that for screen updates.
-' nothing needs to happen once bIdling is true but you could update a performance counter. 
-'
-
-function Idle(iAction as integer=0) as integer
-	if IdleMethod<>null then
-		iAction= IdleMethod(bIdling)
-		if bIdling=0 then
-			bIdling= 1
-		endif
-	endif
-	sleep(1)		'lets the operating system have all the time it needs/wants to show 0% cpu use.
-	return iAction	'interpreted as a key
-End Function
-
 
 '
 ' wrappers for the built-in key-getters.  make sure to always use them!
