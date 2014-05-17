@@ -2,6 +2,10 @@
 'include to build sound, debug and all the utilities. include dependencies.  
 'builds in a single pass.
 
+'4 external units
+'25 foundation units
+'29 total units
+
 	inc("uSound.bi",				"first, include the sound drivers")
 	inc("fbGfx.bi",					"")
 	inc("file.bi",					"")

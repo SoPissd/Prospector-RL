@@ -1,4 +1,5 @@
 #ifdef phase1
+	'23 units
 	#define gbasics
 	' these are all the units i could 'sneak' under vGame.bas without introducing more dependencies
 	' some of the are essential, some of them are just containers to isolate something, even nothing
@@ -6,6 +7,7 @@
 	' it could become a dll to rely on the foundation.
 #endif
 #ifdef phase2
+	'65 units
 	#define xvars		'leftover global vars and types
 	#define ccommerce	'commerce
 	#define ddisplay	'display
