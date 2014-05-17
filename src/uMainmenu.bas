@@ -223,8 +223,8 @@ function tMenuCore.after() as integer
     elseif iDir =2 then 
     	loca=loca+1
     elseif help<>"" then
-        if uConsole.keyaccept(key,"+,"+key__dr) then offset+=1
-        if uConsole.keyaccept(key,"-,"+key__ur) then offset-=1
+        if uConsole.keyaccept(key,keyl_menup) then offset +=1
+        if uConsole.keyaccept(key,keyl_mendn) then offset -=1
     endif
 
     for i=0 to c
@@ -249,7 +249,7 @@ end function
 
 
 function tMenuCore.init() as integer
-DbgPrint(a)
+	'DbgPrint(a)
 	'LogOut("uMenu.init()")
 	dim as integer a
 
@@ -355,7 +355,7 @@ End Function
 
 
 function tMenuCore.finish() as integer
-DbgPrint(e)
+	'DbgPrint(e)
 	'LogOut("uMenu.finish()")
 	dim as integer a
     if key=key__esc and markesc=1 then e=-uConsole.aKey2i(key__esc)
@@ -391,8 +391,8 @@ function tMenuCore.menu() as integer
     	if bGraphic<>tScreen.isGraphic then
 			bGraphic=tScreen.isGraphic 		
 	   	EndIf
-			e=init()
-DbgPrint("e=init() a=" &a):uConsole.Pressanykey			
+		e=init()
+		'DbgPrint("e=init() a=" &a):uConsole.Pressanykey			
 	   	if (e=0) then e=before()    		
 	   	if (e=0) then key=uConsole.keyinput() 'key=keyin(,96+c)
 	   	if (e=0) then e=after()

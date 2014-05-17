@@ -60,6 +60,7 @@ function ViewArray(lines() as string,nlines as integer) as short
     next
     
     height=(width() shr (4*4)) ' gives screen/console height
+    if height>25 then height=25
     xwidth=(width() and &hFFFF)
     if nlines-height<0 then
    		pheight=nlines
@@ -95,7 +96,13 @@ function ViewArray(lines() as string,nlines as integer) as short
 '            key=keyin("12346789 ",1)
 		'
 		di=uConsole.getdirection(key)
-        if 	   di=2 then
+        if 	   di=7 then
+        	offset=0
+        	offsetx=0
+        elseif di=1 then
+        	offset=nlines-pheight
+        	offsetx=0
+        elseif di=2 then
         	offset=offset+1
         elseif di=8 then
         	offset=offset-1
@@ -103,18 +110,16 @@ function ViewArray(lines() as string,nlines as integer) as short
         	offsetx=offsetx-1
         elseif di=6 then
         	offsetx=offsetx+1
-        elseif uConsole.keyplus(key) then
-        	offset=offset+(height-1)
-        elseif uConsole.keyminus(key) then
+        elseif uConsole.keyaccept(key,keyl_menup) then 
         	offset=offset-(height-1)
+        elseif uConsole.keyaccept(key,keyl_mendn) then 
+        	offset=offset+(height-1)
         endif
 		'
         if offset<0 then 
 			offset=0
-        elseif offset>nlines then 
-            offset=nlines
-'        elseif offset>nlines-height then 
-'            offset=nlines-height
+'        elseif offset>nlines then offset=nlines
+        elseif offset>nlines-height then offset=nlines-height
         endif
 		'
         if (offsetx<0) then 

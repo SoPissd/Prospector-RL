@@ -171,7 +171,7 @@ end sub
 
 
 function tGameloop.DoInitProc() as integer
-DbgPrint(iCmd)
+	'DbgPrint(iCmd)
 	
 	load_config()
 	tColor.load_palette()
@@ -192,7 +192,7 @@ DbgPrint(iCmd)
 end function
 
 function tGameloop.DoCmdProc() as integer
-DbgPrint(iCmd)
+	'DbgPrint(iCmd)
 	'
 	select case iCmd
 	case 1 ' main menu
@@ -200,7 +200,7 @@ DbgPrint(iCmd)
 		iCmd=aMenu.mainmenu()
 		return iCmd
 	case else
-DbgPrint(iCmd)
+		'DbgPrint(iCmd)
 		return 0 'iCmd ' next no-command
 	end select
 end function
@@ -210,12 +210,12 @@ function tGameloop.DoConfirmClose() as integer
 end function
 
 function tGameloop.DoKeyProc() as integer
-DbgPrint(iCmd)
+	'DbgPrint(iCmd)
 	return iCmd ' next no-command
 end function
 
 function tGameloop.DoMouseProc() as integer
-DbgPrint(iCmd)
+	'DbgPrint(iCmd)
 	return iCmd 'nochange
 end function
 
@@ -360,7 +360,7 @@ load_fonts()
 End Function
 
 function tGamemenu.mainmenu(a as integer=0) as integer
-DbgPrint(a)
+	'DbgPrint(a)
 	dim key as string
 	dim no_key as string
 	dim iLines as integer

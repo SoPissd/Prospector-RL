@@ -106,6 +106,10 @@ Const key__dr = 	xk & "Q"		'Down Right / PgDn
 Const key__Ins= 	xk & "P"		'Insert		
 Const key__Del= 	xk & "P"		'Delete		
 
+'lists of constant keys
+Const keyl_yes=			key__enter+",y,Y, "
+Const keyl_no=			key__esc+",n,N"	
+Const keyl_onwards=		key__esc+","+key__backspace+","+key__enter+", "	
 
 'these are the configurable directions for getdirection below 
 Dim Shared As String*3 key_sw		="1"
@@ -118,6 +122,11 @@ Dim Shared As String*3 key_nw		="7"
 Dim Shared As String*3 key_north	="8"
 Dim Shared As String*3 key_ne		="9"
 
+'lists of configurable keys
+#define keyl_plus		key__up+","+key__rt+","+key_north+",+"
+#define keyl_minus		key__dn+","+key__lt+","+key_south+",-"
+#define keyl_menup		"-,"+key__ur
+#define keyl_mendn		"+,"+key__dr
 #endif'head
 
 
@@ -392,27 +401,27 @@ end function
 
 function isKeyYes(aKey as string="") as short
 	if aKey="" then aKey=LastKey
-	return keyaccept(aKey,key__enter+",y,Y, ")	
+	return keyaccept(aKey,keyl_yes)
 End Function
 
 function isKeyNo(aKey as string="") as short
 	if aKey="" then aKey=LastKey
-	return keyaccept(aKey,key__esc+",n,N")	
+	return keyaccept(aKey,keyl_no)	
 End Function
-
+	
 function keyplus(aKey as string="") as short
 	if aKey="" then aKey=LastKey
-	return keyaccept(aKey,key__up+","+key__lt+","+key_south+",+")	
+	return keyaccept(aKey,keyl_plus)	
 end function
 
 function keyminus(aKey as string="") as short
 	if aKey="" then aKey=LastKey
-	return keyaccept(aKey,key__dn+","+key__rt+","+key_north+",-")	
+	return keyaccept(aKey,keyl_minus)	
 end function
 
 function keyonwards(aKey as string="") as short
 	if aKey="" then aKey=LastKey
-	return keyaccept(aKey,key__esc+","+key__backspace+","+key__enter+", ")	
+	return keyaccept(aKey,keyl_onwards)	
 end function
 
 function getdirection(aKey as string="", bJustNumpad as short=0) as short
