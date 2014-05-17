@@ -118,13 +118,10 @@ End Function
 
 function Run(iAction as integer) as Integer
 	if RunMethod<>null then
-?"		return RunMethod(iAction)"
 		return RunMethod(iAction)
 	elseif ErrorMethod<>null then
-?"		return ErrorMethod()"
 		return ErrorMethod()
 	else 
-?"		return 0"
 		return 0
 	EndIf
 End Function

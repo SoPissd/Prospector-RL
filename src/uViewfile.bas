@@ -21,6 +21,9 @@
 #undef intest
 #define test
 #endif'test
+#ifdef types
+'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+#endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tViewfile -=-=-=-=-=-=-=-
 

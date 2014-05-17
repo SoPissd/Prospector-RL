@@ -28,8 +28,8 @@
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
-Dim Shared _fgcolor_ 	As UInteger	'active rgb color
-Dim Shared _bgcolor_ 	As UInteger
+Dim Shared _fgcolor_ 	As UInteger	'active rgb fg color
+Dim Shared _bgcolor_ 	As UInteger	'active rgb bg color
 
 Dim Shared FONT1 		As Any Ptr	'fonts for draw screen
 Dim Shared FONT2 		As Any Ptr
@@ -80,7 +80,6 @@ const as integer GFX_SHAPED_WINDOW			= &h10
 const as integer GFX_ALWAYS_ON_TOP			= &h20
 #endif
 
-
 declare function mode(iMode as integer=0) As Short
 declare function set(fg As Short=1,bg As Short=1) As Short
 declare function loc(iRow As Short=0,iCol As Short=0,aText as string="") As Short
@@ -113,6 +112,8 @@ Dim Shared as UShort LastRow=0
 
 Dim Shared As UShort x=800
 Dim Shared As UShort y=600
+
+'	
 
 function res(flags as integer= GFX_WINDOWED ) As Short
     screenres x,y,16,2,flags

@@ -25,9 +25,8 @@
 
 namespace tGame
 	
-#ifdef head
-'     -=-=-=-=-=-=-=- HEAD: tGame -=-=-=-=-=-=-=-
-
+#ifdef types
+'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 type tGameloop extends tMainloop
 	declare constructor()
 	declare destructor()
@@ -53,6 +52,14 @@ end type
 Dim as tActionmethod pStart_new_game
 Dim as tActionmethod pFrom_savegame
 Dim as tActionmethod pPlay_game
+
+dim Game as tMainloop
+
+#endif'types
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tGame -=-=-=-=-=-=-=-
+
+declare function run(iAction as Integer) as Integer
 
 'private function Private start_new_game() As Short
 'Private function from_savegame(iBg as short,key As String) As String
@@ -134,7 +141,7 @@ function tGamemenu.finish() as integer
 end function
 
 
-Private function mainmenuactions(ByRef iAction as integer, ByRef aText as String) as integer
+function mainmenuactions(ByRef iAction as integer, ByRef aText as String) as integer
     If iAction=0 Then  
 		aText =__VERSION__+"/"
 		aText+="Load game/"
