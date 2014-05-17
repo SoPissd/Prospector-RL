@@ -73,16 +73,19 @@ dim shared Lastmouse as tGetMouse
 
 type tMainloop Extends Object
 	declare constructor()
-	declare destructor()
+	declare virtual destructor()
 	declare function run(iAction as Integer) as Integer
 	declare function KeyProc as integer
 	declare function MouseProc as integer
-	declare Virtual function DoInitProc() as integer
-	declare Virtual function DoConfirmClose() as integer
-	declare Virtual function DoCmdProc() as integer
-	declare Virtual function DoKeyProc() as integer
-	declare Virtual function DoMouseProc() as integer
-	dim as short NoMouseChecks 
+	'
+	' the non-virtual virtuals:
+	declare virtual function DoInitProc() as integer
+	declare virtual function DoConfirmClose() as integer
+	declare virtual function DoCmdProc() as integer
+	declare virtual function DoKeyProc() as integer
+	declare virtual function DoMouseProc() as integer
+	'
+	dim as short NoMouseChecks = 1 
 	dim as string aKey
     dim as integer mx 
     dim as integer my
@@ -165,13 +168,13 @@ destructor tMainloop()
 End Destructor
 
 function tMainloop.DoInitProc as integer
-	return iCmd '- 0 to accept, -1 to abort
+	return iCmd '- interprets -1 to abort
 End Function
 function tMainloop.DoConfirmClose as integer
-	return 0 '- 0 to accept, -1 to ignore the close signal
+	return 0 '- 0 to accept, else ignores the close signal
 End Function
 function tMainloop.DoCmdProc as integer
-	return iCmd ' next no-command
+	return 0' done.   iCmd ' next no-command
 End Function
 function tMainloop.DoKeyProc as integer
 	return iCmd ' next no-command
@@ -205,6 +208,8 @@ function tMainloop.run(iAction as Integer) as Integer
 	'DoInitProc
 	iCmd=iAction
 	iCmd=DoInitProc
+?"	iCmd=DoInitProc",iCmd
+
    	while uConsole.Closing=0 and (iCmd<> -1)
 		
 		' icmd=0 	- find something to do, idle as needed

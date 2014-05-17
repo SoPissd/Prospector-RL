@@ -62,6 +62,5 @@ ErrorHandler:
 	tError.ErrorHandler()
 Done:
 	uSound.set(-1)
-	'DbgLogExplorePlanetEnd
 	DbgEnd
 	End tError.ErrorNr

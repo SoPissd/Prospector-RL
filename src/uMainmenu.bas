@@ -24,17 +24,34 @@
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 
-Type tMainmenu Extends Object
+Type tMenuCore Extends Object
   declare constructor()
-  declare destructor()
+  declare virtual destructor() 
   '
   declare virtual function init() as integer
   declare virtual function before() as integer
+  declare abstract function DoProcess() as integer
   declare virtual function after() as integer
   declare virtual function finish() as integer
   '
   declare function menu() as integer
   declare function go(bg as short,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as integer
+  '
+  declare function ClearChoices() as integer
+  declare function AddChoice(aTe as string, aTh as string="") as integer  
+'
+    dim a as short			=0
+    dim e as short			=0
+    dim bg as short			=0
+    dim te as string		=""
+    dim th as string		="" 
+    dim x as short			=2 
+    dim y as short			=2 
+    dim blocked as short	=0 
+    dim markesc as short	=0
+    dim st as short			=-1
+    dim loca as short		=0
+    dim iLines as short
 Private:
     ' 0= headline 1=first entry
     dim as short blen
@@ -44,12 +61,10 @@ Private:
     dim helps(256) as string
     dim shrt(256) as string
     dim as string key,delhelp
-    dim a as short
     dim b as short
     dim c as short
     'static loca as short
     'dim loca as short
-    dim e as short
     dim l as short
     dim hfl as short
     dim hw as short
@@ -58,17 +73,11 @@ Private:
     dim longest as short
     dim as short ofx,l2,longestbox,longesthelp,backpic,offset
     '
-    dim bg as short
-    dim te as string 
-    dim he as string="" 
-    dim x as short=2 
-    dim y as short=2 
-    dim blocked as short=0 
-    dim markesc as short=0
-    dim st as short=-1
-    dim loca as short=0
-    '
     dim as any ptr logo
+End Type
+
+type tMainmenu extends tMenuCore
+	declare function DoProcess() as integer
 End Type
 
 
@@ -86,16 +95,22 @@ function init(iAction as integer) as integer
 end function
 end namespace'nuMenu
 
-Constructor tMainmenu()
+
+function  tMainmenu.DoProcess() as integer
+	return 0
+End Function
+
+
+Constructor tMenuCore()
 End Constructor
 
-Destructor tMainmenu()
+Destructor tMenuCore()
 End Destructor
 
-function tMainmenu.before() as integer
+function tMenuCore.before() as integer
 	'LogOut("uMenu.before()")
 	dim as integer i
-	dim as string a
+	dim as string a1
     'if bg<>bg_noflip then
     '    tScreen.set(0)
     '    set__color(15,0)
@@ -163,12 +178,12 @@ function tMainmenu.before() as integer
 	        if loca=i then 
 	            if hfl=1 and loca<=c and helps(i)<>"" then blen=textbox(helps(i),ofx,2,hw,15,1,,,offset)
 	            tScreen.rgbcol(255,255,255)
-	            a="*"
+	            a1="*"
 	        else
 	            tScreen.rgbcol(127,127,127)
-	            a=" "
+	            a1=" "
 	        endif
-		    tScreen.xy(x,y+i, a+shrt(i) &") "& lines(i))
+		    tScreen.xy(x,y+i, a1+shrt(i) &") "& lines(i))
 	    next
 		tScreen.poppos()
 	EndIf
@@ -181,7 +196,7 @@ function tMainmenu.before() as integer
 	return 0
 end function
 
-function tMainmenu.after() as integer
+function tMenuCore.after() as integer
 	'LogOut("uMenu.after()")
 	dim as integer i
 	dim as integer iDir
@@ -208,8 +223,8 @@ function tMainmenu.after() as integer
     elseif iDir =2 then 
     	loca=loca+1
     elseif help<>"" then
-        if key="+" then offset+=1
-        if key="-" then offset-=1
+        if uConsole.keyaccept(key,"+,"+key__dr) then offset+=1
+        if uConsole.keyaccept(key,"-,"+key__ur) then offset-=1
     endif
 
     for i=0 to c
@@ -224,7 +239,7 @@ function tMainmenu.after() as integer
     if loca>c then loca=1
 
     if key=key__enter then e=loca
-    if key=key__esc then e= uConsole.aKey2i(key__esc)
+    if key=key__esc then e= -uConsole.aKey2i(key__esc)
     
 '   if player.dead<>0 then e=c
 '   if key=key__esc or player.dead<>0 then e=c
@@ -233,7 +248,8 @@ end function
 	          
 
 
-function tMainmenu.init() as integer
+function tMenuCore.init() as integer
+DbgPrint(a)
 	'LogOut("uMenu.init()")
 	dim as integer a
 
@@ -255,7 +271,7 @@ function tMainmenu.init() as integer
 	EndIf
 
 	text=te
-    help=he
+    help=th
     b=len(text)
     text=text &"/"
     c=0
@@ -338,7 +354,8 @@ function tMainmenu.init() as integer
 End Function
 
 
-function tMainmenu.finish() as integer
+function tMenuCore.finish() as integer
+DbgPrint(e)
 	'LogOut("uMenu.finish()")
 	dim as integer a
     if key=key__esc and markesc=1 then e=-uConsole.aKey2i(key__esc)
@@ -366,23 +383,41 @@ function tMainmenu.finish() as integer
 End Function
 
 
-function tMainmenu.menu() as integer
+function tMenuCore.menu() as integer
 	dim bGraphic as Short
 	bGraphic=not tScreen.isGraphic
     while (uConsole.Closing=0) and (e=0)	
     	'changed modes?
     	if bGraphic<>tScreen.isGraphic then
 			bGraphic=tScreen.isGraphic 		
-			e=init()
 	   	EndIf
-	   	if e=0 then e=before()    		
-	   	if e=0 then key=uConsole.keyinput() 'key=keyin(,96+c)        
-	   	if e=0 then e=after()
+			e=init()
+DbgPrint("e=init() a=" &a):uConsole.Pressanykey			
+	   	if (e=0) then e=before()    		
+	   	if (e=0) then key=uConsole.keyinput() 'key=keyin(,96+c)
+	   	if (e=0) then e=after()
+	   	if (e<>0) and (key<>"") then e=DoProcess()
     wend
     return finish()
 End Function
 
-function tMainmenu.go(sbg as short,ate as string, ahe as string="", sx as short=2, sy as short=2, sblocked as short=0, smarkesc as short=0, sst as short=-1, sloca as short=0) as integer
+'
+
+Function tMenuCore.ClearChoices() as integer
+	te=""
+	th=""
+	iLines=0
+	return 0	
+End Function
+
+function tMenuCore.AddChoice(aTe as string, aTh as string="") as integer
+	te= te + iif(len(te)>0,"/","") + aTe
+	th=	th + iif(len(th)>0,"/","") + aTh
+	iLines +=1
+	return 0	
+End Function
+
+function tMenuCore.go(sbg as short,ate as string, ahe as string="", sx as short=2, sy as short=2, sblocked as short=0, smarkesc as short=0, sst as short=-1, sloca as short=0) as integer
 	'if tScreen.isGraphic then
 	'	LogOut("tScreen.isGraphic")
 	'else
@@ -391,7 +426,7 @@ function tMainmenu.go(sbg as short,ate as string, ahe as string="", sx as short=
 	'endif
     bg= sbg
     te= ate
-    he= ahe
+    th= ahe
     x= sx
     y= sy
     blocked= sblocked

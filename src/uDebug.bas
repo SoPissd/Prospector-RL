@@ -34,7 +34,7 @@
 	#ifdef __FB_WIN32__					'only under windows
 		#print Windows Debug mode
 		#define _DbgOptLoadMLD 0		'load the Memory Leak Detector
-		#define _DbgOptLoadWin 0		'load the Windows headers
+		#define _DbgOptLoadWin 1		'load the Windows headers
 	#else
 	#ifdef __FB_LINUX__					'only under linux
 		#print Linux Debug mode
@@ -44,7 +44,7 @@
 	#define _DbgPrintCSVs 0				'print csv's?
 	#define _DbgLogExplorePlanet 0
 	'
-	#define _DbgPrintMode 0
+	#define _DbgPrintMode 5
 	'				
 	#if _DbgPrintMode =0				'=0: ignore
 		#print DbgPrint ignored.  
@@ -91,8 +91,12 @@
 		'
 		#define DbgEnd close #_DbgLog
 		
+	#elseif _DbgPrintMode =5			'=5: just print	
+		#print DbgPrints just prints.
+		#Define DbgPrint(Text) ? stripFileExtension(lastword(__FILE__,"\"));":" &__LINE__ ;" ";__FUNCTION__,Text
 	#endif
 	'
+	
 	sub DbgScreeninfo
 	dim as Integer w,h,depth,bpp,pitch,rate
 	dim as String driver 
@@ -104,9 +108,9 @@
     ch=(width() shr (4*4)) ' gives screen/console height
     cw=(width() and &hFFFF)
 	print "Console: x,y: ";cw;",";ch
-
 	End Sub	
 	
+	#define DbgEnd
 #else
 	#ifdef __FB_WIN32__					'windows
 		#print Windows Release mode

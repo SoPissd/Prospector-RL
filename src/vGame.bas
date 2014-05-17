@@ -1,9 +1,5 @@
 'tGame.
 '
-'defines:
-'Private start_new_game=0, Private from_savegame=0, Private mainmenu=0,
-', Prospector=1
-'
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -23,59 +19,59 @@
 #endif'test
 
 
-namespace tGame
-	
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 type tGameloop extends tMainloop
 	declare constructor()
-	declare destructor()
-	declare function run(iAction as Integer) as Integer
-	declare function KeyProc() as integer
-	declare function MouseProc()as integer
-	declare function DoInitProc() as integer override
-	declare function DoConfirmClose() as integer override
-	declare function DoCmdProc() as integer override
-	declare function DoKeyProc() as integer override
-	declare function DoMouseProc() as integer override
+	declare virtual destructor() 
+	'
+	' the non-override overrides:
+	declare function DoInitProc() as integer '
+	declare function DoConfirmClose() as integer 
+	declare function DoCmdProc() as integer 
+	declare function DoKeyProc() as integer 
+	declare function DoMouseProc() as integer 
 end type
 
-type tGamemenu extends tMainmenu
+type tGamemenu extends tMenuCore
 	declare constructor()
-	declare destructor()
-	declare function init() as integer override
-	declare function before() as integer override
-	declare function after() as integer override
-	declare function finish() as integer override
+	declare virtual destructor() 
+	'
+	'the non-override overrides:
+	'declare function init() as integer 
+	'declare function before() as integer 
+	'declare function after() as integer 
+	'declare function finish() as integer 
+	'
+	declare function mainmenu(a as integer=0) as integer
+	declare function DoProcess() as integer 
 end type
+#endif'types
+
+'
+
+namespace tGame
+	
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tGame -=-=-=-=-=-=-=-
+'these are used in menu processing to start game-functions 
+'without knowing anything about the context they exist in. 
 
 Dim as tActionmethod pStart_new_game
 Dim as tActionmethod pFrom_savegame
 Dim as tActionmethod pPlay_game
 
-dim Game as tMainloop
-
-#endif'types
-#ifdef head
-'     -=-=-=-=-=-=-=- HEAD: tGame -=-=-=-=-=-=-=-
-
-declare function run(iAction as Integer) as Integer
-
-'private function Private start_new_game() As Short
-'Private function from_savegame(iBg as short,key As String) As String
-'private function Private mainmenu() as string
 
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tGame -=-=-=-=-=-=-=-
-
 dim shared Fpsshow as short =1
+
 function Fpsupdate(iAction as Integer) as integer
 	'?"updatefps"
 	dim atime as string
 	'
-	if Fpsshow then
-		
+	if Fpsshow then		
 		aTime=LeadingZero(3,uConsole.Fps)
 		if not tScreen.isGraphic then
 			tScreen.pushpos()
@@ -88,17 +84,27 @@ end function
 
 '
 
-function init(iAction as integer) as integer
-	tModule.RunMethod= @tGame.run 'here is where the magic happens as main runs module runs game.run(0)
-	uConsole.IdleMethod= @Fpsupdate
-	'
+function run(iAction as Integer) as Integer
+'?"debugbreak": debugbreak
+	?"function run(iAction as Integer) as Integer"
+	dim aLoop as tGameloop
+	aLoop.run(1)
 	return 0
 end function
 
 
-'
-'
-'
+function init(iAction as integer) as integer
+	tModule.RunMethod= @tGame.run 	'here is where the magic happens as main runs module runs game.run(0)
+	uConsole.IdleMethod= @Fpsupdate	'just because
+	return 0
+end function
+
+#endif'main
+end namespace'tGame
+
+
+#ifdef main
+
 
 constructor tGameloop()
 end constructor
@@ -109,55 +115,161 @@ end destructor
 		' icmd=0 	- find something to do, idle as needed
 		' icmd=-1 	- abort the main loop
 
+' init
+
+function check_filestructure() as short
+	if chdir("data")=-1 then
+		set__color(c_yel,0)
+		print "Can't find folder 'data'. Try reinstalling the game."
+		sleep
+		end
+	else
+		chdir("..")
+	endif
+
+	if (tFile.assertpath("bones")=-1) _
+	or (tFile.assertpath("savegames")=-1) _
+	or (tFile.assertpath("summary")=-1) _
+	then
+		set__color(c_yel,0)
+		print "Can not create folder. Try reinstalling the game."
+		sleep
+		end
+	endif
+
+	''why?
+	'if fileexists("savegames/empty.sav") _ 
+	'and (tFile.Filesize("savegames/empty.sav")>0) then return 0
+	'' not there or was empty for some reason yet to be eradicated
+	'player.desig="empty"
+	'tVersion.Gamedesig="empty"
+	'savegame()
+	
+	return 0
+end function
+
+
+sub register()
+	dim f as integer
+	If Not fileexists("register") Then
+    	Cls
+	    If askyn("This is the first time you start prospector. Do you want to see the keybindings before you start?(Y/N)") Then
+    	   keybindings()
+	    EndIf
+	    Cls
+	    f=Freefile
+	    Open "register" For Output As f
+	    Print #f,"0"
+	    Print #f,""
+	    If textmenu(bg_randompic,"Autonaming:/Standard/Babylon 5 Shipnames")=2 Then
+	        Print #f,"b5shipnames.txt"
+	    EndIf
+	    Close #f
+	    set__color(11,0)
+	EndIf
+end sub
+
+
 function tGameloop.DoInitProc() as integer
-	return Base.DoInitProc()
+DbgPrint(iCmd)
+	
+	load_config()
+	tColor.load_palette()
+	check_filestructure()
+	load_keyset()
+	uSound.load()
+
+'	load_fonts()
+'	load_tiles()
+	'
+	DbgScreeninfo
+	register()
+	'setglobals
+	'DbgWeapdumpCSV
+    'DbgTilesCSV
+	
+	return iCmd '- interprets -1 to abort
 end function
-function tGameloop.DoConfirmClose() as integer
-	return Base.DoConfirmClose()
-end function
+
 function tGameloop.DoCmdProc() as integer
-	return Base.DoCmdProc()
+DbgPrint(iCmd)
+	'
+	select case iCmd
+	case 1 ' main menu
+		dim aMenu as tGamemenu
+		iCmd=aMenu.mainmenu()
+		return iCmd
+	case else
+DbgPrint(iCmd)
+		return 0 'iCmd ' next no-command
+	end select
 end function
+
+function tGameloop.DoConfirmClose() as integer
+	return 0 '- 0 to accept, else ignores the close signal
+end function
+
 function tGameloop.DoKeyProc() as integer
-	return Base.DoKeyProc()
+DbgPrint(iCmd)
+	return iCmd ' next no-command
 end function
+
 function tGameloop.DoMouseProc() as integer
-	return Base.DoMouseProc()
+DbgPrint(iCmd)
+	return iCmd 'nochange
 end function
 
 '
 
-function tGamemenu.init() as integer
-	return Base.init()
-end function
-function tGamemenu.before() as integer
-	return Base.before()
-end function
-function tGamemenu.after() as integer
-	return Base.after()
-end function
-function tGamemenu.finish() as integer
-	return Base.finish()
-end function
+constructor tGamemenu()
+end constructor
 
+destructor tGamemenu()
+end destructor		
 
-function mainmenuactions(ByRef iAction as integer, ByRef aText as String) as integer
-    If iAction=0 Then  
-		aText =__VERSION__+"/"
-		aText+="Load game/"
-		aText+="Start new game/"
-		aText+="Highscore/"
-		aText+="Manual/"
-		aText+="Configuration/"
-		aText+="Keybindings/"
-		aText+="Quit"
-		return 7 
+'function tGamemenu.init() as integer
+'	dim cmd as integer
+'	cmd=Base.init()
+'	? tModule.Status()
+'	return cmd 
+'end function
+'
+'function tGamemenu.before() as integer
+'	dim cmd as integer
+'	cmd=Base.before()
+''	? tModule.Status()
+'	return cmd 
+'end function
+'
+'function tGamemenu.after() as integer
+'	return Base.after()
+'end function
+'
+'function tGamemenu.finish() as integer
+'	return Base.finish()
+'end function
+
+function tGamemenu.DoProcess() as integer
+	dim iAction as short
+	iAction= this.e
+    If iAction=0 Then 
+    	ClearChoices()
+		AddChoice(__VERSION__)
+		AddChoice("Load game")
+		AddChoice("Start new game")
+		AddChoice("Highscore")
+		AddChoice("Manual")
+		AddChoice("Configuration")
+		AddChoice("Keybindings")
+		AddChoice("Quit")
+		return iLines 
     endif 
 
     If iAction=1 Then  
-    	if pFrom_savegame<>null then
+		if askyn("pStart_new_game") then ?"yes"
+    	if tGame.pFrom_savegame<>null then
 			LogOut("pFrom_savegame")
-    		iAction= pFrom_savegame(iAction)
+    		iAction= tGame.pFrom_savegame(iAction)
     	else 
 			LogOut("pFrom_savegame=null")
     		'iAction=-1
@@ -165,32 +277,32 @@ function mainmenuactions(ByRef iAction as integer, ByRef aText as String) as int
     elseif iAction=2 then
 		if tScreen.isGraphic then
 			tScreen.mode(0)
-			if askyn("pStart_new_game") then ?"yes"
+'			if askyn("pStart_new_game") then ?"yes"
 		else
 load_fonts()
 '			tScreen.res
 '			tScreen.set
 			DbgScreeninfo
-			if askyn("pStart_new_game") then ?"yes"
+'			if askyn("pStart_new_game") then ?"yes"
 			'uConsole.pressanykey
-			debugbreak
+'			debugbreak
 			'viewfile("readme.txt",256)
 			'uConsole.pressanykey
 			'tScreen.mode(0)
 		EndIf
 		'
-    	if pStart_new_game<>null then
+    	if tGame.pStart_new_game<>null then
 			LogOut("pStart_new_game")
-    		iAction= pStart_new_game(iAction)
+    		iAction= tGame.pStart_new_game(iAction)
     	else 
 			LogOut("pStart_new_game=null")
     		'iAction=-1
     	EndIf
     EndIf
     '
-	if (pPlay_game<>null) and (iAction=1 or iAction=2) then
+	if (tGame.pPlay_game<>null) and (iAction=1 or iAction=2) then
 		LogOut("pPlay_game")
-    	iAction= pPlay_game(iAction)
+    	iAction= tGame.pPlay_game(iAction)
 	else 
 		LogOut("pPlay_game=null")
 		'iAction=-1
@@ -204,9 +316,10 @@ load_fonts()
     elseif iAction=4 Then viewfile("readme.txt",256)
     elseif iAction=5 Then configuration()
     elseif iAction=6 Then keybindings
-	elseif iAction=7 Then return 1
-	elseif iAction=-27 Then iAction=7    ' esc becomes last choice
-    EndIf
+	elseif iAction=7 Then return -1
+	elseif iAction=-27 Then loca=7    ' esc becomes last choice
+	EndIf
+	'DbgPrint("return 0")	
     return 0 'stay
 	
 '		if key="8" then
@@ -246,53 +359,45 @@ load_fonts()
 '#endif
 End Function
 
-function mainmenu(a as integer) as integer
+function tGamemenu.mainmenu(a as integer=0) as integer
+DbgPrint(a)
 	dim key as string
 	dim no_key as string
-	dim aText as string
 	dim iLines as integer
-    while (uConsole.Closing=0)
-    	if (a=0) and (iLines=0) then
-    		iLines=mainmenuactions(a,aText)
-    		if iLines<0 then return iLines		'needs choice? 0 means, just show title.
-    		iLines += 3							'choices+title+top'n'bottom rows= +3 == 10 total
-    	elseif a<0 then							'esc makes last choice the default choice 
-			a=iLines-2
-			tGraphics.iBg=0
-		EndIf
-		if tGraphics.iBg=0 then				 	'use a random picture the first time round
-			tGraphics.Randombackground()
-		EndIf
-		if a=0 then a=1							'first choice by default 
+	dim j as integer
 
-		LogOut("_lines,_fh2,_fh1 " &_lines &", " &_fh2 &", " &_fh1 &";" &a)
-		if _fh1>0 then
-	        a=textmenu(aText,,40,_lines-iLines*_fh2/_fh1,,1,,a)
-		else
-	        a=textmenu(aText,,40,_lines-iLines,,1,,a)
-		endif
-		
-		if mainmenuactions(a,aText)<>0 then exit while
-	wend
+	if (iLines=0) then
+		j=a
+		a=0
+		iLines=DoProcess()
+		a=j
+		if iLines<0 then return iLines		'needs choice? 0 means, just show title.
+		iLines += 3							'choices+title+top'n'bottom rows= +3 == 10 total
+	EndIf
+	if tGraphics.iBg=0 then				 	'use a random picture the first time round
+		tGraphics.Randombackground()
+	EndIf
+	if a=0 then a=1							'first choice by default 
+	LogOut("_lines,_fh2,_fh1 " &_lines &", " &_fh2 &", " &_fh1 &";" &a)
+
+    x= 40
+	if _fh1>0 then
+	    y= _lines-iLines*_fh2/_fh1
+	else
+	    y= _lines-iLines
+	endif
+    markesc= 1
+    loca= a
+	a= menu()
     return a
 End function
 
-function run(iAction as Integer) as Integer
-	?"function run(iAction as Integer) as Integer"
-    while (uConsole.Closing=0) and (iAction=0)
-	    iAction= mainmenu(iAction)
-    wend
-	'Pressanykey
-	return iAction
-end function
-
-
 #endif'main
-end namespace'tGame
+
 
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: tGame -=-=-=-=-=-=-=-
-	tModule.register("tGame",@tGame.init()) ',@tGame.load(),@tGame.save())
+	tModule.register("tGame",@tGame.init()) 'this sets the module-run-method to tGame.run() yeah. 
 #endif'main
 
 #ifdef test

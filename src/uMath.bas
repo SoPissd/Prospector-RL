@@ -52,7 +52,7 @@ End Type
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tMath -=-=-=-=-=-=-=-
 
-declare function urn(min as short, max as short,mult as short,bonus as short) as short 
+declare function urn(sMin as short, sMax as short,mult as short,bonus as short) as short  
 declare function round_nr(i as single,c as short) as single
 declare function round_str(i As Double,c As Short) As String
 declare function find_low(list() as short,last as short,start as short=1) as short
@@ -137,14 +137,14 @@ Property _sym_matrix.Val(xy As vector,v As Integer)
 End Property
 
 
-function urn(min as short, max as short,mult as short,bonus as short) as short 
+function urn(sMin as short, sMax as short,mult as short,bonus as short) as short 
     dim as short values(1024),v,st,i,j,e,f,r
-    if min>max then 
+    if sMin>sMax then 
         st=-1
     else
         st=1
     endif
-    for i=min to max step st
+    for i=sMin to sMax step st
         e+=1
         for j=1 to e
             f+=1
