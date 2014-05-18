@@ -296,4 +296,6 @@ end function
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tPng -=-=-=-=-=-=-=-
+#undef test
+
 #endif'test

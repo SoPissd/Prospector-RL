@@ -158,6 +158,12 @@ end namespace
 #endif
 
 
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tRng -=-=-=-=-=-=-=-
+	tModule.register("tRng",@tRng.init(),@tRng.load(),@tRng.save())
+#endif'main'test
+
+
 #ifdef main
 
 'Returns a random short
@@ -165,8 +171,11 @@ function rnd_range(first As Integer, last As Integer) As Integer
     return tRng.rng.uRange(first, last)
 End function
 
+#endif'main
 
-#else 'rng_test
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tRng -=-=-=-=-=-=-=-
+#undef test
 
 #include once "string.bi"
 sub test()
@@ -220,13 +229,5 @@ sub main()
 	?"done"
 End Sub
 main()
-#endif'else if main
 
-#if (defined(main) or defined(test))
-'      -=-=-=-=-=-=-=- INIT: tRng -=-=-=-=-=-=-=-
-	tModule.register("tRng",@tRng.init(),@tRng.load(),@tRng.save())
-#endif'main
-
-#ifdef test
-#print -=-=-=-=-=-=-=- TEST: tRng -=-=-=-=-=-=-=-
 #endif'test

@@ -101,4 +101,5 @@ end function
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tIndex -=-=-=-=-=-=-=-
+#undef test
 #endif'test

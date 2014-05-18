@@ -169,4 +169,5 @@ end namespace
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: version -=-=-=-=-=-=-=-
+#undef test
 #endif'test

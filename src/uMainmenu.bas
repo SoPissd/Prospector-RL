@@ -453,4 +453,5 @@ end function
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: uMenu -=-=-=-=-=-=-=-
+#undef test
 #endif'test

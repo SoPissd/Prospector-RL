@@ -275,13 +275,16 @@ end function
 '
 End Namespace
 
-#ifdef main
-	tModule.Register("tFile",@tFile.Init())
-#endif		
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tFile -=-=-=-=-=-=-=-
+	tModule.register("tFile",@tFile.init()) ',@tFile.load(),@tFile.save())
+#endif'main
+
 
 #ifdef test
-#print "tFile testing"
+#print -=-=-=-=-=-=-=- TEST: tFile -=-=-=-=-=-=-=-
 #undef test
+#print "tFile testing"
 #include "uScreen.bas"
 #include "uColor.bas"
 #include "uUtils.bas"
@@ -310,18 +313,6 @@ function ttest() as Integer
 	kill fn
 	return uConsole.Pressanykey()	
 End Function
+
 ttest()
-#endif 
-#define cut2bottom
-#endif'main
-
-#if (defined(main) or defined(test))
-'      -=-=-=-=-=-=-=- INIT: tFile -=-=-=-=-=-=-=-
-	tModule.register("tFile",@tFile.init()) ',@tFile.load(),@tFile.save())
-#endif'main
-
-#ifdef test
-#print -=-=-=-=-=-=-=- TEST: tFile -=-=-=-=-=-=-=-
-? "test"
-sleep
 #endif'test

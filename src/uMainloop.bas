@@ -248,6 +248,7 @@ End Function
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: uMainloop -=-=-=-=-=-=-=-
+#undef test
 '	dim shared as uMainloop.tMainloopParams aParams
 	
 	function keypress(aKey as string) as Integer

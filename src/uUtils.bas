@@ -367,6 +367,7 @@ end function
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tUtils -=-=-=-=-=-=-=-
+#undef test
 ?"TEST: tUtils"
 
 '	const FilenameSlashOk = "/"		'ok on windows and linux

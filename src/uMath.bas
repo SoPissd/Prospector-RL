@@ -462,4 +462,5 @@ end function
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tMath -=-=-=-=-=-=-=-
+#undef test
 #endif'test

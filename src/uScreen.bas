@@ -116,13 +116,13 @@ declare function loc(iRow As Short=0,iCol As Short=0,aText as string="") As Shor
 declare function xy(iCol As Short=0,iRow As Short=0,aText as string="") As Short
 
 declare function col(fg As Short,bg As Short=0) As Short
-declare function rgbcol(r As Short,g As Short,b As Short) As integer 'sets fg to rgb, bg to 0
+declare function rgbcol(r As Short=255,g As Short=255,b As Short=255) As integer 'sets fg to rgb, bg to 0
 
 declare sub pushpos()		'remember and restore console cursor.  with plenty stack.
 declare sub poppos()
 
 declare sub drawfx(df_x as integer=0,df_y as integer=0)
-declare sub draws(ds_x as integer,ds_y as integer,ds_text as string,ds_font as string,aProc as DrawStringCustom)
+declare sub draws(ds_x as integer,ds_y as integer,ds_text as string,ds_font as string="",aProc as DrawStringCustom=null)
 declare sub draw1c(ds_x as integer,ds_y as integer,ds_text as string) ' font1 @_col 
 declare sub draw2c(ds_x as integer,ds_y as integer,ds_text as string) ' font2 @_col 
 
@@ -169,7 +169,7 @@ function col(fg As Short,bg As Short=0) As Short
 	return 0
 End Function
 
-function rgbcol(r As Short,g As Short,b As Short) As integer
+function rgbcol(r As Short=255,g As Short=255,b As Short=255) As integer 'sets fg to rgb, bg to 0
     if isGraphic= 0 then return 0 
 	dim i as Integer
 	i=(r shl 16)+(g shl 8)+(b)
@@ -234,9 +234,14 @@ sub drawfx(df_x as integer=0,df_y as integer=0)
 	dsy= df_y: if dsy<1 then dsy=1
 End Sub
 
-sub draws(ds_x as integer,ds_y as integer,ds_text as string,ds_font as string,aProc as DrawStringCustom)
+sub draws(ds_x as integer,ds_y as integer,ds_text as string,ds_font as string="",aProc as DrawStringCustom=null)
 	'Draw String ( ds_x , ds_y ), ds_text
-	Draw String (ds_x*dsx,ds_y*dsy),	ds_text,,ds_font,custom,@aProc
+	if ds_font="" then
+		Draw String (ds_x*dsx,ds_y*dsy),	ds_text
+	else
+		Draw String (ds_x*dsx,ds_y*dsy),	ds_text,,ds_font,custom,@aProc
+	EndIf
+
 End sub
 
 sub draw1c(ds_x as integer,ds_y as integer,ds_text as string)
@@ -261,4 +266,15 @@ end namespace
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tScreen -=-=-=-=-=-=-=-
+#undef test
+#include "file.bi"
+#include "uFile.bas"
+#include "uColor.bas"
+#include "uConsole.bas"
+
+tScreen.res
+tScreen.rgbcol()
+tScreen.draws( 20,20,"OK!")
+uConsole.pressanykey
+
 #endif'test

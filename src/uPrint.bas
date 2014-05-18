@@ -298,4 +298,5 @@ end function
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tPrint -=-=-=-=-=-=-=-
+#undef test
 #endif'test

@@ -156,4 +156,5 @@ end namespace'tGraphics
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tGraphics -=-=-=-=-=-=-=-
+#undef test
 #endif'test

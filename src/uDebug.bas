@@ -188,6 +188,8 @@ end namespace'tDebug
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tDebug -=-=-=-=-=-=-=-
+#undef test
+
 #endif'test
 
 

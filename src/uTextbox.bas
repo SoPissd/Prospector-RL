@@ -83,6 +83,7 @@ end function
 function textbox(text as string,x as short,y as short,w as short,_
     fg as short=11, bg as short=0,pixel as byte=0,byref op as short=0,byref offset as short=0) as short
     'op=1 only count lines, don't print
+
     dim as short lastspace,tlen,p,wcount,lcount,xw,a,longestline,linecount,maxlines,blocks
     dim words(6023) as string
     dim addt as string
@@ -93,6 +94,9 @@ function textbox(text as string,x as short,y as short,w as short,_
         y=y*_fh1
     endif
     maxlines=(20*_fh1-y)/_fh2
+    
+DbgPrint(x &" " &y &" " &maxlines)
+    
     'if len(text)<=w then addt(0)=text
     for p=0 to len(text)
         if mid(text,p,1)="{" or mid(text,p,1)="|" then wcount+=1
@@ -194,12 +198,12 @@ end function
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tTextbox -=-=-=-=-=-=-=-
-
+#undef test
 'textbox(text as string,x as short,y as short,w as short,_
 '    fg as short=11, bg as short=0,pixel as byte=0,byref op as short=0,byref offset as short=0) as short
     
     
-dim text as string		= "kslf jlekrfj ksdfjvlkdsajfklj fklvj lekrtioeufidclvj;lgk ae;rtl d;flk;dlft o"
+dim text as string		= "abcde fgh ijkl mnopq rstu vwxyz ab cde fg h ijklmnopq rs tu vwxyzabcde fgh ijkl mnopq rstu vwxyz"
 dim x as short			= 10
 dim y as short			= 10
 dim w as short			= 16
@@ -210,6 +214,11 @@ dim pixel as byte			= 0
 'dim byref offset as short	= 0
     
 'textbox(text,x,y,w,fg,bg,pixel),op,offset) ',fg,bg,pixel) ,op,offset)
+
+tScreen.res
+tScreen.rbgcol(255,255,255)
+? tModule.Status()
+?
 
 textbox(text,x,y,w) 
 

@@ -105,4 +105,6 @@ end function
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tTime -=-=-=-=-=-=-=-
+#undef test
+
 #endif'test

@@ -462,6 +462,7 @@ End Namespace
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: uConsole -=-=-=-=-=-=-=-
+#undef test
 'redo with uMainloop for testing
 ''	dim shared as uConsole.tMainloopParams aParams
 '	

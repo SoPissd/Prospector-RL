@@ -273,4 +273,5 @@ end function
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tAstar -=-=-=-=-=-=-=-
+#undef test
 #endif'test

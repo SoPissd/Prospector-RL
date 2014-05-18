@@ -154,4 +154,6 @@ end namespace'uSound
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tSound -=-=-=-=-=-=-=-
+#undef test
+
 #endif'test

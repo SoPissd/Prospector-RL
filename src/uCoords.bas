@@ -240,4 +240,6 @@ end function
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tCoords -=-=-=-=-=-=-=-
+#undef test
+
 #endif'test

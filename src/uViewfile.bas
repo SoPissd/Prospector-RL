@@ -186,5 +186,6 @@ end function
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tViewfile -=-=-=-=-=-=-=-
+#undef test
 	Viewfile(tVersion.ErrorlogFilename())	
 #endif'test

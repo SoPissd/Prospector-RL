@@ -71,6 +71,8 @@ tModule.register("tDefines",@tDefines.init()) ',@tDefines.load(),@tDefines.save(
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tDefines -=-=-=-=-=-=-=-
+#undef test
+
 ? "TRUE", TRUE
 ? "FALSE", FALSE
 ? "NULL", NULL
