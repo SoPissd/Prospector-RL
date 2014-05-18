@@ -97,7 +97,7 @@ end namespace'nuMenu
 
 
 function  tMainmenu.DoProcess() as integer
-	return 0
+	return e
 End Function
 
 
@@ -307,8 +307,9 @@ function tMenuCore.init() as integer
     b=0
     for a=0 to c
         shrt(a)=chr(96+b+a)
-        if uConsole.getdirection(lcase(shrt(a)))>0 _ 'or getdirection(lcase(shrt(a)))>0 _
-        or val(shrt(a))>0 then 'or ucase(shrt(a))=ucase(key_awayteam) then
+        if uConsole.getdirection(lcase(shrt(a)))>0 or val(shrt(a))>0 then 
+        'or getdirection(lcase(shrt(a)))>0 _
+         'or ucase(shrt(a))=ucase(key_awayteam) then
             do 
                 b+=1
                 shrt(a)=chr(96+b+a)
@@ -322,21 +323,18 @@ function tMenuCore.init() as integer
         lines(a)=lines(a)&space(longest-len(lines(a)))
     next
     
-'	if tScreen.isGraphic then
-	    hw=_mwx*_fw1-((longest)*_fw2)-(3+x)*_fw1
-	    if _fw2>0 then
-		    hw=hw/_fw2
-		else
-		    hw=1'hw/_fw2
-	    EndIf
-'LogOut("hw=" & hw &", _mwx=" &_mwx &", longest=" &longest )
-'LogOut( "hw=" &hw &", _mwx=" &_mwx &", longest=" &longest )
-	    
-	    for a=0 to c
-	        longesthelp=1
-	        l2=textbox(helps(a),ofx,2,hw,15,1,,longesthelp)
-	        if l2>longestbox then longestbox=l2
-	    next
+    hw=_mwx*_fw1-((longest)*_fw2)-(3+x)*_fw1
+    if _fw2>0 then
+	    hw=hw/_fw2
+	else
+	    hw=1'hw/_fw2
+    EndIf
+    
+    for a=0 to c
+        longesthelp=1
+        l2=textbox(helps(a),ofx,2,hw,15,1,,longesthelp)
+        if l2>longestbox then longestbox=l2
+    next
 	    
 	if tScreen.isGraphic then
 	    if longestbox>20 or (longestbox/hw)>2 or hw<8 then
@@ -352,7 +350,6 @@ function tMenuCore.init() as integer
 	    'if hw>longesthelp then hw=longesthelp
 	    ofx=x+4+longest
 	EndIf
-	'LogOut("hw=" & hw & ", ofx=" & ofx)
     
     e=0
     return e

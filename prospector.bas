@@ -4,15 +4,15 @@
 'dont mess up "fbc -d options"  
 #undef buildjustcore
 #undef buildjustbasic
-#undef makesound
-#undef makezlib
+#undef makesound				'active or blank wrappers for sound-dll
+#undef makezlib					'active or blank wrappers for zlib and png. the linked library has no debug symbols and delays loading the debugger. 
 '
 'set needed flags
 '#define buildjustcore
-'#define buildjustbasic
+#define buildjustbasic
 '
-'options
-#define makesound   
+'SET OPTIONS
+'#define makesound   
 '#define makezlib 
 '
  
@@ -42,7 +42,7 @@
 	
 namespace tMain
 #ifndef buildjustcore
-	#print Make application
+	#print Make-application
 	function init(iAction as integer) as Integer
 		Print tModule.status()
 		Print
@@ -50,7 +50,7 @@ namespace tMain
 		return tModule.Run(iAction)
 	end function
 #else
-	#print Make core
+	#print Make-core
 	function init(iAction as integer) as Integer
 		Print tModule.status()
 		Print

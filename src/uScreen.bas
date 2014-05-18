@@ -86,10 +86,11 @@ const as integer GFX_ALWAYS_ON_TOP			= &h20
 
 declare function mode(iMode as integer=0) As Short
 declare function set(fg As Short=1,bg As Short=1) As Short
-declare function loc(iRow As Short=0,iCol As Short=0,aText as string="") As Short
-declare function xy(iCol As Short=0,iRow As Short=0,aText as string="") As Short
 declare function res(flags as integer= GFX_WINDOWED ) As Short
 declare function size(irows As Short=25,icols As Short=80) As Short
+
+declare function loc(iRow As Short=0,iCol As Short=0,aText as string="") As Short
+declare function xy(iCol As Short=0,iRow As Short=0,aText as string="") As Short
 
 declare function col(fg As Short,bg As Short=0) As Short
 declare function rgbcol(r As Short,g As Short,b As Short) As integer 'sets fg to rgb, bg to 0

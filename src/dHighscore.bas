@@ -1,12 +1,4 @@
 'tHighscore.
-'
-'defines:
-'income_expenses_html=0, income_expenses=1, space_mapbmp=0, get_death=0,
-', death_text=0, explper=0, exploration_text=0, ship_table=0,
-', planet_artifacts_table=0, crew_table=0, score=5,
-', exploration_text_html=0, acomp_table=0, postmort_html=0,
-', post_mortemII=0, high_score=1, death_message=1
-'
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -100,49 +92,81 @@ function high_score(iBg as short, text as string) as short
     endif
     'display hScore table
     offset=rank
-    set__color( 11,0)
 
     cls
-    tGraphics.background()
-    
-    yo=(tScreen.y-22*_fh2)/2
-    xo=(tScreen.x-80*_fw2)/2
-    set__color( 0,0)
-    for a=yo/2-_fh2 to tScreen.y-yo/2+_fh2 step _fh2-1
-        draw_string (xo,a,space(80),font2,_col)
-    next
-    set__color( 15,0)
-    draw_string (2*_fw2+xo,yo/2,"10 MOST SUCCESSFUL MISSIONS",Titlefont,_col)
-    
-    for a=1 to 10
-        if a=rank then 
-            set__color( 15,0)
-        else
-            set__color( 11,0)
-        endif
-        sp=73-len(a &".)")-len(trim(hScore(a+off2).desig))-len(hScore(a+off2).points &" pts.")
-        draw_string (2*_fw2+xo,yo+(a*2)*_fh2, a & ".) " & trim(hScore(a+off2).desig) & ", "  & space(sp)&credits( hScore(a+off2).points) &" pts." ,font2,_col)
-        if a=rank then
-            set__color( 14,0)
-        else
-            set__color( 7,0)
-        endif
-        draw_string (2*_fw2+xo,yo+(a*2+1)*_fh2, trim(hScore(a+off2).death),font2,_col)
-    next
+    tGraphics.background()    
     set__color( 11,0)
-    if rank>10 then draw_string (2*_fw2+xo,tScreen.y-yo, hScore(10).points &" Points required to enter highscore. you scored "&s &" Points",font2,_col)
-    draw_string (2*_fw2+xo,tScreen.y-yo/2, "Esc to continue",font2,_col)
+    
+    if tScreen.isGraphic then
+	    yo=(tScreen.y-22*_fh2)/2
+	    xo=(tScreen.x-80*_fw2)/2
+	    for a=yo/2-_fh2 to tScreen.y-yo/2+_fh2 step _fh2-1
+	        draw_string (xo,a,space(80),font2,_col)
+	    next
+	    set__color( 15,0)
+	    draw_string (2*_fw2+xo,yo/2,"10 MOST SUCCESSFUL MISSIONS",Titlefont,_col)
+	    
+	    for a=1 to 10
+	        if a=rank then 
+	            set__color( 15,0)
+	        else
+	            set__color( 11,0)
+	        endif
+	        sp=73-len(a &".)")-len(trim(hScore(a+off2).desig))-len(hScore(a+off2).points &" pts.")
+	        
+	        draw_string (2*_fw2+xo,yo+(a*2)*_fh2, a & ".) " & trim(hScore(a+off2).desig) & ", "  & space(sp)&credits( hScore(a+off2).points) &" pts." ,font2,_col)
+	        
+	        if a=rank then
+	            set__color( 14,0)
+	        else
+	            set__color( 7,0)
+	        endif
+	        draw_string (2*_fw2+xo,yo+(a*2+1)*_fh2, trim(hScore(a+off2).death),font2,_col)
+	    next
+	    set__color( 11,0)
+	    if rank>10 then draw_string (2*_fw2+xo,tScreen.y-yo, hScore(10).points &" Points required to enter highscore. you scored "&s &" Points",font2,_col)
+	    draw_string (2*_fw2+xo,tScreen.y-yo/2, "Esc to continue",font2,_col)
+    else
+	    yo=(tScreen.y-22)/2
+	    xo=(tScreen.x-80)/2
+	    for a=yo/2-_fh2 to tScreen.y-yo/2+_fh2 step _fh2-1
+	        draw_string (xo,a,space(80),font2,_col)
+	    next
+	    set__color( 15,0)
+	    tScreen.xy(2+xo,yo/2,"10 MOST SUCCESSFUL MISSIONS")',Titlefont,_col)
+	    
+	    for a=1 to 10
+	        if a=rank then 
+	            set__color( 15,0)
+	        else
+	            set__color( 11,0)
+	        endif
+	        sp=73-len(a &".)")-len(trim(hScore(a+off2).desig))-len(hScore(a+off2).points &" pts.")
+	        
+	        tScreen.xy(2+xo,yo+(a*2), a & ".) " & trim(hScore(a+off2).desig) & ", "  & space(sp)&credits( hScore(a+off2).points) &" pts.")',font2,_col)
+	        
+	        if a=rank then
+	            set__color( 14,0)
+	        else
+	            set__color( 7,0)
+	        endif
+	        tScreen.xy(2+xo,yo+(a*2+1), trim(hScore(a+off2).death))',font2,_col)
+	    next
+	    set__color( 11,0)
+	    if rank>10 then tScreen.xy(2+xo,tScreen.y-yo, hScore(10).points &" Points required to enter highscore. you scored "&s &" Points")',font2,_col)
+	    tScreen.xy(2+xo,tScreen.y-yo/2, "Esc to continue")',font2,_col)
+    EndIf
+
     no_key=uConsole.keyinput(key__esc)'    keyin(key__esc)
+
+
     'save highscore table
-    f=freefile
-    
-    
+    f=freefile    
     'open highscore table
     in=1
     open "highscore" for binary as f
       for a=1 to 10  
-        put #f,,hScore(a)
-        
+        put #f,,hScore(a)        
       next
     close f
     cls

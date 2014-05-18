@@ -24,7 +24,9 @@
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tGameinit -=-=-=-=-=-=-=-
 
+declare function Reset_game(iAction as integer) as Integer
 declare function clear_gamestate() As Short
+
 declare function Initgame() as integer
 
 'private function setglobals() as short
@@ -34,14 +36,21 @@ declare function Initgame() as integer
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tGameinit -=-=-=-=-=-=-=-
 
+
+function Reset_game(iAction as integer) as Integer
+	player.dead=0
+    clear_gamestate()
+    loadgame()
+    tVersion.gamerunning=0
+End Function
+
+
 namespace tGameinit
 function init(iAction as integer) as integer
+	tGame.pReset_game= @Reset_game
 	return 0
 end function
 end namespace'tGameinit
-
-
-#define cut2top
 
 
 function clear_gamestate() As Short

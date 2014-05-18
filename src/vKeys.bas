@@ -250,9 +250,12 @@ function keybindings(allowed as string="") as short
     dim as _cords cc,ncc
     dim as short di
     dim as string keys(99),nkeys(99),varn(99),exl(99),coml(99),comn(99),comdes(99),text,newkey,text2
+    
+    
     if not fileexists("keybindings.txt") then
         save_keyset
     endif
+    
     f=freefile
     open "keybindings.txt" for input as #f
     while not eof(f)
@@ -275,10 +278,11 @@ function keybindings(allowed as string="") as short
         endif
     wend
     close #f
+    
+    
     f=freefile
     open "data/commands.csv" for input as #f
-    a=0
-    cls
+    a=0 
     while not eof(f)
        line input #f,text2
 
@@ -287,6 +291,11 @@ function keybindings(allowed as string="") as short
        comdes(a)=right(text2,len(text2)-instr(text2,";"))
     wend
     close #f
+    
+
+    cls
+    set__color( 11,0)
+    
     do
         for a=1 to lk
             colflag(a)=0
@@ -311,7 +320,7 @@ function keybindings(allowed as string="") as short
         if c>lk then c=1
 
         if varn(c)="" then cc=ncc
-        tScreen.set(0)
+'        tScreen.set(0)
         set__color( 15,0)
         draw string ((tScreen.x-12*_fw2)/2,1*_fh2),"Keybindings:",,FONT2,custom,@_col
         for x=1 to 4
@@ -389,7 +398,7 @@ function keybindings(allowed as string="") as short
         if varn(c)="" then o=c
 
         if no_key=key__enter and keys(c)<>"" then
-            tScreen.set(1)
+'            tScreen.set(1)
             draw string ((2*_fw2)+(cc.x-1)*25*_fw2,(cc.y+2)*_fh2),space(25),,FONT2,custom,@_col
             draw string ((2*_fw2)+(cc.x-1)*25*_fw2,(cc.y+2)*_fh2),exl(c),,FONT2,custom,@_col
             newkey=gettext(2+(cc.x-1)*25+len(exl(c)),cc.y+2,3,"")

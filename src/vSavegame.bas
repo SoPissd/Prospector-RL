@@ -39,11 +39,12 @@ declare function savegame(crash as short=0) as short
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tSavegame -=-=-=-=-=-=-=-
-declare function from_savegame(iBg as integer) As integer
+declare function loadgame(filename as string="empty.sav") as short
+declare function loadsavegame(iBg as integer) As integer
 
 namespace tSavegame
 function init(iAction as integer) as integer
-	tGame.pFrom_savegame= @from_savegame
+	tGame.pFrom_savegame= @loadsavegame
 	return 0
 end function
 end namespace'tSavegame
@@ -168,7 +169,8 @@ function savegame_crashfilename(fname as String, ext as String) as String
     return fname & j & ext		
 End function
 
-function savegame(crash as short=0) as short
+function savegame() as short
+	dim crash as short
     dim back as short
     dim a as short
     dim b as short
@@ -181,12 +183,16 @@ function savegame(crash as short=0) as short
     dim cl as string
     dim unflags(lastspecial) as byte
     dim artifactstr as string*512
+    
+    crash= tError.ErrorNr
 
     'Needed for compression
     dim as Integer dest_len, header_len
     dim as Ubyte Ptr dest
     dim filedata_string as string
     dim as short emptyshort
+    
+    '
     make_unflags(unflags())
     cl=player.h_sdesc
     names=player.desig
@@ -468,7 +474,7 @@ end function
 '
 '
 
-function load_game(filename as string) as short
+function loadgame(filename as string="empty.sav") as short
     dim from as short
     dim ship as _cords
     dim awayteam as _monster
@@ -786,7 +792,7 @@ function load_game(filename as string) as short
 end function
 
 
-function from_savegame(iBg as integer) As integer
+function loadsavegame(iBg as integer) As integer
     Dim As Short c
 	dim no_key as string
     c=count_savegames
@@ -797,7 +803,7 @@ function from_savegame(iBg as integer) As integer
         no_key=uConsole.keyinput() 
 '        no_key=keyin 
     Else
-        load_game(getfilename(iBg))
+        loadgame(getfilename(iBg))
         If player.desig="" Then 
         else
             player.dead=0

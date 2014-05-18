@@ -58,6 +58,7 @@ namespace tGame
 'without knowing anything about the context they exist in. 
 
 Dim as tActionmethod pStart_new_game
+Dim as tActionmethod pReset_game
 Dim as tActionmethod pFrom_savegame
 Dim as tActionmethod pPlay_game
 
@@ -279,7 +280,7 @@ function tGamemenu.DoProcess() as integer
 			tScreen.mode(0)
 '			if askyn("pStart_new_game") then ?"yes"
 		else
-load_fonts()
+			load_fonts()
 '			tScreen.res
 '			tScreen.set
 			DbgScreeninfo
@@ -303,6 +304,14 @@ load_fonts()
 	if (tGame.pPlay_game<>null) and (iAction=1 or iAction=2) then
 		LogOut("pPlay_game")
     	iAction= tGame.pPlay_game(iAction)
+    	'
+	    If (player.dead>0) and not (configflag(con_restart)=1 or player.dead=99) Then
+		  death_message(0)
+	    EndIf
+		if (tGame.pReset_game<>null) then
+			iAction= tGame.pReset_game(iAction)			
+		EndIf
+		'
 	else 
 		LogOut("pPlay_game=null")
 		'iAction=-1
@@ -316,11 +325,17 @@ load_fonts()
     elseif iAction=4 Then viewfile("readme.txt",256)
     elseif iAction=5 Then configuration()
     elseif iAction=6 Then keybindings
-	elseif iAction=7 Then return -1
+	elseif iAction=7 Then		
+    	player.dead=99
+		death_message(0,2600)
+		player.dead=0
+		if not tScreen.isGraphic then cls
+		return true
 	elseif iAction=-27 Then loca=7    ' esc becomes last choice
 	EndIf
+	
 	'DbgPrint("return 0")	
-    return 0 'stay
+    return false 'stay
 	
 '		if key="8" then
 '			DbgItemsCSV()

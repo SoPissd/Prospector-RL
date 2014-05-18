@@ -238,8 +238,11 @@ function configuration() as short
         next
         text=text &"/Exit"
         c=textmenu(text,,,,1)
+  		'DbgPrint(c)
+		'sleep
         select case c
-        case con_sound,con_captainsprite
+        case con_end,-1,-27 'Exit, do nothing
+		case con_sound,con_captainsprite
             configflag(c)+=1
             if configflag(c)>2 then configflag(c)=0
         case con_sound
@@ -276,7 +279,7 @@ function configuration() as short
         case con_gtmwx
             gt_mwx=getnumber(20,60,30)
             rlprint "Will be changed next time you start prospector."
-        case con_end,-1 'Exit, do nothing
+
         case else
             select case configflag(c)
             case 1
@@ -286,7 +289,7 @@ function configuration() as short
             end select
         end select
 
-    loop until c=con_end or c=-1
+    loop until (uConsole.Closing) or c=con_end or c=-1 or c=-27
 'fail    if tVersion.gamerunning=1 then SetCaptainsprite(configflag(con_captainsprite))
 '    screenshot(2)
     return save_config(oldtiles)

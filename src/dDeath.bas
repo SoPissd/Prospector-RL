@@ -51,11 +51,13 @@ function messages() as short
     ll=_lines*_fh1/_fh2
     set__color( 15,0)
     cls
+    tScreen.drawfx(0,_fh2)
     for a=1 to ll
         locate a,1
         set__color( dtextcol(a),0)
-        tScreen.draw2c(0,a*_fh2, displaytext(a))
+        tScreen.draw2c(0,a,displaytext(a))
     next
+    tScreen.drawfx(0,_fh2)
     no_key=uConsole.keyinput()
 '    no_key=keyin(,1)
     'cls
@@ -185,33 +187,48 @@ function death_message(iBg as short,iShowMS as integer=0) as short
     text=""
     
     if player.dead<99 then
-    if not fileexists("summary/"&player.desig &".png") then screenshot(3)
+    	if not fileexists("summary/"&player.desig &".png") then screenshot(3)
     EndIf 
     
-    cls
-    tGraphics.background()
-    
-    set__color( 12,0)
     text=death_text()
     text2=text
+    b=0
+    cls
+    set__color( 12,0)
     if text<>"" and player.dead<>98 then
-        set__color( 11,0)
-        
-        b=0
-        tx=tScreen.x/_fw1-10
-        while len(text)>tx
-            a=40
-            do 
-                a=a-1
-            loop until mid(text,a,1)=" "        
-            tScreen.drawtt(5*_fw1,(_lines*_fh1)/2-(4*_fh1)+b*(tScreen.y/15),left(text,a))
-            text=mid(text,a,(len(text)-a+1))
-            b=b+1
-        wend
-        'draw_string (5*_fw1,(_lines*_fh1)/2-(4*_fh1)+b*(tScreen.y/15),text,TITLEFONT,_tcol)
-        tScreen.drawtt(5*_fw1,(_lines*_fh1)/2-(4*_fh1)+b*(tScreen.y/15),text)',TITLEFONT,_tcol)
-        
-    endif
+	    if tScreen.isGraphic then
+		    tGraphics.background()
+	        set__color( 11,0)
+	        tx=tScreen.x/_fw1-10
+		    tScreen.drawfx(_fw1,_fh1)
+	        while len(text)>tx
+	            a=40
+	            do 
+	                a=a-1
+	            loop until mid(text,a,1)=" "        
+	            tScreen.drawtt(5,_lines/2-4+b,left(text,a))
+	'            tScreen.drawtt(5,_lines/2-4+b*(tScreen.y/15),left(text,a))
+	            text=mid(text,a,(len(text)-a+1))
+	            b=b+1
+	        wend
+	        'draw_string (5*_fw1,(_lines*_fh1)/2-(4*_fh1)+b*(tScreen.y/15),text,TITLEFONT,_tcol)
+	        tScreen.drawtt(5,_lines/2-4+b,text)
+	'        tScreen.drawtt(5*_fw1,(_lines*_fh1)/2-(4*_fh1)+b*(tScreen.y/15),text)',TITLEFONT,_tcol)
+		    tScreen.drawfx()        
+	    else
+	        tx=tScreen.x/_fw1-10
+	        while len(text)>tx
+	            a=40
+	            do 
+	                a=a-1
+	            loop until mid(text,a,1)=" "        
+	            tScreen.xy(5,_lines/2-4+b,left(text,a))
+	            text=mid(text,a,(len(text)-a+1))
+	            b=b+1
+	        wend
+			tScreen.xy(5,_lines/2-4+b,text)
+	    endif
+    EndIf
     
 	no_key=uConsole.aGetKey(iShowMS)
 

@@ -94,7 +94,7 @@ function Errorhandler() As integer
 	'to file
 	if tError.ErrorNr=0 and tError.ErrText="" then
 		if tModule.fErrOut>0 then
-			print #tModule.fErrOut,"All done."
+			'print #tModule.fErrOut,"All done."
 			close #tModule.fErrOut
 		endif
 		return 0
