@@ -27,7 +27,7 @@ type tGameloop extends tMainloop
 	'
 	' the non-override overrides:
 	declare function DoInitProc() as integer '
-	declare function DoConfirmClose() as integer 
+	declare function DoAbortClose() as integer 
 	declare function DoCmdProc() as integer 
 	declare function DoKeyProc() as integer 
 	declare function DoMouseProc() as integer 
@@ -205,8 +205,8 @@ function tGameloop.DoCmdProc() as integer
 	end select
 end function
 
-function tGameloop.DoConfirmClose() as integer
-	return 0 '- 0 to accept, else ignores the close signal
+function tGameloop.DoAbortClose() as integer
+	return false '- 0 to accept, else ignores the close signal
 end function
 
 function tGameloop.DoKeyProc() as integer

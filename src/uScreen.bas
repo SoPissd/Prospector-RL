@@ -70,6 +70,10 @@ namespace tScreen
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tScreen -=-=-=-=-=-=-=-
 
+dim shared dsx as integer=0		'draw-scale x,y used with tScreen.Draw..
+dim shared dsy as integer=0
+
+
 #ifndef GFX_WINDOWED
 const as integer GFX_WINDOWED				= &h00
 const as integer GFX_FULLSCREEN				= &h01
@@ -93,6 +97,7 @@ declare function rgbcol(r As Short,g As Short,b As Short) As integer 'sets fg to
 declare sub pushpos()		'remember and restore console cursor.  with plenty stack.
 declare sub poppos()
 
+declare sub drawfx(df_x as integer=0,df_y as integer=0)
 declare sub draws(ds_x as integer,ds_y as integer,ds_text as string,ds_font as string,aProc as DrawStringCustom)
 declare sub draw1c(ds_x as integer,ds_y as integer,ds_text as string) ' font1 @_col 
 declare sub draw2c(ds_x as integer,ds_y as integer,ds_text as string) ' font2 @_col 
@@ -200,21 +205,26 @@ End Sub
 	'[buffer,] [STEP] (x, y), text [,color [, font [, method [, (alpha|blender) [, parameter] ] ] ] ]
 	'(x, y), text [,color [, font [, method [, (alpha|blender) [, parameter] ] ] ] ]
 
+sub drawfx(df_x as integer=0,df_y as integer=0)
+	dsx= df_x: if dsx<1 then dsx=1
+	dsy= df_y: if dsy<1 then dsy=1
+End Sub
+
 sub draws(ds_x as integer,ds_y as integer,ds_text as string,ds_font as string,aProc as DrawStringCustom)
-	Draw String ( ds_x , ds_y ), ds_text
-	Draw String (ds_x,ds_y),ds_text,,ds_font,custom,aProc
+	'Draw String ( ds_x , ds_y ), ds_text
+	Draw String (ds_x*dsx,ds_y*dsy),	ds_text,,ds_font,custom,@aProc
 End sub
 
 sub draw1c(ds_x as integer,ds_y as integer,ds_text as string)
-	Draw String (ds_x,ds_y),ds_text,,FONT2,custom,@_col
+	Draw String (ds_x*dsx,ds_y*dsy),	ds_text,,FONT2,custom,@_col
 End sub
 
 sub draw2c(ds_x as integer,ds_y as integer,ds_text as string)
-	Draw String (ds_x,ds_y),ds_text,,FONT2,custom,@_col
+	Draw String (ds_x*dsx,ds_y*dsy),	ds_text,,FONT2,custom,@_col
 End sub
 
 sub drawtt(ds_x as integer,ds_y as integer,ds_text as string)	
-	Draw String (ds_x, ds_y), ds_text,,TITLEFONT,custom,@_tcol
+	Draw String (ds_x*dsx,ds_y*dsy),	ds_text,,TITLEFONT,custom,@_tcol
 End sub
 
 end namespace

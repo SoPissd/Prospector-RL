@@ -110,7 +110,7 @@ function Errorhandler() As integer
 		'to console
 		tScreen.mode(0)
 		tVersion.Errorscreen(tError.ErrText,ErrorLn=0)
-		uConsole.Pressanykey()		
+		'uConsole.Pressanykey()		
 	EndIf
 	return 0
 End function

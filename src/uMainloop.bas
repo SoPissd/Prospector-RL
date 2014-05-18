@@ -80,7 +80,7 @@ type tMainloop Extends Object
 	'
 	' the non-virtual virtuals:
 	declare virtual function DoInitProc() as integer
-	declare virtual function DoConfirmClose() as integer
+	declare virtual function DoAbortClose() as integer
 	declare virtual function DoCmdProc() as integer
 	declare virtual function DoKeyProc() as integer
 	declare virtual function DoMouseProc() as integer
@@ -170,8 +170,8 @@ End Destructor
 function tMainloop.DoInitProc as integer
 	return iCmd '- interprets -1 to abort
 End Function
-function tMainloop.DoConfirmClose as integer
-	return 0 '- 0 to accept, else ignores the close signal
+function tMainloop.DoAbortClose as integer
+	return false '- 0 to accept, else ignores the close signal
 End Function
 function tMainloop.DoCmdProc as integer
 	return 0' done.   iCmd ' next no-command
@@ -197,7 +197,7 @@ End Function
 
 function tMainloop.KeyProc as integer
 	aKey=uConsole.aInKey()  			
-	if uConsole.Closing<>0 and DoConfirmClose<>0 then uConsole.Closing=0
+	if uConsole.Closing and DoAbortClose then uConsole.Closing=false
 	return iCmd 'nochange
 End Function
 
@@ -210,14 +210,14 @@ function tMainloop.run(iAction as Integer) as Integer
 	iCmd=DoInitProc
 ?"	iCmd=DoInitProc",iCmd
 
-   	while uConsole.Closing=0 and (iCmd<> -1)
+   	while (not uConsole.Closing) and (iCmd<> -1)
 		
 		' icmd=0 	- find something to do, idle as needed
 		' icmd=-1 	- abort the main loop
 		
    		if iCmd=0 then
    			iCmd=KeyProc()	'sets aKey
-			if uConsole.Closing=1 then continue while
+			if uConsole.Closing then continue while
    		EndIf
 
    		if iCmd=0 and aKey<>"" then
@@ -235,7 +235,7 @@ function tMainloop.run(iAction as Integer) as Integer
 		EndIf
 		'
    	Wend
-   	return uConsole.Closing
+   	return iCmd'uConsole.Closing
 End Function
 
 

@@ -161,7 +161,9 @@ function tMenuCore.before() as integer
     'endif
 	if tScreen.isGraphic then
 	    set__color( 15,0)
-	    tScreen.draw2c(x*_fw1, y*_fh1, lines(0)&space(3))    
+'	    tScreen.drawfx(_fw1,_fh1)    
+	    tScreen.drawfx(_fw2,_fh2)    
+	    tScreen.draw2c(x,y,lines(0)&space(3))    
 	    for i=1 to c
 	        if loca=i then 
 	            if hfl=1 and loca<=c and helps(i)<>"" then blen=textbox(helps(i),ofx,2,hw,15,1,,,offset)
@@ -169,8 +171,9 @@ function tMenuCore.before() as integer
 	        else
 	            set__color( 11,0)
 	        endif
-	        tScreen.draw2c(x*_fw1,y*_fh1+i*_fh2,shrt(i) &") "& lines(i))
+	        tScreen.draw2c(x,y+i,shrt(i) &") "& lines(i))
 	    next
+	    tScreen.drawfx()    
 	else
 		tScreen.pushpos()
 	    tScreen.xy(x,y,lines(0)&space(3))    
@@ -201,12 +204,14 @@ function tMenuCore.after() as integer
 	dim as integer i
 	dim as integer iDir
 	if tScreen.isGraphic then
+	    tScreen.drawfx(_fw2,_fh2)    
 	    if hfl=1 then 
 	        for i=1 to blen
 	            set__color( 0,0)
-	            tScreen.draw2c(ofx*_fw1,y*_fh1+(i-1)*_fh2, space(hw))
+	            tScreen.draw2c(ofx,y+i-1,space(hw))
 	        next
 	    endif
+	    tScreen.drawfx()    
 	else
 	    if hfl=1 then 
 			tScreen.pushpos()
@@ -362,9 +367,11 @@ function tMenuCore.finish() as integer
     
 	if tScreen.isGraphic then
 	    set__color( 0,0)
+	    tScreen.drawfx(_fw2,_fh2)    
+	    tScreen.drawfx()    
 	    for a=0 to c
 	        'locate y+a,x
-	        tScreen.draw2c(x*_fw1,y*_fh1+a*_fh2, space(longest))
+	        tScreen.draw2c(x,y+a,space(longest))
 	    next
 '	    set__color( 11,0)
 '	    cls
@@ -386,7 +393,7 @@ End Function
 function tMenuCore.menu() as integer
 	dim bGraphic as Short
 	bGraphic=not tScreen.isGraphic
-    while (uConsole.Closing=0) and (e=0)	
+    while (not uConsole.Closing) and (e=0)	
     	'changed modes?
     	if bGraphic<>tScreen.isGraphic then
 			bGraphic=tScreen.isGraphic 		

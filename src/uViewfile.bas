@@ -1,8 +1,5 @@
 'tViewfile.
 '
-'defines:
-'Viewfile=0
-'
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -17,18 +14,17 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tViewfile -=-=-=-=-=-=-=-
-
 #undef intest
 #define test
 #endif'test
+
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 #endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tViewfile -=-=-=-=-=-=-=-
-
-
-'private function Viewfile(filename as string,nlines as integer=4096) as short
+declare function ViewArray(lines() as string,nlines as integer) as integer
+declare function Viewfile(filename as string,nlines as integer=2048) as integer
 
 #endif'head
 #ifdef main
@@ -40,9 +36,12 @@ function init(iAction as integer) as integer
 end function
 end namespace'tViewfile
 
-'type tLines() as string   
-
-function ViewArray(lines() as string,nlines as integer) as short
+function ViewArray(lines() as string,nlines as integer) as integer
+	'dbgprint(offset)
+	'dbgprint(nlines)
+	'dbgprint(height)
+	'dbgprint(tScreen.isGraphic)
+	'uconsole.pressanykey
     dim as Integer height, pheight, xwidth, i, di
     dim as Integer offset, offsetx 
     dim as Integer iwid, longest 
@@ -60,10 +59,10 @@ function ViewArray(lines() as string,nlines as integer) as short
     next
     
     height=(width() shr (4*4)) ' gives screen/console height
-    if height>25 then height=25
+    if (tScreen.isGraphic=0) and (height>25) then height=25
     xwidth=(width() and &hFFFF)
     if nlines-height<0 then
-   		pheight=nlines
+   		pheight=nlines-1
     else
     	pheight =height-1
     EndIf
@@ -71,8 +70,6 @@ function ViewArray(lines() as string,nlines as integer) as short
     'set__color( 15,0)
     do
         cls
-'ErrLog("height=" & height)
-'?"pheight=" & pheight           
         set__color( 11,0)
         for i=0 to pheight-1
         	if i+offset>ubound(col) then exit for
@@ -84,7 +81,6 @@ function ViewArray(lines() as string,nlines as integer) as short
             	longest=iwid
             EndIf
             text= mid(text,offsetx+1,xwidth)
-            'print i+offset;" ";pheight;" ";text;
             print text;
         next
         ?
@@ -92,50 +88,55 @@ function ViewArray(lines() as string,nlines as integer) as short
         key="Use Arrows and +/- to browse " & nlines & " lines. Enter to close: "
         locate height,(xwidth-len(key))\2+1
         print key; 
-        key=uConsole.keyinput() '("12346789 ")
-'            key=keyin("12346789 ",1)
 		'
-		di=uConsole.getdirection(key)
-        if 	   di=7 then
-        	offset=0
-        	offsetx=0
-        elseif di=1 then
-        	offset=nlines-pheight
-        	offsetx=0
-        elseif di=2 then
-        	offset=offset+1
-        elseif di=8 then
-        	offset=offset-1
-        elseif di=4 then
-        	offsetx=offsetx-1
-        elseif di=6 then
-        	offsetx=offsetx+1
-        elseif uConsole.keyaccept(key,keyl_menup) then 
-        	offset=offset-(height-1)
-        elseif uConsole.keyaccept(key,keyl_mendn) then 
-        	offset=offset+(height-1)
-        endif
-		'
-        if offset<0 then 
-			offset=0
-'        elseif offset>nlines then offset=nlines
-        elseif offset>nlines-height then offset=nlines-height
-        endif
-		'
-        if (offsetx<0) then 
-			offsetx=0
-        elseif xwidth>=longest then 
-			offsetx=0
-        elseif offsetx>longest-xwidth then 
-            offsetx=longest-xwidth
-        EndIf
-		'
+		while true
+	        key=uConsole.keyinput() '("12346789 ")'            key=keyin("12346789 ",1)
+			i=0
+			di=uConsole.getdirection(key)
+	        if 	   di=7 then
+	        	offset=0
+	        	offsetx=0
+	        	i=1
+	        elseif di=1 then
+	        	offset=nlines-pheight
+	        	offsetx=0
+	        	i=1
+	        elseif di=2 then
+	        	offset=offset+1
+	        	i=1
+	        elseif di=8 then
+	        	offset=offset-1
+	        	i=1
+	        elseif di=4 then
+	        	offsetx=offsetx-1
+	        	i=1
+	        elseif di=6 then
+	        	offsetx=offsetx+1
+	        	i=1
+	        elseif uConsole.keyaccept(key,keyl_menup) then 
+	        	offset=offset-(height-1)
+	        	i=1
+	        elseif uConsole.keyaccept(key,keyl_mendn) then 
+	        	offset=offset+(height-1)
+	        	i=1
+	        endif
+			'
+			'if offset>nlines then offset=nlines
+	        if offset>=nlines-height then offset=nlines-height
+	        if offset<0 then offset=0
+	        if offsetx>longest-xwidth then offsetx=longest-xwidth
+	        if (offsetx<0) or (xwidth>=longest) then offsetx=0
+			'
+			if (i>0) or uConsole.Closing<>0 or uConsole.keyonwards(key) then
+				exit while
+			EndIf
+		wend
     loop until uConsole.Closing<>0 or uConsole.keyonwards(key)
     return 0
 End Function
 
 
-function Viewfile(filename as string,nlines as integer=4096) as short
+function Viewfile(filename as string,nlines as integer=2048) as integer
     dim as integer f
     dim as Integer c,lastspace
     dim lines(nlines) as string

@@ -177,8 +177,8 @@ declare function getdirection(aKey as string="", bJustNumpad as short=0) as shor
 '     -=-=-=-=-=-=-=- MAIN: uConsole -=-=-=-=-=-=-=-
 
 function init(iAction as integer) as integer
-	Closing=0			'e.g. run, no reason to exit 
-	bIdling=0			'e.g. am not and have not been idling (yet)
+	Closing=false		'e.g. run, no reason to exit 
+	bIdling=false		'e.g. am not and have not been idling (yet)
 	Fpstime=dTimer()	'makes the first fps value 'right'er
 	'dLastTime= n/a 	'no need to set/reset this. it tracks overall run-time, not 'a run'. 
 	return 0
@@ -272,7 +272,7 @@ function aProcessKey(aKey as String) as String
 	'and that's it, keep a copy and recognize a single command
 	LastKey= aKey
 	if akey= key__close then
-		Closing=1
+		Closing=true
 		'ErrOut("received close command")		
 	EndIf 
 	'?"aProcessKey(" &aKey &",len=" &len(aKey) &")",asc(mid(akey,2,1))
@@ -310,7 +310,7 @@ function iGetKey(iMilliSeconds as integer=0) as integer
 		iUpTo=iMilliSeconds/1000+uConsole.dTimer()
 	EndIf
 	bIdling= 0
-	do while (Closing=0) and ((iMilliSeconds=0) or (uConsole.dTimer()<iUpTo))
+	do while (not Closing) and ((iMilliSeconds=0) or (uConsole.dTimer()<iUpTo))
 		'print #tKbinput.fErrOut,iUpTo-uConsole.dTimer()
 		aKey=aInKey()
 		if aKey<>"" then
@@ -335,7 +335,7 @@ End Function
 
 function ClearKeys() as integer
 	do while iInKey()<>0: loop
-	if (Closing=0) then Idle()
+	if (not Closing) then Idle()
 	return 0	
 End Function
 
@@ -391,7 +391,7 @@ function keyinput(allowed as string="") as string
 	ClearKeys
     do        
 		aKey=aGetKey()
-    loop until (Closing<>0) or keyaccept(aKey,allowed) 
+    loop until Closing or keyaccept(aKey,allowed) 
     return aKey
 end function
 
