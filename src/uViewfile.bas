@@ -15,6 +15,19 @@
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tViewfile -=-=-=-=-=-=-=-
 #undef intest
+
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
+#include "uScreen.bas"
+#include "file.bi"
+#include "uFile.bas"
+#include "uColor.bas"
+#include "uConsole.bas"
+#include "uVersion.bas"
+#include "uUtils.bas"
+#include "uError.bas"
+
 #define test
 #endif'test
 
@@ -58,13 +71,12 @@ function ViewArray(lines() as string,nlines as integer) as integer
         'if left(lines(a),1)="*" then col(a)=14
     next
     
-    height=(width() shr (4*4)) ' gives screen/console height
-    if (tScreen.isGraphic=0) and (height>25) then height=25
-    xwidth=(width() and &hFFFF)
-    if nlines-height<0 then
-   		pheight=nlines-1
-    else
-    	pheight =height-1
+    xwidth=(width() and &hFFFF)	' width is easy.
+    height=(width() shr (4*4))	' gives screen/console height
+    if (tScreen.isGraphic=0) and (height>25) then height=25	' limit console height to 25 (at least on windows)
+   	pheight=height-1			' take off 1 line for instructions and we get the viewport
+    if pheight>nlines then		' viewport-height is more than lines of text to show 
+   		pheight=nlines
     EndIf
     
     'set__color( 15,0)
@@ -83,7 +95,7 @@ function ViewArray(lines() as string,nlines as integer) as integer
             text= mid(text,offsetx+1,xwidth)
             print text;
         next
-        ?
+        '
         set__color( 14,0)
         key="Use Arrows and +/- to browse " & nlines & " lines. Enter to close: "
         locate height,(xwidth-len(key))\2+1
@@ -119,6 +131,12 @@ function ViewArray(lines() as string,nlines as integer) as integer
 	        elseif uConsole.keyaccept(key,keyl_mendn) then 
 	        	offset=offset+(height-1)
 	        	i=1
+	        elseif key=key__Ins then 
+	        	offsetx=offsetx+(xwidth\2)
+	        	i=1
+	        elseif key=key__Del then 
+	        	offsetx=offsetx-(xwidth\2)
+	        	i=1
 	        endif
 			'
 			'if offset>nlines then offset=nlines
@@ -146,7 +164,7 @@ function Viewfile(filename as string,nlines as integer=2048) as integer
 	    do
 	        line input #f,lines(c)
 	        c=c+1
-	    loop until eof(f) or c>nlines
+	    loop until eof(f) or c>=nlines
 	    tFile.Closefile(f)
     else 
     	tError.log("Viewfile:"+tFile.FileError)
@@ -166,4 +184,5 @@ end function
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tViewfile -=-=-=-=-=-=-=-
+	Viewfile(tVersion.ErrorlogFilename())	
 #endif'test
