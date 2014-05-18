@@ -1,30 +1,37 @@
 'tDefines.
-'
-'namespace: tDefines
+'Define rudiments
 
-'
-'
-'defines:
-'init=16
-'
-
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
 #if not (defined(types) or defined(head) or defined(main))
 #define intest
-#define both
-#endif'test
-#if defined(both)
-#define head
-#define main
-#endif'both
+#endif
 '
 #ifdef intest
-'     -=-=-=-=-=-=-=- TEST: tDefines -=-=-=-=-=-=-=-
+#print -=-=-=-=-=-=-=- TEST: tDefines -=-=-=-=-=-=-=-
+
+#ifdef types 
+	#print "types"
+#else
+	#print "no types"
+#endif
+
+#ifdef head 
+	#print "head"
+#else
+	#print "no head"
+#endif
+
+#ifdef main 
+	#print "main"
+#else
+	#print "no main"
+#endif
+
 #undef intest
 #define test
 #endif'test
-#ifdef types
+
+
+#ifndef tErrorMethod							'declare if not found'
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 
 'Define True/False values.
@@ -43,12 +50,10 @@ type tActionmethod As Function(iAction as integer) As Integer
 type tTextmethod As Function(aText as string) As Integer
 type tTextIntegermethod As Function(aText as string,iAction as integer) As Integer
 
-#endif'types
-#ifdef head
-'     -=-=-=-=-=-=-=- HEAD: tDefines -=-=-=-=-=-=-=-
-#endif'head
-#ifdef main
-'     -=-=-=-=-=-=-=- MAIN: tDefines -=-=-=-=-=-=-=-
+#endif'tErrorMethod
+
+
+#ifdef tModule									'register if possible'
 
 namespace tDefines
 function init(iAction as integer) as integer
@@ -56,13 +61,15 @@ function init(iAction as integer) as integer
 end function
 end namespace'tDefines
 
-#endif'main
+tModule.register("tDefines",@tDefines.init()) ',@tDefines.load(),@tDefines.save())
 
-#if defined(main)
-'      -=-=-=-=-=-=-=- INIT: tDefines -=-=-=-=-=-=-=-
-	tModule.register("tDefines",@tDefines.init()) ',@tDefines.load(),@tDefines.save())
-#endif'main
+#endif'tModule
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tDefines -=-=-=-=-=-=-=-
+? "TRUE", TRUE
+? "FALSE", FALSE
+? "NULL", NULL
+?
+sleep
 #endif'test

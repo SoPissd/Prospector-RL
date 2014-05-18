@@ -11,41 +11,46 @@
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
+
 #if not (defined(types) or defined(head) or defined(main))
 #define intest
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tFile -=-=-=-=-=-=-=-
-#if not (defined(types) or defined(head) or defined(main)) 'test
-#print "tFile test"
-#define intest
-#define head
+#undef intest
+#undef main
+#include "uDefines.bas"
 #define main
-#include "tDefines.bas"
-#include "tModule.bas"
-#include "tScreen.bas"
-#include "tColor.bas"
-#include "Version.bas"
-#include "kbinput.bas"
-'#include "tUtils.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
 #include "file.bi"
 #include "windows.bi"
-#undef main
-#undef intest
-#define test
-#endif 
 
 #undef intest
 #define test
 #endif'test
 
 namespace tFile	
+
+
+#ifdef types
+'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+#ifdef __FB_WIN32__					'windows
+	const FilenameSlashOk = "/\"
+	const FilenameSlashNg = ""
+#else								'linux
+	const FilenameSlashOk = "/"
+	const FilenameSlashNg = "\"
+#endif
+#endif'types
 
 
 #ifdef head
@@ -58,9 +63,10 @@ Enum tFileOpenMode
 	fmBinary
 	fmRandom
 End Enum	
+
 	
-dim lastfn as String
-dim FileError as String
+dim FilenameOpenedLast as String		'updated by Openfile
+dim FileError as String					'assembled by Openerror 
 
 declare function Closefile(ByRef fileno as integer) as integer
 'private function Openerror(filename as string, fileno as integer, filemode as tFileOpenMode) as integer
@@ -89,7 +95,7 @@ declare function FilesizeInMb(filename as string) as string
 '     -=-=-=-=-=-=-=- MAIN: tFile -=-=-=-=-=-=-=-
 
 public function Init(iAction as integer) as integer
-	lastfn=""
+	FilenameOpenedLast=""
 	FileError=""
 	return 0
 End function
@@ -123,7 +129,7 @@ public function Openfile(filename as string, ByRef fileno as integer, filemode a
     if fileno<=0 then 
 		fileno=freefile
     EndIf
-    lastfn=filename
+    FilenameOpenedLast=filename
     FileError=""
 	scope
 	select case filemode
@@ -284,11 +290,17 @@ End Namespace
 
 #ifdef test
 #print "tFile testing"
-'declare function GetCurrentDirectory alias "GetCurrentDirectoryA" (byval as DWORD, byval as LPSTR) as DWORD
+#undef test
+#include "uScreen.bas"
+#include "uColor.bas"
+#include "uUtils.bas"
+#include "uConsole.bas"
+#include "uVersion.bas"
+
+
 function ttest() as Integer
 	dim as String a1,a2,fn
-	a1="1234"
-	a1+=space(300)+a1
+	a1=Pad(50,"1234",">")
 	'
 	fn="test.txt"
 	? "temp-file "+fn
@@ -299,13 +311,13 @@ function ttest() as Integer
 	? "testing string-to-file and file-to-string"
 	tFile.stringtofile(fn,a1)
 	a2=tFile.filetostring(fn)
-	? a1,len(a1)
-	? a2,len(a2)
+	? a1;" len: ";len(a1)
+	? a2;" len: ";len(a2)
 	? "a1=a2 = "; a1=a2
 	?
 	? "zapped temp-file "+fn
 	kill fn
-	return uConsole.Pressanykey(0)	
+	return uConsole.Pressanykey()	
 End Function
 ttest()
 #endif 
@@ -319,4 +331,6 @@ ttest()
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tFile -=-=-=-=-=-=-=-
+? "test"
+sleep
 #endif'test
