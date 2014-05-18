@@ -9,64 +9,52 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: uConsole -=-=-=-=-=-=-=-
+#undef intest
+
 #include "fbGfx.bi"
 #include "zlib.bi"
-#include "File.bi"
+#include "file.bi"
 
-#undef intest
-#undef both
-#define head
-#undef main
-#include "tDefines.bas"
-#define main
-#include "tModule.bas"
-#undef head
-#include "tDefines.bas"
-#define head
-#include "tScreen.bas"
-#include "tColor.bas"
-#include "tPng.bas"
-#undef main
-#include "uConsole.bas"
-#include "tFonts.bas"
-#define main
-#define head
-#include "tFile.bas"
-#include "tGraphics.bas"
-#include "tRng.bas"
-#define head
-#include "tCoords.bas"
-#include "tMath.bas"
-#include "tPrint.bas"
-#include "Version.bas"
-#include "tUtils.bas"
-#include "tError.bas"
-#include "tSound.bas"
-#include "tStars.bas"
-#include "tConfig.bas"
-#include "tMenu.bas"
-#undef head
-#include "uConsole.bas"
-#include "tFonts.bas"
-#undef main
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
 
-#undef intest
+#include "uScreen.bas"
+#include "uColor.bas"
+'#include "uPng.bas"
+'
+'#include "uConsole.bas"
+'#include "uFonts.bas"
+'#include "uFile.bas"
+'#include "uGraphics.bas"
+'#include "uRng.bas"
+'#include "uCoords.bas"
+'#include "uMath.bas"
+'#include "tPrint.bas"
+'#include "Version.bas"
+'#include "tUtils.bas"
+'#include "tError.bas"
+'#include "tSound.bas"
+'#include "tStars.bas"
+'#include "tConfig.bas"
+'#include "tMenu.bas"
+'#include "uConsole.bas"
+'#include "tFonts.bas"
+
 #define test
 #endif'test
 
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
-#endif'types
-#ifdef head
-'     -=-=-=-=-=-=-=- HEAD: uConsole -=-=-=-=-=-=-=-
-
 'some key-constants
 'http://www.freebasic.net/wiki/wikka.php?wakka=KeyPgInkey
 'http://www.freebasic.net/wiki/wikka.php?wakka=GfxScancodes
@@ -111,6 +99,10 @@ Const keyl_yes=			key__enter+",y,Y, "
 Const keyl_no=			key__esc+",n,N"	
 Const keyl_onwards=		key__esc+","+key__backspace+","+key__enter+", "	
 
+#endif'types
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: uConsole -=-=-=-=-=-=-=-
+
 'these are the configurable directions for getdirection below 
 Dim Shared As String*3 key_sw		="1"
 Dim Shared As String*3 key_south	="2"
@@ -134,7 +126,6 @@ namespace uConsole
 
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: uConsole -=-=-=-=-=-=-=-
-
 dim shared as string		LastKey
 dim shared as integer 		Closing
 dim shared as integer 		bIdling
@@ -503,4 +494,20 @@ End Namespace
 '	aParams.KeyProc= @keypress 
 '	aParams.CmdProc= @CmdProc 
 '	uConsole.mainloop(aParams)
+
+cls
+?"showing keycodes"
+?"close window to end loop"
+?
+dim a as String
+while not uConsole.Closing
+	a= uConsole.aGetKey()
+	if len(a)>1 then 
+		a="x"+mid(a,2,1)
+	elseif a<" " then 
+		a="#" &asc(a)
+	EndIf
+	? uConsole.getdirection(a),a, asc(mid(a,2,1))
+wend
+
 #endif'test

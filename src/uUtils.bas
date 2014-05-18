@@ -14,30 +14,52 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tUtils -=-=-=-=-=-=-=-
-
 #undef intest
+
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
+#include "uScreen.bas"
+#include "file.bi"
+#include "uColor.bas"
+
 #define test
 #endif'test
+
+
+#ifdef types
+	const FilenameSlashOk = "/"		'ok on windows and linux
+	const FilenameSlashNg = "\"		'not ok on linus
+#endif'types
+
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tUtils -=-=-=-=-=-=-=-
-
-declare function string_towords(word() as string, s as string, break as string, punct as short=0) as short
-declare function numfromstr(t as string) as short
-declare function lastword(text as string, delim as string, capacity as short=29) As String
-declare function stripFileExtension(text as string, delim as string=".") As String 
-declare function first_lc(t as string) as string
-declare function first_uc(t as string) as string
-declare function roman(i as integer) as string
 
 declare function Pad(iLen as integer, aVal as string, aPad as string=" ") as string
 declare function PadLeading(iLen as integer, aVal as string, aPad as string=" ") as string
 declare function LeadingZero(iLen as integer, iVal as integer, aPad as string="0") as string
+
+declare function FixSlashes(aFile as string) as string
+declare function FilePath(aFile as string) as string 'just path/
+declare function NoFilePath(aFile as string) as string 'just name.ext
+declare function NoFileExt(aFile as string) as string 'just path/name
+declare function Namebase(aFile as string) as string 'name nothing else
+
+declare function string_towords(word() as string, s as string, break as string, punct as short=0) as short
+declare function numfromstr(t as string) as short
+declare function lastword(text as string, delim as string, capacity as short=29) As String
+
+declare function first_lc(t as string) as string
+declare function first_uc(t as string) as string
+declare function roman(i as integer) as string
 
 declare function html_color(c as string, indent as short=0, wid as short=0) as string
 declare function text_to_html(text as string) as string
@@ -60,6 +82,8 @@ end namespace'tUtils
 #define cut2top
 
 '
+' string creation.  
+' pad front/back with arb chars
 
 function Pad(iLen as integer, aVal as string, aPad as string=" ") as string
 	if iLen<0 then 
@@ -83,6 +107,39 @@ end function
 function LeadingZero(iLen as integer, iVal as integer, aPad as string="0") as string
 	return Pad(-iLen,"" & iVal,aPad)
 end function
+
+'
+' file-name 
+'
+
+function FixSlashes(aFile as string) as string
+	dim i as Integer=1
+	while i>0
+		i=Instr(i,aFile,FilenameSlashNg)
+		if i>0 then aFile= mid(aFile,1,i-1)+FilenameSlashOk+mid(aFile,i+1)
+	Wend
+	return aFile
+End Function
+
+function FilePath(aFile as string) as string 'just path/
+	if Instr(aFile,FilenameSlashNg)>0 then aFile= FixSlashes(aFile)
+	return mid(aFile,1,Instrrev(aFile,FilenameSlashOk))
+End Function
+
+function NoFilePath(aFile as string) as string 'just name.ext
+	if Instr(aFile,FilenameSlashNg)>0 then aFile= FixSlashes(aFile)
+	return mid(aFile,Instrrev(aFile,FilenameSlashOk)+1)
+End Function
+
+function NoFileExt(aFile as string) as string 'just path/name
+	dim i as Integer
+	i=Instrrev(aFile,".")-1
+	if i<0 then return aFile else return mid(aFile,1,i)
+End Function
+
+function Namebase(aFile as string) as string 'name nothing else
+	return NoFilePath(NoFileExt(aFile))
+End Function
 
 '
 
@@ -126,12 +183,6 @@ end function
 function lastword(text as string, delim as string, capacity as short=29) As String
 	Dim As String w(capacity)
 	return w(string_towords(w(),text,delim))
-End function
-
-function stripFileExtension(text as string, delim as string=".") As String 
-	dim as Integer i = Instrrev(text,delim)
-	if i=0 then return text
-	return left(text,i-1)
 End function
 
 '
@@ -316,4 +367,21 @@ end function
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tUtils -=-=-=-=-=-=-=-
+?"TEST: tUtils"
+
+'	const FilenameSlashOk = "/"		'ok on windows and linux
+'	const FilenameSlashNg = "\"		'not ok on linus
+
+
+? command(0)
+? FixSlashes(command(0))
+? NoFilePath(command(0))
+? NoFilePath(FixSlashes(command(0)))
+? FilePath(command(0))
+? NoFilePath(NoFileExt(command(0)))
+? NoFilePath(NoFileExt("test"))
+? __FILE__
+? lastword(command(0),"\")
+? lastword(command(0),"/")
+
 #endif'test

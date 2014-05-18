@@ -32,7 +32,7 @@
 #include "uModule.bas"
 #include "uDefines.bas"
 #include "file.bi"
-#include "windows.bi"
+'#include "windows.bi"
 
 #undef intest
 #define test
@@ -43,13 +43,6 @@ namespace tFile
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
-#ifdef __FB_WIN32__					'windows
-	const FilenameSlashOk = "/\"
-	const FilenameSlashNg = ""
-#else								'linux
-	const FilenameSlashOk = "/"
-	const FilenameSlashNg = "\"
-#endif
 #endif'types
 
 

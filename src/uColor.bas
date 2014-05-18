@@ -1,13 +1,7 @@
-'tColor.
+'uColor.
 '
 'namespace: tColor
 
-'
-'
-'defines:
-'_tcol=33, _col=442, _icol=0, Init=6, argb=0, set=611, set__color=537,
-', prt=0, test=41
-'
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -16,16 +10,20 @@
 #define both
 #endif'test
 #if defined(both)
+#define types
 #define head
 #define main
 #endif'both
 
 #ifdef intest
+#undef intest
 '     -=-=-=-=-=-=-=- TEST: tColor -=-=-=-=-=-=-=-
 #print "tColor test"
-#include "tModule.bas"
-#include "tDefines.bas"
-#include "tScreen.bas"
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
+#include "uScreen.bas"
+#include "file.bi"
 
 '#ifdef intest
 ''     -=-=-=-=-=-=-=- TEST: tPalette -=-=-=-=-=-=-=-
@@ -46,7 +44,6 @@
 'dim shared fout as integer
 '#endif 
 
-#undef intest
 #define test
 #endif'test
 #ifdef head
@@ -178,7 +175,36 @@ End Function
 	tModule.Register("tColor",@tColor.Init())
 #endif		
 
-#if not (defined(types) or defined(head) or defined(main)) 'test
+#endif'main
+
+#if (defined(main) or defined(test))
+'      -=-=-=-=-=-=-=- INIT: tColor -=-=-=-=-=-=-=-
+	tModule.register("tColor",@tColor.init()) ',@tColor.load(),@tColor.save())
+#endif'main
+
+'#ifdef test
+'#print -=-=-=-=-=-=-=- TEST: tPalette -=-=-=-=-=-=-=-
+''#if ( define(all) or define(head) or define(main) )
+''#else
+'#ifdef gen_include
+'chdir exepath
+'chdir ".."
+'fout=freefile
+'open "tPalette.bi" for output as #fout
+'load_palette
+'close #fout
+'dim i as Integer
+'for i = 1 to 255 
+'Next
+'Pressanykey
+'#else
+''load_palette()
+'#endif		
+'#endif'test
+
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tColor -=-=-=-=-=-=-=-
+#undef test
 
 function prt(imax as integer=15) as integer
 	dim fg as Integer
@@ -222,36 +248,4 @@ End Function
 
 ? test()
 
-#endif
-
-
-#endif'main
-
-#if (defined(main) or defined(test))
-'      -=-=-=-=-=-=-=- INIT: tColor -=-=-=-=-=-=-=-
-	tModule.register("tColor",@tColor.init()) ',@tColor.load(),@tColor.save())
-#endif'main
-
-'#ifdef test
-'#print -=-=-=-=-=-=-=- TEST: tPalette -=-=-=-=-=-=-=-
-''#if ( define(all) or define(head) or define(main) )
-''#else
-'#ifdef gen_include
-'chdir exepath
-'chdir ".."
-'fout=freefile
-'open "tPalette.bi" for output as #fout
-'load_palette
-'close #fout
-'dim i as Integer
-'for i = 1 to 255 
-'Next
-'Pressanykey
-'#else
-''load_palette()
-'#endif		
-'#endif'test
-
-#ifdef test
-#print -=-=-=-=-=-=-=- TEST: tColor -=-=-=-=-=-=-=-
 #endif'test

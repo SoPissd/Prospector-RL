@@ -69,17 +69,11 @@ end namespace'tMain
 
 '      -=-=-=-=-=-=-=- MAIN -=-=-=-=-=-=-=-
 Letsgo:
-	On Error goto Errormessage
+	On Error goto ErrorHandler
 	tModule.register("main",@tMain.init()) ',@main.load(),@main.save())
-	goto ErrorHandler 
-Errormessage:
-	On Error goto 0
-	tError.ErrorNr= Err
-	tError.ErrorLn= Erl
-	tError.ErrText= ucase(stripFileExtension(lastword(*ERMN(),"\")))
-	tError.ErrText= tError.ErrText &"::" &*ERFN() &"() reporting Error #" &tError.ErrorNr &" at line " &tError.ErrorLn &"!"
 ErrorHandler:
-	tError.ErrorHandler()
+	On Error goto 0
+	tError.ErrorHandler(ErrorLoc)
 Done:
 	uSound.set(-1)
 	DbgEnd

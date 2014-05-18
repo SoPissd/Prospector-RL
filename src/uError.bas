@@ -15,14 +15,27 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tError -=-=-=-=-=-=-=-
-
 #undef intest
+
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
+#include "file.bi"
+#include "uFile.bas"
+#include "uScreen.bas"
+#include "uColor.bas"
+#include "uUtils.bas"
+#include "uConsole.bas"
+#include "uVersion.bas"
+
 #define test
 #endif'test
 
@@ -31,21 +44,18 @@ namespace tError
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tError -=-=-=-=-=-=-=-
 
-declare function init(iAction as integer) as integer
-
-'private function log_error(text as string) As integer
-'private function log_warning(aFile as string, aFunct as string, iLine as integer, text as string) as integer
-'private function Errorhandler() As integer
-
-#endif'head
-#ifdef main
-'     -=-=-=-=-=-=-=- MAIN: tError -=-=-=-=-=-=-=-
-
 Dim as integer ErrorNr=0
 Dim as integer ErrorLn=0
 Dim as String ErrText
 
-declare function Errorhandler() As integer
+declare function Errorhandler(ErrWhere as String) As integer
+#define ErrorLoc ucase(Namebase(*ERMN())) + "::" + *ERFN() +"()"  'usually used to call errorhandler
+
+#define LogWarning(Text) Assert(tError.log_warning(__FILE__,__FUNCTION__,__LINE__,Text))
+
+#endif'head
+#ifdef main
+'     -=-=-=-=-=-=-=- MAIN: tError -=-=-=-=-=-=-=-
 
 function init(iAction as integer) as integer
 	tModule.ErrorMethod= @Errorhandler
@@ -78,40 +88,54 @@ function log_warning(aFile as string, aFunct as string, iLine as integer, text a
 #if __FB_DEBUG__
 ' use LogWarning(text) defined in types.bas to output warnings to the error log.
 ' this code is in this awkward place here only because i dont want to think about placing the helper functions into better places.
-	aFile= ucase(stripFileExtension(lastword(aFile,"\")))
+	aFile= ucase(Namebase(aFile))
 	return not log_error( "Warning! "+aFile+":"+aFunct +" line " & iLine & ": "+text)
 #else
 	return 0
 #endif
 End function
 
-'Declare function log_error(text as string) As Short					' writes to error log
-'Declare function error_message() As String							' builds error message
-'Declare function error_handler(text as string) As Short				' system error handler
+'
+'
 '
 
-function Errorhandler() As integer
+function Errorhandler(ErrWhere as string) As integer
+	
+	if Err<>0 then
+		ErrorNr= Err
+		ErrorLn= Erl
+		ErrText= ErrWhere  + " reporting Error #" &tError.ErrorNr 
+		if ErrorLn<>0 then
+			ErrText &= " at line " &tError.ErrorLn
+		endif 
+		ErrText &= "!"
+	endif
+	
 	'to file
-	if tError.ErrorNr=0 and tError.ErrText="" then
+	if ErrorNr=0 and ErrText="" then
 		if tModule.fErrOut>0 then
 			'print #tModule.fErrOut,"All done."
 			close #tModule.fErrOut
 		endif
 		return 0
 	EndIf
-	if tModule.fErrOut>0 and tError.ErrText="" then
+	
+	if tModule.fErrOut>0 and ErrText="" then
 		print #tModule.fErrOut,ErrText
 	endif
+	
 	log_error(ErrText)
+	
 	'to current screen
-	tVersion.Errorscreen(ErrText,ErrorLn=0)
-	uConsole.Pressanykey()
 	if tScreen.IsGraphic then
-		'to console
+		tVersion.Errorscreen(ErrText,ErrorLn=0)
+		uConsole.Pressanykey()
 		tScreen.mode(0)
-		tVersion.Errorscreen(tError.ErrText,ErrorLn=0)
-		'uConsole.Pressanykey()		
 	EndIf
+	
+	'and lastly to console
+	tVersion.Errorscreen(tError.ErrText,ErrorLn=0)
+	
 	return 0
 End function
 
@@ -122,12 +146,26 @@ End Namespace
 #if (defined(main) or defined(test))
 	' -=-=-=-=-=-=-=- INIT: tError -=-=-=-=-=-=-=-
 	'
-	#Define LogWarning(Text) Assert(tError.log_warning(__FILE__,__FUNCTION__,__LINE__,Text))						' disappears from release
 	tModule.register("tError",@tError.init()) ',@tError.load(),@tError.save())
 #endif'main
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tError -=-=-=-=-=-=-=-
+
+Letsgo:
+	On Error goto ErrorHandler
+	
+	dim as Integer a, i(10)
+	a=11
+	i(a)=4
+	
+
+ErrorHandler:
+	On Error goto 0
+	tError.ErrorHandler(ErrorLoc)
+Done:
+	? "onwards..."
+	
 	? tError.log_warning("ok.log","fun",10,"txt")
 	LogWarning("warning")
 #endif'test

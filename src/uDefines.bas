@@ -1,5 +1,9 @@
 'tDefines.
 'Define rudiments
+'note: at first this code was structured to require includes to define and register itself in two steps 
+'now you can simply include it before and after uModule and it will check defined() to link itself in
+'since there is no init/load/save happening here, the 2nd inclusion only serves to make a complete run-
+'time module list available should it be needed elsewhere. (e.g. include uDefines once b4 uModules is enough)
 
 #if not (defined(types) or defined(head) or defined(main))
 #define intest
