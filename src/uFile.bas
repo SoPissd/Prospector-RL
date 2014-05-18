@@ -26,9 +26,7 @@
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tFile -=-=-=-=-=-=-=-
 #undef intest
-#undef main
 #include "uDefines.bas"
-#define main
 #include "uModule.bas"
 #include "uDefines.bas"
 #include "file.bi"
@@ -78,7 +76,7 @@ declare function Countlines(filename as string,nonblank as integer=1) as integer
 
 declare function Filesize(filename as string) as integer
 declare function FilesizeInMb(filename as string) as string
-	
+
 'private function = Close(#fileno)
 'private function private Openerror(filename as string, fileno as integer, filemode as tFileOpenMode) as integer
 'private function ttest() as Integer

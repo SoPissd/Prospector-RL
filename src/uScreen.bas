@@ -15,6 +15,8 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
@@ -65,6 +67,23 @@ function _icol( ByVal src As UInteger, ByVal dest As UInteger, ByVal param As An
     'Itemcolor
     If src=0 Then Return Hiword(Color) Else Return Loword(Color)
 End function
+
+#if __FB_Debug__
+	sub DbgScreeninfo
+	dim as Integer w,h,depth,bpp,pitch,rate
+	dim as String driver 
+	Screeninfo w,h,depth,bpp,pitch,rate,driver
+	print "Screeninfo:"
+	print "w, h, depth, bpp, pitch, rate, driver"
+	write w,h,depth,bpp,pitch,rate,driver
+	dim as Integer cw,ch
+    ch=(width() shr (4*4)) ' gives screen/console height
+    cw=(width() and &hFFFF)
+	print "Console: x,y: ";cw;",";ch
+	End Sub	
+#else
+	#define DbgScreeninfo
+#endif
 
 #endif'head
 

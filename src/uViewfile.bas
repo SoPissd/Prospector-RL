@@ -148,6 +148,8 @@ function Viewfile(filename as string,nlines as integer=2048) as integer
 	        c=c+1
 	    loop until eof(f) or c>nlines
 	    tFile.Closefile(f)
+    else 
+    	tError.log("Viewfile:"+tFile.FileError)
     EndIf
     '
     ViewArray(Lines(),c)

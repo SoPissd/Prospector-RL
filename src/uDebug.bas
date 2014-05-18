@@ -95,21 +95,7 @@
 		#print DbgPrints just prints.
 		#Define DbgPrint(Text) ? stripFileExtension(lastword(__FILE__,"\"));":" &__LINE__ ;" ";__FUNCTION__,Text
 	#endif
-	'
-	
-	sub DbgScreeninfo
-	dim as Integer w,h,depth,bpp,pitch,rate
-	dim as String driver 
-	Screeninfo w,h,depth,bpp,pitch,rate,driver
-	print "Screeninfo:"
-	print "w, h, depth, bpp, pitch, rate, driver"
-	write w,h,depth,bpp,pitch,rate,driver
-	dim as Integer cw,ch
-    ch=(width() shr (4*4)) ' gives screen/console height
-    cw=(width() and &hFFFF)
-	print "Console: x,y: ";cw;",";ch
-	End Sub	
-	
+	'	
 	#define DbgEnd
 #else
 	#ifdef __FB_WIN32__					'windows
@@ -124,7 +110,6 @@
 	#define _DbgPrintCSVs 0
 	'									'NOTICE!! these must be on their own line.  no IF x THEN DbgPrint()! 
 	#define DbgPrint(text)
-	#define DbgScreeninfo
 	#define DbgEnd
 #endif
 

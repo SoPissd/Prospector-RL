@@ -48,10 +48,13 @@ Dim as integer ErrorNr=0
 Dim as integer ErrorLn=0
 Dim as String ErrText
 
-declare function Errorhandler(ErrWhere as String="") As integer
+declare function Errorhandler(ErrWhere as String="") As integer   'global error-handler. pass in ErrorLoc
 #define ErrorLoc ucase(Namebase(*ERMN())) + "::" + *ERFN() +"()"  'usually used to call errorhandler
 
 #define LogWarning(Text) Assert(tError.log_warning(__FILE__,__FUNCTION__,__LINE__,Text))
+declare function log_warning(aFile as string, aFunct as string, iLine as integer, text as string) as integer
+
+declare function log(text as string="") As integer 'simply write a note to the error log
 
 #endif'head
 #ifdef main
@@ -66,7 +69,7 @@ function init(iAction as integer) as integer
 End function
 
 
-function log_error(text as string) As integer
+function log(text as string="") As integer
 	Dim As integer f
 	dim as string logfile
 	
@@ -74,8 +77,8 @@ function log_error(text as string) As integer
 		Print #f, date + " " + time + " " + __VERSION__  + " " + text
 		tFile.Closefile(f)
 		'
-		? "LOGGED in " +  tVersion.ErrorlogFilename()+":"
-		? date + " " + time + " " + __VERSION__  + " " + text
+		'? "LOGGED in " +  tVersion.ErrorlogFilename()+":"
+		'? date + " " + time + " " + __VERSION__  + " " + text
 		return 0
 	else 
 		? "FAILED LOG WRITE to " +  tVersion.ErrorlogFilename()+"!"
@@ -88,8 +91,7 @@ function log_warning(aFile as string, aFunct as string, iLine as integer, text a
 #if __FB_DEBUG__
 ' use LogWarning(text) defined in types.bas to output warnings to the error log.
 ' this code is in this awkward place here only because i dont want to think about placing the helper functions into better places.
-	aFile= ucase(Namebase(aFile))
-	return not log_error( "Warning! "+aFile+":"+aFunct +" line " & iLine & ": "+text)
+	return log( "Warning! "+ucase(Namebase(aFile))+":"+aFunct +" line " & iLine & ": "+text)
 #else
 	return 0
 #endif
@@ -124,7 +126,7 @@ function Errorhandler(ErrWhere as string) As integer
 		print #tModule.fErrOut,ErrText
 	endif
 	
-	log_error(ErrText)
+	log(ErrText)
 	
 	'to current screen
 	if tScreen.IsGraphic then
@@ -150,6 +152,8 @@ End Namespace
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tError -=-=-=-=-=-=-=-
+#undef test
+#include "uViewfile.bas"
 
 Letsgo:
 	tScreen.res
@@ -166,9 +170,11 @@ ErrorHandler:
 	On Error goto 0
 	tError.ErrorHandler(ErrorLoc)
 Done:
+	Viewfile(tVersion.ErrorlogFilename())	
 	? "--------------------------------------------onwards..."	
-	? tError.log_warning("ok.log","fun",10,"txt")
+	tError.log_warning("ok.log","fun",10,"txt")
 	LogWarning("warning")
-	? "--------------------------------------------onwards..."	
+	? "--------------------------------------------onwards..."
+	Viewfile(tVersion.ErrorlogFilename())	
 	tVersion.Errorscreen("THATS ALL",true)
 #endif'test

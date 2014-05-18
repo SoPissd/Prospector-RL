@@ -14,14 +14,16 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tModule -=-=-=-=-=-=-=-
-
 #undef intest
+#include "uDefines.bas"
 #define test
 #endif'test
 
@@ -60,6 +62,7 @@ Dim as tTextmethod 			ErrLogMethod
 declare function LogWrite(aText as string,fileno as integer=0) as integer
 declare function ErrorLog(aText as string) as integer
 
+declare function Status() as string
 declare function Run(iAction as integer) as Integer		'used as 'the run method'
 
 #endif'head
@@ -112,7 +115,7 @@ function ErrorLog(aText as string) as integer
 End Function
 
 '
-public function status() as string
+public function Status() as string
 	return "" &lastmodule &" modules initialized."
 End Function
 
@@ -128,7 +131,7 @@ End Function
 
 '
 #endif'main
-end namespace
+end namespace'tModule
 
 #ifdef main
 
@@ -149,5 +152,15 @@ End Function
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tModule -=-=-=-=-=-=-=-
+	#undef test
+	#include "uDefines.bas"
+	'
+	? tModule.Status: ?
+	'
+	print #tModule.fLogOut,"#fLogOut: log console open as #" &tModule.fLogOut &"!"
 	print #tModule.fErrOut,"#fErrOut: error console open as #" &tModule.fErrOut &"!"
+	'
+	LogOut("using log console")
+	ErrOut("using error console")
+	
 #endif'test
