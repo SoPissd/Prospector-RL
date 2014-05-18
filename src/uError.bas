@@ -157,7 +157,7 @@ End Namespace
 
 Letsgo:
 	tScreen.res
-	tVersion.Errorscreen("HELLO",true)
+	tVersion.Errorscreen("HELLO from TEST: tError",true)
 	sleep
 		
 	On Error goto ErrorHandler
@@ -170,7 +170,8 @@ ErrorHandler:
 	On Error goto 0
 	tError.ErrorHandler(ErrorLoc)
 Done:
-	Viewfile(tVersion.ErrorlogFilename())	
+	Viewfile(tVersion.ErrorlogFilename())
+	?	
 	? "--------------------------------------------onwards..."	
 	tError.log_warning("ok.log","fun",10,"txt")
 	LogWarning("warning")

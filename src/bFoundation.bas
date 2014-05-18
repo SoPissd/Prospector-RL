@@ -1,7 +1,7 @@
 'bFoundation.
 
 	'Cls
-	On Error Goto errormessage
+	On Error Goto Errorhandler
 	scope 
 	#include "uVersion.bi"
 	Print __VERSION__

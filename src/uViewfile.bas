@@ -8,6 +8,8 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
@@ -132,10 +134,10 @@ function ViewArray(lines() as string,nlines as integer) as integer
 	        	offset=offset+(height-1)
 	        	i=1
 	        elseif key=key__Ins then 
-	        	offsetx=offsetx+(xwidth\2)
+	        	offsetx=offsetx-(xwidth\2)
 	        	i=1
 	        elseif key=key__Del then 
-	        	offsetx=offsetx-(xwidth\2)
+	        	offsetx=offsetx+(xwidth\2)
 	        	i=1
 	        endif
 			'

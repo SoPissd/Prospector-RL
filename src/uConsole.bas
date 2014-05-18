@@ -91,8 +91,8 @@ Const key__dr = 	xk & "Q"		'Down Right / PgDn
 'needs more numpad keys
 'list fkeys by name?
 
-Const key__Ins= 	xk & "P"		'Insert		
-Const key__Del= 	xk & "P"		'Delete		
+Const key__Ins= 	xk & "R"		'Insert		
+Const key__Del= 	xk & "S"		'Delete		
 
 'lists of constant keys
 Const keyl_yes=			key__enter+",y,Y, "

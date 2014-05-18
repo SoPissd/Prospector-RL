@@ -11,14 +11,32 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tTextbox -=-=-=-=-=-=-=-
-
 #undef intest
+
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
+#include "uScreen.bas"
+#include "file.bi"
+#include "uFile.bas"
+#include "uColor.bas"
+#include "uConsole.bas"
+#include "uVersion.bas"
+#include "uUtils.bas"
+#include "uError.bas"
+#include "uRng.bas"
+#include "uCoords.bas"
+#include "uPrint.bas"
+#include "uDebug.bas"
+
 #define test
 #endif'test
 #ifdef head
@@ -176,4 +194,25 @@ end function
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tTextbox -=-=-=-=-=-=-=-
+
+'textbox(text as string,x as short,y as short,w as short,_
+'    fg as short=11, bg as short=0,pixel as byte=0,byref op as short=0,byref offset as short=0) as short
+    
+    
+dim text as string		= "kslf jlekrfj ksdfjvlkdsajfklj fklvj lekrtioeufidclvj;lgk ae;rtl d;flk;dlft o"
+dim x as short			= 10
+dim y as short			= 10
+dim w as short			= 16
+dim fg as short			= 11
+dim bg as short				= 0
+dim pixel as byte			= 0
+'dim byref op as short 		= 0
+'dim byref offset as short	= 0
+    
+'textbox(text,x,y,w,fg,bg,pixel),op,offset) ',fg,bg,pixel) ,op,offset)
+
+textbox(text,x,y,w) 
+
+uConsole.pressanykey
+
 #endif'test

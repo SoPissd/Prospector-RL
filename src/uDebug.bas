@@ -7,6 +7,8 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
@@ -93,7 +95,7 @@
 		
 	#elseif _DbgPrintMode =5			'=5: just print	
 		#print DbgPrints just prints.
-		#Define DbgPrint(Text) ? stripFileExtension(lastword(__FILE__,"\"));":" &__LINE__ ;" ";__FUNCTION__,Text
+		#Define DbgPrint(Text) ? ucase(Namebase(__FILE__))+":"+__FUNCTION__+"." &__LINE__ &"> ";Text
 	#endif
 	'	
 	#define DbgEnd
@@ -139,11 +141,11 @@
 
 #if _DbgOptLoadWin = 1			
 	#print loading windows headers			
-	inc("windows.bi",			windows header mandatory for DebugBreak & console)
+	#include "windows.bi" ',			windows header mandatory for DebugBreak & console)
 #else
 #if _DbgOptLoadWin = 2			
 	#print loading winbase headers			
-	inc("winbase.bi",			windows header mandatory for DebugBreak & console)
+	#include "winbase.bi" ',			windows header mandatory for DebugBreak & console)
 #endif							
 #endif							
 '
