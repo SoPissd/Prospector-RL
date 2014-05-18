@@ -54,6 +54,7 @@ Dim Shared Gamedesig as string
 dim Shared SavegameMethod as tAction
 Dim Shared logerror as byte =1
 
+
 public function Init(iAction as integer) as integer
 	Gamedesig	=""
 	Gamerunning	=0
@@ -90,10 +91,11 @@ public function Errorscreen(text as string,suppress as integer=0) As integer
 		Cls
 		tScreen.loc(irow,10)
 		if suppress=0 then
-		    tScreen.rgbcol(255,0,0)
+		    tScreen.rgbcol(255,255,255)
 		else
 		    tScreen.rgbcol(127,127,127)
 		endif
+   'tScreen.rgbcol(255,255,0)
 		Print text
 		Print 
 		irow= CsrLin
@@ -106,8 +108,8 @@ public function Errorscreen(text as string,suppress as integer=0) As integer
 		Print 
 	endif
 	'
-	if suppress=0 then
-		If gamerunning=1 Then
+	if not suppress then
+		If gamerunning Then
 			text= "savegames/" & gamedesig 'player.desig 
 			Print "Please send " & text & "-crash.sav and " & text & "-error.log to " +__AUTHOR__ +"."
 		else
@@ -125,12 +127,12 @@ public function Errorscreen(text as string,suppress as integer=0) As integer
 		'
 		if tScreen.IsGraphic then
 		    tScreen.rgbcol(255,255,255)
-			If gamerunning=1 Then 
+			If gamerunning Then 
 				irow+=2
 				tScreen.loc(irow,10)
 			EndIf
 		EndIf
-		if (logerror>0) and (gamerunning=1) Then
+		if (logerror>0) and (gamerunning) Then
 			if Savegamemethod<>null then
 				logerror= Savegamemethod()
 			endif

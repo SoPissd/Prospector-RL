@@ -48,7 +48,7 @@ Dim as integer ErrorNr=0
 Dim as integer ErrorLn=0
 Dim as String ErrText
 
-declare function Errorhandler(ErrWhere as String) As integer
+declare function Errorhandler(ErrWhere as String="") As integer
 #define ErrorLoc ucase(Namebase(*ERMN())) + "::" + *ERFN() +"()"  'usually used to call errorhandler
 
 #define LogWarning(Text) Assert(tError.log_warning(__FILE__,__FUNCTION__,__LINE__,Text))
@@ -58,7 +58,7 @@ declare function Errorhandler(ErrWhere as String) As integer
 '     -=-=-=-=-=-=-=- MAIN: tError -=-=-=-=-=-=-=-
 
 function init(iAction as integer) as integer
-	tModule.ErrorMethod= @Errorhandler
+	tModule.ErrorMethod= @tError.Errorhandler
 	ErrorNr=0
 	ErrorLn=0
 	ErrText=""
@@ -145,7 +145,6 @@ End Namespace
 
 #if (defined(main) or defined(test))
 	' -=-=-=-=-=-=-=- INIT: tError -=-=-=-=-=-=-=-
-	'
 	tModule.register("tError",@tError.init()) ',@tError.load(),@tError.save())
 #endif'main
 
@@ -153,19 +152,23 @@ End Namespace
 #print -=-=-=-=-=-=-=- TEST: tError -=-=-=-=-=-=-=-
 
 Letsgo:
+	tScreen.res
+	tVersion.Errorscreen("HELLO",true)
+	sleep
+		
 	On Error goto ErrorHandler
 	
 	dim as Integer a, i(10)
 	a=11
 	i(a)=4
-	
 
 ErrorHandler:
 	On Error goto 0
 	tError.ErrorHandler(ErrorLoc)
 Done:
-	? "onwards..."
-	
+	? "--------------------------------------------onwards..."	
 	? tError.log_warning("ok.log","fun",10,"txt")
 	LogWarning("warning")
+	? "--------------------------------------------onwards..."	
+	tVersion.Errorscreen("THATS ALL",true)
 #endif'test

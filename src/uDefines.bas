@@ -49,7 +49,7 @@
     #Define NULL 0
 #EndIf
 
-type tErrorMethod As Function() As Integer
+type tErrorMethod As Function(ErrWhere as String="") As integer
 type tActionmethod As Function(iAction as integer) As Integer
 type tTextmethod As Function(aText as string) As Integer
 type tTextIntegermethod As Function(aText as string,iAction as integer) As Integer
