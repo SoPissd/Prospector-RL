@@ -216,12 +216,14 @@ dim pixel as byte			= 0
 'textbox(text,x,y,w,fg,bg,pixel),op,offset) ',fg,bg,pixel) ,op,offset)
 
 tScreen.res
-tScreen.rbgcol(255,255,255)
+tScreen.rbgcolor(255,255,255)
+tScreen.drawfx( 10,10)
 ? tModule.Status()
 ?
 
 textbox(text,x,y,w) 
 
+tScreen.xy(10,44)
 uConsole.pressanykey
 
 #endif'test

@@ -93,16 +93,16 @@ public function Errorscreen(text as string,suppress as integer=0) As integer
 		Cls
 		tScreen.loc(irow,10)
 		if suppress=0 then
-		    tScreen.rgbcol(255,255,255)
+		    tScreen.rbgcolor(255,255,255)
 		else
-		    tScreen.rgbcol(127,127,127)
+		    tScreen.rbgcolor(127,127,127)
 		endif
-   'tScreen.rgbcol(255,255,0)
+   'tScreen.rbgcolor(255,255,0)
 		Print text
 		Print 
 		irow= CsrLin
 		tScreen.loc(irow,10)
-	    tScreen.rgbcol(0,255,0)
+	    tScreen.rbgcolor(0,255,0)
 		'tColor.set(12,0)
 	else
 		Print 
@@ -128,7 +128,7 @@ public function Errorscreen(text as string,suppress as integer=0) As integer
 		endif
 		'
 		if tScreen.IsGraphic then
-		    tScreen.rgbcol(255,255,255)
+		    tScreen.rbgcolor(255,255,255)
 			If gamerunning Then 
 				irow+=2
 				tScreen.loc(irow,10)
@@ -146,7 +146,7 @@ End function
 
 
 'public function DisplayError(text as string) as integer
-'    tScreen.rgbcol(255,255,0)
+'    tScreen.rbgcolor(255,255,0)
 '    print text
 '    'sleep	
 '	return 0

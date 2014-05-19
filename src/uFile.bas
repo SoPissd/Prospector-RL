@@ -272,8 +272,9 @@ public function Countlines(filename as string,nonblank as integer=1) as integer
     return n
 end function
 
-'
+#endif'main
 End Namespace
+
 
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: tFile -=-=-=-=-=-=-=-
