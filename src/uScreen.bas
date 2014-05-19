@@ -2,11 +2,6 @@
 '
 'namespace: tScreen
 
-'
-'
-'defines:
-'mode=24, set=613, loc=199, res=105, size=25, col=315, rgbcol=0
-'
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -25,6 +20,7 @@
 '     -=-=-=-=-=-=-=- TEST: tScreen -=-=-=-=-=-=-=-
 #undef intest
 
+#include "fbGfx.bi"
 #include "uDefines.bas"
 #include "uModule.bas"
 #include "uDefines.bas"
@@ -93,8 +89,8 @@ namespace tScreen
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tScreen -=-=-=-=-=-=-=-
 
-dim shared dsx as integer=0		'draw-scale x,y used with tScreen.Draw..
-dim shared dsy as integer=0
+dim shared dsx as integer=1		'draw-scale x,y used with tScreen.Draw..
+dim shared dsy as integer=1
 
 
 #ifndef GFX_WINDOWED
@@ -115,8 +111,8 @@ declare function size(irows As Short=25,icols As Short=80) As Short
 declare function loc(iRow As Short=0,iCol As Short=0,aText as string="") As Short
 declare function xy(iCol As Short=0,iRow As Short=0,aText as string="") As Short
 
-declare function col(fg As Short,bg As Short=0) As Short
-declare function rgbcol(r As Short=255,g As Short=255,b As Short=255) As integer 'sets fg to rgb, bg to 0
+declare function col(fg As UInteger,bg As UInteger=0) As UInteger
+declare function rbgcolor(sr As Short=255,sg As Short=255,sb As Short=255) As UInteger 'sets fg to rgb, bg to 0
 
 declare sub pushpos()		'remember and restore console cursor.  with plenty stack.
 declare sub poppos()
@@ -132,6 +128,10 @@ declare sub draw2c(ds_x as integer,ds_y as integer,ds_text as string) ' font2 @_
 '     -=-=-=-=-=-=-=- MAIN: tScreen -=-=-=-=-=-=-=-
 
 function init(iAction as integer) as integer
+    #ifdef __FB_WIN32__
+        'setting the driver to gdi makes the window appear on top as needed for windows.						
+        ScreenControl FB.SET_DRIVER_NAME, "GDI"
+    #endif    
 	return 0
 end function
 
@@ -161,20 +161,17 @@ function set(fg As Short=1,bg As Short=1) As Short
 	return 0
 End Function
 
-function col(fg As Short,bg As Short=0) As Short
+function col(fg As UInteger,bg As UInteger=0) As UInteger
     if isGraphic=0 then return 0
 	color fg,bg
 	_fgcolor_= fg
 	_bgcolor_= bg	
-	return 0
+	return fg
 End Function
 
-function rgbcol(r As Short=255,g As Short=255,b As Short=255) As integer 'sets fg to rgb, bg to 0
+function rbgcolor(sr As Short=255,sg As Short=255,sb As Short=255) As UInteger 'sets fg to rgb, bg to 0
     if isGraphic= 0 then return 0 
-	dim i as Integer
-	i=(r shl 16)+(g shl 8)+(b)
-	col(i,0)		
-	return i
+	return col((sr shl 16)+(sg shl 8)+(sb),0)
 End Function
 
 function update() As Short
@@ -272,9 +269,15 @@ end namespace
 #include "uColor.bas"
 #include "uConsole.bas"
 
-tScreen.res
-tScreen.rgbcol()
-tScreen.draws( 20,20,"OK!")
+tScreen.res:				tScreen.drawfx( 10,10)
+tScreen.rbgcolor(255,255,0):	tScreen.draws( 05,20,"OK!")
+tScreen.rbgcolor(0,255,255):	tScreen.draws( 10,30,"OK!")
+tScreen.rbgcolor(255,255,255):	tScreen.draws( 10,31,"OK!")
+'tScreen.rbgcolor(255,0,255):	tScreen.draws( 15,100,"OK!")
+'tScreen.rbgcolor(255,0,0):	tScreen.draws( 40,20,"OK!")
+'tScreen.rbgcolor(0,255,0):	tScreen.draws( 50,60,"OK!")
+'tScreen.rbgcolor(0,0,255):	tScreen.draws( 100,100,"OK!")
+tScreen.xy(10,44)
 uConsole.pressanykey
 
 #endif'test
