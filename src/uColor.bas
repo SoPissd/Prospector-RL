@@ -37,7 +37,7 @@
 '#include "tScreen.bas"
 '#include "tColor.bas"
 '#include "kbinput.bas"
-''#include "tUtils.bas"
+'#include "tUtils.bas"
 '#undef main
 '
 '# define gen_include
@@ -47,6 +47,23 @@
 
 #define test
 #endif'test
+#ifndef filexists
+#print uColor.bas: late including file.bi
+#include "file.bi"
+#endif
+
+' Below are the 16 colors QBASIC uses
+'
+'    00 = black			'    08 = dark gray
+'    01 = dark blue		'    09 = light blue
+'    02 = dark green	'    10 = light green
+'    03 = dark cyan		'    11 = light cyan
+'    04 = dark red		'    12 = light red
+'    05 = dark purple	'    13 = magenta
+'    06 = orange brown	'    14 = yellow
+'    07 = gray			'    15 = bright white 
+'
+
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tColor -=-=-=-=-=-=-=-
 
