@@ -152,7 +152,8 @@ declare function aKey2i(aKey as String) as Integer
 declare function Pressanykey(aRow as Integer=2,aCol as Integer=0,aFg as Integer=0,aBg as Integer=0) as Integer
 declare function ClearKeys() as integer
 
-declare function keyaccept(ByRef aKey as string,allowed as string="") as short
+declare function keyaccept overload (ByRef aKey as string,allowed as string="") as short
+declare function keyaccept overload (iKey as integer,allowed as string="") as short
 declare function keyinput(allowed as string="") as string
 
 declare function isKeyYes(aKey as string="") as short
@@ -375,6 +376,10 @@ function keyaccept(ByRef aKey as string,allowed as string="") as short
 	validateaccept(allowed)'validates against a comma delimited list of keys
     return (aKey<>"" and (allowed="" or allowed="," or (instr(","+allowed,","+aKey)>0))) 
 end function
+
+function keyaccept (iKey as integer,allowed as string="") as short
+	return keyaccept(iKey2a(iKey),allowed)
+End Function
 
 function keyinput(allowed as string="") as string
 	'accepts a comma delimited list of keys to accept. or it just takes any.
