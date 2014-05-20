@@ -329,11 +329,15 @@ tScreen.rbgcolor(255,255,255):	tScreen.draws( 10,31,"OK!")
 'tScreen.rbgcolor(0,255,0):	tScreen.draws( 50,60,"OK!")
 'tScreen.rbgcolor(0,0,255):	tScreen.draws( 100,100,"OK!")
 
-''AllocConsole
-''#include "uConprint.bas"
-''dim conprint as tagConPrintObject ptr = new tagConPrintObject
-''
-'DbgPrint("uDebug loaded")				
+AllocConsole
+DbgPrint("uDebug loaded")		
+
+sub s 
+	DbgPrint("uDebug loaded")				
+End Sub
+
+s
+		
 'for i as integer =1 to 10
 '    conprint->ConsolePrint("With linefeeds")
 'next

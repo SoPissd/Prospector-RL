@@ -52,7 +52,10 @@
 	'
 	#define _DbgPrintMode 4
 	'				
-	#if _DbgPrintMode =0				'=0: ignore
+	#if _DbgPrintMode =-1				'=-1: do nothing
+		#print DbgPrint is up to you. (do nothing)  
+		
+	#elseif _DbgPrintMode =0				'=0: ignore
 		#print DbgPrint ignored.  
 		#define DbgPrint(text)
 		#define DbgEnd
@@ -87,22 +90,15 @@
 	#elseif _DbgPrintMode =4			'=4: use console requires windows!	
 		#ifdef __FB_WIN32__					'only under windows
 			#define _DbgOptLoadWin 1		'load the Windows headers
+			#print loading windows headers			
+			#include once "windows.bi" 
+			#include "uConprint.bas"
 			#print DbgPrints to console.
 			'
-			#include "uConprint.bas"
-			dim conprint as tagConPrintObject ptr 
+			dim shared conprint as tagConPrintObject ptr 
 			conprint= new tagConPrintObject
 			'
-			' ucase(Namebase(__FILE__))+":"+__FUNCTION__+"." &__LINE__ &"> "+Text
-			'sub _DbgPrint(text as string)
-			'	conprint->ConsolePrint(text)
-			'End Sub
-			'conprint->ConsolePrint("OK!")
-			
-			#Macro DbgPrint(text)			
-				conprint->ConsolePrint(text) '_DbgPrint(text)
-			#EndMacro
-			'
+			#define DbgPrint(text) conprint->ConsolePrint(text)
 			#define DbgEnd delete conprint
 		#else
 			#print Can not use _DbgPrintMode=4 on Linux
@@ -213,6 +209,16 @@ end namespace'tDebug
 #print -=-=-=-=-=-=-=- TEST: tDebug -=-=-=-=-=-=-=-
 #undef test
 
+
+AllocConsole
+DbgPrint("uDebug loaded")		
+
+sub s 
+	DbgPrint("uDebug loaded")				
+End Sub
+
+s
+		
 #endif'test
 
 

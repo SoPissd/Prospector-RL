@@ -1,9 +1,6 @@
     'consolePrint.bi
     'http://www.freebasic.net/forum/viewtopic.php?f=7&t=22393&p=196386  by Zippy
     '
-	#print uConprint loading windows headers			
-    #include once "windows.bi"
-    '
     type tagConPrintDat
         cinfo as CONSOLE_SCREEN_BUFFER_INFO
         chand as HANDLE
