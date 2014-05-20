@@ -19,8 +19,22 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tGraphics -=-=-=-=-=-=-=-
-
 #undef intest
+
+#include "fbGfx.bi"
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
+#include "uScreen.bas"
+#include "file.bi"
+#include "uFile.bas"
+#include "uColor.bas"
+#include "uConsole.bas"
+#include "uRNG.bas"
+'#include "uCoords.bas"
+'#include "uPrint.bas"
+#include "uUtils.bas"
+
 #define test
 #endif'test
 
@@ -29,12 +43,18 @@ namespace tGraphics
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 
+dim shared as any ptr logo				'in memory image
+dim shared as string  logosource		'filename
+
 dim shared backgrounds as integer= 14
 dim shared iBg as integer= 0
 
 #endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tGraphics -=-=-=-=-=-=-=-
+declare function LoadLogo(filename as string="") as Integer
+declare function PutLogo(x as integer, y as integer) as Integer
+
 declare function Randombackground() as integer
 declare function bmp_load( ByRef filename As String ) As Any Ptr
 
@@ -49,6 +69,33 @@ declare function background overload (fn as string) as integer
 
 function init(iAction as integer) as integer
 	return 0
+end function
+
+
+function LoadLogo(filename as string="") as Integer
+	if LogoSource<>filename then
+	    if Logo <> 0 then ImageDestroy(Logo)
+	    if filename="" then
+	    	Logo= 0
+	    else
+			Logo= bmp_load(filename)
+	    endif
+	    if Logo <> 0 then LogoSource= filename
+	endif
+	return LogoSource<>""
+    '        if logo<>NULL then
+    '            put (39,69),logo,trans
+    '        else
+    '            draw string(26,26),"PROSPECTOR",,titlefont,custom,@_col
+    '        endif
+End Function
+
+function PutLogo(x as integer, y as integer) as Integer
+	if logo<>NULL then
+    	put (x,y),logo,trans
+    	return true
+	endif
+	return false
 end function
 
 
@@ -79,9 +126,9 @@ function background overload (fn as string) as integer
     fn="graphics/"&fn
     '' open BMP file
     filenum = FreeFile()
-    If tFile.Openbinary(fn,filenum ) =0 Then Return -1
+    If not fileexists(fn) or tFile.Openbinary(fn,filenum ) =0 Then Return -1
     'If Openbinaryread '( fn For Binary Access Read As #filenum ) <> 0 Then Return 0
-
+?fn
         '' retrieve BMP dimensions
         Get #filenum, 19, bmpwidth
         Get #filenum, 23, bmpheight
@@ -113,7 +160,7 @@ function bmp_load( ByRef filename As String ) As Any Ptr
   	Dim As Any Ptr img
 
 	'' open BMP file
-	If tFile.Openbinary(filename,filenum) =0 Then return null
+	If not fileexists(filename) or tFile.Openbinary(filename,filenum) =0 Then return null
    	'' retrieve BMP dimensions
     Get #filenum, 19, bmpwidth
     Get #filenum, 23, bmpheight
@@ -159,4 +206,29 @@ end namespace'tGraphics
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tGraphics -=-=-=-=-=-=-=-
 #undef test
+#include "uWindows.bas" 'auto-close
+
+
+cls
+chdir exepath
+chdir ".."
+? curdir
+
+
+while not uConsole.Closing
+	tscreen.res
+	? tGraphics.LoadLogo("graphics/prospector.bmp")
+
+	tGraphics.Randombackground()		    	    
+	tGraphics.background(0)
+	if not tGraphics.putlogo(39,69) then
+    	draw string(26,26),"PROSPECTOR"',,titlefont,custom,@_col
+    endif
+	tScreen.xy(10,22, "this is image: "&tGraphics.iBg)
+	tScreen.xy(10,24)
+	if uConsole.keyaccept(uConsole.pressanykey(0),keyl_onwards) then exit while
+	tScreen.xy(10,22, pad(25,""))
+wend
+
+
 #endif'test

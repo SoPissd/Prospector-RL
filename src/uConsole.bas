@@ -468,6 +468,8 @@ End Namespace
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: uConsole -=-=-=-=-=-=-=-
 #undef test
+#include "uWindows.bas" 'auto-close
+
 'redo with uMainloop for testing
 ''	dim shared as uConsole.tMainloopParams aParams
 '	
@@ -501,7 +503,36 @@ End Namespace
 '	aParams.CmdProc= @CmdProc 
 '	uConsole.mainloop(aParams)
 
+
+sub ascii_table()
+	?"showing extended ascii-codes"
+	dim i as Integer
+	? "    ";
+	for i= 0 to 15
+		if i<10 then ? " "; i; else ? i;  
+	Next
+	?
+	? "000:";
+	for i= 0 to 255
+		if i=7 or i=8 or i=9 or i=10 or i=13 then 	
+			?"   "; 
+		else
+			? "  ";chr(i);
+		EndIf
+		if i<255 and (i+1) mod 16 = 0 then 
+			?
+			?mid(""&1000+i,2,3);":";
+		EndIf
+	Next
+	?
+End Sub
+
 cls
+ascii_table()
+?"OK"
+
+?
+?
 ?"showing keycodes"
 ?"close window to end loop"
 ?
