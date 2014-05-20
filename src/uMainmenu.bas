@@ -19,8 +19,25 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: uMenu -=-=-=-=-=-=-=-
-
 #undef intest
+#print     -=-=-=-=-=-=-=- TEST: uMenu -=-=-=-=-=-=-=-
+
+#include "fbGfx.bi"
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
+#include "uScreen.bas"
+#include "file.bi"
+#include "uFile.bas"
+#include "uColor.bas"
+#include "uConsole.bas"
+#include "uRNG.bas"
+#include "uCoords.bas"
+#include "uPrint.bas"
+#include "uUtils.bas"
+#include "uTextbox.bas"
+#include "uGraphics.bas"
+
 #define test
 #endif'test
 #ifdef types
@@ -37,14 +54,13 @@ Type tMenuCore Extends Object
   declare virtual function finish() as integer
   '
   declare function menu() as integer
-  declare function go(bg as short,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as integer
+  declare function go(te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as integer
   '
   declare function ClearChoices() as integer
   declare function AddChoice(aTe as string, aTh as string="") as integer  
 '
     dim a as short			=0
     dim e as short			=0
-    dim bg as short			=0
     dim te as string		=""
     dim th as string		="" 
     dim x as short			=2 
@@ -52,13 +68,13 @@ Type tMenuCore Extends Object
     dim blocked as short	=0 
     dim markesc as short	=0
     dim st as short			=-1
-    dim loca as short		=0
+    dim loca as short		=1
     dim iLines as short
 Private:
     ' 0= headline 1=first entry
     dim as short blen
     dim as string text,help
-    dim as string bgname
+    'dim as string bgname
     dim lines(256) as string
     dim helps(256) as string
     dim shrt(256) as string
@@ -75,7 +91,6 @@ Private:
     dim longest as short
     dim as short ofx,l2,longestbox,longesthelp,backpic,offset
     '
-    dim as any ptr logo
 End Type
 
 type tMainmenu extends tMenuCore
@@ -104,6 +119,7 @@ End Function
 
 
 Constructor tMenuCore()
+	loca= 1
 End Constructor
 
 Destructor tMenuCore()
@@ -160,7 +176,7 @@ function tMenuCore.before() as integer
     '        display_ship()
     '        displaywares(bg-bg_trading)
     '    end select
-    'endif
+    'endif    
 	if tScreen.isGraphic then
 	    set__color( 15,0)
 '	    tScreen.drawfx(_fw1,_fh1)    
@@ -182,17 +198,16 @@ function tMenuCore.before() as integer
 	    for i=1 to c
 	        if loca=i then 
 	            if hfl=1 and loca<=c and helps(i)<>"" then blen=textbox(helps(i),ofx,2,hw,15,1,,,offset)
-	            tScreen.rgbcol(255,255,255)
+	            tScreen.rbgcolor(255,255,255)
 	            a1="*"
 	        else
-	            tScreen.rgbcol(127,127,127)
+	            tScreen.rbgcolor(127,127,127)
 	            a1=" "
 	        endif
 		    tScreen.xy(x,y+i, a1+shrt(i) &") "& lines(i))
 	    next
 		tScreen.poppos()
 	EndIf
-    
     'if bg<>1 then 'bg_noflip then 
     '    tScreen.update()
     'else
@@ -262,13 +277,7 @@ function tMenuCore.init() as integer
 
     cls
 	if tScreen.isGraphic then
-		if bg<0 then
-		    backpic=-bg
-		    bg= 0'bg_title
-		else
-			tGraphics.Randombackground()		    
-		endif
-	    
+		tGraphics.Background(0)		    	    
 	'    if bg=bg_title then
 	'    	backpic= 0
 	'        logo= bmp_load("graphics/prospector.bmp")
@@ -285,6 +294,7 @@ function tMenuCore.init() as integer
     do
         tlen=instr(text,"/")
         lines(c)=left(text,tlen-1)
+? lines(c)
         text=mid(text,tlen+1)
         c=c+1
     loop until len(text)<=0
@@ -298,6 +308,7 @@ function tMenuCore.init() as integer
         do
             tlen=instr(help,"/")
             helps(e)=left(help,tlen-1)
+? helps(e)            
             'if len(helps(e))>len(delhelp) then delhelp=space(len(helps(e)))
             help=mid(help,tlen+1)
             e=e+1
@@ -423,14 +434,13 @@ function tMenuCore.AddChoice(aTe as string, aTh as string="") as integer
 	return 0	
 End Function
 
-function tMenuCore.go(sbg as short,ate as string, ahe as string="", sx as short=2, sy as short=2, sblocked as short=0, smarkesc as short=0, sst as short=-1, sloca as short=0) as integer
+function tMenuCore.go(ate as string, ahe as string="", sx as short=2, sy as short=2, sblocked as short=0, smarkesc as short=0, sst as short=-1, sloca as short=0) as integer
 	'if tScreen.isGraphic then
 	'	LogOut("tScreen.isGraphic")
 	'else
 	'	cls
 	'	LogOut("tScreen.isConsole")
 	'endif
-    bg= sbg
     te= ate
     th= ahe
     x= sx
@@ -444,7 +454,6 @@ function tMenuCore.go(sbg as short,ate as string, ahe as string="", sx as short=
 	return menu()
 end function
 
-
 #endif'main
 
 
@@ -456,4 +465,28 @@ end function
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: uMenu -=-=-=-=-=-=-=-
 #undef test
+#include "uWindows.bas" 'auto-close
+chdir exepath
+chdir ".."
+
+
+dim Mainmenu as tMainmenu
+  Mainmenu.ClearChoices()
+  Mainmenu.AddChoice("testing",	"this could be a title")  
+  Mainmenu.AddChoice("one",		"test the menu")  
+  Mainmenu.AddChoice("two",		"more help")  
+  Mainmenu.AddChoice("three",	"and thrirdly..")
+  
+
+cls
+tGraphics.Randombackground()		    	    
+while not uConsole.Closing
+	tscreen.res
+	Mainmenu.menu()
+	tScreen.xy(10,22, "you chose: "&Mainmenu.e)
+	tScreen.xy(10,24)
+	if uConsole.keyaccept(uConsole.pressanykey(0),keyl_onwards) then exit while
+	tScreen.xy(10,22, pad(15,""))
+wend
+
 #endif'test
