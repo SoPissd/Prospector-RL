@@ -15,10 +15,14 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tDebug -=-=-=-=-=-=-=-
-
 #undef intest
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
 #define test
 #endif'test
+
+
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tDebug -=-=-=-=-=-=-=-
 
@@ -46,7 +50,7 @@
 	#define _DbgPrintCSVs 0				'print csv's?
 	#define _DbgLogExplorePlanet 0
 	'
-	#define _DbgPrintMode 5
+	#define _DbgPrintMode 4
 	'				
 	#if _DbgPrintMode =0				'=0: ignore
 		#print DbgPrint ignored.  
@@ -80,25 +84,38 @@
 		'
 		#define DbgEnd close #_DbgLog
 		
-	#elseif _DbgPrintMode =4			'=4: use console (experiment/sucks)	
-		#print DbgPrints to console.
-		'
-		dim shared as Short _DbgLog
-		_DbgLog= freefile
-		open cons for output as #_DbgLog
-		'
-		#Macro DbgPrint(text)
-			print #_DbgLog, __FUNCTION__ & "  " & text
-		#EndMacro
-		'
-		#define DbgEnd close #_DbgLog
+	#elseif _DbgPrintMode =4			'=4: use console requires windows!	
+		#ifdef __FB_WIN32__					'only under windows
+			#define _DbgOptLoadWin 1		'load the Windows headers
+			#print DbgPrints to console.
+			'
+			#include "uConprint.bas"
+			dim conprint as tagConPrintObject ptr 
+			conprint= new tagConPrintObject
+			'
+			' ucase(Namebase(__FILE__))+":"+__FUNCTION__+"." &__LINE__ &"> "+Text
+			'sub _DbgPrint(text as string)
+			'	conprint->ConsolePrint(text)
+			'End Sub
+			'conprint->ConsolePrint("OK!")
+			
+			#Macro DbgPrint(text)			
+				conprint->ConsolePrint(text) '_DbgPrint(text)
+			#EndMacro
+			'
+			#define DbgEnd delete conprint
+		#else
+			#print Can not use _DbgPrintMode=4 on Linux
+			#define DbgEnd
+		#endif
 		
 	#elseif _DbgPrintMode =5			'=5: just print	
 		#print DbgPrints just prints.
 		#Define DbgPrint(Text) ? ucase(Namebase(__FILE__))+":"+__FUNCTION__+"." &__LINE__ &"> ";Text
+	#else
+		#define DbgEnd
 	#endif
 	'	
-	#define DbgEnd
 #else
 	#ifdef __FB_WIN32__					'windows
 		#print Windows Release mode
@@ -141,13 +158,17 @@
 
 #if _DbgOptLoadWin = 1			
 	#print loading windows headers			
-	#include "windows.bi" ',			windows header mandatory for DebugBreak & console)
+	#include once "windows.bi" ',		windows header mandatory for DebugBreak & console)
 #else
 #if _DbgOptLoadWin = 2			
 	#print loading winbase headers			
-	#include "winbase.bi" ',			windows header mandatory for DebugBreak & console)
+	#include once "winbase.bi" ',		windows header mandatory for DebugBreak & console)
 #endif							
-#endif							
+#endif			
+#if _DbgPrintMode =4					'use console requires windows.. and a console	
+	AllocConsole
+#endif			
+				
 '
 #if _DbgOptLoadMLD = 1
 	#print loading memory leak detector			
@@ -169,6 +190,8 @@
 	'#endif
 	inc("fbmld.bi",				memory-leak-detector)
 #endif							
+
+'DbgPrint("testing DbgPrint output")
 
 
 #endif'head

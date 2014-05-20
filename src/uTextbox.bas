@@ -25,6 +25,8 @@
 #include "uModule.bas"
 #include "uDefines.bas"
 #include "uScreen.bas"
+#include "uDebug.bas"
+#Print("uDebug loaded")				
 #include "file.bi"
 #include "uFile.bas"
 #include "uColor.bas"
@@ -35,7 +37,6 @@
 #include "uRng.bas"
 #include "uCoords.bas"
 #include "uPrint.bas"
-#include "uDebug.bas"
 
 #define test
 #endif'test
@@ -56,11 +57,15 @@ function init(iAction as integer) as integer
 end function
 end namespace'tTextbox
 
+conprint->ConsolePrint("text")
+DbgPrint("HEAD")				
 
 function textbox(text as string,x as short,y as short,wid as short,_
     fg as short=11, bg as short=0,pixel as byte=0,byref op as short=0,byref offset as short=0) as short
     'op=1 only count lines, don't print
    
+conprint->ConsolePrint("HEAD")
+DbgPrint("HEAD")				
 
 	assert(pixel=0)
     tScreen.drawfx( _fw1,_fh1)
@@ -103,7 +108,7 @@ function textbox(text as string,x as short,y as short,wid as short,_
     for i=0 to wcount
 		w= trim(words(i))
 		if len(w)>wid then continue for 'already accounted for the long word
-				
+'DbgPrint(""&w &" "& lcount &" "& longestline &" " + w)				
         if w="|" then 'New line
             lcount=lcount+1
             if xw>longestline then longestline=xw

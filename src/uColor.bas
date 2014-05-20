@@ -49,7 +49,7 @@
 #endif'test
 #ifndef filexists
 #print uColor.bas: late including file.bi
-#include "file.bi"
+#include once "file.bi"
 #endif
 
 ' Below are the 16 colors QBASIC uses

@@ -24,11 +24,11 @@
 #endif'test
 #ifndef HWND
 #print uWindows.bas: late including windows.bi
-#include "windows.bi"
+#include once "windows.bi"
 #endif
 #ifndef EnumProcesses
 #print uWindows.bas: late including win\psapi.bi
-#include "win\psapi.bi"
+#include once "win\psapi.bi"
 #endif
 
 #ifdef head
@@ -113,7 +113,6 @@ END FUNCTION
 
 #if __FB_Debug__
 function KillCMD() as Integer
-	'well, not really.
 	'this is to run only in debug builds
 	'will kill the first unattended CMd.exe
 	return KillProcess(FindProcessId("CMD.EXE"))  

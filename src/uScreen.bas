@@ -25,11 +25,14 @@
 #include "uModule.bas"
 #include "uDefines.bas"
 
+#include "uDebug.bas"
+#Print("uDebug loaded")				
+
 #define test
 #endif'test
 #ifndef FB
 #print uScreen.bas: late including fbGfx.bi
-#include "fbGfx.bi"
+#include once "fbGfx.bi"
 #endif
 
 #ifdef types
@@ -325,6 +328,19 @@ tScreen.rbgcolor(255,255,255):	tScreen.draws( 10,31,"OK!")
 'tScreen.rbgcolor(255,0,0):	tScreen.draws( 40,20,"OK!")
 'tScreen.rbgcolor(0,255,0):	tScreen.draws( 50,60,"OK!")
 'tScreen.rbgcolor(0,0,255):	tScreen.draws( 100,100,"OK!")
+
+''AllocConsole
+''#include "uConprint.bas"
+''dim conprint as tagConPrintObject ptr = new tagConPrintObject
+''
+'DbgPrint("uDebug loaded")				
+'for i as integer =1 to 10
+'    conprint->ConsolePrint("With linefeeds")
+'next
+
+
+
+
 tScreen.xy(10,44)
 uConsole.pressanykey
 
