@@ -16,10 +16,10 @@
 #define main
 #endif'both
 '
+
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tScreen -=-=-=-=-=-=-=-
 #undef intest
-
 #include "fbGfx.bi"
 #include "uDefines.bas"
 #include "uModule.bas"
@@ -27,6 +27,10 @@
 
 #define test
 #endif'test
+#ifndef FB
+#print uScreen.bas: late including fbGfx.bi
+#include "fbGfx.bi"
+#endif
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-

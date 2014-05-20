@@ -26,6 +26,10 @@
 #include "uDefines.bas"
 #define test
 #endif'test
+#ifndef tActionmethod
+#print uModule.bas: late including uDefines.bas
+#include "uDefines.bas"
+#endif
 
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tModule -=-=-=-=-=-=-=-
