@@ -92,9 +92,19 @@ namespace tScreen
 
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tScreen -=-=-=-=-=-=-=-
+Dim Shared as integer isGraphic=0		'decide on print vs draw-string
 
-dim shared dsx as integer=1		'draw-scale x,y used with tScreen.Draw..
-dim shared dsy as integer=1
+Dim Shared As integer x=800
+Dim Shared As integer y=600
+
+dim shared as integer dsx=1				'draw-scale x,y used with tScreen.Draw..
+dim shared as integer dsy=1				'1== pixel resolution. set to font h/w to get a draw char-coordinate grid 
+
+dim shared as integer gtw				'graphics terminal width
+dim shared as integer gth		 		'computed to rows and cols when you set dsx/dsy with drawfx 
+
+dim shared as integer erw				'graphic fonts might not fit 100%. 
+dim shared as integer erh		 		'these shifts the origin to keep an even border
 
 
 #ifndef GFX_WINDOWED
@@ -135,16 +145,13 @@ function init(iAction as integer) as integer
     #ifdef __FB_WIN32__
         'setting the driver to gdi makes the window appear on top as needed for windows.						
         ScreenControl FB.SET_DRIVER_NAME, "GDI"
-    #endif    
+    #endif
+    drawfx() 'compute initial values    
 	return 0
 end function
 
-Dim Shared as UShort isGraphic=0
-Dim Shared as UShort LastCol=0
-Dim Shared as UShort LastRow=0
-
-Dim Shared As UShort x=800
-Dim Shared As UShort y=600
+Dim Shared as UShort LastCol=0		'console position tracker 
+Dim Shared as UShort LastRow=0		'console position tracker
 
 '	
 
@@ -233,28 +240,49 @@ End Sub
 sub drawfx(df_x as integer=0,df_y as integer=0)
 	dsx= df_x: if dsx<1 then dsx=1
 	dsy= df_y: if dsy<1 then dsy=1
+	
+	gtw=x\dsx			'we can fit this many chars integrally
+	gth=y\dsy
+	
+	erw=x- gtw*dsx 		'yet there may remain a fractional space in our fix-char matrix
+	erh=x- gtw*dsx 		'we'll keep track of it here and adjust below
+	
+	erw \= 2			'first though, lets half the error and distribute it all around 
+	erh \= 2
+	
 End Sub
 
 sub draws(ds_x as integer,ds_y as integer,ds_text as string,ds_font as string="",aProc as DrawStringCustom=null)
 	'Draw String ( ds_x , ds_y ), ds_text
 	if ds_font="" then
-		Draw String (ds_x*dsx,ds_y*dsy),	ds_text
+		Draw String (erw+ds_x*dsx,erh+ds_y*dsy),	ds_text
 	else
-		Draw String (ds_x*dsx,ds_y*dsy),	ds_text,,ds_font,custom,@aProc
+		Draw String (erw+ds_x*dsx,erh+ds_y*dsy),	ds_text,,ds_font,custom,@aProc
 	EndIf
-
 End sub
 
 sub draw1c(ds_x as integer,ds_y as integer,ds_text as string)
-	Draw String (ds_x*dsx,ds_y*dsy),	ds_text,,FONT2,custom,@_col
+	if FONT2=null then
+		Draw String (erw+ds_x*dsx,erh+ds_y*dsy),	ds_text
+	else
+		Draw String (erw+ds_x*dsx,erh+ds_y*dsy),	ds_text,,FONT2,custom,@_col
+	EndIf
 End sub
 
 sub draw2c(ds_x as integer,ds_y as integer,ds_text as string)
-	Draw String (ds_x*dsx,ds_y*dsy),	ds_text,,FONT2,custom,@_col
+	if FONT2=null then
+		Draw String (erw+ds_x*dsx,erh+ds_y*dsy),	ds_text
+	else
+		Draw String (erw+ds_x*dsx,erh+ds_y*dsy),	ds_text,,FONT2,custom,@_col
+	EndIf
 End sub
 
 sub drawtt(ds_x as integer,ds_y as integer,ds_text as string)	
-	Draw String (ds_x*dsx,ds_y*dsy),	ds_text,,TITLEFONT,custom,@_tcol
+	if TITLEFONT=null then
+		Draw String (erw+ds_x*dsx,erh+ds_y*dsy),	ds_text
+	else
+		Draw String (erw+ds_x*dsx,erh+ds_y*dsy),	ds_text,,TITLEFONT,custom,@_tcol
+	EndIf
 End sub
 
 end namespace
@@ -272,8 +300,24 @@ end namespace
 #include "uFile.bas"
 #include "uColor.bas"
 #include "uConsole.bas"
+#include "uWindows.bas" 'auto-close
 
-tScreen.res:				tScreen.drawfx( 10,10)
+tScreen.res
+DbgScreeninfo				
+tScreen.drawfx( 10,10)
+?
+? tScreen.dsx,tScreen.dsy
+? tScreen.gtw,tScreen.gth
+? tScreen.erw,tScreen.erh
+
+set__color(14,1):				tScreen.draws( 05,21,"yellow on light blue")
+set__color(14,1):				tScreen.draws( 05,22, hex(_fgcolor_)+" "+hex(_bgcolor_))
+
+Width 80, 25
+Locate 1,1: Color 14, 9 : Print "yellow text on bg 9"
+   ''  the color nightmare continues. no bg color is set
+
+
 tScreen.rbgcolor(255,255,0):	tScreen.draws( 05,20,"OK!")
 tScreen.rbgcolor(0,255,255):	tScreen.draws( 10,30,"OK!")
 tScreen.rbgcolor(255,255,255):	tScreen.draws( 10,31,"OK!")
