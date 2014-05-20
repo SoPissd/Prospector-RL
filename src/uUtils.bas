@@ -6,7 +6,6 @@
 ', fuzzymatch=0, roman=5, Texttofile=0, screenshot_nextfilename=0,
 ', screenshot=12
 '
-
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
 #if not (defined(types) or defined(head) or defined(main))

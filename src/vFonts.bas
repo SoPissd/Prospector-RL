@@ -152,13 +152,10 @@ function load_fonts() as short
     if tScreen.y<>_lines*_fh1 then tScreen.y=_lines*_fh1
     _textlines=fix((22*_fh1)/_fh2)+fix((tScreen.y-_fh1*22)/_fh2)-1
 
-    tScreen.x=_mwx*_fw1+25*_fw2
-    tScreen.res()
-    tScreen.set()
+'    tScreen.x=_mwx*_fw1+25*_fw2
+'    tScreen.res()
+'    tScreen.set()
 
-#if __FB_DEBUG__
-    if debug=1 then print #f,"Made screen"
-#endif
     
     Print "Loading Fonts"
     'gfx.font.loadttf("graphics/Nouveau_IBM.ttf", FONT1, 32, 448, _fh1)
@@ -166,29 +163,28 @@ function load_fonts() as short
     set__color(11,0)
 
     if configflag(con_customfonts)=0 then
+
         print "loading font 1"
         font1=load_font(""&_fohi1,_FH1)
-#if __FB_DEBUG__
-        if debug=1  then print #f,"Loaded Font 1"
-#endif
+
         print "loading font 2"
         font2=load_font(""&_fohi2,_FH2)
-#if __FB_DEBUG__
-        if debug=1then print #f,"Loaded Font 2"
-#endif
+
         titlefont=load_font("26",26)
     else
-        tScreen.x=1024
-        tScreen.y=768
-        tScreen.res()
-        tScreen.size(tScreen.x/8,tScreen.y/16) 'width
+
+'        tScreen.x=1024
+'        tScreen.y=768
+'        tScreen.res()
+'        tScreen.size(tScreen.x/8,tScreen.y/16) 'width
         'font1=load_font("FH1.bmp",16)
         'font2=load_font("FH1.bmp",16)
+        
         Font1 = ImageCreate((254-1) * 8, 17,rgba(0,0,0,0),16)
         Font2 = ImageCreate((254-1) * 8, 17,rgba(0,0,0,0),16)
+
         dim as ubyte ptr p
         ImageInfo( Font1, , ,depth , , p )
-
         p[0] = 0
         p[1] = 24
         p[2] = 254
@@ -196,6 +192,7 @@ function load_fonts() as short
             p[3 + a - 24] = 8
             Draw String Font1, ((a - 24) * 8, 1), Chr(a),rgba(255,255,255,255)
         Next
+        
         _fh1=16
         _fh2=16
 '        bsave "data/F1.bmp",Font1
@@ -204,6 +201,7 @@ function load_fonts() as short
 
     _FW1=_FH1/2+2
     _FW2=_FH2/2+2
+    
     if configflag(con_tiles)=0 then
         _Fw1=_tix
         _Fh1=_tiy
@@ -212,18 +210,12 @@ function load_fonts() as short
     if tScreen.y<>_lines*_fh1 then tScreen.y=_lines*_fh1
     _textlines=fix((22*_fh1)/_fh2)+fix((tScreen.y-_fh1*22)/_fh2)-1
     
-    tScreen.x=_mwx*_fw1+25*_fw2
-    tScreen.res(tScreen.GFX_WINDOWED OR tScreen.GFX_ALWAYS_ON_TOP)
-    tScreen.res()
+'    tScreen.x=_mwx*_fw1+25*_fw2
+'    tScreen.res(tScreen.GFX_WINDOWED OR tScreen.GFX_ALWAYS_ON_TOP)
+'    tScreen.res()
     
     sidebar=(_mwx+1)*_fw1+_fw2
 
-#if __FB_DEBUG__
-    if debug=1 then
-        print #f,"reset screen size"
-        close #f
-    endif
-#endif
     return 0
 end function
 
