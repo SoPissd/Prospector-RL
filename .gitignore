@@ -13,6 +13,7 @@ test/
 *.orig
 Thumbs.db
 
+*.a
 *.o
 *.asm
 *.exe
@@ -20,6 +21,8 @@ Thumbs.db
 
 *.log
 /*.csv
+
+untitled.bas
 
 register
 shipregistry.txt
