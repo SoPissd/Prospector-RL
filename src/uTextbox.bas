@@ -26,7 +26,6 @@
 #include "uDefines.bas"
 #include "uScreen.bas"
 #include "uDebug.bas"
-#Print("uDebug loaded")				
 #include "file.bi"
 #include "uFile.bas"
 #include "uColor.bas"
@@ -37,15 +36,19 @@
 #include "uRng.bas"
 #include "uCoords.bas"
 #include "uPrint.bas"
+#include "uWindows.bas"
 
 #define test
 #endif'test
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tTextbox -=-=-=-=-=-=-=-
 
-declare function textbox(text as string,x as short,y as short,w as short,_
+declare function textbox(text as string, x as short, y as short, wid as short,_
     fg as short=11, bg as short=0,pixel as byte=0,byref op as short=0,byref offset as short=0) as short
-declare function scroll_bar(offset as short,linetot as short,lineshow as short,winhigh as short, x as short,y as short,col as short) as short
+
+declare function scroll_bar(iStartingline as short, iTotalLines as short, iLinesShown as short, _
+	iScrollerHeight as short, x as short, y as short, fg as short) as short
+
 declare function draw_border(xoffset as short,yoffset as short,mwx as short,mhy as short) as short
 
 #endif'head
@@ -58,7 +61,7 @@ end function
 end namespace'tTextbox
 
 
-function textbox(text as string,x as short,y as short,wid as short,_
+function textbox(text as string, x as short, y as short, wid as short,_
     fg as short=11, bg as short=0,pixel as byte=0,byref op as short=0,byref offset as short=0) as short
     'op=1 only count lines, don't print
 
@@ -87,12 +90,6 @@ function textbox(text as string,x as short,y as short,wid as short,_
         if c=" " or c="|" then wcount+=1
         if wcount+1>=ubound(words) then exit for 'need to leave 1 empty word at the end
     next
-
-	'for i = 0 to wcount: ? ":"+words(i)+":",len(words(i)) :Next :uConsole.pressanykey(0)
-    'if words(wcount)<>"|" and bg<>0 and pixel=0 then
-    '    wcount+=1
-    '    words(wcount)="|"
-    'endif
    
     'Count lines
     dim as string w
@@ -103,7 +100,6 @@ function textbox(text as string,x as short,y as short,wid as short,_
     for i=0 to wcount
 		w= trim(words(i))
 		if len(w)>wid then continue for 'already accounted for the long word
-DbgPrint(lcount &" "& longestline &" " + w)				
         if w="|" then 'New line
             lcount=lcount+1
             if xw>longestline then longestline=xw
@@ -123,14 +119,12 @@ DbgPrint(lcount &" "& longestline &" " + w)
 	            endif
         	EndIf
         endif
+	'DbgPrint(lcount &" "& longestline  &" "& xw &" " + w)				
     next
     if xw>0 then
 		lcount+=1
     	xw=0
     EndIf
-    
-tScreen.xy(10,8)
- ? x,y,lcount,longestline
 
     if op<>0 then
         op=longestline
@@ -141,98 +135,156 @@ tScreen.xy(10,8)
     if offset>0 and lcount-offset<maxlines-1 then offset=lcount-maxlines-1
     if offset<0 then offset=0
     
-tScreen.xy(10,9)
-? "LL",longestline
-
-
     lcount=0
     dim as integer j
     dim as integer isCol=0
+
     for i=0 to wcount
 		w= trim(words(i))
        	j= lcount-offset
-       	
+
         isCol= Left(w,1)="{" and Right(w,1)="}" 					'Color spec'd 
         if isCol then
 			set__color( numfromstr(w),bg)
         elseif w="|" then 											'New line
-            'if j>=0 and j<maxlines then
-            if j>=maxlines then exit for 
-			tScreen.draw2c(x+xw,y+j,space(wid-xw))
+            if y+j>=maxlines then exit for
+			if j>=0 then tScreen.draw2c(x+xw,y+j,space(wid-xw))
             lcount += 1
             xw=0
         else			 											'Print word
             if (len(trim(words(i+1)))>wid) or (xw+len(w)>wid) then	'Newline before long word or line to long
-                if j>=maxlines then exit for	
-				tScreen.draw2c(x+xw,y+j,space(wid-xw))
+                if y+j>=maxlines then exit for
+				if j>=0 then tScreen.draw2c(x+xw,y+j,space(wid-xw))
                 lcount += 1
 		       	j= lcount-offset
                 xw=0
             EndIf
-			if j>=maxlines then exit for
-			tScreen.draw2c(x+xw,y+j,w)          	
+			if y+j>=maxlines then exit for
+			if j>=0 then tScreen.draw2c(x+xw,y+j,w)
             xw=xw+len(w)
         endif
-		'if j<0 or j>=maxlines then exit for						'Too long
+		'DbgPrint(lcount &" "& j &" "& longestline &" "& xw &" " & len(w) &" "& ":"+w+":")
     next
     
-tScreen.xy(10,9)
-? "LL",longestline
-    
-    'if linecount>maxlines then
-    '    if offset>0 then
-    '        set__color(14,0)
-    '    else
-    '        set__color(14,0,0)
-    '    endif
-    '    tScreen.draw2c(x+w-1,y              ,chr(24))
-    '    tScreen.draw2c(x+w-1,y+1            ,"-")
-    '    if offset+maxlines<linecount-1 then
-    '        set__color(14,0)
-    '    else
-    '        set__color(14,0,0)
-    '    endif
-    '    tScreen.draw2c(x+w-1,y+maxlines-1	,"+")
-    '    tScreen.draw2c(x+w-1,y+maxlines		,chr(25))
+    ''the spaces left between chars need to be dealt with by a different version of the draw-string code
+    ''http://www.freebasic.net/forum/viewtopic.php?f=3&t=17546&p=154151&hilit=draw+string+text+width#p154151
+	'tScreen.rbgcolor(255,255,255)
+	'for i=0 to wid-1
+	'	tScreen.draw2c(x+i,y+lcount+1,right(""&i,1))    	
+	'Next
+	'DbgPrint(x &" "& y &" "& longestline &" "& maxlines)				
 
-    '    DbgPrint("LC:" &linecount &"ML:"&maxlines)
-    '    scroll_bar(offset,linecount,maxlines,maxlines-4,x+w-1,y,14)
-    'endif
+
+DbgPrint(""&y &" "& lcount &" "& maxlines)
+    
+    if y+lcount>=maxlines then									' a full-screen textbox... for the finale
+
+        if offset>0 then
+            set__color(14,0)
+        else
+            set__color(14,0,0)
+        endif
+        
+wid -=1        
+        tScreen.draw2c(x+wid,y            ,chr(24))
+        tScreen.draw2c(x+wid,y+1          ,"-")
+        
+        if offset+maxlines<lcount-1 then
+            set__color(14,0)
+        else
+            set__color(14,0,0)
+        endif
+        tScreen.draw2c(x+wid,maxlines-2	,"+")
+        tScreen.draw2c(x+wid,maxlines-1	,chr(25))
+wid +=1        
+
+        scroll_bar(offset, lcount, maxlines-y, maxlines-y -1 -4,x+wid,y+2,14)
+	endif
+    
     set__color(11,0)
     op=longestline
     return lcount
 end function
 
 
-function scroll_bar(offset as short,linetot as short,lineshow as short,winhigh as short, x as short,y as short,col as short) as short
-	'offset as short,	#starting line
-	'linetot as short,	#of lines
-	'lineshow as short,	#lines showing
-	'winhigh,x,y,col	tallness,starting point, color
+function scroll_bar(iStartingline as short, iTotalLines as short, iLinesShown as short, _
+	iScrollerHeight as short, x as short, y as short, fg as short) as short
+	'iStartingline as short,	#starting line
+	'iTotalLines as short,	#of lines
+	'iLinesShown as short,	#lines showing
+	'iScrollerHeight,x,y,col	tallness,starting point, color
 	
-    dim as single part,i,balkenh,offset2,oneline
+    dim as double oneline
+    dim as integer balkenh,offset2
 
-	if lineshow>=linetot then offset=0							'already viewing the whole thing
-	if offset>=linetot-lineshow then offset= linetot-lineshow-1	'keep the scroller visible at the bottom 
-    oneline=winhigh/linetot					'% of total represented by one scrollbar-unit
-    balkenh=cint(lineshow*oneline)			'% of total lines shown in scrollbar-units
-    offset2=cint(offset*oneline)			'starting line in scrollbar-units
-
-    tScreen.drawfx( _fw1,_fh1)
-    set__color(col,0)
-    tScreen.draw2c(x,y-1,chr(220))			'put a marker on top
-    tScreen.draw2c(x,y+winhigh,chr(223))	'put a marker below
-    for i=0 to winhigh-1
-        if i>=offset2 and i<=offset2+balkenh then
-            set__color(col,0)
-        else
-            set__color(0,0)
-        endif
-        tScreen.draw2c(x,y+i,chr(178)) '"¦"
+	if iLinesShown>=iTotalLines then iStartingline=0		'already viewing the whole thing
+	if iStartingline>iTotalLines-iLinesShown then iStartingline= iTotalLines-iLinesShown	'keep the scroller visible at the bottom
+	
+	dim as integer bReserveSpace, bShowMarkers
+	bShowMarkers= iScrollerHeight>3
+	bReserveSpace= iScrollerHeight>5
+	
+	if bReserveSpace then iTotalLines -=2 'reserve top and bottom scrollbar positions
+	 
+	'DbgPrint("--")
+	'DbgPrint(iStartingline &" "& oneline  &" "& balkenh &" " & offset2)				
+	'DbgPrint(iTotalLines &" "& iLinesShown  &" "& iScrollerHeight &" " )				
+	'
+	dim as integer f,t
+	f=1
+	t=iScrollerHeight-2
+	'
+    set__color(fg,0)
+    if bShowMarkers then
+		if tScreen.isGraphic then
+		    tScreen.drawfx(_fw1,_fh1)
+		    tScreen.draw2c(x,y,chr(220))			'put a marker on top
+		    tScreen.draw2c(x,y+iScrollerHeight-1,chr(223))	'put a marker below
+		else
+			'text mode is 1-based..
+		    tScreen.xy(x,y,chr(220))			'put a marker on top
+		    tScreen.xy(x,y+iScrollerHeight-1,chr(223))	'put a marker below
+		endif
+    else 
+    	f -= 1
+    	t += 1
+	endif
+	'
+    if bReserveSpace then
+		if not (iStartingline=0 or iStartingline=iTotalLines-iLinesShown+2) then
+			f +=1		'reserve top and bottom scrollbar positions
+			t -=1
+		endif
+	endif
+	'
+    oneline=(t-f+1)/iTotalLines					'% of total represented by one scrollbar-unit
+'    oneline=(iScrollerHeight-2)/iTotalLines			'% of total represented by one scrollbar-unit
+    balkenh=iLinesShown*oneline				'% of total lines shown in scrollbar-units
+    offset2=iStartingline*oneline					'starting line in scrollbar-units
+	'
+popup(""& balkenh &" "& offset2) 	
+	dim as integer i
+    for i=f to t
+		if tScreen.isGraphic then
+	        if i>=offset2 and i<=offset2+balkenh then
+	            set__color(fg,0)
+	        else
+	            set__color(0,0)
+	        endif
+    	    tScreen.draw2c(x,y+i,chr(178))
+		else
+	        if i>=offset2 and i<offset2+balkenh then
+	            set__color(fg,0)
+				tScreen.xy(x,y+i,chr(178))
+	        else
+	            set__color(0,0)
+				tScreen.xy(x,y+i,chr(250))'" ") 
+	        endif
+		endif
         'draw string(x,y+(i)*_fh2),chr(178),,font2,custom,@_col
     next
     tScreen.drawfx()
-    set__color(col,0)
+    set__color(fg,0)
     return 0
 end function
 
@@ -282,7 +334,7 @@ end function
 #print -=-=-=-=-=-=-=- TEST: tTextbox -=-=-=-=-=-=-=-
 #undef test
 #include "uWindows.bas" 'auto-close
-
+ReplaceConsole()
     
 dim as string text
 dim as short w 
@@ -295,20 +347,17 @@ text+= " ijklmnopqrstuvwxyzabcde"
 text+= " fgh ijkl mnopq rstu"
 text+= " vwxyz"
 
-text= "here is a new text string for display in the fabulous textbox! you know, the one that will get its scrollbars back soon. yeah."
+text= "here is a new text string for display in the fabulous textbox!"' you know, the one that will get its scrollbars back soon. yeah."
 w= 20
 
+for w2=1 to 10
+	text +="|"+text
+Next
 
-dim fg as short			= 11
-dim bg as short			= 0
-dim pixel as byte			= 0
-'dim byref op as short 		= 0
-'dim byref offset as short	= 0
-    
-'textbox(text,x,y,w,fg,bg,pixel),op,offset) ',fg,bg,pixel) ,op,offset)
 
-fg=15
-bg=5
+dim fg as short			= 15
+dim bg as short			= 5
+
 _fw1=10
 _fh1=10
 
@@ -326,7 +375,7 @@ draw_border(4,4,40,30)
 
 dim as short x,y,h
 
-x=12
+x=8
 y=16
 w2=1
 h=textbox(text,x,y,w,,,,w2)
@@ -335,14 +384,17 @@ w2=1
 h=textbox(text,x,y,w,,,,w2)
 '? w2 &"*******************" 
 draw_border(x-1,y-1,w2+2,h+2)
-textbox(text,x,y,w2,fg,bg) 
+textbox(text,x,y,w2,fg,bg,,,0) 
 
-x=48
-y=16
-h=textbox(text,x,y,w,,,,1)',w) 
-draw_border(x-1,y-1,w+2,h+2)
-textbox(text,x,y,w,fg,bg,,0,3) 
+'x=48
+'y=16
+'h=textbox(text,x,y,w,,,,1)',w) 
+'draw_border(x-1,y-1,w+2,h+2)
+'textbox(text,x,y,w,fg,bg,,0,3) 
 
+tScreen.xy(10,44)
+uConsole.pressanykey(0)
+end
 
 while not uConsole.Closing
 	'scroll_bar(offset as short,linetot as short,lineshow as short,winhigh as short, x as short,y as short,col as short) as short
