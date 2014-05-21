@@ -22,6 +22,7 @@
 #include "uModule.bas"
 #include "uDefines.bas"
 #include "uScreen.bas"
+#include "uDebug.bas"
 #include "file.bi"
 #include "uFile.bas"
 #include "uColor.bas"
@@ -29,6 +30,8 @@
 #include "uVersion.bas"
 #include "uUtils.bas"
 #include "uError.bas"
+#include "uWindows.bas"
+#include "uTextbox.bas"
 
 #define test
 #endif'test
@@ -80,6 +83,8 @@ function ViewArray(lines() as string,nlines as integer) as integer
     if pheight>nlines then		' viewport-height is more than lines of text to show 
    		pheight=nlines
     EndIf
+
+	xwidth -= 1
     
     'set__color( 15,0)
     do
@@ -97,6 +102,11 @@ function ViewArray(lines() as string,nlines as integer) as integer
             text= mid(text,offsetx+1,xwidth)
             print text;
         next
+
+	'scroll_bar(offset,linetot,lineshow ,winhigh as short, x as short,y as short,col as short) as short
+	scroll_bar( offset, nlines, pheight, 4, xwidth+1, 1, 15) 
+'	scroll_bar( offset, nlines, pheight, pheight, xwidth+1, 1, 15) 
+
         '
         set__color( 14,0)
         key="Use Arrows and +/- to browse " & nlines & " lines. Enter to close: "
@@ -142,7 +152,7 @@ function ViewArray(lines() as string,nlines as integer) as integer
 	        endif
 			'
 			'if offset>nlines then offset=nlines
-	        if offset>=nlines-height then offset=nlines-height
+	        if offset>nlines-height+1 then offset=nlines-height+1
 	        if offset<0 then offset=0
 	        if offsetx>longest-xwidth then offsetx=longest-xwidth
 	        if (offsetx<0) or (xwidth>=longest) then offsetx=0
@@ -187,5 +197,21 @@ end function
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tViewfile -=-=-=-=-=-=-=-
 #undef test
-	Viewfile(tVersion.ErrorlogFilename())	
+	#include "file.bi"
+
+	ReplaceConsole(0)
+	chdir exepath
+	chdir ".."
+	
+	if not fileexists(tVersion.ErrorlogFilename()) then
+		dim as Integer f,i
+		assert(tFile.OpenLogfile(tVersion.ErrorlogFilename(),f)>0)
+		for i = 1 to 30 
+			print #f, pad(30," ") &i
+		Next
+		tFile.Closefile(f)
+	EndIf
+	
+	Viewfile(tVersion.ErrorlogFilename())
+		
 #endif'test
