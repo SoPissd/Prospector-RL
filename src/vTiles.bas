@@ -17,64 +17,13 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tTiles -=-=-=-=-=-=-=-
-
 #undef intest
 #define test
 #endif'test
 
 #ifdef types
-'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
-Type _tile
-    no As Short
 
-    tile As Short
-    ti_no As UInteger
-    bgcol As Short
-    col As Short
-
-    desc As String*512
-    stopwalking As Byte
-    oxyuse As Byte
-    locked As Byte
-    movecost As UByte
-    seetru As Short
-    walktru As Short
-    firetru As Short
-    shootable As Short 'shooting at it will damage it
-    dr As Short 'damage reduction
-    hp As Short
-    dam As Short
-    range As Short
-    tohit As Short
-    hitt As String*512
-    misst As String*512
-    deadt As String*512
-    turnsinto As Short
-    succt As String*512
-    failt As String*512
-    killt As String*512
-    spawnson As Short
-    spawnswhat As Short
-    spawnsmax As Short
-    spawnblock As Short '=0 spawns forever, >0 each spawn =-3, <0 spawning blocked
-    spawntext As String*512
-    survivors As Short
-    resources As Short
-    gives As Short
-    vege As Byte
-    disease As Byte
-    turnsoninspect As Short
-    turnroll As Byte
-    turntext As String*512
-    causeaeon As Byte
-    aetype As Byte
-    hides As Byte
-    repairable As Byte
-    onclose As Short
-    onopen As Short
-    turnsonleave As Short
-    turnsonleavetext As String*512
-End Type
+Dim Shared tiles(dimTiles) As _tile
 
 Dim Shared stiles(9,68) As Any Ptr
 Dim Shared shtiles(7,4) As Any Ptr
@@ -84,10 +33,9 @@ Dim Shared bestaltdir(9,1) As Byte
 Dim Shared gtiles(2048) As Any Ptr
 Dim Shared gt_no(4096) As Integer
 
-Dim Shared tiles(512) As _tile
 Dim Shared tmap(60,20) As _tile
-
 #endif'types
+
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tTiles -=-=-=-=-=-=-=-
 
@@ -100,10 +48,8 @@ declare function plant_name(ti as _tile) as string
 
 namespace tTiles
 function init(iAction as integer) as integer
-	dim as uinteger a
-	for a=1 to 512
-	    tiles(a).movecost=1
-	next
+	init_tiles(tiles())
+	set_movecost(tiles(),1)
 	return 0
 end function
 end namespace'tTiles

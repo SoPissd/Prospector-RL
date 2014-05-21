@@ -124,7 +124,6 @@ End function
 function screenshot(a as short) as short
 #ifdef makezlib
     savepng( screenshot_nextfilename("summary/" + tVersion.Gamedesig, ".png", 0), 0, 1) 'player.desig
-#else    
 #endif    
     return 0
 end function
@@ -133,6 +132,8 @@ end function
 function savepng(byref filename as string ="",byval image as any ptr =0,byval save_alpha as integer =0) as integer
 	return 0	
 End Function
+#else
+	#print *** gUtils.bas: compiled without zLib, screenshot/savepng not available. ***
 #endif    
 
 '

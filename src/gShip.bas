@@ -251,7 +251,8 @@ End function
 function _ship.bestcrew(s1 As Short,s2 As Short) As Short
 #if defined(best_crew)
     Return best_crew(s1,s2)
-#else    
+#else
+	#print *** gShip.bas compiled without access to best_crew() ***
     Return 0
 #endif
 End function

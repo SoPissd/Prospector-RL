@@ -395,9 +395,12 @@ function player_eval(p() as _pokerplayer,i as short,rules as _pokerrules) as sho
         'Sell has, else fold
         rlprint p(i).name &" is out of money.",c_yel
         if p(i).qg>0 then
-            if questguy(p(i).qg).has.given=0 and questguy(p(i).qg).has.it.desig<>"" then 'He is a qg and has not given up his has yet
+            if questguy(p(i).qg).has.given=0 and questguy(p(i).qg).has.it.desig<>"" then 
+            	'He is a qg and has not given up his has yet
+                dim q as String
+                q=p(i).name &" offers to sell you "&add_a_or_an(questguy(p(i).qg).has.it.desig,0)
                 price=(p(i).pot+p(i).bet)*rules.bet-p(i).money
-                if askyn(p(i).name &" offers to sell you "&add_a_or_an(questguy(p(i).qg).has.it.desig,0) &" for " &price &" Cr. (y/n)") then
+                if askyn(q &" for " &price &" Cr. (y/n)") then
                     if paystuff(price) then 
                         p(i).money+=price
                         questguy(p(i).qg).friendly(0)+=1

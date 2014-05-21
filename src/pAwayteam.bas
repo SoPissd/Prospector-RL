@@ -1015,7 +1015,6 @@ function pathblock(byval c as _cords,byval b as _cords,mapslot as short,blocktyp
     dim as single px,py
     dim deltax as single
     dim deltay as single
-    dim numtiles as single
     dim l as single
     dim  as short result
     dim text as string
@@ -1035,7 +1034,6 @@ function pathblock(byval c as _cords,byval b as _cords,mapslot as short,blocktyp
     deltax = Abs(c.x - b.x)
     deltay = Abs(c.y - b.y)
     If deltax >= deltay Then
-        numtiles = deltax 
         d = (2 * deltay) - deltax
         dinc1 = deltay Shl 1
         dinc2 = (deltay - deltax) Shl 1
@@ -1044,7 +1042,6 @@ function pathblock(byval c as _cords,byval b as _cords,mapslot as short,blocktyp
         yinc1 = 0
         yinc2 = 1
     Else
-        numtiles = deltay 
         d = (2 * deltax) - deltay
         dinc1 = deltax Shl 1
         dinc2 = (deltax - deltay) Shl 1

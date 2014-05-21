@@ -35,11 +35,31 @@
 '
 '
 '
+
+'experiments/duplicate the inc's
+ 
+#ifdef justpoker
+inc("gUtils.bas",				"game utils")
+inc("vInput.bas",				"gettext & getnumber")
+inc("cCasino.bas",				"")
+inc("cSlotmachine.bas",			"")
+inc("dCards.bas",				"Playing card rendering")
+inc("cPoker.bas",				"")
+#endif
+
+
+
+' for real - unique inc's
+
 #ifdef gbasics
 '
 'basics
 '
-inc("dCards.bas",				"Playing card rendering")
+
+#ifndef useLibTileData
+inc("vTiledata.bas",			"data about each tile")
+#endif
+'inc("dCards.bas",				"Playing card rendering")
 inc("vSettings.bas",			"Saved settings and keys assembled here for early save/load inclusion")
 inc("sStars.bas",				"Stellar map, resized based on save/load")
 inc("vInput.bas",				"gettext & getnumber")
@@ -47,7 +67,6 @@ inc("vKeys.bas",				"save, load, configure keys")
 inc("vConfig.bas",				"save, load, configure settings")
 inc("vFonts.bas",				"compute/load fonts/graphics-mode")
 inc("vDebug2.bas",				"disabled csv printing")
-inc("vTiledata.bas",			"data about each tile")
 inc("vTiles.bas",				"tile rendering")
 inc("dHighscore.bas",			"highscore display")
 inc("gUtils.bas",				"game utils")
@@ -78,6 +97,7 @@ inc("xVars.bas",				"")
 '
 'commerce
 '
+inc("dCards.bas",				"Playing card rendering")
 inc("cArtifacts.bas",			"")
 'inc("cCargo.bas",				"")
 inc("cCargotrade.bas",			"")
