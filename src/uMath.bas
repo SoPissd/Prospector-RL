@@ -22,8 +22,14 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tMath -=-=-=-=-=-=-=-
-
 #undef intest
+
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
+#include "uRng.bas"
+#include "uCoords.bas"
+
 #define test
 #endif'test
 

@@ -19,11 +19,14 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tPng -=-=-=-=-=-=-=-
-
 #undef intest
+#include "zlib.bi"
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
+
 #define test
 #endif'test
-
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-

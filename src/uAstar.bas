@@ -19,8 +19,14 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tAstar -=-=-=-=-=-=-=-
-
 #undef intest
+
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
+#include "uRNG.bas"
+#include "uCoords.bas"
+
 #define test
 #endif'test
 #ifdef types

@@ -19,8 +19,12 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tSound -=-=-=-=-=-=-=-
-
 #undef intest
+
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
+
 #define test
 #endif'test
 

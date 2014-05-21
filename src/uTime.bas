@@ -19,8 +19,15 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tTime -=-=-=-=-=-=-=-
-
 #undef intest
+
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
+#include "uScreen.bas"
+#include "uColor.bas"
+#include "uUtils.bas"
+
 #define test
 #endif'test
 #ifdef head

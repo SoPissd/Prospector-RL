@@ -23,8 +23,13 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: version -=-=-=-=-=-=-=-
-
 #undef intest
+
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
+#include "uScreen.bas"
+
 #define test
 #endif'test
 #ifdef head

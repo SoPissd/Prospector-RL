@@ -30,8 +30,12 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tRng -=-=-=-=-=-=-=-
-
 #undef intest
+
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
+
 #define test
 #endif'test
 
@@ -180,10 +184,13 @@ End function
 #undef test
 
 #include once "string.bi"
+
 sub test()
 	cls
-	? "exercising tRng": ?
-	dim rng as tRng
+	? "exercising tRng"
+	?
+	
+	dim rng as tRandom
 	dim seed as tRngSeed
 	dim i as Short
 	'
@@ -219,7 +226,7 @@ sub test()
 	next
 end sub
 
-sub main()
+sub go()
 	width 80,32	
 	do 
 		test()
@@ -230,6 +237,6 @@ sub main()
 	loop while (getkey=asc("y"))	
 	?"done"
 End Sub
-main()
+go()
 
 #endif'test

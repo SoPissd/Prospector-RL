@@ -17,45 +17,38 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: uMainloop -=-=-=-=-=-=-=-
+#undef intest
+
 #include "fbGfx.bi"
 #include "zlib.bi"
 #include "File.bi"
 
-#undef intest
-#undef both
-#define head
-#undef main
-#include "tDefines.bas"
-#define main
-#include "tModule.bas"
-#undef head
-#include "tDefines.bas"
-#define head
-#include "tScreen.bas"
-#include "tColor.bas"
-#include "tPng.bas"
-#undef main
-#include "uMainloop.bas"
-#include "tFonts.bas"
-#define main
-#define head
-#include "tFile.bas"
-#include "tGraphics.bas"
-#include "tRng.bas"
-#define head
-#include "tCoords.bas"
-#include "tMath.bas"
-#include "tPrint.bas"
-#include "Version.bas"
-#include "tUtils.bas"
-#include "tError.bas"
-#include "tSound.bas"
-#include "tStars.bas"
-#include "tConfig.bas"
-#include "tMainMenu.bas"
-#undef head
-#include "uMainloop.bas"
-#include "tFonts.bas"
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
+#include "uWindows.bas"
+#include "uDebug.bas"
+#include "uFile.bas"
+#include "uScreen.bas"
+#include "uColor.bas"
+#include "uConsole.bas"
+#include "uPng.bas"
+'#include "uMainloop.bas"
+'#include "uFonts.bas"
+#include "uRng.bas"
+#include "uGraphics.bas"
+#include "uCoords.bas"
+#include "uMath.bas"
+#include "uPrint.bas"
+#include "uVersion.bas"
+#include "uUtils.bas"
+#include "uError.bas"
+'#include "uSound.bas"
+'#include "uStars.bas"
+'#include "uConfig.bas"
+#include "uTextbox.bas"
+#include "uMainMenu.bas"
+
 #undef main
 
 #undef intest
@@ -106,17 +99,13 @@ End Type
 #endif'head
 
 
-namespace uMainloop
-
-#ifdef head
-'     -=-=-=-=-=-=-=- HEAD: uMainloop -=-=-=-=-=-=-=-
-#endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: uMainloop -=-=-=-=-=-=-=-
-
+namespace uMainloop
 function init(iAction as integer) as integer
 	return 0
 End function
+End Namespace
 
 '
 
@@ -158,10 +147,7 @@ End function
 '	return 0
 'end function
 
-#endif'main
-End Namespace
 
-#ifdef main
 
 constructor tMainloop()
 End Constructor
@@ -240,8 +226,8 @@ function tMainloop.run(iAction as Integer) as Integer
    	return iCmd'uConsole.Closing
 End Function
 
-
 #endif'main
+
 
 #if (defined(main) or defined(test))
 	' -=-=-=-=-=-=-=- INIT: uMainloop -=-=-=-=-=-=-=-

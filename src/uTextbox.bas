@@ -333,7 +333,7 @@ end function
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tTextbox -=-=-=-=-=-=-=-
 #undef test
-#include "uWindows.bas" 'auto-close
+'#include "uWindows.bas" 'auto-close
 ReplaceConsole()
     
 dim as string text

@@ -15,8 +15,15 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tIndex -=-=-=-=-=-=-=-
-
 #undef intest
+
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
+#include "uRng.bas"
+#include "uCoords.bas"
+#include "uDebug.bas"
+
 #define test
 #endif'test
 

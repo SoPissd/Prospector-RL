@@ -35,6 +35,8 @@
 #include "uCoords.bas"
 #include "uPrint.bas"
 #include "uUtils.bas"
+#include "uDebug.bas"
+#include "uWindows.bas" 'auto-close
 #include "uTextbox.bas"
 #include "uGraphics.bas"
 
@@ -465,7 +467,6 @@ end function
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: uMenu -=-=-=-=-=-=-=-
 #undef test
-#include "uWindows.bas" 'auto-close
 chdir exepath
 chdir ".."
 

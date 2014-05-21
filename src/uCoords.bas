@@ -20,8 +20,13 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tCoords -=-=-=-=-=-=-=-
-
 #undef intest
+
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
+#include "uRng.bas"
+
 #define test
 #endif'test
 
