@@ -19,23 +19,26 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tPrint -=-=-=-=-=-=-=-
-
 #undef intest
+#include "uDefines.bas"
+#include "uModule.bas"
+#include "uDefines.bas"
+#include "uScreen.bas"
+#include "uDebug.bas"
+#include "file.bi"
+#include "uFile.bas"
+#include "uColor.bas"
+#include "uConsole.bas"
+#include "uVersion.bas"
+#include "uUtils.bas"
+#include "uError.bas"
+#include "uRng.bas"
+#include "uCoords.bas"
+
 #define test
 #endif'test
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tPrint -=-=-=-=-=-=-=-
-
-Dim Shared As UByte _FH1
-Dim Shared As UByte _FH2
-Dim Shared As UByte _FW1
-Dim Shared As UByte _FW2
-Dim Shared As UByte _TFH
-Dim Shared As Byte _mwx=60
-
-'dim shared as FB.image ptr TITLEFONT
-
-
 
 Dim Shared displaytext(255) As String
 Dim Shared dtextcol(255) As Short
@@ -61,11 +64,6 @@ declare function rlprint(t as string, col as short=11) as short
 
 namespace tPrint
 function init(iAction as integer) as integer
-	_FH1=24
-	_FH2=16
-	_FW1=16
-	_FW2=16
-	_mwx=60
 	return 0
 end function
 end namespace'tPrint

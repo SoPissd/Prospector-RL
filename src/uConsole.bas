@@ -20,7 +20,7 @@
 #undef intest
 
 #include "fbGfx.bi"
-#include "zlib.bi"
+'#include "zlib.bi"
 #include "file.bi"
 
 #include "uDefines.bas"
@@ -132,7 +132,6 @@ dim shared as integer 		bIdling
 Dim shared as integer		Fps			'most recent fps
 Dim shared as double		Fpstime		'time of most recent fps
 
-
 Dim shared as tActionmethod IdleMethod
 
 '
@@ -227,7 +226,6 @@ End Function
 function EventPending() as short		'0 if nothing pending, 1 has buffered
 	return Screenevent(0)
 End Function
-
 
 '
 'freely convert between one of each form of key-expression
@@ -468,7 +466,8 @@ End Namespace
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: uConsole -=-=-=-=-=-=-=-
 #undef test
-#include "uWindows.bas" 'auto-close
+
+'#include once "uWindows.bas" 'auto-close,expectedconsole
 
 'redo with uMainloop for testing
 ''	dim shared as uConsole.tMainloopParams aParams
@@ -536,6 +535,7 @@ ascii_table()
 ?"showing keycodes"
 ?"close window to end loop"
 ?
+
 dim a as String
 while not uConsole.Closing
 	a= uConsole.aGetKey()

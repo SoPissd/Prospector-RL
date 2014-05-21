@@ -22,7 +22,8 @@
 
 #define test
 #endif'test
-#ifndef HWND
+#ifndef __WINDOWS_BI__
+#undef DebugBreak
 #print uWindows.bas: late including windows.bi
 #include once "windows.bi"
 #endif
@@ -30,6 +31,16 @@
 #print uWindows.bas: late including win\psapi.bi
 #include once "win\psapi.bi"
 #endif
+
+
+#ifdef types
+
+type tTheEnd extends object
+	declare Destructor()
+	dim as integer WindowsConsoleAutoClose = true
+End Type
+
+#endif'types
 
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: uWindows -=-=-=-=-=-=-=-
@@ -39,23 +50,65 @@ Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (_
 	ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
 
 declare function Get_hWnd(pid as integer) as hWnd
+declare function MaximizeWindow(hWindow as hWnd) as integer
+
 declare function KillProcess(pid as integer) as integer
 declare function FindProcessId (ProcessName as string) as DWORD
 
-#if __FB_Debug__
-#print Activating Console Auto-close!
+declare function HaveConsoleWindow() as integer
+declare function ReplaceConsole(bMaximize as short= true) as Integer
+
 declare function KillCMD() as Integer
-#endif
+
+declare function Popup overload (aTitle as string,aMsg as string) as integer
+declare function Popup overload (aMsg as string="") as integer
+declare function Popup overload (iMsg as integer) as integer
 
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: uWindows -=-=-=-=-=-=-=-
+
+Destructor tTheEnd()
+	if WindowsConsoleAutoClose then KillCMD()
+End Destructor
+
+#if _WindowsConsoleAutoClose =1
+	#print Activating Console Auto-close!
+	dim TheEnd as tTheEnd
+#endif
+
+'
 
 namespace uWindows
 function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'uWindows
+
+'
+
+function HaveConsoleWindow() as integer
+	'figure out if we're compiled as a console or gui application by the presence of a console window
+	dim as UInteger mf
+	return (GetConsoleDisplayMode(@mf)=1) ' 0= no console window, 1= compiled with consolewindow
+end function	
+
+function ReplaceConsole(bMaximize as short= true) as Integer
+    dim as integer ac
+	if HaveConsoleWindow() then
+		FreeConsole
+	EndIf	
+	KillCMD()
+	ac=(AllocConsole=1)
+	if ac and bMaximize then MaximizeWindow(Get_hWnd(GetCurrentProcessID))
+	return ac
+End Function
+
+'
+function MaximizeWindow(hWindow as hWnd) as integer
+	SendMessage(hWindow, WM_SYSCOMMAND, SC_MAXIMIZE, 0)
+	return 0
+End Function
 
 function Get_hWnd(pid as integer) as hWnd
     dim as integer ProcID
@@ -111,28 +164,29 @@ function FindProcessId (ProcessName as STRING) as DWORD
        RETURN 0
 END FUNCTION
 
-#if __FB_Debug__
+
 function KillCMD() as Integer
 	'this is to run only in debug builds
 	'will kill the first unattended CMd.exe
 	return KillProcess(FindProcessId("CMD.EXE"))  
 End Function
-#endif
+
+
+function Popup overload (aTitle as string,aMsg as string) as integer
+	if aTitle="" then aTitle= "Info"
+	return MessageBox(HWND_DESKTOP,aMsg,aTitle,MB_OK)	
+End Function
+
+function Popup overload (aMsg as string="") as integer
+	return Popup("",aMsg)
+End Function
+
+function Popup overload (iMsg as integer) as integer
+	return Popup("",""& iMsg)
+End Function
+
 
 #endif'main
-
-#if __FB_Debug__
-
-type tTheEnd extends object
-	declare Destructor()
-End Type
-
-Destructor tTheEnd()
-	KillCMD()
-End Destructor
-
-dim TheEnd as tTheEnd
-#endif
 
 
 #if (defined(main) or defined(test))
@@ -143,10 +197,11 @@ dim TheEnd as tTheEnd
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: uWindows -=-=-=-=-=-=-=-
 #undef test
+ReplaceConsole()
 
 'ShellExecute(HWND_DESKTOP,"open","cmd.exe","","",SW_SHOW)
 #if __FB_Debug__
-? "this cmd.exe console will close when you click ok.."
+? "this console will close when you click ok.."
 #endif
 
 MessageBox(HWND_DESKTOP,"Test","Hello",MB_OK)

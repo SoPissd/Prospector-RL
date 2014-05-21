@@ -53,7 +53,7 @@
 	#define _DbgPrintMode 4
 	'				
 	#if _DbgPrintMode =-1				'=-1: do nothing
-		#print DbgPrint is up to you. (do nothing)  
+		#print DbgPrint is up to you. (do nothing) 
 		
 	#elseif _DbgPrintMode =0				'=0: ignore
 		#print DbgPrint ignored.  
@@ -124,6 +124,7 @@
 	#define _DbgOptLoadMLD 0		
 	#define _DbgPrintCSVs 0
 	'									'NOTICE!! these must be on their own line.  no IF x THEN DbgPrint()! 
+	#define _DbgPrintMode -1
 	#define DbgPrint(text)
 	#define DbgEnd
 #endif
@@ -152,19 +153,24 @@
 #EndMacro
 
 
-#if _DbgOptLoadWin = 1			
-	#print loading windows headers			
-	#include once "windows.bi" ',		windows header mandatory for DebugBreak & console)
+#if (_DbgOptLoadWin = 1)
+	#ifndef  __WINDOWS_BI__			
+		#print loading windows headers
+		#include once "windows.bi" 		'windows header mandatory for DebugBreak & console)
+	#endif							
 #else
-#if _DbgOptLoadWin = 2			
-	#print loading winbase headers			
-	#include once "winbase.bi" ',		windows header mandatory for DebugBreak & console)
-#endif							
+	#if (_DbgOptLoadWin = 2)
+		#ifndef  __WIN_WINBASE_BI__			
+			#print loading winbase headers			
+			#include once "winbase.bi"	'windows header mandatory for DebugBreak & console)
+		#endif							
+	#endif							
 #endif			
-#if _DbgPrintMode =4					'use console requires windows.. and a console	
-	AllocConsole
-#endif			
-				
+
+#if _DbgPrintMode =4					'use console requires windows.. and a console
+'	AllocConsole
+#endif
+
 '
 #if _DbgOptLoadMLD = 1
 	#print loading memory leak detector			
@@ -205,19 +211,31 @@ end namespace'tDebug
 	tModule.register("tDebug",@tDebug.init()) ',@tDebug.load(),@tDebug.save())
 #endif'main
 
-#ifdef test
+
+#if (defined(test) and __FB_Debug__) 
 #print -=-=-=-=-=-=-=- TEST: tDebug -=-=-=-=-=-=-=-
 #undef test
 
+#include "uWindows.bas"
+'ScreenControl FB.SET_DRIVER_NAME, "GDI"
+'screenres 800,600,16,2,flags
+'cls
+'sleep
 
-AllocConsole
+
+? "ReplaceConsole()  " & ReplaceConsole()
+
+DbgPrint("_DbgPrintMode "& _DbgPrintMode)		
+
+#include "fbGfx.bi"
+ScreenControl FB.SET_DRIVER_NAME, "GDI"
+screenres 800,600,16,2,0
+cls
+
 DbgPrint("uDebug loaded")		
 
-sub s 
-	DbgPrint("uDebug loaded")				
-End Sub
-
-s
+? "sleep"
+sleep
 		
 #endif'test
 

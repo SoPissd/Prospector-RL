@@ -25,12 +25,9 @@
 #include "uModule.bas"
 #include "uDefines.bas"
 
-#include "uDebug.bas"
-#Print("uDebug loaded")				
-
 #define test
 #endif'test
-#ifndef FB
+#ifndef __fbgfx_bi__
 #print uScreen.bas: late including fbGfx.bi
 #include once "fbGfx.bi"
 #endif
@@ -43,6 +40,15 @@ Dim Shared _bgcolor_ 	As UInteger	'active rgb bg color
 Dim Shared FONT1 		As Any Ptr	'fonts for draw screen
 Dim Shared FONT2 		As Any Ptr
 Dim Shared TITLEFONT	As Any Ptr
+
+Dim Shared As UByte _FH1
+Dim Shared As UByte _FH2
+Dim Shared As UByte _FW1
+Dim Shared As UByte _FW2
+Dim Shared As UByte _TFH
+Dim Shared As Byte _mwx=60
+
+'
 
 type DrawStringCustom as Function( ByVal src As UInteger, ByVal dest As UInteger, ByVal param As Any Ptr ) As UInteger
 #endif'types
@@ -149,6 +155,11 @@ function init(iAction as integer) as integer
         'setting the driver to gdi makes the window appear on top as needed for windows.						
         ScreenControl FB.SET_DRIVER_NAME, "GDI"
     #endif
+	_FH1=24
+	_FH2=16
+	_FW1=16
+	_FW2=16
+	_mwx=60
     drawfx() 'compute initial values    
 	return 0
 end function
@@ -304,6 +315,7 @@ end namespace
 #include "uColor.bas"
 #include "uConsole.bas"
 #include "uWindows.bas" 'auto-close
+#include "uDebug.bas"
 
 tScreen.res
 DbgScreeninfo				
@@ -341,8 +353,6 @@ s
 'for i as integer =1 to 10
 '    conprint->ConsolePrint("With linefeeds")
 'next
-
-
 
 
 tScreen.xy(10,44)

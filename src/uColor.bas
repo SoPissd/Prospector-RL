@@ -47,7 +47,8 @@
 
 #define test
 #endif'test
-#ifndef filexists
+
+#ifndef __FILE_BI__
 #print uColor.bas: late including file.bi
 #include once "file.bi"
 #endif

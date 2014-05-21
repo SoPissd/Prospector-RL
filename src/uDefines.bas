@@ -13,22 +13,35 @@
 #print -=-=-=-=-=-=-=- TEST: tDefines -=-=-=-=-=-=-=-
 
 #ifdef types 
-	#print "types"
+	#print "got types"
 #else
 	#print "no types"
 #endif
 
 #ifdef head 
-	#print "head"
+	#print "got head"
 #else
 	#print "no head"
 #endif
 
 #ifdef main 
-	#print "main"
+	#print "got main"
 #else
 	#print "no main"
 #endif
+
+#ifndef __FILE_BI__
+#print no __FILE_BI__
+#else
+#print got __FILE_BI__
+#endif
+
+#ifndef __FBGFX_BI__
+#print no __FBGFX_BI__
+#else
+#print got __FBGFX_BI__
+#endif
+
 
 #undef intest
 #define test
@@ -49,13 +62,15 @@
     #Define NULL 0
 #EndIf
 
+#DEFINE _WindowsConsoleAutoClose 1 	' <--
+
 type tErrorMethod As Function(ErrWhere as String="") As integer
 type tActionmethod As Function(iAction as integer) As Integer
 type tTextmethod As Function(aText as string) As Integer
 type tTextIntegermethod As Function(aText as string,iAction as integer) As Integer
 
-#endif'tErrorMethod
 
+#endif'tErrorMethod
 
 #ifdef tModule									'register if possible'
 
