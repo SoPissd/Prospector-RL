@@ -50,6 +50,7 @@ Dim as String ErrText
 
 declare function Errorhandler(ErrWhere as String="") As integer   'global error-handler. pass in ErrorLoc
 #define ErrorLoc ucase(Namebase(*ERMN())) + "::" + *ERFN() +"()"  'usually used to call errorhandler
+'e.g. tError.Errorhandler(Errorloc+"> why it failed")
 
 #define LogWarning(Text) Assert(tError.log_warning(__FILE__,__FUNCTION__,__LINE__,Text))
 declare function log_warning(aFile as string, aFunct as string, iLine as integer, text as string) as integer

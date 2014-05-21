@@ -152,12 +152,12 @@ End function
 
 function textmenu overload (bg as short,te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as short
 	dim aMenu as tMainmenu
-	return aMenu.go(bg,te,he,x,y,blocked,markesc,st,loca) 	          
+	return aMenu.go(te,he,x,y,blocked,markesc,st,loca) 	          
 end function
 
 function textmenu overload (te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as short
 	dim aMenu as tMainmenu
-	return aMenu.go(0,te,he,x,y,blocked,markesc,st,loca) 	          
+	return aMenu.go(te,he,x,y,blocked,markesc,st,loca) 	          
 end function
 
 

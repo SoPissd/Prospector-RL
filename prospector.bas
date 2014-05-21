@@ -9,14 +9,16 @@
 '
 'set needed flags
 '#define buildjustcore
-#define buildjustbasic
+'#define buildjustbasic
 '
 'SET OPTIONS
 '#define makesound   
 '#define makezlib 
 '
+
+
  
-#include once "src/bFoundation.bas"	'build the core pieces  
+#include once "utl/bFoundation.bas"	'build the core pieces  
 
 'build module 'build' for types, head and main
 #ifdef buildjustcore
@@ -66,6 +68,12 @@ end namespace'tMain
 '
 'main
 '
+#if __FB_Debug__
+#ifdef __FB_WIN32__			
+	ReplaceConsole()
+#endif
+#endif
+
 
 '      -=-=-=-=-=-=-=- MAIN -=-=-=-=-=-=-=-
 Letsgo:
@@ -75,6 +83,5 @@ ErrorHandler:
 	On Error goto 0
 	tError.ErrorHandler(ErrorLoc)
 Done:
-	uSound.set(-1)
 	DbgEnd
 	End tError.ErrorNr

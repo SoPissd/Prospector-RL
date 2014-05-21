@@ -245,7 +245,7 @@ function ace_highlo_eval(c() as integer,knowall as short) as _handrank
     dim as _handrank h1,h2
     h1=poker_eval(c(),0,knowall)
     h2=poker_eval(c(),1,knowall)
-    DbgPrint(h1.rank ;":";h2.rank)
+    DbgPrint(h1.rank &":"& h2.rank)
     if better_hand(h1,h2)=1 then return h1
     return h2
 end function
@@ -361,7 +361,7 @@ function sort_cards(card() as integer,knowall as short=0) as short
 	            flag=1
 	        endif
 	    next
-    	DbgPrint(".";)
+    	DbgPrint("sorting...")
     loop until flag=0
     return 0
 end function

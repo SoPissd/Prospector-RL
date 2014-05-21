@@ -38,10 +38,11 @@ declare function Initgame() as integer
 
 
 function Reset_game(iAction as integer) as Integer
-	player.dead=0
+    tVersion.gamerunning= false
+	player.dead=false
     clear_gamestate()
     loadgame()
-    tVersion.gamerunning=0
+	return 0
 End Function
 
 

@@ -31,7 +31,7 @@
 'declare function from_savegame(iBg as integer) As integer
 
 #ifndef savegame 'allow this to be a forward
-declare function savegame(crash as short=0) as short
+declare function savegame() as short
 #endif
 
 'private function savegame_crashfilename(fname as String, ext as String) as String
@@ -170,7 +170,6 @@ function savegame_crashfilename(fname as String, ext as String) as String
 End function
 
 function savegame() as short
-	dim crash as short
     dim back as short
     dim a as short
     dim b as short
@@ -184,7 +183,7 @@ function savegame() as short
     dim unflags(lastspecial) as byte
     dim artifactstr as string*512
     
-    crash= tError.ErrorNr
+	dim crash as short= tError.ErrorNr
 
     'Needed for compression
     dim as Integer dest_len, header_len

@@ -381,7 +381,7 @@ function add_event_planets() as short
     for d=0 to 5
         sys=get_random_system()
         if sys>0 then
-            DbgPrint("disc:";map(sys).discovered)
+            DbgPrint("disc:" &map(sys).discovered)
             if map(sys).discovered=0 then
                 planet=getrandomplanet(sys)
                 

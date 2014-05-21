@@ -37,7 +37,6 @@ Dim Shared As Short sidebar
 
 declare function load_font(fontdir as string,byref fh as ubyte) as ubyte ptr
 declare function load_fonts() as short
-declare function draw_border(xoffset as short) as short
 
 
 #endif'head
@@ -92,6 +91,11 @@ function load_fonts() as short
     dim as short a,f
     dim as integer depth
     dim as integer debug
+    
+    if not tScreen.isGraphic then
+    	tError.Errorhandler(Errorloc+"> why it failed")
+    	return false
+    EndIf
 
 #if __FB_DEBUG__
     if debug=1 then
@@ -184,7 +188,9 @@ function load_fonts() as short
         Font2 = ImageCreate((254-1) * 8, 17,rgba(0,0,0,0),16)
 
         dim as ubyte ptr p
-        ImageInfo( Font1, , ,depth , , p )
+        if ImageInfo( Font1, , ,depth , , p )=1 then
+        	LogWarning("Invalid Image")
+        EndIf
         p[0] = 0
         p[1] = 24
         p[2] = 254
@@ -216,7 +222,7 @@ function load_fonts() as short
     
     sidebar=(_mwx+1)*_fw1+_fw2
 
-    return 0
+    return true
 end function
 
 
@@ -263,35 +269,6 @@ end function
 'End function
 
 
-
-function draw_border(xoffset as short) as short
-    dim as short fh1,fw1,fw2,a
-    if configflag(con_tiles)=0 then
-        fh1=16
-        fw1=8
-        fw2=_fw2
-    else
-        fh1=_fh1
-        fw1=_fw1
-        fw2=_fw2
-    endif
-    set__color( 224,1)
-    if xoffset>0 then draw string(xoffset*fw2,21*_fh1),chr(195),,Font1,Custom,@_col
-    for a=(xoffset+1)*fw2 to (_mwx+1)*_fw1 step fw1
-        draw string (a,21*_fh1),chr(196),,Font1,custom,@_col
-    next
-    for a=0 to tScreen.y-fh1 step fh1
-        set__color( 224,1)
-        'draw string ((_mwx+1)*_fw1,a),chr(179),,Font1,custom,@_col
-        draw string ((_mwx+1)*_fw1,a),chr(179),,Font1,custom,@_col
-        set__color(0,0)
-        draw string ((_mwx+2)*_fw1,a),space(25),,font1,custom,@_col
-    next
-    set__color( 224,1)
-    draw string ((_mwx+1)*_fw1,21*_fh1),chr(180),,Font1,custom,@_col
-    set__color( 11,0)
-    return 0
-end function
 
 
 #define cut2bottom

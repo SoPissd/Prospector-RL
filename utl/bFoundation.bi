@@ -14,8 +14,7 @@
 #endif
 '
 	#undef both
-	#undef test
-	
+	#undef test	
 	#undef types
 	#undef head
 	#undef main
@@ -33,6 +32,12 @@
 	#define head
 '	
 	inc("uDebug.bas",				"debug macros or their null eqivalents. also include loading")
+#if __FB_Debug__
+#ifdef __FB_WIN32__			
+	inc("uWindows.bas",				"windows utils used when debugging")
+#endif
+#endif
+	
 	inc("uScreen.bas",				"wrap screen,screenset,locate,width,color so console code works too")
 	inc("uColor.bas",				"maps color codes to screen via palette")
 	inc("uConsole.bas",				"all the key and keyboard wrappers, idle and application close support")
@@ -55,7 +60,7 @@
 
 	inc("uTime.bas",				"display_time, date_string")	'*need test*'	
 	inc("uSound.bas",				"define 'makesound' and the sound methods will start to use the dll code. else they do nothing.")	'*need test*'
-	inc("uPalette.bas",				"parse a text-file into uColor's palette")
+'	inc("uPalette.bas",				"parse a text-file into uColor's palette")
 	inc("uPrint.bas",				"rlprints to graphics console, screen-info, some input")
 	inc("uTextbox.bas",				"Draws a box with text?")
 	inc("uViewfile.bas",			"File and List Viewers rendering in text mode")

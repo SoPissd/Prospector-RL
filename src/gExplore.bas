@@ -308,7 +308,7 @@ function explore_planet(from As _cords, orbit As Short) As _cords
             EndIf
             If rnd_range(1,100)<planets(slot).atmos And planets(slot).atmos>1 And planets(slot).depth=0 Then cloudmap(x,y)=1
             If planetmap(x,y,slot)=0 Then
-            	tError.log_error("Tile at "&x &":"&y &":"&slot &"=0")
+            	tError.log("Tile at "&x &":"&y &":"&slot &"=0")
                 planetmap(x,y,slot)=-4
             EndIf
         Next

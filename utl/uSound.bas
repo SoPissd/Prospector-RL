@@ -150,6 +150,18 @@ function play(iSound As Short,iRepeats As Short=1,iDelay As Short=0) as short
 End function
 
 ' /sound support
+
+
+type tTheEnd extends object
+	declare Destructor()
+End Type
+
+Destructor tTheEnd()
+	set(-1)						'shutdown means that this destructor turns off the sound
+End Destructor
+
+dim TheEnd as tTheEnd			'main instantiates the object that gets destroyed by global cleanup on shutdown
+
 #endif'main
 end namespace'uSound
 
