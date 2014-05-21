@@ -20,6 +20,7 @@
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+
 Type _monster
     e As _energycounter
     speed As Byte

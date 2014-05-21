@@ -844,7 +844,7 @@ Dim Shared pcards As tCards.cardobj
 #endif'types
 
 
-#if (defined(main) or defined(test))
+#if not __FB_OUT_LIB__ and (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: tCards -=-=-=-=-=-=-=-
 	tModule.register("tCards",@tCards.init()) ',@tCards.load(),@tCards.save())
 #endif'main

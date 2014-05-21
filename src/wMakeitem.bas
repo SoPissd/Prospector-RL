@@ -23,9 +23,9 @@
 #endif'test
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tMakeitem -=-=-=-=-=-=-=-
+Dim Shared As UInteger uid
 
 declare function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=0,nomod as byte=0) as _items
-
 
 #endif'head
 #ifdef main
@@ -44,14 +44,16 @@ end namespace'tMakeitem
 function make_item(a as short, mod1 as short=0,mod2 as short=0,prefmin as short=0,nomod as byte=0) as _items
     dim i as _items
     dim as short f,roll,target,rate
+    
     if uid=4294967295 then 
         rlprint "Can't make any more items!"
         return i
     endif
-    rate=5000-disnbase(player.c)*10
-    if rate<1000 then rate=1000'Divisor of turn to determine improved items
     uid=uid+1
     i.uid=uid
+
+    rate=5000-disnbase(player.c)*10
+    if rate<1000 then rate=1000'Divisor of turn to determine improved items
     i.scanmod=1
     
     if a=1 then

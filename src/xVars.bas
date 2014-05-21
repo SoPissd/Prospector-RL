@@ -65,7 +65,7 @@ Dim Shared As Byte captainskill=-5
 Dim Shared As Byte wage=10
 
 dim shared as byte optoxy
-Dim Shared As UInteger uid
+
 Dim Shared As Short ranoutoffuel
 Dim Shared As Short walking
 

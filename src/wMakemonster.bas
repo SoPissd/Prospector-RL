@@ -22,6 +22,7 @@
 #undef intest
 #define test
 #endif'test
+
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tMakemonster -=-=-=-=-=-=-=-
 
@@ -4595,7 +4596,7 @@ end function
 #define cut2bottom
 #endif'main
 
-#if (defined(main) or defined(test))
+#if not __FB_OUT_LIB__ and (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: tMakemonster -=-=-=-=-=-=-=-
 	tModule.register("tMakemonster",@tMakemonster.init()) ',@tMakemonster.load(),@tMakemonster.save())
 #endif'main

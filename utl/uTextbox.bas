@@ -263,7 +263,7 @@ function scroll_bar(iStartingline as short, iTotalLines as short, iLinesShown as
     balkenh=iLinesShown*oneline				'% of total lines shown in scrollbar-units
     offset2=iStartingline*oneline					'starting line in scrollbar-units
 	'
-popup(""& balkenh &" "& offset2) 	
+'popup(""& balkenh &" "& offset2) 	
 	dim as integer i
     for i=f to t
 		if tScreen.isGraphic then
