@@ -51,6 +51,7 @@ declare function is_special(m as short) as short
 declare function UpdateMapSize(size as short) as Short
 declare function sysfrommap(a as short)as short
 declare function orbitfrommap(a as short) as short
+declare function count_gas_giants_area(c as _cords,r as short) as short
 
 
 #endif'head
@@ -100,6 +101,23 @@ function orbitfrommap(a as short) as short
         next
     endif
     return -1
+end function
+
+function count_gas_giants_area(c as _cords,r as short) as short
+    dim as short cc,i,j
+    for i=0 to laststar
+        if distance(c,map(i).c)<r then
+            for j=1 to 9
+                if isgasgiant(map(i).planets(j)) then cc+=1
+                if map(i).planets(j)=specialplanet(21) then cc+=5
+                if map(i).planets(j)=specialplanet(22) then cc+=5
+                if map(i).planets(j)=specialplanet(23) then cc+=5
+                if map(i).planets(j)=specialplanet(24) then cc+=5
+                if map(i).planets(j)=specialplanet(25) then cc+=5
+            next
+        endif
+    next    
+    return cc
 end function
 
 

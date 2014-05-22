@@ -23,7 +23,7 @@
 'set options
 'set options
 '#define useLibFoundation
-'#define useLibTileData
+#define useLibTileData
 '#define useLibbProspector	
 '#define makesound   
 '#define makezlib 

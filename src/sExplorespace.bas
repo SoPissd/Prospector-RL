@@ -30,14 +30,17 @@ declare function scanning() As Short
 declare function spacestation(st As Short) As _ship
 declare function explore_space() As Short
 
-'private function wormhole_navigation() As Short
-'private function wormhole_ani(target As _cords) As Short
-'private function wormhole_travel() As Short
-'private function move_ship(Key As String) As _ship
-'private function target_landing(mapslot As Short,Test As Short=0) As Short
-'private function asteroid_mining(slot As Short) As Short
-'private function dock_drifting_ship(a As Short)  As Short
-'private function rescue() As Short
+declare function display_system(in as short,forcebar as byte=0,hi as byte=0) as short
+declare function getplanet(sys as short,forcebar as byte=0) as short
+
+'declare function wormhole_navigation() As Short
+'declare function wormhole_ani(target As _cords) As Short
+'declare function wormhole_travel() As Short
+'declare function move_ship(Key As String) As _ship
+'declare function target_landing(mapslot As Short,Test As Short=0) As Short
+'declare function asteroid_mining(slot As Short) As Short
+'declare function dock_drifting_ship(a As Short)  As Short
+'declare function rescue() As Short
 
 #endif'head
 #ifdef main
@@ -1169,6 +1172,229 @@ function rescue() As Short
     Return 0
 End function
 
+
+
+function display_system(in as short,forcebar as byte=0,hi as byte=0) as short
+    dim as short a,b,bg,x,y,fw1
+    dim as string bl,br
+
+    if _fw1<_tix then
+        fw1=_fw1
+    else
+        fw1=_tix
+    endif
+    
+    if configflag(con_onbar)=0 or forcebar=1 then
+        y=21
+        x=_mwx/2-2
+        bl=chr(180)
+        br=chr(195)
+    else
+        x=((map(in).c.x-player.osx)*fw1-12*_fw2)/_fw1
+        y=map(in).c.y+1-player.osy
+        if x<0 then x=0
+        if configflag(con_sysmaptiles)=0 then
+            if x*fw1+18*_tix>_mwx*fw1 then x=(_mwx*fw1-18*_tix)/fw1
+        else
+            if x*fw1+24*_fw2>_mwx*fw1 then x=(_mwx*fw1-24*_fw2)/fw1
+        endif
+        'if x*fw1+(25*_fw2)/fw1>_mwx*fw1 then x=_mwx*fw1-(25*_fw2)/fw1
+        bl="["
+        br="]"
+    endif
+    display_sysmap(x*fw1,y*_fh1,in,hi,bl,br)
+    set__color( 11,0)
+#if __FB_DEBUG__
+    bl=""
+    for a=1 to 9
+        bl=bl &map(in).planets(a)&" "
+        if map(in).planets(a)>0 then
+            bl=bl &"ms:"&map(in).planets(a)
+        endif
+    next
+    rlprint bl &":"& hi  &" - "&x
+#endif
+    return 0
+end function
+
+
+function getplanet(sys as short,forcebar as byte=0) as short
+    dim as short r,p,a,b
+    dim as string text,key
+    dim as _cords p1
+    if sys<0 or sys>laststar then
+        rlprint ("ERROR:System#:"&sys,14)
+        return -1
+    endif
+    map(sys).discovered=2
+    p=liplanet
+    if p<1 then p=1
+    if p>9 then p=9
+    if map(sys).planets(p)=0 then p=nextplan(p,sys)
+    for a=1 to 9
+        if map(sys).planets(a)<>0 then b=1
+    next
+    if b>0 then
+        rlprint "Enter to select, arrows to move,ESC to quit"
+        if show_mapnr=1 then rlprint map(sys).planets(p)&":"&isgasgiant(map(sys).planets(p))
+        do
+            display_system(sys,,p)
+            key=""
+            key=keyin
+            if uConsole.keyplus(key) or key=key_east or key=key_north then p=nextplan(p,sys)
+            if uConsole.keyminus(key) or key=key_west or key=key_south then p=prevplan(p,sys)
+            if key=key_comment then
+                if map(sys).planets(p)>0 then
+                    rlprint "Enter comment on planet: "
+                    p1=locEOL
+                    planets(map(sys).planets(p)).comment=gettext(p1.x,p1.y,60,planets(map(sys).planets(p)).comment)
+                endif
+            endif
+            if key="q" or key="Q" or key=key__esc then r=-1
+            if (key=key__enter or key=key_sc or key=key_la) and map(sys).planets(p)<>0 then r=p
+        loop until r<>0
+        liplanet=r
+
+    else
+        r=-1
+    endif
+    return r
+end function
+
+
+'function getplanet(sys as short,forcebar as byte=0) as short
+'    dim as short a,r,p,x,xo,yo
+'    dim text as string
+'    dim key as string
+'    dim firstplanet as short
+'    dim lastplanet as short
+'    dim p1 as _cords
+'    if sys<0 or sys>laststar then
+'        rlprint ("ERROR:System#:"&sys,14)
+'        return -1
+'    endif
+'    for a=1 to 9
+'        if map(sys).planets(a)<>0 then
+'            lastplanet=a
+'            x=x+1
+'        endif
+'    next
+'    for a=9 to 1 step-1
+'        if map(sys).planets(a)<>0 then firstplanet=a
+'    next
+'    p=liplanet
+'    if p<1 then p=1
+'    if p>9 then p=9
+'    if map(sys).planets(p)=0 then
+'        do
+'            p=p+1
+'            if p>9 then p=1
+'        loop until map(sys).planets(p)<>0 or lastplanet=0
+'    endif
+'    if p>9 then p=firstplanet
+'    if lastplanet>0 then
+'        if _onbar=0 or forcebar=1 then
+'            xo=31
+'            yo=22
+'        else
+'            xo=map(sys).c.x-9-player.osx
+'            yo=map(sys).c.y+2-player.osy
+'            if xo<=4 then xo=4
+'            if xo+18>58 then xo=42
+'        endif
+'        rlprint "Enter to select, arrows to move,ESC to quit"
+'        if show_mapnr=1 then rlprint map(sys).planets(p)&":"&isgasgiant(map(sys).planets(p))
+'        do
+'            displaysystem(sys)
+'            if keyplus(key) or a=6 then
+'                do
+'                    p=p+1
+'                    if p>9 then p=1
+'                loop until map(sys).planets(p)<>0
+'            endif
+'            if keyminus(key) or a=4 then
+'                do
+'                    p=p-1
+'                    if p<1 then p=9
+'                loop until map(sys).planets(p)<>0
+'            endif
+'            if p<1 then p=lastplanet
+'            if p>9 then p=firstplanet
+'            x=xo+(p*2)
+'            if left(displaytext(25),14)<>"Asteroid field" or left(displaytext(25),15)<>"Planet at orbit" then rlprint "System " &map(sys).desig &"."
+'            if map(sys).planets(p)>0 then
+'                if planets(map(sys).planets(p)).comment="" then
+'                    if isasteroidfield(map(sys).planets(p))=1 then
+'                        displaytext(25)= "Asteroid field at orbit " &p &"."
+'                    else
+'                        if planets(map(sys).planets(p)).mapstat<>0 then
+'                            if isgasgiant(map(sys).planets(p))<>0 then
+'                                if p>1 and p<7 then displaytext(25)= "Planet at orbit " &p &". A helium-hydrogen gas giant."
+'                                if p>6 then displaytext(25)= "Planet at orbit " &p &". A methane-ammonia gas giant."
+'                                if p=1 then displaytext(25)= "Planet at orbit " &p &". A hot jupiter."
+'                            else
+'                                if isgasgiant(map(sys).planets(p))=0 and isasteroidfield(map(sys).planets(p))=0 then displaytext(25)="Planet at orbit " &p &". " &atmdes(planets(map(sys).planets(p)).atmos) &" atm., " &planets(map(sys).planets(p)).grav &"g grav."
+'                            endif
+'                        else
+'                            displaytext(25)= "Planet at orbit " &p &"."
+'                        endif
+'                    endif
+'                endif
+'                if planets(map(sys).planets(p)).comment<>"" then
+'                    if isasteroidfield(map(sys).planets(p))=1 then
+'                        displaytext(25)= "Asteroid field at orbit " &p &": " &planets(map(sys).planets(p)).comment &"."
+'                    else
+'                        displaytext(25)= "Planet at orbit " &p &": " &planets(map(sys).planets(p)).comment &"."
+'                    endif
+'                endif
+'                rlprint ""
+'                locate yo,x
+'                set__color( 15,3
+'                if isgasgiant(map(sys).planets(p))=0 and isasteroidfield(map(sys).planets(p))=0 then print "o"
+'                if isgasgiant(map(sys).planets(p))>0 then print "O"
+'                if isasteroidfield(map(sys).planets(p))=1 then print chr(176)
+'                set__color( 11,0
+'            endif
+'
+'            if map(sys).planets(p)<0 then
+'                if map(sys).planets(p)<0 then
+'                    if isgasgiant(map(sys).planets(p))=0 then
+'                        displaytext(25)= "Asteroid field at orbit " &p &"."
+'                    else
+'                        if map(sys).planets(p)=-20001 then displaytext(25)= "Planet at orbit " &p &". A helium-hydrogen gas giant."
+'                        if map(sys).planets(p)=-20002 then displaytext(25)= "Planet at orbit " &p &". A methane-ammonia gas giant."
+'                        if map(sys).planets(p)=-20003 then displaytext(25)= "Planet at orbit " &p &". A hot jupiter."
+'                    endif
+'                    rlprint ""
+'                endif
+'                locate yo,x
+'                set__color( 15,3
+'                if isgasgiant(map(sys).planets(p))=0 then
+'                    print chr(176)
+'                else
+'                    print "O"
+'                endif
+'                set__color( 11,0
+'            endif
+'            key=keyin
+'            if key=key_comment then
+'                rlprint "Enter comment on planet: "
+'                p1=locEOL
+'                planets(map(sys).planets(p)).comment=gettext(p1.x,p1.y,60,planets(map(sys).planets(p)).comment)
+'            endif
+'            a=Getdirection(key)
+'
+'
+'            if key="q" or key="Q" or key=key__esc then r=-1
+'            if (key=key__enter or key=key_sc or key=key_la) and map(sys).planets(p)<>0 then r=p
+'        loop until r<>0
+'        liplanet=r
+'    else
+'        r=-1
+'    endif
+'    return r
+'end function
+'
 
 function explore_space() As Short
     DimDebug(0)'11

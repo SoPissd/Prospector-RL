@@ -12,19 +12,22 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tRadio -=-=-=-=-=-=-=-
-
 #undef intest
 #define test
 #endif'test
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+Const show_energy=0
+
 Type _shipfire
     what As Short
     when As Short
@@ -32,18 +35,39 @@ Type _shipfire
     tile As String*1
     stun As Byte
 End Type
-#endif'types
 
+Type _disease
+    no As UByte
+    desig As String
+    ldesc As String
+    cause As String
+    incubation As UByte
+    duration As UByte
+    fatality As UByte
+    contagio As UByte
+    causeknown As Byte
+    cureknown As Byte
+    att As Byte
+    hal As Byte
+    bli As Byte
+    nac As Byte
+    oxy As Byte
+    wounds As Byte
+End Type
+
+Dim Shared disease(17) As _disease
+
+#endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tRadio -=-=-=-=-=-=-=-
 
 declare function shipstatus(heading as short=0) as short
-declare function ep_display(osx As Short=555) As Short
 declare function ep_radio(ByRef nextlanding As _cords,ByRef ship_landing As Short, shipfire() As _shipfire,lavapoint() As _cords, ByRef sf As Single,nightday() As Byte,localtemp() As Single) As Short
 declare function space_radio() As Short
 
-'private function ep_heatmap(lavapoint() As _cords,lastlavapoint As Short) As Short
-'private function display_monsters(osx as short) as short
+
+'declare function ep_heatmap(lavapoint() As _cords,lastlavapoint As Short) As Short
+'declare function display_monsters(osx as short) as short
 
 #endif'head
 #ifdef main
@@ -120,39 +144,6 @@ function ep_heatmap(lavapoint() As _cords,lastlavapoint As Short) As Short
 End function
 
 
-function shipstatus(heading as short=0) as short
-'    dim as short c1,c2,c3,c4,c5,c6,c7,c8,sick,offset,mjs,filter
-'    dim as short a,b,c,lastinv,set,tlen,cx,cy
-'    dim as string text,key
-'    dim inv(256) as _items
-'    dim invn(256) as short
-'    dim cargo(12) as string
-'    dim cc(12) as short
-    dim as short cw,turrets,a,offset
-    set__color( 0,0)
-    cls
-    do
-        cw=(tScreen.x-16*_fw2)/3.5
-        cw=cw/_fw2
-        if heading=0 then textbox("{15}Name: {11}"&player.desig &"{15} Type:{11}" &player.h_desig,1,0,40)
-
-        textbox(shipstatsblock &"||" & weapon_string &"|" & cargo_text ,1,2,cw)
-
-        textbox(crewblock,(2+cw)*_fw2/_fw1,2,16)
-
-        textbox(list_artifacts(artflag()),(2+18+cw)*_fw2/_fw1,2,cw)
-
-        if heading=0 then
-            textbox(list_inventory,(2+18+2*cw)*_fw2/_fw1,2,cw,,,,,offset)
-
-            no_key=keyin
-            if no_key="+" then offset+=1
-            if no_key="-" then offset-=1
-        endif
-    loop until not(no_key="+" or no_key="-")
-    cls
-    return 0
-end function
 
 
 function display_monsters(osx as short) as short
@@ -230,92 +221,6 @@ function display_monsters(osx as short) as short
 end function
 
 
-function ep_display(osx As Short=555) As Short
-    Dim As Short a,b,x,y,slot,fg,bg,alp,x2
-    Dim As Byte comitem,comdead,comalive,comportal
-    Dim As _cords p,p1,p2
-    slot=player.map
-    If osx=555 Then osx=calcosx(awayteam.c.x,planets(slot).depth)
-
-    If disease(awayteam.disease).bli>0 Then
-        x=awayteam.c.x
-        y=awayteam.c.y
-        vismask(x,y)=1
-        dtile(x,y,tmap(x,y),vismask(x,y))
-        Return 0
-    EndIf
-    ' Stuff on ground
-    make_vismask(awayteam.c,awayteam.sight,slot)
-    
-    For a=1 To itemindex.vlast'Cant use index because unseen grenades burn out too
-        If item(itemindex.value(a)).ty=7 And item(itemindex.value(a)).v2=1 Then 'flash grenade
-            item(itemindex.value(a)).v3-=1
-            p2=item(itemindex.value(a)).w
-
-            If item(itemindex.value(a)).v3>0 Then
-                If vismask(p2.x,p2.y)>0 Then
-                    make_vismask(item(itemindex.value(a)).w,item(itemindex.value(a)).v3/10,slot,1)
-                EndIf
-            Else
-                'Burnt out, destroy
-                destroyitem(itemindex.value(a))
-                itemindex.remove(itemindex.value(a),item(itemindex.value(a)).w)
-            EndIf
-        EndIf
-        If item(itemindex.value(a)).ty=18 And item(itemindex.value(a)).discovered=1 And item(itemindex.value(a)).w.p=0 And item(itemindex.value(a)).w.s>=0  And item(itemindex.value(a)).v5=0 Then 'Rover
-            make_vismask(item(itemindex.value(a)).w,item(itemindex.value(a)).v1+3,slot,1)
-        endif
-    Next
-        
-    For x=0 To _mwx
-        For y=0 To 20
-            p.x=x+osx
-            p.y=y
-            If p.x>60 Then p.x=p.x-61
-            If p.x<0 Then p.x=p.x+61
-
-            'if awayteam.sight>cint(distance(awayteam.c,p)) then
-            If vismask(p.x,y)>0 Then
-                If planetmap(p.x,y,slot)<0 Then
-                    planetmap(p.x,y,slot)=planetmap(p.x,y,slot)*-1
-                    reward(0)=reward(0)+1
-                    reward(7)=reward(7)+planets(slot).mapmod
-                    If tiles(planetmap(p.x,y,slot)).stopwalking>0 And walking<11 Then walking=0
-                    If player.questflag(9)=1 And planetmap(p.x,y,slot)=100 Then player.questflag(9)=2
-                EndIf
-                If rnd_range(1,100)<disease(awayteam.disease).hal Then
-                    dtile(x,y,tiles(rnd_range(1,255)),1)
-                    planetmap(x,y,slot)=planetmap(x+osx,y,slot)*-1
-                Else
-                    dtile(x,y,tmap(p.x,y),vismask(p.x,y))
-                EndIf
-            endif
-            
-            a=0
-            if portalindex.last(p.x,p.y)>0 then 
-                display_portal(portalindex.index(p.x,p.y,1),slot,osx)
-                If portal(a).from.m=slot And portal(a).oneway<2 and awayteam.c.x=portal(a).from.x And awayteam.c.y=portal(a).from.y And comstr.comportal=0 Then
-                    comstr.t=comstr.t &key_portal &" Enter"
-                    comstr.comportal=1
-                endif
-                If portal(a).oneway=0 and portal(a).dest.m=slot and awayteam.c.x=portal(a).dest.x And awayteam.c.y=portal(a).dest.y And comstr.comportal=0 Then
-                    comstr.t=comstr.t &key_portal &" Enter"
-                    comstr.comportal=1
-                EndIf
-            endif
-        
-            if itemindex.last(p.x,p.y)>0 then
-                for b=1 to itemindex.last(p.x,p.y)
-                    display_item(itemindex.index(p.x,p.y,b),osx,slot)
-                next
-            endif
-        Next
-    Next
-    
-    display_monsters(osx)
-    
-    Return 0
-End function
 
 
 function ep_radio(ByRef nextlanding As _cords,ByRef ship_landing As Short, shipfire() As _shipfire,lavapoint() As _cords, ByRef sf As Single,nightday() As Byte,localtemp() As Single) As Short

@@ -18,20 +18,23 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tCommunicate -=-=-=-=-=-=-=-
-
 #undef intest
 #define test
 #endif'test
+
+#ifdef types
+
+#endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tCommunicate -=-=-=-=-=-=-=-
 
-declare function get_item(ty as short=0,ty2 as short=0,byref num as short=0,noequ as short=0) as short
 declare function foreignpolicy(c as short, i as byte) as short
 declare function communicate(e as _monster,mapslot as short,monslot as short) as short
+declare function display_item_list(inv() as _items, invn() as short, marked as short, l as short,x as short,y as short) as short
 
-'private function rndsentence(e as _monster) as short
-'private function dirdesc(f as _cords,t as _cords) as string
-'private function talk_culture(c as short) as short
+'declare function rndsentence(e as _monster) as short
+'declare function dirdesc(f as _cords,t as _cords) as string
+'declare function talk_culture(c as short) as short
 
 #endif'head
 #ifdef main
@@ -42,68 +45,6 @@ function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tCommunicate
-
-
-function rndsentence(e as _monster) as short
-    dim as short aggr,intel
-    dim s as string
-    dim r as short
-    aggr=e.aggr
-    intel=e.intel
-    if aggr=0 then
-    r=rnd_range(1,8)
-        if r=1 then rlprint "It says: 'Die monster from another world!'"
-        if r=2 then rlprint "It says: 'You look tasty!'"
-        if r=3 then rlprint "It says: 'The metal gods of old demand your death!'"
-        if r=4 then rlprint "It says: 'Intruder! Flee or be destroyed'"
-        if r=5 then rlprint "It says: 'Your magic is powerfull but my arms are strong!'"
-        if r=6 then rlprint "It says: 'The time for talking is over!'"
-        if r=7 then rlprint "It says: 'I am going to kill you!'"
-        if r=8 then rlprint "It says: 'Resistance is useless!'"
-    endif
-    if aggr=1 then
-    r=rnd_range(1,11)
-        if r=1 then do_dialog(902,e,0)
-        if r=2 then rlprint "It says: 'You are not from around, are you?'"
-        if r=3 then rlprint "It says: 'Do you have a gift for me?'"
-        if r=4 then rlprint "It says: 'I always wondered if there were other beings out there.'"
-        if r=5 then rlprint "It says: 'You can't be from another world! Faster than light travel is impossible!'"
-        if r=6 then rlprint "It says: 'I haven't seen a creature like you before!'"
-        if r=7 then rlprint "It says: 'Are you here for the festival?'"
-        if r=8 then rlprint "It says: 'You can have my food if you want.'"
-        if r=9 then rlprint "It says: 'I always wondered if there were other beings like us up there.'"
-        if r=10 then 
-            if askyn("It says: 'I pay you 5000 zrongs if you tell me all your technological secrets.' Do you agree? (y/n)") then
-                placeitem(make_item(88),0,0,0,0,-1)
-                s="it hands you a bag of local currency while you"
-                if skill_test(player.science(location),st_hard-e.intel,"Science:") then
-                    r=rnd_range(1,6)
-                    if r=1 then s=s &" teach it some basic newtonian physics."
-                    if r=2 then s=s &" teach it some basic chemistry."
-                    if r=3 then s=s &" teach it some basic biology."
-                    if r=4 then s=s &" teach it some basic astronomy."
-                    if r=5 then s=s &" teach it some how to make fire."
-                    if r=6 then s=s &" teach it some how to make wheels."
-                else 
-                    s=s &" fail to teach it anything because you just can't find the terms it would understand."
-                endif
-                rlprint s
-            endif
-        endif
-        if r=11 then do_dialog(901,e,0)
-    endif
-    if aggr=2 then
-    r=rnd_range(1,7)
-        if r=1 then rlprint "It says: 'Help! Help! It's an alien invasion!'"
-        if r=2 then rlprint "It says: 'Don't kill me!'"
-        if r=3 then rlprint "It says: 'Don't point those things at me!'"
-        if r=4 then rlprint "It says: 'Don't eat me!'"
-        if r=5 then rlprint "It says: 'I surrender!'"
-        if r=6 then rlprint "It says: 'Have mercy!'"
-        if r=7 then rlprint "It says: 'Gods! Save me from the evil aliens!'"
-    endif
-    return 0
-end function
 
 
 function dirdesc(f as _cords,t as _cords) as string
@@ -124,78 +65,53 @@ function dirdesc(f as _cords,t as _cords) as string
 end function
   
 
-function get_item(ty as short=0,ty2 as short=0,byref num as short=0,noequ as short=0) as short
-    dim as short last,i,c,j
-    dim as _items inv(1024)
-    dim as short invn(1024)
-    dim as string key,helptext
-    static as short marked=0
+function display_item_list(inv() as _items, invn() as short, marked as short, l as short,x as short,y as short) as short
+    dim as short last,i,longest,ll,wh
+    static offset as short
+    tScreen.set(0)
+    last=ubound(inv)
     
-    i=1
-    DbgPrint("Getting itemlist:ty:"&ty &"ty2"&ty2)
-    last=get_item_list(inv(),invn(),,,,,noequ)
-    if ty<>0 or ty2<>0 then
-        marked=1
-        do
-            if invn(i)<0 then
-                for j=i to last
-                    invn(j)=invn(j+1)
-                    inv(j)=inv(j+1)
-                next
-                c+=1
-            endif
-            if inv(i).ty<>ty and inv(i).ty<>ty2 and inv(i).ty<>0 then
-                DbgPrint("Removing "&inv(i).desig)
-                for j=i to last
-                    invn(j)=invn(j+1)
-                    inv(j)=inv(j+1)
-                next
-                c+=1
-            else
-                i+=1
-            endif
-        loop until i>last
-        DbgPrint("removed "&c &" items" &last-c)
-        last-=c
-        if last=1 then return inv(last).w.s
-        if last<=0 then return -1
-    endif
-    if marked=0 then
-        do
-            marked+=1
-            if marked>last then marked=0
-        loop until invn(marked)>0
-    endif
-    do
-        display_item_list(inv(),invn(),marked,last,2,2)
-        helptext=inv(marked).describe
-        if inv(marked).ty=26 then helptext=helptext & caged_monster_text
-        'helptext = ""&marked &" " &last
-        c=textbox(helptext,22,2,25,11,1)
-        key=keyin(key_north &key_south)
-        for i=0 to c
-            draw string (22*_fw1,2*_fh1+i*_fh2),space(25),,font2,custom,@_col
-        next
-        if key=key_north then
-            do
-                marked-=1
-                if marked<1 then marked=last
-            loop until invn(marked)>0
-        endif
-        if key=key_south then
-            do
-                marked+=1
-                if marked>last then marked=1
-            loop until invn(marked)>0
-        endif
-    loop until key=key__enter or key=key__esc
-    if key=key__enter then
-        
-        num=invn(marked)
-        return inv(marked).w.s
+    for i=1 to l
+        if len(trim(inv(i).desig))>longest then longest=len(trim(inv(i).desig))
+        if len(trim(inv(i).desigp))>longest then longest=len(trim(inv(i).desigp))
+    next
+    for i=1 to last
+        if invn(i)<>0 then ll+=1
+    next
+    if ll>20 then
+        wh=20
     else
-        return -1
+        wh=ll
     endif
+    longest=longest+5
+    'Format: invn=1 1 piece, invn>1 plural invn<1 Headline, text color white
+    if marked+offset>wh then offset=wh-marked
+    if marked+offset<1 then offset=1-marked
+    if marked+offset=1 and invn(marked-1)<0 then offset+=1
+    for i=1 to wh
+        if i-offset>=0 and i-offset<=last then
+            set__color(1,1)
+            draw string(x*_fw2,(y+i)*_fh2),space(longest),,font2,custom,@_col
+            if marked=i-offset then 
+                set__color(15,5)
+            else
+                set__color(11,1)
+            endif
+            select case invn(i-offset)
+            case 1
+                draw string(x*_fw2,(y+i)*_fh2),"  "&trim(inv(i-offset).desig),,font2,custom,@_col
+            case is>1
+                draw string(x*_fw2,(y+i)*_fh2),"  "&invn(i-offset) &" "&trim(inv(i-offset).desigp),,font2,custom,@_col
+                
+            case is<1
+                set__color(15,1)
+                draw string(x*_fw2,(y+i)*_fh2)," "&trim(inv(i-offset).desig),,font2,custom,@_col
+            end select
+        endif
+        if ll>wh then scroll_bar(-offset,ll,wh,wh-1,(x+longest)*_fw2,y*_fh2+_fh2,11)
+    next
+    tScreen.update()
+    return 0
 end function
 
 
@@ -304,9 +220,9 @@ function foreignpolicy(c as short, i as byte) as short
         ad=ad+6/civ(c).phil
     endif
     t=t & "/Exit"
-    a=textmenu(bg_parent,t)
+    a=textmenu(t)
     if a<l then
-        b=textmenu(bg_parent,"What/Status/Declare war/Initiate peace talks/Exit")
+        b=textmenu("What/Status/Declare war/Initiate peace talks/Exit")
         if a=1 then f=1
         if a=2 then f=2
         if a=3 then f=6+o
@@ -1012,7 +928,9 @@ function communicate(e as _monster,mapslot as short,monslot as short) as short
                 endif
             endif
             rlprint "Do you want to talk about (t)hem, (o)ther species, (f)oreign politics or (n)othing ?(t/o/f/n)"
-            t=ucase(keyin("tofnTOFN"))
+            
+            t=ucase(uConsole.keyinput("tofnTOFN"))
+            
             if t="N" then return 0
             if t="T" then
                 if rnd_range(1,100)<66 then

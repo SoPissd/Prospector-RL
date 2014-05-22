@@ -32,10 +32,8 @@ declare function display_awayteam(showshipandteam as byte=1,osx as short=555) as
 declare function gainxp(typ as short,v as short=1) as string
 declare function alerts() as short
 declare function cure_awayteam(where as short) as short
-declare function rnd_crewmember(onship as short=0) as short
 declare function diseaserun(onship as short) as short
 declare function heal_awayteam(byref a as _monster,heal as short) as short
-declare function infect(a as short,dis as short) as short
 declare function equip_awayteam(m as short) as short
 declare function dam_awayteam(dam as short, ap as short=0,disease as short=0) as string
 declare function repair_spacesuits(v as short=-1) as short
@@ -44,11 +42,11 @@ declare function ep_checkmove(ByRef old As _cords,Key As String) As Short
 declare function ep_communicateoffer(Key As String) As Short
 declare function showteam(from as short, r as short=0,text as string="") as short
 
-'private function hpdisplay(a as _monster) as short
-'private function wear_armor(a as short,b as short) as short
-'private function no_spacesuit(who() as short,byref alle as short=0) as short
-'private function giveitem(e as _monster,nr as short) as short
-'private function crew_menu(crew() as _crewmember, from as short, r as short=0,text as string="") as short
+'declare function hpdisplay(a as _monster) as short
+'declare function wear_armor(a as short,b as short) as short
+'declare function no_spacesuit(who() as short,byref alle as short=0) as short
+'declare function giveitem(e as _monster,nr as short) as short
+'declare function crew_menu(crew() as _crewmember, from as short, r as short=0,text as string="") as short
 
 #endif'head
 #ifdef main
@@ -56,12 +54,13 @@ declare function showteam(from as short, r as short=0,text as string="") as shor
 
 namespace tAwayteam
 function init(iAction as integer) as integer
+	pDisplayawayteam= @display_awayteam
+	pShowteam= @showteam
+	pGainxp= @gainxp	
 	return 0
 end function
 end namespace'tAwayteam
 
-
-#define cut2top
 
 
 function hpdisplay(a as _monster) as short
@@ -448,20 +447,6 @@ function cure_awayteam(where as short) as short
 end function
 
 
-
-function rnd_crewmember(onship as short=0) as short
-    dim pot(128) as short
-    dim as short p,a
-    for a=0 to 128
-        if crew(a).hp>0 and crew(a).onship=onship then
-            p+=1
-            pot(p)=a
-        endif
-    next
-    return pot(rnd_range(1,p))
-end function
-
-
 function diseaserun(onship as short) as short
     dim as short a,b,dam,total,affected,dis,distotal
     dim text as string
@@ -558,20 +543,6 @@ function heal_awayteam(byref a as _monster,heal as short) as short
     hpdisplay(a)
     return heal
 end function
-
-function infect(a as short,dis as short) as short
-    dim as short roll
-    roll=rnd_range(1,6) +rnd_range(1,6)+player.doctor(location)
-    if roll<maximum(3,dis) and crew(a).hp>0 and crew(a).hpmax>0 then
-        crew(a).disease=dis
-        crew(a).oldonship=crew(a).onship
-        crew(a).duration=disease(dis).duration
-        crew(a).incubation=disease(dis).incubation
-        if dis>player.disease then player.disease=dis
-    endif
-    return 0
-end function
-
 
 function wear_armor(a as short,b as short) as short
     dim as short invisibility
@@ -1748,3 +1719,4 @@ end function
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tAwayteam -=-=-=-=-=-=-=-
 #endif'test
+

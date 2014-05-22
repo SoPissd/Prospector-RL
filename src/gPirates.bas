@@ -15,16 +15,26 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tPirates -=-=-=-=-=-=-=-
-
 #undef intest
 #define test
 #endif'test
+
+#ifdef types
+'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-    
+Dim Shared alienattacks As Integer
+Dim Shared firststationw As Short
+Dim Shared countpatrol As Short
+Dim Shared just_run As Short
+
+#endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tPirates -=-=-=-=-=-=-=-
 
@@ -34,18 +44,18 @@ declare function collide_fleets() as short
 declare function ss_sighting(i as short) as short
 declare function move_fleets() as short
 
-'private function friendly_pirates(f as short) as short
-'private function join_fight(f as short) as short
-'private function meet_fleet(f as short)as short
-'private function getship(f as _fleet) as short
-'private function fleet_battle(byref red as _fleet,byref blue as _fleet) as short
-'private function resolve_fight(f2 as short) as short
-'private function decide_if_fight(f1 as short,f2 as short) as short
-'private function update_targetlist()as short
-'private function piratecrunch(fl as _fleet) as _fleet
+'declare function friendly_pirates(f as short) as short
+'declare function join_fight(f as short) as short
+'declare function meet_fleet(f as short)as short
+'declare function getship(f as _fleet) as short
+'declare function fleet_battle(byref red as _fleet,byref blue as _fleet) as short
+'declare function resolve_fight(f2 as short) as short
+'declare function decide_if_fight(f1 as short,f2 as short) as short
+'declare function update_targetlist()as short
+'declare function piratecrunch(fl as _fleet) as _fleet
 declare function setmonster(enemy as _monster,map as short,spawnmask()as _cords,lsp as short,x as short=0,y as short=0,mslot as short=0,its as short=0) as _monster    
-'private function monster2crew(m as _monster) as _crewmember
-'private function debug_printfleet(f as _fleet) as string
+'declare function monster2crew(m as _monster) as _crewmember
+'declare function debug_printfleet(f as _fleet) as string
 
 #endif'head
 #ifdef main
@@ -261,7 +271,8 @@ function join_fight(f as short) as short
     endif
     rlprint "You join the fight on the side of the "&fname(side) &".",c_yel
     fleet(f)=add_fleets(fleet(f),fleet(f2))
-    playerfightfleet(f)
+    assert(pPlayerfightfleet<>null)
+    pPlayerfightfleet(f)
     if player.dead=0 then
         rlprint "The " & fname(side) & " hails your ship and thank you for your help in the battle.",c_gre
         fleet(f).ty=side
@@ -295,8 +306,9 @@ function meet_fleet(f as short)as short
                     'Friendly tPirates
                     q=friendly_tPirates(f)
                     lastturncalled=tVersion.gameturn
-                    display_stars(1)
-                    display_ship
+                    assert(pDisplaystars<>null)
+                    pDisplaystars(1)
+                    pDisplayship()
                     if q=0 then return 0
                 endif
             endif
@@ -321,7 +333,8 @@ function meet_fleet(f as short)as short
             endif
             if des=-1 then
                 factionadd(0,fleet(f).ty,15)
-                playerfightfleet(f)
+            	assert(pPlayerfightfleet)
+                pPlayerfightfleet(f)
             endif
         else
             join_fight(f)
@@ -329,10 +342,10 @@ function meet_fleet(f as short)as short
     endif
     
     lastturncalled=tVersion.gameturn
-    display_stars(1)
-    display_ship
-    return 0
-        
+    assert(pDisplaystars<>null)
+    pDisplaystars(1)
+    pDisplayship()
+    return 0        
 end function
 
 

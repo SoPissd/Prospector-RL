@@ -26,9 +26,9 @@
 
 declare function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _shipfire, spawnmask() As _cords,lsp As Short,Key As String, loctemp As Single) As Short
 
-'private function planetflags_toship(m As Short) As _ship
-'private function gets_entry(x as short,y as short, slot as short) as short
-'private function ep_planetmenu(entrycords as _cords,slot As Short,shipfire() As _shipfire,spawnmask() As _cords, lsp As Short,loctemp As Single) As _cords
+'declare function planetflags_toship(m As Short) As _ship
+'declare function gets_entry(x as short,y as short, slot as short) as short
+'declare function ep_planetmenu(entrycords as _cords,slot As Short,shipfire() As _shipfire,spawnmask() As _cords, lsp As Short,loctemp As Single) As _cords
 
 #endif'head
 #ifdef main
@@ -68,6 +68,7 @@ function planetflags_toship(m As Short) As _ship
     Next
     Return s
 End function
+
 
 
 function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _shipfire, spawnmask() As _cords,lsp As Short,Key As String, loctemp As Single) As Short

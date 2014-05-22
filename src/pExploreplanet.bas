@@ -62,12 +62,13 @@ declare function ep_fire(mapmask() As Byte,Key As String,ByRef autofire_target A
 declare function ep_closedoor() As Short
 declare function ep_examine() As Short
 declare function ep_jumppackjump() As Short
+declare function ep_display(osx As Short=555) As Short
 
-'private function ep_portal() As _cords
-'private function ep_updatemasks(spawnmask() As _cords,mapmask() As Byte,nightday() As Byte, ByRef dawn As Single, ByRef dawn2 As Single) As Short
-'private function getmonster() as short
-'private function ep_spawning(spawnmask() As _cords,lsp As Short, diesize As Short,nightday() As Byte) As Short
-'private function mondis(enemy as _monster) as string
+'declare function ep_portal() As _cords
+'declare function ep_updatemasks(spawnmask() As _cords,mapmask() As Byte,nightday() As Byte, ByRef dawn As Single, ByRef dawn2 As Single) As Short
+'declare function getmonster() as short
+'declare function ep_spawning(spawnmask() As _cords,lsp As Short, diesize As Short,nightday() As Byte) As Short
+'declare function mondis(enemy as _monster) as string
 
 #endif'head
 #ifdef main
@@ -2142,7 +2143,93 @@ function ep_jumppackjump() As Short
 End function
 
 
-#define cut2bottom
+function ep_display(osx As Short=555) As Short
+    Dim As Short a,b,x,y,slot,fg,bg,alp,x2
+    Dim As Byte comitem,comdead,comalive,comportal
+    Dim As _cords p,p1,p2
+    slot=player.map
+    If osx=555 Then osx=calcosx(awayteam.c.x,planets(slot).depth)
+
+    If disease(awayteam.disease).bli>0 Then
+        x=awayteam.c.x
+        y=awayteam.c.y
+        vismask(x,y)=1
+        dtile(x,y,tmap(x,y),vismask(x,y))
+        Return 0
+    EndIf
+    ' Stuff on ground
+    make_vismask(awayteam.c,awayteam.sight,slot)
+    
+    For a=1 To itemindex.vlast'Cant use index because unseen grenades burn out too
+        If item(itemindex.value(a)).ty=7 And item(itemindex.value(a)).v2=1 Then 'flash grenade
+            item(itemindex.value(a)).v3-=1
+            p2=item(itemindex.value(a)).w
+
+            If item(itemindex.value(a)).v3>0 Then
+                If vismask(p2.x,p2.y)>0 Then
+                    make_vismask(item(itemindex.value(a)).w,item(itemindex.value(a)).v3/10,slot,1)
+                EndIf
+            Else
+                'Burnt out, destroy
+                destroyitem(itemindex.value(a))
+                itemindex.remove(itemindex.value(a),item(itemindex.value(a)).w)
+            EndIf
+        EndIf
+        If item(itemindex.value(a)).ty=18 And item(itemindex.value(a)).discovered=1 And item(itemindex.value(a)).w.p=0 And item(itemindex.value(a)).w.s>=0  And item(itemindex.value(a)).v5=0 Then 'Rover
+            make_vismask(item(itemindex.value(a)).w,item(itemindex.value(a)).v1+3,slot,1)
+        endif
+    Next
+        
+    For x=0 To _mwx
+        For y=0 To 20
+            p.x=x+osx
+            p.y=y
+            If p.x>60 Then p.x=p.x-61
+            If p.x<0 Then p.x=p.x+61
+
+            'if awayteam.sight>cint(distance(awayteam.c,p)) then
+            If vismask(p.x,y)>0 Then
+                If planetmap(p.x,y,slot)<0 Then
+                    planetmap(p.x,y,slot)=planetmap(p.x,y,slot)*-1
+                    reward(0)=reward(0)+1
+                    reward(7)=reward(7)+planets(slot).mapmod
+                    If tiles(planetmap(p.x,y,slot)).stopwalking>0 And walking<11 Then walking=0
+                    If player.questflag(9)=1 And planetmap(p.x,y,slot)=100 Then player.questflag(9)=2
+                EndIf
+                If rnd_range(1,100)<disease(awayteam.disease).hal Then
+                    dtile(x,y,tiles(rnd_range(1,255)),1)
+                    planetmap(x,y,slot)=planetmap(x+osx,y,slot)*-1
+                Else
+                    dtile(x,y,tmap(p.x,y),vismask(p.x,y))
+                EndIf
+            endif
+            
+            a=0
+            if portalindex.last(p.x,p.y)>0 then 
+                display_portal(portalindex.index(p.x,p.y,1),slot,osx)
+                If portal(a).from.m=slot And portal(a).oneway<2 and awayteam.c.x=portal(a).from.x And awayteam.c.y=portal(a).from.y And comstr.comportal=0 Then
+                    comstr.t=comstr.t &key_portal &" Enter"
+                    comstr.comportal=1
+                endif
+                If portal(a).oneway=0 and portal(a).dest.m=slot and awayteam.c.x=portal(a).dest.x And awayteam.c.y=portal(a).dest.y And comstr.comportal=0 Then
+                    comstr.t=comstr.t &key_portal &" Enter"
+                    comstr.comportal=1
+                EndIf
+            endif
+        
+            if itemindex.last(p.x,p.y)>0 then
+                for b=1 to itemindex.last(p.x,p.y)
+                    display_item(itemindex.index(p.x,p.y,b),osx,slot)
+                next
+            endif
+        Next
+    Next    
+    display_monsters(osx)
+    
+    Return 0
+End function
+
+
 #endif'main
 
 #if (defined(main) or defined(test))

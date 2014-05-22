@@ -12,14 +12,40 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tShip -=-=-=-=-=-=-=-
-
 #undef intest
+
+#include "file.bi"
+#include "../utl/uDefines.bas"
+#include "../utl/uModule.bas"
+#include "../utl/uDefines.bas"
+#include "../utl/uDebug.bas"
+#include "../utl/uRng.bas"
+#include "../utl/uCoords.bas"
+#include "../utl/uIndex.bas"
+#include "../utl/uMath.bas"
+#include "../utl/uScreen.bas"
+#include "../utl/uColor.bas"
+#include "../utl/uUtils.bas"
+#include "../utl/uVersion.bas"
+#include "gUtils.bas"
+#include "vTiledata.bas"
+#include "vTiles.bas"
+#include "vSettings.bas"
+#include "sStars.bas"
+#include "gEnergycounter.bas"
+#include "gWeapon.bas"
+#include "pMonster.bas"
+#include "sCoords.bas"
+'#include "dParty.bas"
+
 #define test
 #endif'test
 
@@ -185,12 +211,57 @@ Dim Shared player As _ship
 Dim Shared empty_ship As _ship
 #endif'types
 
+
+
+#ifdef types
+'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+
+type tHaggle as function(way as string) as single
+dim Shared pHaggle as tHaggle	
+
+type tMerchant as function() as single
+dim Shared pMerchant as tMerchant	
+
+type tDisplay_ship as function (show as byte=0) as short
+dim Shared pDisplayShip as tDisplay_ship 	
+       
+type tRecalcshipsbays as function() as short
+dim Shared pRecalcshipsbays as tRecalcshipsbays
+
+type tBuyShip as function(st as short,ds as string,pr as short) as short
+dim Shared pBuyShip as tBuyShip
+
+type tUpgradehull as function(t as short,byref s as _ship,forced as short=0) as short
+dim Shared pUpgradehull as tUpgradehull
+
+type tDisplayawayteam as function(showshipandteam as byte=1,osx as short=555) as short
+dim Shared pDisplayawayteam as tDisplayawayteam
+
+type tGainxp as function(typ as short,v as short=1) as string
+dim shared pGainxp as tGainxp
+
+type tPlayerfightfleet as function(f as short) as short
+dim shared pPlayerfightfleet as tPlayerfightfleet
+
+type tDisplaystars as function(bg as short=0) as short
+dim Shared pDisplaystars as tDisplaystars
+
+type tUnAugmentRandomCrewmember as function() as string
+dim shared pUnAugmentRandomCrewmember as tUnAugmentRandomCrewmember
+
+type tCrewblock as function() as string
+dim shared pCrewblock as tCrewblock
+
+
+#endif'types
+
+
+
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tShip -=-=-=-=-=-=-=-
 declare function makehullbox(t as short,file as string) as string
 declare function max_hull(s as _ship) as short
 declare function shipstatsblock() as string
-declare function display_ship_weapons(m as short=0) as short
 declare function getnextfreebay() as short
 
 declare function gethullspecs(t as short,file as string) as _ship
@@ -207,6 +278,7 @@ end namespace'tShip
 
 
 'declare function best_crew(skill as short, no as short) as short
+
 
 function _ship.tractor() As Byte
     Dim As Byte i,t
@@ -374,53 +446,6 @@ function shipstatsblock() as string
 end function
 
 
-
-function display_ship_weapons(m as short=0) as short
-    dim as short a,b,bg,wl,ammo,ammomax,c,empty
-    dim as string text
-    set__color( 15,0)
-    draw string ((_mwx+1)*_fw1+_fw2,7*_fh2), "Weapons:",,font2,custom,@_col
-    set__color( 11,0)
-    wl=9
-    for a=1 to player.h_maxweaponslot
-        if m<>0 and a=m then
-            bg=1
-        else
-            bg=0
-        endif
-        if player.weapons(a).ammomax>0 then 
-            ammo+=player.weapons(a).ammo
-            ammomax+=player.weapons(a).ammomax
-        endif
-        text=weapon_text(player.weapons(a))
-        if text<>"" then
-            c=c+textbox(trim("{15}"&text),sidebar,(8+c)*_fh2,20,,bg,1)+1
-        else
-            empty+=1
-        endif
-    next
-
-    if empty>0 then
-        set__color(15,0)
-        if empty=1 then draw string(sidebar,(8+c)*_fh2), "Empty turret",,Font2,custom,@_col
-        if empty>1 then draw string(sidebar,(8+c)*_fh2), empty &" empty turrets",,Font2,custom,@_col
-        c+=1
-    endif
-    c+=1
-    if ammo>0 then
-        set__color(15,0)
-        draw string(sidebar,(8+c)*_fh2), "Loadout ("& ammomax &"/"&ammo &"):",,Font2,custom,@_col
-        set__color(11,0)
-        draw string(sidebar,(9+c)*_fh2), ammotypename(player.loadout),,Font2,custom,@_col
-        draw string(sidebar,(10+c)*_fh2), "Damage: "&player.loadout+1,,Font2,custom,@_col
-        wl+=3
-    endif
-    set__color( 11,0)
-
-
-    wl=wl+c
-    return wl
-end function
 
 
 function getnextfreebay() as short

@@ -27,10 +27,10 @@
 
 declare function ep_atship() As Short
 
-'private function ep_needs_spacesuit(slot As Short,c As _cords,ByRef reason As String="") As Short
-'private function ep_planetroute(route() As _cords,move As Short,start As _cords, target As _cords,rollover As Short) As Short
-'private function ep_autoexploreroute(astarpath() As _cords,start As _cords,move As Short, slot As Short, rover As Short=0) As Short
-'private function ep_autoexplore(slot As Short) As Short
+'declare function ep_needs_spacesuit(slot As Short,c As _cords,ByRef reason As String="") As Short
+'declare function ep_planetroute(route() As _cords,move As Short,start As _cords, target As _cords,rollover As Short) As Short
+'declare function ep_autoexploreroute(astarpath() As _cords,start As _cords,move As Short, slot As Short, rover As Short=0) As Short
+'declare function ep_autoexplore(slot As Short) As Short
 
 #endif'head
 #ifdef main

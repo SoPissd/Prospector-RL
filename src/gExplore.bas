@@ -28,7 +28,7 @@ declare function update_world(location as short) as short
 declare function teleport(from As _cords,map As Short) As _cords
 declare function explore_planet(from As _cords, orbit As Short) As _cords
 
-'private function trouble_with_tribbles() as short
+'declare function trouble_with_tribbles() as short
 
 #endif'head
 #ifdef main

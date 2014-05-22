@@ -29,8 +29,6 @@ Type FONTTYPE
   As Any Ptr dataptr
 End Type
 
-Dim Shared As Short sidebar
-
 #endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tFonts -=-=-=-=-=-=-=-

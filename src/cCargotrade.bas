@@ -29,18 +29,18 @@
 
 
 declare function pirateupgrade() as short
+declare function load_f(f as _fleet, st as short) as _fleet
+declare function refuel_f(f as _fleet, st as short) as _fleet
 
-'private function private load_s(s as _ship, good as short, st as short) as short
-'private function private load_f(f as _fleet, st as short) as _fleet
-'private function private refuel_f(f as _fleet, st as short) as _fleet
-'private function private refuel(st as short,price as single) as short
-'private function private repair_hull(pricemod as single=1) as short
-'private function private sick_bay(st as short=0,obe as short=0) as short
-'private function private pirateupgrade() as short
-'private function private customize_item() as short
-'private function private nextemptyc() as short
-'private function private change_prices(st as short,etime as short) as short
-'private function private removeinvbytype( t as short, am as short) as short
+'declare function load_s(s as _ship, good as short, st as short) as short
+'declare function refuel(st as short,price as single) as short
+'declare function repair_hull(pricemod as single=1) as short
+'declare function sick_bay(st as short=0,obe as short=0) as short
+'declare function pirateupgrade() as short
+'declare function customize_item() as short
+'declare function nextemptyc() as short
+'declare function change_prices(st as short,etime as short) as short
+'declare function removeinvbytype( t as short, am as short) as short
 
 #endif'head
 #ifdef main
@@ -68,7 +68,7 @@ function load_s(s as _ship, good as short, st as short) as short
     return result
 end function
 
-private function load_f(f as _fleet, st as short) as _fleet
+function load_f(f as _fleet, st as short) as _fleet
     dim as short curship,curgood,buylevel,vol,suc,a
     dim loaded(8) as short
     dim text as string
@@ -166,7 +166,7 @@ end function
 private function repair_hull(pricemod as single=1) as short
     dim as short a,b,c,d,add
     
-    display_ship
+    pDisplayship()
     if player.hull<max_hull(player) then
         rlprint "you can add up to " & max_hull(player)-player.hull &" Hull points (" & credits(fix(pricemod*100*(0.5+0.5*player.armortype))) & " Cr. per point, max " &minimum(max_hull(player)-player.hull,int(player.money/100)) &")"
         b=getnumber(0,max_hull(player)-player.hull,player.hull)
@@ -334,9 +334,9 @@ private function sick_bay(st as short=0,obe as short=0) as short
     do
         set__color(11,0)
         cls
-        display_ship()
+        pDisplayship()
         rlprint ""
-        a=textmenu(bg_parent,n &"/ Buy supplies / Treat crewmembers/ Buy crew augments/Exit")
+        a=textmenu(n &"/ Buy supplies / Treat crewmembers/ Buy crew augments/Exit")
         if a=1 then
             shop(21+st,1,"Medical Supplies")
         endif
@@ -372,12 +372,12 @@ private function sick_bay(st as short=0,obe as short=0) as short
             do
                 set__color(11,0)
                 cls
-                display_ship()
+                pDisplayship()
                 rlprint ""
-                b=textmenu(bg_parent,"Augments/"&augn(0)&"Exit","/"&augd(0))
+                b=textmenu("Augments/"&augn(0)&"Exit","/"&augd(0))
                 if b>0 and b<=lastaug then
                     do
-                        c=showteam(0,1,augn(b)&c)
+                        c=pShowteam(0,1,augn(b)&c)
                         if c>0 then c2=1
                         if c=-1 then
                             if crew(6).hpmax>0 then
@@ -390,7 +390,7 @@ private function sick_bay(st as short=0,obe as short=0) as short
                         tScreen.set(0)
                         set__color(11,0)
                         cls
-                        display_ship()
+                        pDisplayship()
                         tScreen.update()
                         tScreen.set(1)
                         if c<>0 then
@@ -430,30 +430,30 @@ private function sick_bay(st as short=0,obe as short=0) as short
                                                         else
                                                             rlprint crew(c).n &" was permanently injured during the operation."
                                                         endif
-                                                        no_key=keyin
+                                                        no_key=uConsole.keyinput()
                                                         if c=1 then player.dead=28
                                                     endif
                                                 endif
                                             else
                                                 rlprint "We can't install more than 3 augmentations."
-                                                no_key=keyin
+                                                no_key=uConsole.keyinput()
                                             endif
                                         else
                                             if crew(c).hp>0 then 
                                                 rlprint "You don't have enough money.",14
-                                                no_key=keyin
+                                                no_key=uConsole.keyinput()
                                             else 
                                                 rlprint crew(c).n &" is dead."
-                                                no_key=keyin
+                                                no_key=uConsole.keyinput()
                                             endif
                                         endif
                                     else
                                         rlprint crew(c).n &" already has "&augn(b)&"."
-                                        no_key=keyin
+                                        no_key=uConsole.keyinput()
                                     endif
                                 else
                                     rlprint "We can only install augments in humans."
-                                    no_key=keyin
+                                    no_key=uConsole.keyinput()
                                 endif
                                 c+=1
                             loop until crew(c).hpmax<=0 or c2>0 or player.money<augp(b)
@@ -492,11 +492,11 @@ private function customize_item() as short
     do
         set__color(11,0)
         cls
-        display_ship()
+        pDisplayship()
         a=textmenu(bg_awayteam,"Customize item/Increase accuracy/Add camo/Add imp. Camo/Acidproof/Exit")
         set__color(11,0)
         cls
-        display_ship()
+        pDisplayship()
         if a=1 then
             i=get_item(2,4)
             if i>0 then

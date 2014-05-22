@@ -28,7 +28,7 @@ declare function ep_rovermove(a as short, slot as short) as short
 declare function update_tmap(slot as short) as short
 declare function move_rover(pl As Short)  As Short
 
-'private function ep_roverreveal(i As Integer) As Short
+'declare function ep_roverreveal(i As Integer) As Short
 
 #endif'head
 #ifdef main

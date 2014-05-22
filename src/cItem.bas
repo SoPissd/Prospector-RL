@@ -11,6 +11,8 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
@@ -18,14 +20,42 @@
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tItem -=-=-=-=-=-=-=-
 
+#include "file.bi"
+#include "../utl/uDefines.bas"
+#include "../utl/uModule.bas"
+#include "../utl/uDefines.bas"
+#include "../utl/uDebug.bas"
+#include "../utl/uRng.bas"
+#include "../utl/uCoords.bas"
+#include "../utl/uIndex.bas"
+#include "../utl/uMath.bas"
+#include "../utl/uScreen.bas"
+#include "../utl/uColor.bas"
+#include "../utl/uUtils.bas"
+#include "../utl/uVersion.bas"
+#include "gUtils.bas"
+#include "vTiledata.bas"
+#include "vTiles.bas"
+#include "vSettings.bas"
+#include "sStars.bas"
+#include "gEnergycounter.bas"
+#include "gWeapon.bas"
+#include "pMonster.bas"
+#include "sCoords.bas"
+#include "sPortal.bas"
+#include "cItems.bas"
+
 #undef intest
 #define test
 #endif'test
+
+
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tItem -=-=-=-=-=-=-=-
 
 declare function check_item_filter(t as short,f as short) as short
-'private function uid_pos(uid as uinteger) as integer
+'declare function uid_pos(uid as uinteger) as integer
+declare function caged_monster_text() as string
 
 #endif'head
 #ifdef main
@@ -96,10 +126,19 @@ end function
 
 
 
+function caged_monster_text() as string
+    dim i as short
+    dim as string t
+    t="Captured lifeforms: "&lastcagedmonster &"|"
+    for i=1 to lastcagedmonster
+        t=t &"|"&cagedmonster(i).sdesc
+        if i<lastcagedmonster and cagedmonster(i).c.s<>cagedmonster(i+1).c.s or i=lastcagedmonster then t=t &" in a "&item(cagedmonster(i).c.s).desig &"."
+    next
+    return t
+end function
 
 
 
-#define cut2bottom
 #endif'main
 
 #if (defined(main) or defined(test))

@@ -56,6 +56,9 @@ Enum fleettype
     ft_civ2
     ft_monster
 End Enum
+
+Dim Shared battleslost(8,8) As Integer
+
 #endif'types
 
 #ifdef head
@@ -119,7 +122,8 @@ function show_standing() as short
         endif
     next
     textbox(scale(6),2,2,32,1,1)
-    no_key=keyin()
+    
+    no_key= uConsole.keyinput()
     return 0
 end function
 

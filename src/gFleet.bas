@@ -1,11 +1,5 @@
 'tFleet.
 '
-'defines:
-'merc_dis=0, random_pirate_system=1, makequestfleet=1, makemerchantfleet=1,
-', makepiratefleet=1, makealienfleet=1, makecivfleet=2,
-', civfleetdescription=1, makepatrol=1, add_fleets=0, bestpilotinfleet=1,
-', countfleet=0, make_fleet=1, disnbase=81
-'
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -14,18 +8,24 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tFleet -=-=-=-=-=-=-=-
-
 #undef intest
 #define test
 #endif'test
+
+
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+
+Const Show_NPCs=0			'shows pirates and mercs
+
 type _fleet
     ty As Short 'Type: 1=patrol 2=merchant 3=pirate
     e As _energycounter
@@ -44,6 +44,12 @@ End Type
 
 Dim Shared fleet(255) As _fleet
 Dim Shared empty_fleet As _fleet
+Dim Shared lastfleet As Short
+Dim Shared patrolmod As Short
+
+type tSpacecombat as function(byref atts as _fleet,ter as short) as short
+dim shared pSpacecombat	as tSpacecombat
+
 
 #endif'types
 #ifdef head
@@ -60,13 +66,17 @@ declare function bestpilotinfleet(f as _fleet) as short
 declare function make_fleet() as _fleet
 declare function disnbase(c as _cords,weight as short=2) as single
 
+declare function gen_fname(fname() as string) as short
+
 declare function merc_dis(fl as short,byref goal as short) as short
-'private function add_fleets(byref target as _fleet,byref source as _fleet) as _fleet
-'private function countfleet(ty as short) as short
+'declare function add_fleets(byref target as _fleet,byref source as _fleet) as _fleet
+'declare function countfleet(ty as short) as short
 
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tFleet -=-=-=-=-=-=-=-
+
+Dim Shared As Short makepat
 
 namespace tFleet
 function init(iAction as integer) as integer
@@ -76,6 +86,7 @@ end function
 end namespace'tFleet
 
 'declare function rnd_point(m as short=-1,w as short=-1,t as short=-1,vege as short=-1)as _cords
+
 
 
 function _fleet.add_move_cost() As Short
@@ -104,6 +115,18 @@ End function
 
 '
 '
+
+function gen_fname(fname() as string) as short
+    fname(1)="merchant convoy"
+    fname(2)="pirate fleet"
+    fname(3)="company patrol"
+    fname(4)="pirate fleet"
+    fname(5)="huge fast ship"
+    fname(6)=civ(0).n &" fleet"
+    fname(7)=civ(1).n &" fleet"
+    fname(8)="space station"
+    return 0
+end function
 
 function merc_dis(fl as short,byref goal as short) as short
     dim as short i,j,dis
@@ -325,7 +348,7 @@ function makecivfleet(slot as short) as _fleet
     dim f as _fleet
     dim as short s,p,i,e
     f.ty=6+slot
-    s=civ(slot).phil
+    s= civ(slot).phil
     if civ(slot).phil=2 and rnd_range(1,100)<50 then s=s+rnd_range(1,2)
     if civ(slot).phil=3 and rnd_range(1,100)<33 then s=s+rnd_range(2,8)
     if s<1 then s=1
@@ -335,7 +358,9 @@ function makecivfleet(slot as short) as _fleet
         else
             f.mem(p)=civ(slot).ship(1)
         endif
-        f.mem(p).c=rnd_point
+        
+        assert(pRnd_point<>null)
+        f.mem(p).c=pRnd_point()
     next
     f.c=civ(slot).home
     f.t=3+(slot*4)

@@ -29,7 +29,7 @@ declare function load_key(byval t2 as string,byref n as string="") as string
 declare function load_keyset() as short
 declare function keybindings(allowed as string="") as short
 
-'private function save_keyset() as short
+'declare function save_keyset() as short
 
 #endif'head
 #ifdef main

@@ -26,7 +26,7 @@
 
 declare function gasgiant_fueling(p As Short, orbit As Short, sys As Short) As Short
 
-'private function rg_icechunk() As Short
+'declare function rg_icechunk() As Short
 
 #endif'head
 #ifdef main

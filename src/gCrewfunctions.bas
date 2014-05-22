@@ -15,6 +15,8 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
@@ -25,8 +27,8 @@
 #undef intest
 #define test
 #endif'test
-#ifdef head
-'     -=-=-=-=-=-=-=- HEAD: tCrewfunctions -=-=-=-=-=-=-=-
+
+#ifdef types
 
 'skill-test thresholds
 Const st_veryeasy=8
@@ -34,6 +36,13 @@ Const st_easy=10
 Const st_average=12
 Const st_hard=14
 Const st_veryhard=16
+
+Const all_resources_are=0
+Dim Shared As Byte _showrolls=0
+
+#endif'types
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tCrewfunctions -=-=-=-=-=-=-=-
 
 declare function skill_test(bonus as short,targetnumber as short,echo as string="") as short
 
@@ -51,17 +60,19 @@ declare function add_member(a as short,skill as short) as short
 declare function girlfriends(st as short) as short
 declare function hiring(st as short,byref hiringpool as short,hp as short) as short
 
-'private function total_bunks() as short
-'private function find_crew_type(t as short) as short
-'private function levelup(p as _ship,from as short) as _ship
-'private function change_captain_appearance(x as short,y as short) as short
+'declare function total_bunks() as short
+'declare function find_crew_type(t as short) as short
+'declare function levelup(p as _ship,from as short) as _ship
+'declare function change_captain_appearance(x as short,y as short) as short
 
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tCrewfunctions -=-=-=-=-=-=-=-
 
+
 namespace tCrewfunctions
 function init(iAction as integer) as integer
+	pFreecrewslot= @get_freecrewslot
 	return 0
 end function
 end namespace'tCrewfunctions
@@ -356,7 +367,7 @@ function levelup(p as _ship,from as short) as _ship
     next
     if text<>"" then rlprint text,10
     if text="" and from=1 then rlprint "Nobody got a promotion."
-    display_ship()
+    pDisplayship()
     return p
 end function
 
@@ -431,7 +442,9 @@ function change_captain_appearance(x as short,y as short) as short
             rlprint ""
             crew(1).n=gettext(LocEOL.x,LocEOL.y,16,crew(1).n)
             rlprint "Are you male or female?(m/f)"
-            no_key=keyin
+            
+            no_key=uConsole.keyinput()
+            
             if lcase(no_key)="m" then
                 crew(1).story(10)=0
             else
@@ -527,6 +540,36 @@ function sort_crew() as short
 end function
 
 
+function starting_turret() as _weap
+    dim as string m,help
+    dim weapon(12) as _weap
+    dim as short i,ws(12)
+    ws(1)=1
+    ws(2)=6
+    ws(3)=84
+    ws(4)=85
+    ws(5)=87
+    ws(6)=88
+    ws(7)=90
+    ws(8)=93
+    ws(9)=96
+    ws(10)=98
+    ws(11)=99
+    '1,6,84,85,87,88,90,93,96-99
+    m="Choose turret:/"
+    for i=1 to 11
+        weapon(i)=make_weapon(ws(i))
+        m=m &weapon(i).desig &"/"
+        help=help &make_weap_helptext(weapon(i))
+    next
+    m=m &"Cancel"
+    i=textmenu(0,m,help,20,2)
+'    i=textmenu(bg_parent,m,help,20,2)
+    if i<0 or i=12 then return weapon(0)
+    return weapon(i)
+end function
+
+
 function add_member(a as short,skill as short) as short
     dim as short slot,b,f,c,cc,nameno,i,cat,j,turret,rask,changeap
     dim as string text,help
@@ -550,7 +593,7 @@ function add_member(a as short,skill as short) as short
     slot=get_freecrewslot
     if slot<0 then
         if askyn("No room on the ship, do you want to replace someone?(y/n)") then
-            slot=showteam(0,1,"Replace who?")
+            slot=pShowteam(0,1,"Replace who?")
         endif
     endif
     DbgPrint(""&slot)
@@ -1153,7 +1196,7 @@ function hiring(st as short,byref hiringpool as short,hp as short) as short
 
             if meni(b)=102 then
                 'fire
-                g=showteam(0,1,"Who do you want to dismiss?")
+                g=pShowteam(0,1,"Who do you want to dismiss?")
                 if g>1 then
                     if askyn("Do you really want to dismiss "&crew(g).n &"?(y/n)") then
                         for f=g to 127

@@ -14,6 +14,8 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
@@ -34,25 +36,23 @@ Enum ShipYards
 End Enum
 
 Dim Shared shipyardname(sy_blackmarket) As String
+
 #endif'types
 
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tShipyard -=-=-=-=-=-=-=-
 
 declare function poolandtransferweapons(s1 As _ship,s2 As _ship) As Short
-declare function upgradehull(t as short,byref s as _ship,forced as short=0) as short
-declare function buy_ship(st as short,ds as string,pr as short) as short
-declare function used_ships() as short
 declare function shipyard(where as byte) as short
 declare function missing_ammo() as short
 declare function shipupgrades(st as short) as short
 
-'private function change_armor(st as short) as short
-'private function ship_design(where as byte) as short
-'private function custom_ships(where as byte) as short
-'private function ship_inspection(price as short) as short
-'private function change_loadout() as short
-'private function buy_engine() as short
+'declare function change_armor(st as short) as short
+'declare function ship_design(where as byte) as short
+'declare function custom_ships(where as byte) as short
+'declare function ship_inspection(price as short) as short
+'declare function change_loadout() as short
+'declare function buy_engine() as short
 
 #endif'head
 #ifdef main
@@ -118,9 +118,12 @@ function poolandtransferweapons(s1 As _ship,s2 As _ship) As Short
         Else
             help = "Empty slot"
         EndIf
+        
         textbox(help,2,8,25,11,1)
         set__color( 15,0)
-        Key=keyin()
+
+        Key=uConsole.keyinput()
+
         crs=movepoint(crs,uConsole.getdirection(Key))
         If crs.x<0 Then crs.x=1
         If crs.x>1 Then crs.x=0
@@ -149,170 +152,12 @@ function poolandtransferweapons(s1 As _ship,s2 As _ship) As Short
     For f=1 To player.h_maxweaponslot
         If weapons(0,f).desig<>"-empty-" Then player.weapons(f)=weapons(0,f)
     Next
-    recalcshipsbays()
+
+	assert(pRecalcshipsbays<>null)
+    pRecalcshipsbays()
     Return 0
 End function
 
-
-function upgradehull(t as short,byref s as _ship,forced as short=0) as short
-    dim as short f,flg,a,b,cargobays,weapons,tfrom,tto,m
-    dim n as _ship
-    dim d as _crewmember
-    dim as string ques
-    dim as string word(10)
-    dim as string text
-    if t<20 then
-        n=gethullspecs(t,"data/ships.csv")
-    else
-        n=gethullspecs(t-22,"data/customs.csv")
-    endif
-    for a=1 to 10
-        if s.cargo(a).x>0 then cargobays=cargobays+1
-        if s.weapons(a).desig<>"" then weapons=weapons+1
-    next
-    
-    'compare
-    if s.h_maxhull>n.h_maxhull then ques=ques &"The new ship will have a lower maximum armor capacity than your current one. "
-    if s.engine>n.h_maxengine and s.engine<6 then ques=ques &"You will need to downgrade your engine for the new hull. "
-    if s.shieldmax>n.h_maxshield then ques=ques &"You will need to downgrade your shield generators for the new hull."
-    if s.sensors>n.h_maxsensors and s.sensors<6 then ques=ques &"You will need to downgrade your sensors for the new hull."
-    if cargobays>n.h_maxcargo then ques=ques &"The new ship will have less cargo space. "
-    if s.h_maxcrew>n.h_maxcrew then ques=ques &"The new ship will have less space for crewmen. "
-    if s.h_maxweaponslot>n.h_maxweaponslot then ques=ques &"The new ship will have fewer weapon turrets. "
-    if s.h_maxfuel>n.h_maxfuel then ques=ques &"The new ship will have a lower fuel capacity than your current one."
-    if forced=1 then
-        ques=""
-        flg=-1
-    endif
-    if ques<>"" then
-        rlprint ques,14 
-        if askyn("Do you really want to transfer to the new hull?") then 
-            flg=-1
-        else
-            flg=0
-        endif
-    else
-        flg=-1
-    endif
-    if flg=-1 then
-        s.ti_no=n.h_no
-        if s.ti_no=18 then s.ti_no=17 'ASCS is one step lower
-        if s.ti_no>18 then s.ti_no=9
-        s.h_no=n.h_no
-        s.h_price=n.h_price
-        s.h_desig=n.h_desig
-        s.h_sdesc=n.h_sdesc
-        s.h_maxhull=n.h_maxhull
-        s.h_maxengine=n.h_maxengine
-        s.h_maxsensors=n.h_maxsensors
-        s.h_maxshield=n.h_maxshield
-        s.h_maxcargo=n.h_maxcargo
-        s.h_maxcrew=n.h_maxcrew
-        if s.engine<6 and s.engine>s.h_maxengine then s.engine=s.h_maxengine
-        if s.sensors<6 and s.sensors>s.h_maxsensors then s.sensors=s.h_maxsensors
-        if s.shieldmax>s.h_maxshield then s.shieldmax=s.h_maxshield
-        
-        s.h_maxweaponslot=n.h_maxweaponslot
-        s.h_maxfuel=n.h_maxfuel
-        if s.hull=0 then s.hull=s.h_maxhull*0.8
-        if s.hull>s.h_maxhull then s.hull=s.h_maxhull
-        if s.fuel=0 or s.fuel>s.h_maxfuel then s.fuel=s.h_maxfuel
-        if s.h_maxweaponslot<weapons then
-            poolandtransferweapons(n,s)
-'            do
-'                tfrom=(s.h_maxweaponslot -tto)
-'                text="Chose weapons to transfer ("&tfrom &"):"
-'                b=1
-'                for a=1 to 10
-'                    if s.weapons(a).desig<>"" then 
-'                        text=text &"/"&s.weapons(a).desig
-'                        b=b+1
-'                    endif
-'                next
-'                text=text &"/Exit"
-'                a=menu(text)
-'                if a<b then
-'                    tto=tto+1
-'                    n.weapons(tto)=s.weapons(a)
-'                    rlprint "Transfering "&s.weapons(a).desig &" to slot "&tto
-'                    weapons=weapons-1
-'                endif
-'                if a=b then
-'                    if not(askyn("Do you really want to lose your remaining weapons(y/n)?")) then a=0
-'                endif
-'            loop until a=b or tto=s.h_maxweaponslot
-'            for a=0 to 10
-'                s.weapons(a)=n.weapons(a)
-'            next
-        endif
-        
-        recalcshipsbays
-        
-        if s.security>s.h_maxcrew+player.crewpod+player.cryo then
-            s.security=s.h_maxcrew
-            for a=s.h_maxcrew+player.crewpod+player.cryo to 255
-                crew(a)=d
-            next
-        endif
-        s.fuelmax=s.h_maxfuel+s.fuelpod
-    endif
-    return flg
-end function
-
-
-function buy_ship(st as short,ds as string,pr as short) as short
-    
-    if paystuff(pr) then
-        if st<>player.h_no then
-            if upgradehull(st,player)=-1 then
-                rlprint "you buy "&add_a_or_an(ds,0)&" hull"
-                return -1
-            else
-                player.money=player.money+pr'Just returning the money
-            endif             
-        else
-            rlprint "You already have that hull."
-            player.money=player.money+pr'Just returning the money
-        endif
-    endif
-    return 0
-end function
-
-
-function used_ships() as short
-    dim as short yourshipprice,i,a,yourshiphull,price(8),l
-    dim s as _ship
-    dim as single pmod
-    dim as string mtext,htext,desig(8)
-    do
-        yourshiphull=player.h_no
-        s=gethullspecs(yourshiphull,"data/ships.csv")
-        yourshipprice=s.h_price*.1
-        mtext="Used ships (" &credits(yourshipprice)& " Cr. for your ship.)/"
-        htext="/"
-        for i=1 to 8
-            pmod=(80-usedship(i).y*3)/100
-            s=gethullspecs(usedship(i).x,"data/ships.csv")
-            l=len(trim(s.h_desig))+len(credits(s.h_price*pmod))
-            mtext=mtext &s.h_desig &space(45-l)&credits(s.h_price*pmod) &" Cr./"
-            price(i)=s.h_price*pmod-yourshipprice
-            desig(i)=s.h_desig
-            htext=htext &makehullbox(s.h_no,"data/ships.csv") &"/"
-        next
-        mtext=mtext &"Bargain bin/Sell equipment/Exit"
-        a=textmenu(bg_shiptxt,mtext,htext,2,2)
-        if a>=1 and a<=8 then
-            if buy_ship(a,desig(a),price(a)) then
-                usedship(a).x=yourshiphull
-                player.cursed=usedship(a).y
-                usedship(a).y=0
-            endif
-        endif
-        if a=9 then shop(30,0.8,"Bargain bin")
-        if a=10 then buysitems("","",0,.5)
-    loop until a=11 or a=-1        
-    return 0
-end function
 
 
 function change_armor(st as short) as short
@@ -431,7 +276,10 @@ function ship_design(where as byte) as short
             draw string(2*_FW2,13*_FH2),space(25),,FONT2,Custom,@_col
             draw string(2*_FW2,13*_FH2),"Exit",,FONT2,Custom,@_col
             
-            key=keyin(key_north &key_south &"+-"&key_west &key_east)
+'            key=keyin(key_north &key_south &"+-"&key_west &key_east)
+            key=uConsole.keyinput(key_north &key_south &"+-" &key_west &key_east)
+            
+            
             if key=key_north then cur=cur-1
             if key=key_south then cur=cur+1
             if cur<1 then cur=9
@@ -467,10 +315,11 @@ function ship_design(where as byte) as short
             h.h_desc=""&st
             draw string(2*_FW2,12*_FH2),"Design Name: ",,FONT2,Custom,@_col
             draw string(2*_FW2,13*_FH2),space(25),,FONT2,Custom,@_col
-            h.h_desig =gettext(2,13,24,"")
+            h.h_desig= gettext(2,13,24,"")
             draw string(2*_FW2,12*_FH2),"Design Short:",,FONT2,Custom,@_col
             draw string(2*_FW2,13*_FH2),space(25),,FONT2,Custom,@_col
-            h.h_sdesc =gettext(2,13,4,"")
+            h.h_sdesc= gettext(2,13,4,"")
+            '
             f=freefile
             open "data/customs.csv" for append as #f
             print #f,h.h_desig &";"& h.h_price &";"& h.h_maxhull &";"& h.h_maxshield &";"& h.h_maxengine &";"& h.h_maxsensors &";"& h.h_maxcargo &";"& h.h_maxcrew &";"& h.h_maxweaponslot &";"& h.h_maxfuel &";"& h.h_sdesc &";10;" & h.h_desc
@@ -483,60 +332,6 @@ function ship_design(where as byte) as short
     return 0
 end function
 
-
-function custom_ships(where as byte) as short
-    dim as string men,des,dummy
-    dim as short i,c,ex,f,nos,a,last,v
-    dim pr(20) as ushort
-    dim ds(20) as string
-    dim st(20) as short
-    dim as _ship s
-    do
-        nos=-1
-        nos=tFile.Countlines("data/customs.csv")-1
-        men="Custom hulls/Build custom hull/Delete custom hull/"
-        des="Nil///"
-        a=3
-        last=3
-        if nos>=0 then
-            for i=0 to nos
-                s=gethullspecs(i,"data/customs.csv")
-                v=val(s.h_desc)
-                if where=sy_blackmarket or v<3 then
-                    s.h_desc=s.h_desig
-                    st(a)=a+20
-                    pr(a)=s.h_price
-                    ds(a)=s.h_desig
-                    a+=1
-                    men=men & s.h_desig & " - " &s.h_price  &"Cr./"
-                    des=des &makehullbox(i,"data/customs.csv") &"/"
-                    last=last+1
-                endif
-            next
-        endif
-        men=men &"Exit"
-        c=textmenu(bg_parent,men,des)
-        if c=1 then ship_design(where)
-        if c=2 then delete_custom(where)
-        if c>2 and c<last then
-            if paystuff(pr(c)) then
-                if st(c)<>player.h_no then
-                    if upgradehull(st(c),player)=-1 then
-                        rlprint "you buy "&add_a_or_an(ds(c),0)&" hull"
-                    else
-                        player.money=player.money+pr(c)
-                    endif             
-                else
-                    rlprint "You already have that hull."
-                    player.money=player.money+pr(c)
-                endif
-            endif
-            display_ship
-        endif
-
-    loop until c=-1 or c=last
-    return 0
-end function
 
 
 function ship_inspection(price as short) as short
@@ -552,77 +347,6 @@ function ship_inspection(price as short) as short
             rlprint "Your ship is in excellent shape.",c_gre
         endif
     endif
-    return 0
-end function
-
-function shipyard(where as byte) as short
-    dim as short a,b,c,d,e,last,designshop,ex,armor,shipstart,shipstop,shipstep,inspection
-    dim as string men,des
-    dim s as _ship
-    dim pr(20) as integer
-    dim ds(20) as string
-    dim st(20) as short
-    men=shipyardname(where)&"/"
-    des="/"
-    a=1
-    select case where
-    case sy_military
-        shipstart=2
-        shipstop=12
-        shipstep=2
-    case sy_civil
-        shipstart=1
-        shipstop=11
-        shipstep=2
-    case sy_pirates
-        shipstart=2
-        shipstop=16
-        shipstep=2
-    case sy_blackmarket
-        shipstart=12
-        shipstop=16
-        shipstep=1
-    end select
-    
-    for b=shipstart to shipstop step shipstep
-        s=gethullspecs(b,"data/ships.csv")
-        st(a)=b
-        pr(a)=s.h_price*haggle_("down")
-        ds(a)=s.h_desig
-        men=men & s.h_desig & space(_swidth-len(trim(s.h_desig))-len(credits(pr(a)))) &credits(pr(a)) &" Cr./"
-        des=des &makehullbox(b,"data/ships.csv") &"/"
-        a+=1
-        last=last+1
-    next
-    
-    men=men &"General overhaul"&space(_swidth-16-len(credits(player.h_price*.05))) & credits(player.h_price*.05) &" Cr./"
-    des=des &"A thorough inspection, looking for any possible source of technical problems./"
-    inspection=last+1
-    last+=1
-    if where=sy_pirates then 'Pirateplanet has no shipshop
-        armor=last+1
-        ex=last+2
-    else
-        men=men & "Design Hull/"
-        des=des &"/"
-        designshop=last+1
-        armor=last+2
-        ex=last+3
-    endif
-    
-    men=men &"Change Armortype/"
-    des=des &"Strip the current Armor off your ship, and replace with another type/"
-    men=men &"Exit"
-    des=des &"/"
-    do 
-        c=textmenu(bg_shiptxt,men,des)
-        if c<last then buy_ship(st(c),ds(c),pr(c))
-        if c=armor then change_armor(0)
-        if c=designshop then custom_ships(where)
-        if c=inspection then ship_inspection(player.h_price*0.05)
-    loop until c=ex or c=-1
-    set__color(11,0)
-    cls
     return 0
 end function
 
@@ -711,7 +435,8 @@ function shipupgrades(st as short) as short
 
     help=help &"Change type of ammo used for missile weapons."
     do 
-        c=textmenu(bg_parent,"Ship Upgrades:/Sensors,Shields & Engines/Weapons & Modules/Change Loadout/Change Armortype/Exit")
+        c=textmenu("Ship Upgrades:/Sensors,Shields & Engines/Weapons & Modules/Change Loadout/Change Armortype/Exit")
+        
 '            mtext="Sensors/" 
 '            for i=1 to 15
 '                mtext=mtext &shopitem(i,20).desig &space(_swidth-len(trim(shopitem(i,20).desig))-len(credits(shopitem(i,20).price))) &credits(shopitem(i,20).price) &" Cr./"
@@ -806,7 +531,8 @@ function shipupgrades(st as short) as short
             if c=2 then buy_weapon(st)
             if c=3 then change_loadout
             if c=4 then change_armor(0)
-            display_ship()
+		    assert(pDisplayShip<>null)
+    		pDisplayShip()
         loop until c=5 or c=-1
     return 0
 end function
@@ -835,9 +561,11 @@ function buy_engine() as short
     iprice(9)=500
     iname(10)="Maneuverjets MKIII"
     iprice(10)=1000
-    metxt="Engine:"
+    
+    metxt="Engine:"    
+    assert(pHaggle<>null)
     for i=1 to 10
-        iprice(i)=iprice(i)*haggle_("down")
+        iprice(i)=iprice(i)*pHaggle("down")
         metxt &="/"&iname(i) &space(_swidth-len(iname(i))-len(credits(iprice(i)))) &credits(iprice(i)) &" Cr."
     next
     metxt &="/Exit"
@@ -859,7 +587,7 @@ function buy_engine() as short
         hetxt &="/Adds 3 pts to movement"
         if player.manjets=3 then hetxt &="|You already have these maneuvering jets."
     
-        d=textmenu(bg_parent,metxt,hetxt)
+        d=textmenu(metxt,hetxt)
         if d<6 and d<=player.h_maxengine then
             if d<player.engine then rlprint "You already have a better engine."
             if d=player.engine then rlprint "You already have this engine."
@@ -867,7 +595,8 @@ function buy_engine() as short
                 if paystuff(iprice(d)) then
                     player.engine=d
                     rlprint "You upgrade your engine."
-                    display_ship()
+				    assert(pDisplayShip<>null)
+		    		pDisplayShip()
                     d=6
                 endif
             endif
@@ -931,7 +660,189 @@ function buy_engine() as short
     return 0
 end function
 
-#define cut2bottom
+
+function delete_custom(pir as short) as short
+    dim s as _ship
+    dim as short n,f,c,last,i,flag
+    dim as string lines(22),men,des
+    do
+        last=0
+        n=tFile.Countlines("data/customs.csv")-1
+        f=freefile
+        open "data/customs.csv" for input as #f
+        for i=0 to n
+            line input #f,lines(i)
+        next
+        close #f
+        men="Delete Ship Design/"
+        des="/"
+        for i=1 to n
+            s=gethullspecs(i,"data/customs.csv")
+            men=men & s.h_desig & "/"
+            des=des &makehullbox(i,"data/customs.csv") &"/"
+            last=last+1
+        next
+        last+=1
+        men=men &"Exit"
+        c=textmenu(men,des)
+        if c>0 and c<last then
+            if askyn("do you really want to delete this ship design? (y/n)") then
+                lines(c)=lines(n)
+                lines(n)=""
+                n-=1
+                open "data/customs.csv" for output as #f
+                for i=0 to n
+                    print #f,lines(i)
+                next
+                close #f
+            endif
+        endif
+    loop until c=last or c=-1
+    if flag=1 then
+    endif
+    return 0
+end function
+
+
+function custom_ships(where as byte) as short
+    dim as string men,des,dummy
+    dim as short i,c,ex,f,nos,a,last,v
+    dim pr(20) as ushort
+    dim ds(20) as string
+    dim st(20) as short
+    dim as _ship s
+    do
+        nos=-1
+        nos=tFile.Countlines("data/customs.csv")-1
+        men="Custom hulls/Build custom hull/Delete custom hull/"
+        des="Nil///"
+        a=3
+        last=3
+        if nos>=0 then
+            for i=0 to nos
+                s=gethullspecs(i,"data/customs.csv")
+                v=val(s.h_desc)
+                if where=sy_blackmarket or v<3 then
+                    s.h_desc=s.h_desig
+                    st(a)=a+20
+                    pr(a)=s.h_price
+                    ds(a)=s.h_desig
+                    a+=1
+                    men=men & s.h_desig & " - " &s.h_price  &"Cr./"
+                    des=des &makehullbox(i,"data/customs.csv") &"/"
+                    last=last+1
+                endif
+            next
+        endif
+        
+        men=men &"Exit"
+        c=textmenu(men,des)
+        
+        assert(pUpgradehull<>null)
+        
+        if c=1 then ship_design(where)
+        if c=2 then delete_custom(where)
+        if c>2 and c<last then
+            if paystuff(pr(c)) then
+                if st(c)<>player.h_no then
+                    if pUpgradehull(st(c),player)=-1 then
+                        rlprint "you buy "&add_a_or_an(ds(c),0)&" hull"
+                    else
+                        player.money=player.money+pr(c)
+                    endif             
+                else
+                    rlprint "You already have that hull."
+                    player.money=player.money+pr(c)
+                endif
+            endif
+
+		    assert(pDisplayShip<>null)
+    		pDisplayShip()
+        endif
+
+    loop until c=-1 or c=last
+    return 0
+end function
+
+
+
+function shipyard(where as byte) as short
+    dim as short a,b,c,d,e,last,designshop,ex,armor,shipstart,shipstop,shipstep,inspection
+    dim as string men,des
+    dim s as _ship
+    dim pr(20) as integer
+    dim ds(20) as string
+    dim st(20) as short
+    men=shipyardname(where)&"/"
+    des="/"
+    a=1
+    select case where
+    case sy_military
+        shipstart=2
+        shipstop=12
+        shipstep=2
+    case sy_civil
+        shipstart=1
+        shipstop=11
+        shipstep=2
+    case sy_pirates
+        shipstart=2
+        shipstop=16
+        shipstep=2
+    case sy_blackmarket
+        shipstart=12
+        shipstop=16
+        shipstep=1
+    end select
+    
+    for b=shipstart to shipstop step shipstep
+        s=gethullspecs(b,"data/ships.csv")
+        st(a)=b
+
+        assert(pHaggle<>null)        
+        pr(a)= s.h_price * pHaggle("down")
+
+        ds(a)=s.h_desig
+        men=men & s.h_desig & space(_swidth-len(trim(s.h_desig))-len(credits(pr(a)))) &credits(pr(a)) &" Cr./"
+        des=des &makehullbox(b,"data/ships.csv") &"/"
+        a+=1
+        last=last+1
+    next
+    
+    men=men &"General overhaul"&space(_swidth-16-len(credits(player.h_price*.05))) & credits(player.h_price*.05) &" Cr./"
+    des=des &"A thorough inspection, looking for any possible source of technical problems./"
+    inspection=last+1
+    last+=1
+    if where=sy_pirates then 'Pirateplanet has no shipshop
+        armor=last+1
+        ex=last+2
+    else
+        men=men & "Design Hull/"
+        des=des &"/"
+        designshop=last+1
+        armor=last+2
+        ex=last+3
+    endif
+    
+    men=men &"Change Armortype/"
+    des=des &"Strip the current Armor off your ship, and replace with another type/"
+    men=men &"Exit"
+    des=des &"/"
+    assert(pBuyShip<>null)
+    do 
+        c=textmenu(bg_shiptxt,men,des)
+        if c<last then pBuyShip(st(c),ds(c),pr(c))
+        if c=armor then change_armor(0)
+        if c=designshop then custom_ships(where)
+        if c=inspection then ship_inspection(player.h_price*0.05)
+    loop until c=ex or c=-1
+    set__color(11,0)
+    cls
+    return 0
+end function
+
+
+
 #endif'main
 
 #if (defined(main) or defined(test))

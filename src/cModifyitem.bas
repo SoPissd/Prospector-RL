@@ -1,8 +1,5 @@
 'tModifyitem.
 '
-'defines:
-'modify_item=0
-'
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -11,6 +8,8 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both

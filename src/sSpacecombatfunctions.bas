@@ -38,7 +38,6 @@ Dim Shared combatmap(60,20) As Byte
 Dim Shared As Byte com_cheat=0
 Const show_enemyships=0
 
-declare function gen_fname(fname() as string) as short
 declare function com_NPCFire(defender as _ship,attacker() as _ship) as short
 declare function com_display(defender as _ship, attacker() as _ship,  marked as short, e_track_p() as _cords,e_track_v() as short,e_map() as byte,e_last as short,mines_p() as _cords,mines_v() as short,mines_last as short) as short
 declare function com_dropmine(defender as _ship,mines_p() as _cords,mines_v() as short,byref mines_last as short ,attacker() as _ship) as short
@@ -81,19 +80,6 @@ function init(iAction as integer) as integer
 	return 0
 end function
 end namespace'tSpacecombatfunctions
-
-
-function gen_fname(fname() as string) as short
-    fname(1)="merchant convoy"
-    fname(2)="pirate fleet"
-    fname(3)="company patrol"
-    fname(4)="pirate fleet"
-    fname(5)="huge fast ship"
-    fname(6)=civ(0).n &" fleet"
-    fname(7)=civ(1).n &" fleet"
-    fname(8)="space station"
-    return 0
-end function
 
 
 function draw_shield(ship as _ship,osx as short) as short

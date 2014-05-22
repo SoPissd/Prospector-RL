@@ -27,7 +27,7 @@
 declare function load_bones() as short
 declare function save_bones(t as short) as short
 
-'private function getbonesfile() as string
+'declare function getbonesfile() as string
 
 #endif'head
 #ifdef main

@@ -75,9 +75,9 @@ End Namespace
 
 declare function set__color(fg As Short,bg As Short=0,visible As Byte=1) As Short
 
-'private function tColor
-'private function argb(c as short) As String
-'private function prt(imax as integer=15) as integer
+'declare function tColor
+'declare function argb(c as short) As String
+'declare function prt(imax as integer=15) as integer
 'declare function test() as integer
 
 #endif'head

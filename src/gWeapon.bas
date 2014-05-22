@@ -55,8 +55,7 @@ declare function make_weapon(a as short) as _weap
 declare function weapon_text(w as _weap) as string
 declare function make_weap_helptext(w as _weap) as string
 
-'private function count_and_make_weapons(st as short) as short
-'private function starting_turret() as _weap
+'declare function count_and_make_weapons(st as short) as short
 
 #endif'head
 #ifdef main
@@ -219,36 +218,6 @@ function make_weap_helptext(w as _weap) as string
     if w.ammomax>0 then help=help &" | Ammuniton: "&w.ammomax
     if w.heatadd>0 or w.heatsink>0 then help=help &"| Heat:"&w.heat &"\"&w.heatadd &" Heatsinks: "& w.heatsink
     return help
-end function
-
-
-function starting_turret() as _weap
-    dim as string m,help
-    dim weapon(12) as _weap
-    dim as short i,ws(12)
-    ws(1)=1
-    ws(2)=6
-    ws(3)=84
-    ws(4)=85
-    ws(5)=87
-    ws(6)=88
-    ws(7)=90
-    ws(8)=93
-    ws(9)=96
-    ws(10)=98
-    ws(11)=99
-    '1,6,84,85,87,88,90,93,96-99
-    m="Choose turret:/"
-    for i=1 to 11
-        weapon(i)=make_weapon(ws(i))
-        m=m &weapon(i).desig &"/"
-        help=help &make_weap_helptext(weapon(i))
-    next
-    m=m &"Cancel"
-    i=textmenu(0,m,help,20,2)
-'    i=textmenu(bg_parent,m,help,20,2)
-    if i<0 or i=12 then return weapon(0)
-    return weapon(i)
 end function
 
 

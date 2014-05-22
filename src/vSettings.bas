@@ -12,6 +12,8 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
@@ -86,7 +88,9 @@ dim shared as ubyte laststar=90
 Dim Shared vismask(sm_x,sm_y) As Byte
 Dim Shared spacemap(sm_x,sm_y) As Short
 
-Dim Shared _swidth As Byte=35'Length of line in a shop
+Dim Shared As Byte _swidth=35'Length of line in a shop
+Dim Shared As Short sidebar
+
 '''
 Dim Shared As Byte _volume=2
 

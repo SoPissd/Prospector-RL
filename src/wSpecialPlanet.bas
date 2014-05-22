@@ -11,22 +11,27 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tSpecialPlanet -=-=-=-=-=-=-=-
-
 #undef intest
 #define test
 #endif'test
+
+#ifdef types
+'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+Const lstcomit=56
+
+#endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tSpecialPlanet -=-=-=-=-=-=-=-
-
 declare function make_special_planet(a as short) as short
 declare function makewhplanet() as short
-
 
 #endif'head
 #ifdef main
@@ -34,6 +39,7 @@ declare function makewhplanet() as short
 
 namespace tSpecialPlanet
 function init(iAction as integer) as integer
+	pMakespecialplanet= @make_special_planet
 	return 0
 end function
 end namespace'tSpecialPlanet
@@ -249,16 +255,17 @@ function make_special_planet(a as short) as short
             'Unused
         endif
         
-        planets(a).mon_template(0)=makemonster(8,a)
+        assert(pMakemonster<>null)
+        planets(a).mon_template(0)=pMakemonster(8,a)
         planets(a).mon_noamin(0)=4
         planets(a).mon_noamax(0)=10
         
         
-        planets(a).mon_template(1)=makemonster(53,a)
+        planets(a).mon_template(1)=pMakemonster(53,a)
         planets(a).mon_noamin(1)=5
         planets(a).mon_noamax(1)=10
         
-        planets(a).mon_template(2)=makemonster(54,a)
+        planets(a).mon_template(2)=pMakemonster(54,a)
         planets(a).mon_noamin(2)=5
         planets(a).mon_noamax(2)=10
         
@@ -310,7 +317,7 @@ function make_special_planet(a as short) as short
             loop until p1.x=0 or p1.y=0 or p1.x=60 or p1.y=60 or planetmap(p1.x,p1.y,a)=-8 or c>8
             planetmap(p2.x,p2.y,a)=-63
     
-            planets(a).mon_template(0)=makemonster(11,a)
+            planets(a).mon_template(0)=pMakemonster(11,a)
             planets(a).mon_noamax(0)=15
             planets(a).mon_noamin(0)=8
         endif
@@ -350,10 +357,10 @@ function make_special_planet(a as short) as short
         portal(lastportal).dimod=-3
         lastplanet=lastplanet+1
         
-        planets(a).mon_template(0)=makemonster(13,a)
+        planets(a).mon_template(0)=pMakemonster(13,a)
         planets(a).mon_noamax(0)=8
         planets(a).mon_noamin(0)=15
-        planets(lastplanet).mon_template(0)=makemonster(13,a)
+        planets(lastplanet).mon_template(0)=pMakemonster(13,a)
         planets(lastplanet).mon_noamax(0)=25
         planets(lastplanet).mon_noamin(0)=10
         placeitem(make_item(15),p1.x,p1.y+2,a,0,0)
@@ -533,7 +540,7 @@ function make_special_planet(a as short) as short
         endif
         endif
         
-        planets(a).mon_template(0)=makemonster(14,a)
+        planets(a).mon_template(0)=pMakemonster(14,a)
         planets(a).mon_noamin(0)=8
         planets(a).mon_noamax(0)=17
         
@@ -589,15 +596,15 @@ function make_special_planet(a as short) as short
             planets(a).atmos=5
             planets(a).temp=33+rnd_range(1,20)-10
             
-            planets(a).mon_template(0)=makemonster(3,a)
+            planets(a).mon_template(0)=pMakemonster(3,a)
             planets(a).mon_noamin(0)=8
             planets(a).mon_noamax(0)=15
             
-            planets(a).mon_template(1)=makemonster(49,a)
+            planets(a).mon_template(1)=pMakemonster(49,a)
             planets(a).mon_noamin(1)=6
             planets(a).mon_noamax(1)=10
             
-            planets(a).mon_template(2)=makemonster(50,a)
+            planets(a).mon_template(2)=pMakemonster(50,a)
             planets(a).mon_noamin(2)=3
             planets(a).mon_noamax(2)=6
         endif
@@ -751,11 +758,11 @@ function make_special_planet(a as short) as short
         
         
         planets(lastplanet).depth=1
-        planets(lastplanet).mon_template(2)=makemonster(39,lastplanet)
+        planets(lastplanet).mon_template(2)=pMakemonster(39,lastplanet)
         planets(lastplanet).mon_noamin(2)=3
         planets(lastplanet).mon_noamax(2)=10
         
-        'planets(lastplanet).mon_template(3)=makemonster(23,lastplanet)
+        'planets(lastplanet).mon_template(3)=pMakemonster(23,lastplanet)
         'planets(lastplanet).mon_noamin(3)=1
         'planets(lastplanet).mon_noamax(3)=3
         
@@ -850,7 +857,7 @@ function make_special_planet(a as short) as short
         if p4.x>60 then p4.x-=60
         planetmap(p4.x,p4.y,a)=-110
         
-        planets(a).mon_template(1)=makemonster(100,a)
+        planets(a).mon_template(1)=pMakemonster(100,a)
         planets(a).mon_noamax(1)=1
         planets(a).mon_noamin(1)=1
         
@@ -880,11 +887,11 @@ function make_special_planet(a as short) as short
         portal(lastportal).dimod=-3
         
         lastplanet+=1
-        planets(a).mon_template(0)=makemonster(20,a)
+        planets(a).mon_template(0)=pMakemonster(20,a)
         planets(a).mon_noamax(0)=24
         planets(a).mon_noamin(0)=18
         
-        planets(a).mon_template(1)=makemonster(58,a)
+        planets(a).mon_template(1)=pMakemonster(58,a)
         planets(a).mon_noamax(1)=24
         planets(a).mon_noamin(1)=18
         
@@ -925,7 +932,7 @@ function make_special_planet(a as short) as short
         planetmap(30,10,a)=-150
         planets(a).mon_noamin(0)=15
         planets(a).mon_noamax(0)=25
-        planets(a).mon_template(0)=makemonster(22,a)
+        planets(a).mon_template(0)=pMakemonster(22,a)
         
         gc.x=rnd_range(1,60)
         gc.y=rnd_range(1,20)
@@ -1002,23 +1009,23 @@ function make_special_planet(a as short) as short
             p1=rnd_point(lastplanet+3,0)
             planetmap(p1.x,p1.y,lastplanet+3)=-161
         next
-        planets(lastplanet+1).mon_template(0)=makemonster(1,lastplanet+1)
-        planets(lastplanet+1).mon_template(1)=makemonster(9,lastplanet+1)
+        planets(lastplanet+1).mon_template(0)=pMakemonster(1,lastplanet+1)
+        planets(lastplanet+1).mon_template(1)=pMakemonster(9,lastplanet+1)
         planets(lastplanet+1).mon_noamin(0)=9
         planets(lastplanet+1).mon_noamax(0)=18
         planets(lastplanet+1).mon_noamax(1)=1
         planets(lastplanet+1).mon_noamax(1)=2
         planets(lastplanet+1).atmos=6
-        planets(lastplanet+2).mon_template(0)=makemonster(1,lastplanet+2)
-        planets(lastplanet+2).mon_template(1)=makemonster(9,lastplanet+2)
+        planets(lastplanet+2).mon_template(0)=pMakemonster(1,lastplanet+2)
+        planets(lastplanet+2).mon_template(1)=pMakemonster(9,lastplanet+2)
         planets(lastplanet+2).mon_noamin(0)=9
         planets(lastplanet+2).mon_noamax(0)=18
         planets(lastplanet+2).mon_noamax(1)=1
         planets(lastplanet+2).mon_noamax(1)=2
         planets(lastplanet+2).atmos=6
         
-        planets(lastplanet+3).mon_template(0)=makemonster(8,lastplanet+3)
-        planets(lastplanet+3).mon_template(1)=makemonster(9,lastplanet+3)
+        planets(lastplanet+3).mon_template(0)=pMakemonster(8,lastplanet+3)
+        planets(lastplanet+3).mon_template(1)=pMakemonster(9,lastplanet+3)
         planets(lastplanet+3).mon_noamin(0)=9
         planets(lastplanet+3).mon_noamax(0)=18
         planets(lastplanet+3).mon_noamax(1)=1
@@ -1073,7 +1080,7 @@ function make_special_planet(a as short) as short
         planetmap(p.x-1,p.y,a)=-108
         planetmap(p.x,p.y-1,a)=-108
         makeice(a,4)
-        planets(a).mon_template(0)=makemonster(30,a)
+        planets(a).mon_template(0)=pMakemonster(30,a)
         planets(a).mon_noamax(0)=25
         planets(a).mon_noamin(0)=18
         planets(a).temp=49.7
@@ -1120,11 +1127,11 @@ function make_special_planet(a as short) as short
         planetmap(3,3,a)=-173
         p=rnd_point
         planetmap(30,10,a)=-172
-        planets(a).mon_template(0)=makemonster(25,a)
+        planets(a).mon_template(0)=pMakemonster(25,a)
         planets(a).mon_noamax(0)=12
         planets(a).mon_noamin(0)=8
         
-        planets(a).mon_template(1)=makemonster(26,a)
+        planets(a).mon_template(1)=pMakemonster(26,a)
         planets(a).mon_noamax(1)=10
         planets(a).mon_noamin(1)=8
         
@@ -1160,7 +1167,7 @@ function make_special_planet(a as short) as short
         planetmap(p.x-3,p.y,a)=-171
         planetmap(p.x,p.y+3,a)=-171
         planetmap(p.x,p.y-3,a)=-171
-        planets(a).mon_template(0)=makemonster(26,a)
+        planets(a).mon_template(0)=pMakemonster(26,a)
         planets(a).mon_noamax(0)=12
         planets(a).mon_noamin(0)=8
         planets(a).temp=-219.7
@@ -1194,7 +1201,7 @@ function make_special_planet(a as short) as short
         planetmap(p2.x+1,p2.y,a)=-182
         planetmap(p2.x,p2.y+1,a)=-182
         planetmap(p2.x+1,p2.y+1,a)=-182
-        planets(a).mon_template(0)=makemonster(28,a)
+        planets(a).mon_template(0)=pMakemonster(28,a)
         planets(a).mon_noamin(0)=5
         planets(a).mon_noamax(0)=15
         planets(a).atmos=6
@@ -1225,11 +1232,11 @@ function make_special_planet(a as short) as short
         makecavemap(gc,4-rnd_range(1,8),2-rnd_range(1,4),-1,0)
         planets(b).depth=1
         
-        planets(b).mon_template(0)=makemonster(29,a)
+        planets(b).mon_template(0)=pMakemonster(29,a)
         planets(b).mon_noamin(0)=3
         planets(b).mon_noamax(0)=10
         
-        planets(b).mon_template(1)=makemonster(65,a)
+        planets(b).mon_template(1)=pMakemonster(65,a)
         planets(b).mon_noamin(1)=1
         planets(b).mon_noamax(1)=5
         
@@ -1261,11 +1268,11 @@ function make_special_planet(a as short) as short
         planets(b).depth=1
         
         
-        planets(b).mon_template(0)=makemonster(29,a)
+        planets(b).mon_template(0)=pMakemonster(29,a)
         planets(b).mon_noamin(0)=5
         planets(b).mon_noamax(0)=15
         
-        planets(b).mon_template(1)=makemonster(65,a)
+        planets(b).mon_template(1)=pMakemonster(65,a)
         planets(b).mon_noamin(1)=3
         planets(b).mon_noamax(1)=8
         
@@ -1310,11 +1317,11 @@ function make_special_planet(a as short) as short
         p=rnd_point
         planetmap(p.x,p.y,a)=-132
         
-        planets(a).mon_template(0)=makemonster(31,a)
+        planets(a).mon_template(0)=pMakemonster(31,a)
         planets(a).mon_noamin(0)=10
         planets(a).mon_noamax(0)=15
         
-        planets(a).mon_template(1)=makemonster(65,a)
+        planets(a).mon_template(1)=pMakemonster(65,a)
         planets(a).mon_noamin(1)=1
         planets(a).mon_noamax(1)=5
         
@@ -1353,11 +1360,11 @@ function make_special_planet(a as short) as short
         planetmap(p.x,p.y,b)=-191
         
         planets(b).depth=1
-        planets(b).mon_template(0)=makemonster(31,b)
+        planets(b).mon_template(0)=pMakemonster(31,b)
         planets(b).mon_noamin(0)=5
         planets(b).mon_noamax(0)=15
                 
-        planets(b).mon_template(1)=makemonster(65,b)
+        planets(b).mon_template(1)=pMakemonster(65,b)
         planets(b).mon_noamin(1)=3
         planets(b).mon_noamax(1)=10
         
@@ -1395,11 +1402,11 @@ function make_special_planet(a as short) as short
             next
         next
         planets(b).depth=2
-        planets(b).mon_template(0)=makemonster(31,a)
+        planets(b).mon_template(0)=pMakemonster(31,a)
         planets(b).mon_noamin(0)=15
         planets(b).mon_noamax(0)=20        
         
-        planets(b).mon_template(1)=makemonster(65,b)
+        planets(b).mon_template(1)=pMakemonster(65,b)
         planets(b).mon_noamin(1)=10
         planets(b).mon_noamax(1)=12
         
@@ -1460,10 +1467,10 @@ function make_special_planet(a as short) as short
         planetmap(p.x,p.y,a)=-rnd_range(140,143)
         p=rnd_point()
         planetmap(p.x,p.y,a)=-rnd_range(140,143)
-        planets(a).mon_template(0)=makemonster(36,a)
+        planets(a).mon_template(0)=pMakemonster(36,a)
         planets(a).mon_noamin(0)=2
         planets(a).mon_noamax(0)=5
-        planets(a).mon_template(1)=makemonster(79,a)
+        planets(a).mon_template(1)=pMakemonster(79,a)
         planets(a).mon_noamin(1)=2
         planets(a).mon_noamax(1)=5
         
@@ -1487,12 +1494,12 @@ function make_special_planet(a as short) as short
         next
         
         
-        planets(lastplanet).mon_template(0)=makemonster(36,lastplanet)
+        planets(lastplanet).mon_template(0)=pMakemonster(36,lastplanet)
         planets(lastplanet).mon_noamin(0)=3
         planets(lastplanet).mon_noamax(0)=7
         
         
-        planets(lastplanet).mon_template(1)=makemonster(79,lastplanet)
+        planets(lastplanet).mon_template(1)=pMakemonster(79,lastplanet)
         planets(lastplanet).mon_noamin(1)=3
         planets(lastplanet).mon_noamax(1)=7
         
@@ -1538,12 +1545,12 @@ function make_special_planet(a as short) as short
         next
         
         
-        planets(lastplanet).mon_template(0)=makemonster(36,lastplanet)
+        planets(lastplanet).mon_template(0)=pMakemonster(36,lastplanet)
         planets(lastplanet).mon_noamin(0)=6
         planets(lastplanet).mon_noamax(0)=17
         
         
-        planets(lastplanet).mon_template(1)=makemonster(79,lastplanet)
+        planets(lastplanet).mon_template(1)=pMakemonster(79,lastplanet)
         planets(lastplanet).mon_noamin(1)=6
         planets(lastplanet).mon_noamax(1)=17
         
@@ -1574,12 +1581,12 @@ function make_special_planet(a as short) as short
         next
         planetmap(30,10,lastplanet)=-187
         
-        planets(lastplanet).mon_template(0)=makemonster(36,lastplanet)
+        planets(lastplanet).mon_template(0)=pMakemonster(36,lastplanet)
         planets(lastplanet).mon_noamin(0)=13
         planets(lastplanet).mon_noamax(0)=27
         
         
-        planets(lastplanet).mon_template(1)=makemonster(79,lastplanet)
+        planets(lastplanet).mon_template(1)=pMakemonster(79,lastplanet)
         planets(lastplanet).mon_noamin(1)=13
         planets(lastplanet).mon_noamax(1)=27
         
@@ -1693,15 +1700,15 @@ function make_special_planet(a as short) as short
         planets(a).atmos=1
         planets(a).grav=.5
         planets(a).rot=12
-        planets(a).mon_template(0)=makemonster(8,a)
+        planets(a).mon_template(0)=pMakemonster(8,a)
         planets(a).mon_noamin(0)=5
         planets(a).mon_noamax(0)=15
         
-        planets(a).mon_template(1)=makemonster(51,a)
+        planets(a).mon_template(1)=pMakemonster(51,a)
         planets(a).mon_noamin(1)=5
         planets(a).mon_noamax(1)=15
         
-        planets(a).mon_template(2)=makemonster(52,a)
+        planets(a).mon_template(2)=pMakemonster(52,a)
         planets(a).mon_noamin(2)=5
         planets(a).mon_noamax(2)=15
         
@@ -1734,7 +1741,7 @@ function make_special_planet(a as short) as short
             planets(lastplanet).atmos=1
             planets(lastplanet).grav=.5
             planets(lastplanet).depth+=1
-            planets(lastplanet).mon_template(0)=makemonster(8,lastplanet)
+            planets(lastplanet).mon_template(0)=pMakemonster(8,lastplanet)
             planets(lastplanet).mon_noamin(0)=10
             planets(lastplanet).mon_noamax(0)=15
         
@@ -1817,9 +1824,9 @@ function make_special_planet(a as short) as short
             planets(lastplanet).depth+=1
             planets(lastplanet).atmos=1
             planets(lastplanet).temp=1
-            if d=1 then planets(lastplanet).mon_template(0)=makemonster(40,lastplanet)
-            if d=2 then planets(lastplanet).mon_template(0)=makemonster(13,lastplanet)
-            if d=3 then planets(lastplanet).mon_template(0)=makemonster(29,lastplanet)
+            if d=1 then planets(lastplanet).mon_template(0)=pMakemonster(40,lastplanet)
+            if d=2 then planets(lastplanet).mon_template(0)=pMakemonster(13,lastplanet)
+            if d=3 then planets(lastplanet).mon_template(0)=pMakemonster(29,lastplanet)
             planets(lastplanet).mon_template(0).hasoxy=1
             planets(lastplanet).mon_noamin(0)=10
             planets(lastplanet).mon_noamax(0)=15
@@ -1875,7 +1882,7 @@ function make_special_planet(a as short) as short
         planets(a).temp=-211
         planets(a).rot=.8
        
-        planets(lastplanet).mon_template(0)=makemonster(3,a)
+        planets(lastplanet).mon_template(0)=pMakemonster(3,a)
         planets(lastplanet).mon_noamin(0)=8
         planets(lastplanet).mon_noamax(0)=12
         for b=0 to 2
@@ -1920,7 +1927,7 @@ function make_special_planet(a as short) as short
             planets(lastplanet).depth+=1
             planets(lastplanet).atmos=6
             planets(lastplanet).temp=16
-            planets(lastplanet).mon_template(0)=makemonster(3,lastplanet)
+            planets(lastplanet).mon_template(0)=pMakemonster(3,lastplanet)
             planets(lastplanet).mon_template(0).hasoxy=1
             planets(lastplanet).mon_noamin(0)=8+b
             planets(lastplanet).mon_noamax(0)=18+b
@@ -1952,7 +1959,7 @@ function make_special_planet(a as short) as short
         next
         p1=rnd_point
         planetmap(p1.x,p1.y,a)=-100 
-        planets(a).mon_template(0)=makemonster(2,a)
+        planets(a).mon_template(0)=pMakemonster(2,a)
         planets(a).mon_noamin(0)=5
         planets(a).mon_noamax(0)=7
     endif
@@ -1966,7 +1973,7 @@ function make_special_planet(a as short) as short
         planets(a).temp=16.3
         planets(a).rot=12.3
         planets(a).atmos=5
-        planets(a).mon_template(0)=makemonster(42,a)
+        planets(a).mon_template(0)=pMakemonster(42,a)
         planets(a).mon_noamin(0)=10
         planets(a).mon_noamax(0)=25
         p1=rnd_point(a,,2)
@@ -1977,7 +1984,7 @@ function make_special_planet(a as short) as short
         planetmap(p1.x,p1.y,a)=-149
         make_drifter(addship,2,1)
         deletemonsters(lastplanet)
-        planets(lastplanet).mon_template(0)=makemonster(90,a)
+        planets(lastplanet).mon_template(0)=pMakemonster(90,a)
         planets(lastplanet).mon_noamin(0)=0
         planets(lastplanet).mon_noamax(0)=5
         for x=0 to 60
@@ -1999,7 +2006,7 @@ function make_special_planet(a as short) as short
         planets(a).water=77
         makeislands(a,3)
         deletemonsters(a)
-        planets(a).mon_template(0)=makemonster(43,a)
+        planets(a).mon_template(0)=pMakemonster(43,a)
         planets(a).mon_noamin(0)=10
         planets(a).mon_noamax(0)=25
         planets(a).temp=12.3
@@ -2021,7 +2028,7 @@ function make_special_planet(a as short) as short
             planetmap(rnd_range(0,60),rnd_range(0,20),lastplanet)=-146
         next 
         deletemonsters(lastplanet)
-        planets(lastplanet).mon_template(0)=makemonster(44,a)
+        planets(lastplanet).mon_template(0)=pMakemonster(44,a)
         planets(lastplanet).mon_noamin(0)=1
         planets(lastplanet).mon_noamax(0)=1
         planets(lastplanet).depth=1
@@ -2049,10 +2056,10 @@ function make_special_planet(a as short) as short
         makeislands(a,3)
         planetmap(rnd_range(1,60),rnd_range(3,12),a)=-62
          
-        planets(a).mon_template(0)=makemonster(45,a)
+        planets(a).mon_template(0)=pMakemonster(45,a)
         planets(a).mon_noamin(0)=45
         planets(a).mon_noamax(0)=46
-        planets(a).mon_template(1)=makemonster(48,a)
+        planets(a).mon_template(1)=pMakemonster(48,a)
         planets(a).mon_noamin(1)=1
         planets(a).mon_noamax(1)=1
         
@@ -2070,7 +2077,7 @@ function make_special_planet(a as short) as short
         planets(lastplanet)=planets(a)
         planets(lastplanet).depth=2
         deletemonsters(lastplanet)
-        planets(lastplanet).mon_template(0)=makemonster(8,lastplanet)
+        planets(lastplanet).mon_template(0)=pMakemonster(8,lastplanet)
         planets(lastplanet).mon_noamin(0)=5
         planets(lastplanet).mon_noamax(0)=8
         makecavemap(gc1,3-rnd_range(1,4),3-rnd_range(1,6),0,0)
@@ -2084,15 +2091,15 @@ function make_special_planet(a as short) as short
         planets(lastplanet).depth=3
         deletemonsters(lastplanet)
                  
-        planets(lastplanet).mon_template(0)=makemonster(8,lastplanet)
+        planets(lastplanet).mon_template(0)=pMakemonster(8,lastplanet)
         planets(lastplanet).mon_noamin(0)=15
         planets(lastplanet).mon_noamax(0)=25
         
-        planets(lastplanet).mon_template(1)=makemonster(54,lastplanet)
+        planets(lastplanet).mon_template(1)=pMakemonster(54,lastplanet)
         planets(lastplanet).mon_noamin(1)=5
         planets(lastplanet).mon_noamax(1)=8
         
-        planets(lastplanet).mon_template(2)=makemonster(53,lastplanet)
+        planets(lastplanet).mon_template(2)=pMakemonster(53,lastplanet)
         planets(lastplanet).mon_noamin(2)=5
         planets(lastplanet).mon_noamax(2)=10
         
@@ -2141,12 +2148,12 @@ function make_special_planet(a as short) as short
         next
         planetmap(p1.x,p1.y,a)=-247
         
-        planets(a).mon_template(0)=makemonster(85,a) 'Colonists
+        planets(a).mon_template(0)=pMakemonster(85,a) 'Colonists
         
         planets(a).mon_noamin(0)=5
         planets(a).mon_noamax(0)=8
         
-        planets(a).mon_template(1)=makemonster(83,a) 'Burrowers
+        planets(a).mon_template(1)=pMakemonster(83,a) 'Burrowers
         planets(a).mon_noamin(1)=10
         planets(a).mon_noamax(1)=15
         
@@ -2176,11 +2183,11 @@ function make_special_planet(a as short) as short
             planets(lastplanet).temp=15.3
             planets(lastplanet).weat=0
             planets(lastplanet).depth=1
-            planets(lastplanet).mon_template(0)=makemonster(83,lastplanet)
+            planets(lastplanet).mon_template(0)=pMakemonster(83,lastplanet)
             planets(lastplanet).mon_template(0).invis=0
             planets(lastplanet).mon_noamin(0)=20
             planets(lastplanet).mon_noamax(0)=25
-            planets(lastplanet).mon_template(1)=makemonster(84,lastplanet)
+            planets(lastplanet).mon_template(1)=pMakemonster(84,lastplanet)
             planets(lastplanet).mon_template(1).invis=0
             planets(lastplanet).mon_noamin(1)=2
             planets(lastplanet).mon_noamax(1)=5
@@ -2207,10 +2214,10 @@ function make_special_planet(a as short) as short
             next
         next
         deletemonsters(a)
-        planets(a).mon_template(0)=makemonster(86,a)
+        planets(a).mon_template(0)=pMakemonster(86,a)
         planets(a).mon_noamin(0)=10
         planets(a).mon_noamax(0)=15
-        planets(a).mon_template(1)=makemonster(1,a)
+        planets(a).mon_template(1)=pMakemonster(1,a)
         planets(a).mon_template(1).diet=2
         planets(a).mon_template(1).disease=13
         planets(a).mon_template(1).faction=1
@@ -2226,10 +2233,10 @@ function make_special_planet(a as short) as short
         gc1.y=p1.y
         gc1.m=lastplanet
         addportal(gc,gc1,0,asc(">"),"Stairs",15)
-        planets(lastplanet).mon_template(0)=makemonster(86,a)
+        planets(lastplanet).mon_template(0)=pMakemonster(86,a)
         planets(lastplanet).mon_noamin(0)=15
         planets(lastplanet).mon_noamax(0)=20
-        planets(lastplanet).mon_template(1)=makemonster(87,a)
+        planets(lastplanet).mon_template(1)=pMakemonster(87,a)
         planets(lastplanet).mon_noamin(1)=2
         planets(lastplanet).mon_noamax(1)=3
         planets(lastplanet).depth=3
@@ -2246,10 +2253,10 @@ function make_special_planet(a as short) as short
         gc1.y=p1.y
         gc1.m=lastplanet
         addportal(gc,gc1,0,asc(">"),"Stairs",15)
-        planets(lastplanet).mon_template(0)=makemonster(86,a)
+        planets(lastplanet).mon_template(0)=pMakemonster(86,a)
         planets(lastplanet).mon_noamin(0)=20
         planets(lastplanet).mon_noamax(0)=25
-        planets(lastplanet).mon_template(1)=makemonster(87,a)
+        planets(lastplanet).mon_template(1)=pMakemonster(87,a)
         planets(lastplanet).mon_noamin(1)=5
         planets(lastplanet).mon_noamax(1)=8
         planets(lastplanet).depth=6
@@ -2292,10 +2299,10 @@ function make_special_planet(a as short) as short
         planets(a).atmos=1
         planets(a).temp=-233
         planets(a).grav=.3
-        planets(a).mon_template(0)=makemonster(70,a)
+        planets(a).mon_template(0)=pMakemonster(70,a)
         planets(a).mon_noamin(0)=5
         planets(a).mon_noamax(0)=8
-        planets(a).mon_template(1)=makemonster(71,a)
+        planets(a).mon_template(1)=pMakemonster(71,a)
         planets(a).mon_noamin(1)=1
         planets(a).mon_noamax(1)=5
         lastplanet+=1
@@ -2310,7 +2317,7 @@ function make_special_planet(a as short) as short
         if gc.y>20 then gc.y=20
         gc1.m=lastplanet
         addportal(gc,gc1,0,asc(">"),"Stairs",15)
-        planets(lastplanet).mon_template(0)=makemonster(71,lastplanet)
+        planets(lastplanet).mon_template(0)=pMakemonster(71,lastplanet)
         planets(lastplanet).mon_noamin(0)=10
         planets(lastplanet).mon_noamax(0)=15
         planets(lastplanet).depth=3
@@ -2329,13 +2336,13 @@ function make_special_planet(a as short) as short
         gc1.y=p1.y
         gc1.m=lastplanet
         addportal(gc,gc1,0,asc(">"),"Stairs",15)
-        planets(lastplanet).mon_template(0)=makemonster(71,lastplanet)
+        planets(lastplanet).mon_template(0)=pMakemonster(71,lastplanet)
         planets(lastplanet).mon_noamin(0)=15
         planets(lastplanet).mon_noamax(0)=20
-        planets(lastplanet).mon_template(1)=makemonster(72,lastplanet)
+        planets(lastplanet).mon_template(1)=pMakemonster(72,lastplanet)
         planets(lastplanet).mon_noamin(1)=5
         planets(lastplanet).mon_noamax(1)=6
-        planets(lastplanet).mon_template(2)=makemonster(73,lastplanet)
+        planets(lastplanet).mon_template(2)=pMakemonster(73,lastplanet)
         planets(lastplanet).mon_noamin(2)=10
         planets(lastplanet).mon_noamax(2)=15
         
@@ -2360,13 +2367,13 @@ function make_special_planet(a as short) as short
         addportal(gc,gc1,0,asc(">"),"Stairs",15)
         p1=rnd_point(lastplanet,0)
         planetmap(p1.x,p1.y,lastplanet)=-252
-        planets(lastplanet).mon_template(0)=makemonster(71,lastplanet)
+        planets(lastplanet).mon_template(0)=pMakemonster(71,lastplanet)
         planets(lastplanet).mon_noamin(0)=20
         planets(lastplanet).mon_noamax(0)=25
-        planets(lastplanet).mon_template(1)=makemonster(72,lastplanet)
+        planets(lastplanet).mon_template(1)=pMakemonster(72,lastplanet)
         planets(lastplanet).mon_noamin(1)=8
         planets(lastplanet).mon_noamax(1)=10
-        planets(lastplanet).mon_template(2)=makemonster(73,lastplanet)
+        planets(lastplanet).mon_template(2)=pMakemonster(73,lastplanet)
         planets(lastplanet).mon_noamin(2)=20
         planets(lastplanet).mon_noamax(2)=25
         planets(lastplanet).depth=6
@@ -2398,10 +2405,10 @@ function make_special_planet(a as short) as short
         gc1.y=p1.y
         gc1.m=lastplanet
         addportal(gc,gc1,0,asc(">"),"Stairs",15)
-        planets(lastplanet).mon_template(0)=makemonster(7,a)
+        planets(lastplanet).mon_template(0)=pMakemonster(7,a)
         planets(lastplanet).mon_noamin(0)=10
         planets(lastplanet).mon_noamax(0)=15
-        planets(lastplanet).mon_template(1)=makemonster(50,a)
+        planets(lastplanet).mon_template(1)=pMakemonster(50,a)
         planets(lastplanet).mon_noamin(1)=10
         planets(lastplanet).mon_noamax(1)=15
         planets(lastplanet).depth=3
@@ -2411,7 +2418,7 @@ function make_special_planet(a as short) as short
         planets(lastplanet).grav=.3
         
         makeoutpost(a)
-        planets(a).mon_template(0)=makemonster(7,a)
+        planets(a).mon_template(0)=pMakemonster(7,a)
         planets(a).mon_noamin(0)=10
         planets(a).mon_noamin(0)=15
         lastplanet+=1
@@ -2433,10 +2440,10 @@ function make_special_planet(a as short) as short
         gc1.y=p1.y
         gc1.m=lastplanet
         addportal(gc,gc1,0,asc(">"),"Stairs",15)
-        planets(lastplanet).mon_template(0)=makemonster(7,a)
+        planets(lastplanet).mon_template(0)=pMakemonster(7,a)
         planets(lastplanet).mon_noamin(0)=10
         planets(lastplanet).mon_noamax(0)=15
-        planets(lastplanet).mon_template(1)=makemonster(50,a)
+        planets(lastplanet).mon_template(1)=pMakemonster(50,a)
         planets(lastplanet).mon_noamin(1)=10
         planets(lastplanet).mon_noamax(1)=15
         planets(lastplanet).depth=3
@@ -2457,10 +2464,10 @@ function make_special_planet(a as short) as short
         gc1.y=p1.y
         gc1.m=lastplanet
         addportal(gc,gc1,0,asc(">"),"Stairs",15)
-        planets(lastplanet).mon_template(0)=makemonster(7,a)
+        planets(lastplanet).mon_template(0)=pMakemonster(7,a)
         planets(lastplanet).mon_noamin(0)=10
         planets(lastplanet).mon_noamax(0)=15
-        planets(lastplanet).mon_template(1)=makemonster(50,a)
+        planets(lastplanet).mon_template(1)=pMakemonster(50,a)
         planets(lastplanet).mon_noamin(1)=10
         planets(lastplanet).mon_noamax(1)=15
         planets(lastplanet).depth=3
@@ -2479,10 +2486,10 @@ function make_special_planet(a as short) as short
         planets(a).grav=.1
         planets(a).atmos=9
         planets(a).depth=1
-        planets(a).mon_template(0)=makemonster(76,a)
+        planets(a).mon_template(0)=pMakemonster(76,a)
         planets(a).mon_noamin(0)=5
         planets(a).mon_noamax(0)=8
-        planets(a).mon_template(1)=makemonster(77,a)
+        planets(a).mon_template(1)=pMakemonster(77,a)
         planets(a).mon_noamin(1)=1
         planets(a).mon_noamax(1)=5
         
@@ -2500,13 +2507,13 @@ function make_special_planet(a as short) as short
         planets(lastplanet).temp=20
         planets(lastplanet).grav=1
         planets(lastplanet).atmos=4
-        planets(lastplanet).mon_template(0)=makemonster(76,lastplanet)
+        planets(lastplanet).mon_template(0)=pMakemonster(76,lastplanet)
         planets(lastplanet).mon_noamin(0)=10
         planets(lastplanet).mon_noamax(0)=15
-        planets(lastplanet).mon_template(1)=makemonster(77,lastplanet)
+        planets(lastplanet).mon_template(1)=pMakemonster(77,lastplanet)
         planets(lastplanet).mon_noamin(1)=4
         planets(lastplanet).mon_noamax(1)=6
-        planets(lastplanet).mon_template(2)=makemonster(78,lastplanet)
+        planets(lastplanet).mon_template(2)=pMakemonster(78,lastplanet)
         planets(lastplanet).mon_noamin(2)=10
         planets(lastplanet).mon_noamax(2)=15
         planets(lastplanet).depth=1
@@ -2524,13 +2531,13 @@ function make_special_planet(a as short) as short
         planets(lastplanet).temp=20
         planets(lastplanet).grav=1
         planets(lastplanet).atmos=4
-        planets(lastplanet).mon_template(0)=makemonster(76,lastplanet)
+        planets(lastplanet).mon_template(0)=pMakemonster(76,lastplanet)
         planets(lastplanet).mon_noamin(0)=10
         planets(lastplanet).mon_noamax(0)=15
-        planets(lastplanet).mon_template(1)=makemonster(77,lastplanet)
+        planets(lastplanet).mon_template(1)=pMakemonster(77,lastplanet)
         planets(lastplanet).mon_noamin(1)=8
         planets(lastplanet).mon_noamax(1)=10
-        planets(lastplanet).mon_template(2)=makemonster(78,lastplanet)
+        planets(lastplanet).mon_template(2)=pMakemonster(78,lastplanet)
         planets(lastplanet).mon_noamin(2)=10
         planets(lastplanet).mon_noamax(2)=15
         planets(lastplanet).depth=1
@@ -2592,7 +2599,7 @@ function make_special_planet(a as short) as short
         next
         if p.x=0 and p.y=0 then p=rnd_point
         planetmap(p.x,p.y,a)=-244
-        planets(a).mon_template(0)=makemonster(8,a)
+        planets(a).mon_template(0)=pMakemonster(8,a)
         planets(a).mon_noamin(0)=4
         planets(a).mon_noamax(0)=10
         
@@ -2648,11 +2655,11 @@ function make_special_planet(a as short) as short
         planetmap(p2.x+6,p2.y+3,lastplanet)=-54
         
         
-        planets(lastplanet).mon_template(0)=makemonster(8,a)
+        planets(lastplanet).mon_template(0)=pMakemonster(8,a)
         planets(lastplanet).mon_noamin(0)=14
         planets(lastplanet).mon_noamax(0)=20
         
-        planets(lastplanet).mon_template(1)=makemonster(56,a)
+        planets(lastplanet).mon_template(1)=pMakemonster(56,a)
         planets(lastplanet).mon_noamin(1)=1
         planets(lastplanet).mon_noamax(1)=2
         
@@ -2680,35 +2687,35 @@ function make_special_planet(a as short) as short
         planets(a).grav=1.1
         planets(a).atmos=9
         if rnd_range(1,100)<35 then                 
-            planets(a).mon_template(0)=makemonster(8,a)
+            planets(a).mon_template(0)=pMakemonster(8,a)
             planets(a).mon_noamin(0)=5
             planets(a).mon_noamax(0)=15
         endif
         if rnd_range(1,100)<25 then             
-            planets(a).mon_template(0)=makemonster(9,a)
+            planets(a).mon_template(0)=pMakemonster(9,a)
             planets(a).mon_noamin(0)=5
             planets(a).mon_noamax(0)=15
         endif
         if rnd_range(1,100)<15 then
              
-            planets(a).mon_template(0)=makemonster(27,a)
+            planets(a).mon_template(0)=pMakemonster(27,a)
             planets(a).mon_noamin(0)=1
             planets(a).mon_noamax(0)=5
         endif
         if rnd_range(1,100)<10 then
-            planets(a).mon_template(0)=makemonster(61,a)
+            planets(a).mon_template(0)=pMakemonster(61,a)
             planets(a).mon_noamin(0)=1
             planets(a).mon_noamax(0)=3
         endif
         
         if rnd_range(1,100)<10 then
-            planets(a).mon_template(0)=makemonster(62,a)
+            planets(a).mon_template(0)=pMakemonster(62,a)
             planets(a).mon_noamin(0)=1
             planets(a).mon_noamax(0)=3
         endif
         
         if rnd_range(1,100)<10 then
-            planets(a).mon_template(0)=makemonster(63,a)
+            planets(a).mon_template(0)=pMakemonster(63,a)
             planets(a).mon_noamin(0)=1
             planets(a).mon_noamax(0)=3
         endif
@@ -2727,7 +2734,7 @@ function makewhplanet() as short
     b=-13
     makeplanetmap(a,3,9)
     deletemonsters(a)
-    planets(a).mon_template(1)=makemonster(55,a)
+    planets(a).mon_template(1)=pMakemonster(55,a)
     planets(a).mon_noamin(1)=2
     planets(a).mon_noamax(1)=3
     for x=0 to 60

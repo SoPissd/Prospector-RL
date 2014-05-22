@@ -34,7 +34,7 @@
 declare function savegame() as short
 #endif
 
-'private function savegame_crashfilename(fname as String, ext as String) as String
+'declare function savegame_crashfilename(fname as String, ext as String) as String
 
 #endif'head
 #ifdef main

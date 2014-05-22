@@ -36,12 +36,12 @@
 '     -=-=-=-=-=-=-=- HEAD: version -=-=-=-=-=-=-=-
 
 
-'private function tVersion
-'private function tVersion
-'private function tVersion
-'private function tVersion
-'private function tVersion
-'private function tVersion
+'declare function tVersion
+'declare function tVersion
+'declare function tVersion
+'declare function tVersion
+'declare function tVersion
+'declare function tVersion
 
 #endif'head
 #ifdef main

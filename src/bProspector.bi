@@ -51,11 +51,10 @@ inc("cPoker.bas",				"")
 
 ' for real - unique inc's
 
-#ifdef gbasics
 '
 'basics
 '
-
+#ifdef gbasics2
 #ifndef useLibTileData
 inc("vTiledata.bas",			"data about each tile")
 #endif
@@ -83,20 +82,78 @@ inc("cStockmarket.bas",			"just a template")
 inc("vGame.bas",				"game menu. gives about 1/3rd the units a workout without anything on top")
 #endif
 
-#ifdef xvars
+
+
+
+#ifdef gbasics
+#ifndef useLibTileData
+inc("vTiledata.bas",			"data about each tile")
+#endif
+inc("cCredits.bas",				"")
+inc("gBasis.bas",				"")
+inc("gUtils.bas",				"")
+inc("vTiles.bas",				"")
+inc("vSettings.bas",			"")
+inc("sStars.bas",				"")
+inc("gEnergycounter.bas",		"")
+inc("gWeapon.bas",				"")
+inc("pMonster.bas",				"")
+inc("sCoords.bas",				"")
+inc("sPortal.bas",				"")
+inc("cItems.bas",				"")
+inc("cItem.bas",				"")
+inc("gShip.bas",				"")
+inc("gMenu.bas",				"")
+inc("vPlayer.bas",				"")
+inc("wMakeship.bas",			"")
+inc("cRetirement.bas",			"")
+inc("vInput.bas",				"")
+inc("gFaction.bas",				"")
+inc("gCivilisation.bas",		"")
+inc("pPlanet.bas",				"")
+inc("gCommandstring.bas",		"")
+inc("cCargo.bas",				"")
+inc("dSpacemap.bas",			"")
+inc("gFleet.bas",				"")
+inc("dPlanetmap.bas",			"")
+inc("cModifyitem.bas",			"")
+inc("wMakeitem.bas",			"")
+inc("wMakeplanet.bas",			"")
+inc("wSpecialplanet.bas",		"")
+inc("cShops.bas",				"")
+inc("cShipyard.bas",			"")
+inc("cArtifacts.bas",			"")
+inc("cQuest.bas",				"")
+inc("cPeople.bas",				"")
+inc("wMakemonster.bas",			"")
+inc("gCrewfunctions.bas",		"")
+inc("gCommunicate.bas",			"")
+inc("cCargotrade.bas",			"")
+inc("gCompany.bas",				"")
+inc("pDialog.bas",				"")
+inc("cTrading.bas",				"")
+inc("gPirates.bas",				"")
+inc("cQuests.bas",				"")
+inc("gCrew.bas",				"")
+#endif
+
+
+
+
 '
 'leftover
 '
+#ifdef xvars
 inc("xConsts.bas",				"")
 inc("xTypes.bas",				"")
 inc("xEnums.bas",				"")
 inc("xVars.bas",				"")
 #endif
 
-#ifdef ccommerce
 '
 'commerce
 '
+#ifdef ccommerce
 inc("dCards.bas",				"Playing card rendering")
 inc("cArtifacts.bas",			"")
 'inc("cCargo.bas",				"")
@@ -122,10 +179,10 @@ inc("cSlotmachine.bas",			"")
 inc("cTrading.bas",				"")
 #endif
 
-#ifdef ddisplay
 '
 'display
 '
+#ifdef ddisplay
 inc("dCockpit.bas",				"")
 inc("dLogbook.bas",				"")
 inc("dParty.bas",				"")
@@ -135,10 +192,10 @@ inc("dSummary.bas",				"")
 inc("dPlanetmap.bas",			"")
 #endif
 
-#ifdef pplanet
 '
 'planet
 '
+#ifdef pplanet
 inc("pAttack.bas",				"")
 inc("pAutoexplore.bas",			"")
 inc("pAwayteam.bas",			"")
@@ -154,10 +211,10 @@ inc("pRadio.bas",				"")
 inc("pRover.bas",				"")
 #endif
 
-#ifdef ggame
 '
 'game
 '
+#ifdef ggame
 'inc("gShip.bas",				"")
 inc("gBasis.bas",				"")
 inc("gCivilisation.bas",		"")
@@ -173,10 +230,10 @@ inc("gPirates.bas",				"")
 inc("gWaypoints.bas",			"")
 #endif
 
-#ifdef sspace
 '
 'space
 '
+#ifdef sspace
 inc("sAutopilot.bas",			"")
 'inc("sCoords.bas",				"")
 inc("sExplorespace.bas",		"")
@@ -187,10 +244,10 @@ inc("sSpacecombatfunctions.bas","")
 'inc("sStars.bas",				"")
 #endif
 
-#ifdef wworldgen
 '
 'world-gen
 '
+#ifdef wworldgen
 inc("wBones.bas",				"")
 inc("wColony.bas",				"")
 inc("wMakeplanet.bas",			"")
@@ -199,16 +256,16 @@ inc("wSpecialPlanet.bas",		"")
 inc("wWorldgen.bas",			"")
 #endif
 
-#ifdef vapp
 '
 'app
 '
+#ifdef vapp
 #endif
 
-#ifdef vfinal
 '
 'overall
 '
+#ifdef vfinal
 inc("vPlayer.bas",				"player functions. the type long ago declared as _ship in Ship.bas")
 inc("vSavegame.bas",			"universe and player ... via compression")
 inc("vGameinit.bas",			"final initialization coordination")

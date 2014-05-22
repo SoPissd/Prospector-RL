@@ -42,9 +42,9 @@ declare function a_star(path() as _cords, start as _cords,goal as _cords,map() a
 'declare function addneighbours(node() as _node, curr as _cords,mx as short,my as short,rollover as byte=0) as short
 'declare function findlowerneighbour(node() as _node, curr as _cords,mx as short,my as short,rollover as byte=0) as short
 
-'private function findlowerneighbour(node() as _node, curr as _cords,mx as short,my as short,rollover as byte=0) as short
-'private function addneighbours(node() as _node, curr as _cords,mx as short,my as short,rollover as byte=0) as short
-'private function manhattan(a as _cords,b as _cords) as single
+'declare function findlowerneighbour(node() as _node, curr as _cords,mx as short,my as short,rollover as byte=0) as short
+'declare function addneighbours(node() as _node, curr as _cords,mx as short,my as short,rollover as byte=0) as short
+'declare function manhattan(a as _cords,b as _cords) as single
 
 #endif'head
 #ifdef main

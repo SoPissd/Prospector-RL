@@ -1,10 +1,5 @@
 'tTrading.
 '
-'defines:
-'check_tasty_pretty_cargo=3, merchant=27, station_goods=0, getfreecargo=0,
-', displaywares=1, buygoods=2, cargobay=3, getinvbytype=3,
-', get_invbay_bytype=0, sellgoods=3, showprices=1, buysitems=9
-'
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -13,21 +8,44 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tTrading -=-=-=-=-=-=-=-
-
 #undef intest
 #define test
 #endif'test
+
+#ifdef types
+'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+Enum rwrd
+    rwrd_mapdata
+    rwrd_biodata
+    rwrd_resources
+    rwrd_pirates
+    rwrd_artifacts
+    rwrd_5
+    rwrd_piratebase
+    rwrd_6
+    rwrd_pirateoutpost
+    rwrd_tasty
+    rwrd_pretty
+End Enum
+
+Dim Shared goodsname(9) As String
+Dim Shared goods_prices(9,12,12) As Single
+
+
+
+#endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tTrading -=-=-=-=-=-=-=-
 
 declare function check_tasty_pretty_cargo() as short
-declare function merchant() as single
 declare function displaywares(st as short) as short
 declare function buygoods(st as short) as short
 declare function cargobay(text as string,st as short,sell as byte=0) as string
@@ -35,10 +53,10 @@ declare function getinvbytype(t as short) as short
 declare function sellgoods(st as short) as short
 declare function showprices(st as short) as short
 declare function buysitems(desc as string,ques as string, ty as short, per as single=1,aggrmod as short=0) as short
+declare function mudds_shop() as short
 
-'private function station_goods(st as short, tb as byte) as string
-'private function getfreecargo() as short
-'private function get_invbay_bytype(t as short) as short
+'declare function station_goods(st as short, tb as byte) as string
+'declare function get_invbay_bytype(t as short) as short
 
 #endif'head
 #ifdef main
@@ -46,14 +64,41 @@ declare function buysitems(desc as string,ques as string, ty as short, per as si
 
 namespace tTrading
 function init(iAction as integer) as integer
+    goodsname(1)="Food"
+    goodsname(2)="Basic Goods"
+    goodsname(3)="Tech Goods"
+    goodsname(4)="Luxury Goods"
+    goodsname(5)="Weapon Parts"
+    goodsname(6)="OBE Narcotics"
+    goodsname(7)="SHI Hightech"
+    goodsname(8)="EE Computers"
+    goodsname(9)="Fuel"
+    
 	return 0
 end function
 end namespace'tTrading
 
 
-#define cut2top
+function mudds_shop() as short
+    dim as short a,b
+    rlprint "An overweight gentleman greets you 'Welcome to Mudds Incredible Bargains' Do you wish to buy or sell?"
+    do
+	    assert(pDisplayShip<>null)
+	    pDisplayShip()
 
-
+        a=textmenu("Mudds Shop/Buy/Sell/Exit")
+        if a=1 then 
+            do
+                b=shop(7,2.5,"Mudds Incredible Bargains")
+			    assert(pDisplayShip<>null)
+			    pDisplayShip()
+			    
+            loop until b=-1
+        endif
+        if a=2 then buysitems("","",0,.1)
+    loop until a=3 or a=-1
+    return 0
+end function
 
 
 function check_tasty_pretty_cargo() as short
@@ -86,18 +131,12 @@ end function
 
 '
 
-function merchant() as single
-    dim as single m
-    m=(70+5*crew(1).talents(6))/100
-    if m>0.9 then merchant=0.9
-    return m
-end function
-
-
 function station_goods(st as short, tb as byte) as string
     dim as string text,pl,LR
     dim a as short
     dim off as short
+    assert(pMerchant<>null)
+    
     if tb=0 then 'Textbox or menu
         LR="/"
         text=space(25)&"Buy        Sell"&LR
@@ -113,7 +152,7 @@ function station_goods(st as short, tb as byte) as string
         text=text & space(12-len(pl))
         text=text & pl
         
-        pl=""& credits(cint(basis(st).inv(a).p*merchant))&" Cr."
+        pl=""& credits(cint(basis(st).inv(a).p* pMerchant()))&" Cr."
         text=text & space(12-len(pl))
         text=text & pl &space(4)
         if basis(st).inv(a).v>=10 then
@@ -125,17 +164,6 @@ function station_goods(st as short, tb as byte) as string
     next
     if tb=0 then text=text & "Exit"
     return text
-end function
-
-
-
-function getfreecargo() as short
-    dim re as short
-    dim a as short
-    for a=1 to 10
-        if player.cargo(a).x=1 then re=re+1
-    next
-    return re
 end function
 
 
@@ -186,7 +214,7 @@ function buygoods(st as short) as short
         if basis(st).inv(c).v>0 then
             if m>getfreecargo() then m=getfreecargo
             if m>0 then
-                display_ship
+                pDisplayship()
                 displaywares(st)
                 if st<>10 then rlprint "how many tons of "& goodsname(c) &" do you want to buy?"
                 if st=10 then rlprint "how many tons of "& goodsname(c) &" do you want to transfer?"
@@ -218,11 +246,11 @@ function buygoods(st as short) as short
                 endif
             else
                 rlprint "No room for additional cargo.",14
-                no_key=keyin
+                no_key= uConsole.keyinput()
             endif
         endif
     endif
-    display_ship
+    pDisplayship()
     return 0
 end function
 
@@ -233,7 +261,7 @@ function cargobay(text as string,st as short,sell as byte=0) as string
     for a=1 to 10        
         if player.cargo(a).x=1  then text=text &"Empty/"
         if player.cargo(a).x>1 and player.cargo(a).x<=10 then
-            text=text & goodsname(player.cargo(a).x-1) &" for " &credits(cint(basis(st).inv(player.cargo(a).x-1).p*merchant)) &" Cr.," 
+            text=text & goodsname(player.cargo(a).x-1) &" for " &credits(cint(basis(st).inv(player.cargo(a).x-1).p* pMerchant())) &" Cr.," 
             if player.cargo(a).y=0 then
                 text=text &" found/"
             else
@@ -315,15 +343,15 @@ function sellgoods(st as short) as short
                                 bay=get_invbay_bytype(ct)
                                 rlprint "Unloading " & goodsname(ct) &" in bay "& bay &"."
                                 if player.cargo(bay).y=0 then
-                                    addmoney(basis(st).inv(ct).p*merchant,mt_piracy)
+                                    addmoney(basis(st).inv(ct).p*pMerchant(),mt_piracy)
                                 else
-                                    addmoney(basis(st).inv(ct).p*merchant,mt_trading)
+                                    addmoney(basis(st).inv(ct).p*pMerchant(),mt_trading)
                                 endif
                                 basis(st).inv(ct).v=basis(st).inv(ct).v+1
                                 player.cargo(bay).x=1
                                 player.cargo(bay).y=0
                             next
-                            if st<>10 then rlprint "Sold " & sold & " tons of " & goodsname(Ct) & " for " & cint(basis(st).inv(ct).p*sold*merchant) &" Cr."
+                            if st<>10 then rlprint "Sold " & sold & " tons of " & goodsname(Ct) & " for " & cint(basis(st).inv(ct).p*sold*pMerchant()) &" Cr."
                             'removeinvbytype(player.cargo(c).x-1,sold)
                             'no_key=keyin
                             'c=b+1
@@ -341,11 +369,11 @@ function sellgoods(st as short) as short
                     if player.cargo(i).x>1 and player.cargo(i).x<10  then
                         ct=player.cargo(i).x-1
                         if player.cargo(i).y=0 then
-                            addmoney(basis(st).inv(ct).p*merchant,mt_piracy)
+                            addmoney(basis(st).inv(ct).p*pMerchant(),mt_piracy)
                         else
-                            addmoney(basis(st).inv(ct).p*merchant,mt_trading)
+                            addmoney(basis(st).inv(ct).p*pMerchant(),mt_trading)
                         endif
-                        rlprint "You sell a ton of "& goodsname(ct) &" for "&credits(basis(st).inv(ct).p*merchant) &" Cr."
+                        rlprint "You sell a ton of "& goodsname(ct) &" for "&credits(basis(st).inv(ct).p * pMerchant()) &" Cr."
                         player.cargo(i).x=1
                         player.cargo(i).y=0
                     else
@@ -355,7 +383,7 @@ function sellgoods(st as short) as short
             endif
         endif
     loop until c>=b+2 or c=-1 or em=0
-    display_ship
+    pDisplayship()
     return 0
 end function
 
@@ -407,7 +435,7 @@ function showprices(st as short) as short
 
     endif
     rlprint "a: absolute, r: sRelative, esq to quit."
-    no_key=keyin
+    no_key= uConsole.keyinput()
     if no_key="a" then sRelative=0
     if no_key="r" then sRelative=1
     loop until no_key=key__esc

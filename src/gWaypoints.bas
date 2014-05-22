@@ -36,9 +36,9 @@ End Type
 declare function check(queue() as _pfcords, p as _pfcords) as short
 declare function add_p(queue() as _pfcords,p as _pfcords) as short
 
-'private function checkandadd(queue() as _pfcords,map() as byte ,in as short) as short
-'private function nearlowest(p as _pfcords,queue() as _pfcords) as _pfcords
-'private function gen_waypoints(queue() as _pfcords,start as _pfcords,goal as _pfcords,map() as byte) as short
+'declare function checkandadd(queue() as _pfcords,map() as byte ,in as short) as short
+'declare function nearlowest(p as _pfcords,queue() as _pfcords) as _pfcords
+'declare function gen_waypoints(queue() as _pfcords,start as _pfcords,goal as _pfcords,map() as byte) as short
 
 #endif'head
 #ifdef main

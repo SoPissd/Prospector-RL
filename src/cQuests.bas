@@ -16,16 +16,23 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tQuests -=-=-=-=-=-=-=-
-
 #undef intest
 #define test
 #endif'test
+
+#ifdef types
+'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+Dim Shared As String bountyquestreason(6)
+
+#endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tQuests -=-=-=-=-=-=-=-
 
@@ -39,16 +46,15 @@ declare function ask_alliance(who as short) as short
 declare function robot_invasion() as short
 declare function reward_patrolquest() as short
 declare function reward_bountyquest(employer as short) as short
-declare function eris_does() as short
+declare function questguy_newquest(i as short) as short
 
-'private function eris_doesnt_like_your_ship() as short
-'private function getunusedplanet() as short
-'private function load_quest_cargo(t as short,car as short,dest as short) as short
-'private function give_quest(st as short) as short
-'private function Find_Passage(m as short, start as _cords, goal as _cords) as short
-'private function find_passage_quest(m as short, start as _cords, goal as _cords) as short
-'private function form_alliance(who as short) as short
-'private function scrap_component() as short
+'declare function eris_doesnt_like_your_ship() as short
+'declare function getunusedplanet() as short
+'declare function load_quest_cargo(t as short,car as short,dest as short) as short
+'declare function Find_Passage(m as short, start as _cords, goal as _cords) as short
+'declare function find_passage_quest(m as short, start as _cords, goal as _cords) as short
+'declare function form_alliance(who as short) as short
+'declare function scrap_component() as short
 
 #endif'head
 #ifdef main
@@ -56,6 +62,12 @@ declare function eris_does() as short
 
 namespace tQuests
 function init(iAction as integer) as integer
+    bountyquestreason(1)="for repeated acts of piracy."
+    bountyquestreason(2)="for damaging company property."
+    bountyquestreason(3)="for repeated acts of piracy."
+    bountyquestreason(4)="since she has become dangerously close to discover one of our bases."
+    bountyquestreason(5)="because she has shown no mercy in spacecombat and shall be afforded none."
+    bountyquestreason(6)=". She is the most dangerous pirate hunter out there at this time and must be dealt with."
 	return 0
 end function
 end namespace'tQuests
@@ -88,10 +100,12 @@ function eris_doesnt_like_your_ship() as short
         rlprint "Eris likes your ship"
     else
         rlprint "Eris doesn't like your ship"
-        upgradehull(n,player,1)
+        assert(pUpgradehull)
+        pUpgradehull(n,player,1)
     endif
     return 0
 end function
+
 
 function eris_finds_apollo() as short
     dim as short x,y,a
@@ -114,7 +128,6 @@ function eris_finds_apollo() as short
     return 0
 end function
 
-
   
 function getunusedplanet() as short
     dim as short a,b,c,potential
@@ -135,20 +148,6 @@ function getunusedplanet() as short
     return -1
 end function
 
-
-function load_quest_cargo(t as short,car as short,dest as short) as short
-    dim as short bay
-    do
-        bay=getnextfreebay
-        if bay>0 then
-            player.cargo(bay).x=t
-            player.cargo(bay).y=dest
-            car=car-1
-        endif
-    loop until getnextfreebay<0 or car=0
-    if car>0 then rlprint "You don't have enough room and leave "&car &" tons behind.",c_yel
-    return car
-end function
 
 
 function give_bountyquest(employer as short) as short
@@ -204,220 +203,6 @@ function give_patrolquest(employer as short) as short
     return 0
 end function
 
-
-function give_quest(st as short) as short
-    dim as short a,b,bay, s,pl,car,st2,m,o,m2,o2,x,y,i,j,f
-    dim as _cords p
-    static stqroll as short
-    if st<>player.lastvisit.s then stqroll=rnd_range(1,20)
-    do
-        st2=rnd_range(0,2)
-    loop until st2<>st
-    
-#if __FB_DEBUG__
-    'if _debug=1111 then questroll=14
-#endif
-    
-    if questroll>16 then
-        'standard quest by office
-        if basis(st).company=1 then
-            do
-                m=rnd_range(0,laststar)
-                o=rnd_range(1,9)
-            loop until map(m).planets(o)>0
-            if player.questflag(7)=0 then
-                if askyn("The company rep offers you a contract to deliver complete maps of a newly discovered planet in orbit " & o &" around a star at "&map(m).c.x &":" &map(m).c.y &". They will pay 1000 cr. Do you accept?(y/n)") then
-                    m=map(m).planets(o)
-                    player.questflag(7)=m 
-                    questroll=999'save m in .... a quest?
-                endif
-            else
-                for m=0 to laststar
-                    for o=1 to 9
-                        if map(m).planets(o)=player.questflag(7) then 
-                            m2=m
-                            o2=o
-                        endif
-                    next
-                next
-                rlprint "The company rep reminds you that you still have a contract open to map a planet at "&map(m2).c.x &":" &map(m2).c.y &" orbit " & o2 &"."
-            endif
-        endif
-        
-        if basis(st).company=2 then
-            if player.questflag(9)=0 then
-                if askyn("The rep says:'We have learned that there are still working robot factories found on some planets on this sector. We would like to send a team of scientists to one of these. Would you be willing to find a suitable target for 5000 credits?('(y/n)") then 
-                    player.questflag(9)=1
-                    questroll=999
-                endif
-            else
-                rlprint "The company rep reminds you that you have yet to locate a factory of the ancients"
-            endif    
-        endif
-        
-        if basis(st).company=3 then
-            car=rnd_range(3,4)
-            rlprint "The company rep offers you a contract to deliver "&car &" tons of cargo to station " &st2+1 &"."
-            if askyn(" They will pay 200 cr per ton. Do you accept?(y/n)") then
-                if getnextfreebay<0 then 
-                    rlprint "You have no room.",c_red
-                    return questroll
-                endif
-                load_quest_cargo(12,car,st2)
-                questroll=999
-            endif
-        endif
-        
-        if basis(st).company=4 then
-            if player.questflag(10)=0 then
-                m=rnd_range(2,16)
-                if askyn("Omega Bioengineering's scientists want to conduct an experiment. They need a planet with "&add_a_or_an(atmdes(m),0) &" atmosphere, and without plant life for that. They are willing to pay 2500 credits for the position of a possible candidate. Do you want to help in the search (y/n)?") then 
-                    player.questflag(10)=m
-                    questroll=999
-                endif
-            else 
-                rlprint "The company rep reminds you that you have yet to find a planet with "&add_a_or_an(atmdes(player.questflag(10)),0)&" atmosphere without life."
-            endif
-        endif
-    else
-        'other quests
-        do
-            a=rnd_range(0,2)
-        loop until a<>st
-#if __FB_DEBUG__
-'        if _debug=1111 then stqroll=14
-#endif
-        select case stqroll
-        	case 1 to 3
-            if askyn("The company rep needs some cargo delivered to station "&a+1 &". He is willing to pay 200 credits. Do you accept? (y/n)" ) then
-                bay=getnextfreebay
-                if bay<=0 then 
-                    if askyn("Do you want to make room for the cargo ?(y/n)") then 
-                        sellgoods(10)
-                        bay=getnextfreebay
-                    endif
-                endif
-                if bay>0 then
-                    player.cargo(bay).x=12 'type=specialcargo
-                    player.cargo(bay).y=a 'Destination
-                endif
-            endif
-        
-        case 4
-            b=rnd_range(1,16)
-            if askyn("The company rep needs "&add_a_or_an(shiptypes(b),0) &" hull towed to station "&a+1 &" for refits. He is willing to pay "& b*50 &" Cr. Do you accept(y/n)?") then
-                if player.tractor=0 then
-                    rlprint "You need a tractor beam for this job.",14
-                else
-                    player.towed=-b
-                    player.questflag(8)=a
-                endif
-            endif
-        
-        case 5
-            if player.questflag(2)=0 then
-                rlprint "The company rep informs you that one of the local executives has been abducted by pirates. They demand ransom, but it is company policy to not give in to such demands. There is a bounty of 10.000 CR on the pirates, and a bonus of 5000 CR to bring back the exec alive.",15
-                no_key=keyin
-                player.questflag(2)=1
-                s=get_random_system
-                if s=-1 then s=rnd_range(0,laststar)
-                pl=getrandomplanet(s)
-                if pl<0 then pl=rnd_range(1,9)
-                makeplanetmap(pl,3,map(s).spec)
-                for a=1 to rnd_range(1,3)
-                    planetmap(rnd_range(0,60),rnd_range(0,20),pl)=-65
-                next
-                planetmap(rnd_range(0,60),rnd_range(0,20),pl)=-66
-            endif
-            
-        case 6
-            if player.questflag(5)=0 and tVersion.gameturn>3*30*24*60 then
-                rlprint "The company rep warns you about a ship that has reportedly been preying on pirates and merchants alike. 'It's fast, it's dangerous, and a confirmed kill is worth 15.000 credits to my company.",15
-                player.questflag(5)=1
-                lastfleet=lastfleet+1
-                fleet(lastfleet).ty=5
-                fleet(lastfleet).mem(1)=make_ship(11)
-                fleet(lastfleet).flag=5
-                fleet(lastfleet).c=map(sysfrommap(specialplanet(29))).c            
-            endif
-            
-        case 7
-            if player.questflag(5)=2 then
-                rlprint "The company rep warns you that there are reports about another ship prowling space of the type you destroyed before. The company again pays 15.000 Credits if you bring it down",15
-                player.questflag(6)=1
-                lastfleet=lastfleet+1
-                fleet(lastfleet).ty=5
-                fleet(lastfleet).mem(1)=make_ship(11)
-                fleet(lastfleet).mem(2)=make_ship(11)
-                fleet(lastfleet).mem(3)=make_ship(11)
-                fleet(lastfleet).flag=6
-                fleet(lastfleet).c.x=rnd_range(0,sm_x)     
-                fleet(lastfleet).c.y=rnd_range(0,sm_y)     
-            endif
-            
-        case 8
-            if player.questflag(11)=0 and lastdrifting<128 then
-                player.questflag(11)=1
-                x=5-rnd_range(1,10)+map(sysfrommap(specialplanet(27))).c.x
-                y=5-rnd_range(1,10)+map(sysfrommap(specialplanet(27))).c.y
-                if x<0 then x=0
-                if y<0 then y=0
-                if x>sm_x then x=sm_x
-                if y>sm_y then y=sm_y
-                rlprint "The company rep tells you about a battleship that has gone missing. It's last known position was " & x &":" &y & ". There is a 5000 Credit reward for finding out what happened to it.",15
-                lastdrifting=lastdrifting+1
-                m=lastdrifting
-                drifting(m).s=14
-                drifting(m).x=x
-                drifting(m).y=y
-                drifting(m).m=lastplanet+1
-                lastplanet=lastplanet+1
-                load_map(14,lastplanet)
-                make_drifter(drifting(m))
-                p=rnd_point(lastplanet,0)
-                planetmap(p.x,p.y,lastplanet)=-226
-                player.questflag(11)=1
-                m=lastplanet
-                planets(m).darkness=0
-                planets(m).depth=1
-                planets(m).atmos=6
-        
-                planets(m).mon_template(0)=makemonster(29,m)
-                planets(m).mon_noamin(0)=10
-                planets(m).mon_noamax(0)=20
-                planets_flavortext(m)="No hum from the engines is heard as you enter the Battleship. Emergency lighting bathes the corridors in red light, and the air smells stale."
-            endif
-            
-        case 9 to 14
-            give_bountyquest(0)
-        
-        case 15 to 17
-            if player.questflag(26)=0 then
-                s=get_random_system
-                pl=getrandomplanet(s)
-                if pl>0 then
-                    rlprint "We haven't heard in a while from a ship that last reported from " & map(s).c.x &":"&map(s).c.y & ". We offer you 500 Cr. if you can find out what hapened to them."
-                    player.questflag(26)=pl
-                    placeitem(make_item(81,1),rnd_range(0,60),rnd_range(0,20),pl)
-                endif
-            endif
-        case 18
-            'Escort
-            if askyn("There is an important delivery for station "&a+1 &". We are looking to enhance security. Would you be interested in flying escort? (y/n)") then
-                f=set_fleet(makemerchantfleet)
-                fleet(f).c=player.c
-                fleet(f).con(1)=1
-                fleet(f).con(3)=a
-                fleet(f).con(2)=distance(player.c,basis(st).c)*50
-                rlprint "The captain will pay you "&fleet(f).con(2) & " Cr. when you reach the target."
-            endif
-        
-        case else
-            give_patrolquest(0)
-        end select
-    endif
-return questroll
-end function
 
 
 function Find_Passage(m as short, start as _cords, goal as _cords) as short
@@ -1223,219 +1008,97 @@ function scrap_component() as short
 end function
 
 
-
-function eris_does() as short
-    dim as short roll,roll2,a,noa,b
-    dim en as _fleet
-    dim weap as _weap
-    dim awayteam as _monster
-    if rnd_range(1,100)<33 then
-        if planets(specialplanet(1)).visited<>0 then
-            if askyn("Eris asks: 'Do you know where apollo is?' Do you want to tell her (y/n)") then
-                for a=3 to lastfleet
-                    if fleet(a).ty=10 then
-                        fleet(a).t=4068
-                        b=sysfrommap(specialplanet(1))
-                        targetlist(4068).x=map(b).c.x
-                        targetlist(4068).y=map(b).c.y
-                    endif
-                next
-                return 0
-            endif
-            roll=rnd_range(1,66)
-            select case roll
-                case roll<=33
-                    rlprint "Eris decides to punish you for your insolence"
-                case roll>=66 
-                    rlprint "Eris decides to show you how she could reward you for the information"
-                case else
-                    rlprint "Eris doesn't seem to care"
-            end select
-            
-        else
-            roll=rnd_range(1,100)
+function questguy_newquest(i as short) as short
+'    DimDebugL(qt_travel)    
+    dim wanttable(25,2) as short
+    dim hastable(25,2) as short
+    dim as short f,j,l
+    dim as string w(5),li
+    
+    f=freefile
+    open "data/wanthas.csv" for input as #f
+    do
+        line input #f,li
+        j+=1
+        w(0)=""
+        w(1)=""
+        w(2)=""
+        w(3)=""
+        w(4)=""
+        w(5)=""
+        string_towords(w(),li,";")
+        wanttable(j,0)=val(w(0))
+        wanttable(j,1)=val(w(1))
+        wanttable(j,2)=val(w(2))
+        hastable(j,0)=val(w(0))
+        hastable(j,1)=val(w(3))
+        hastable(j,2)=val(w(4))
+    loop until eof(f)
+    close #f
+    if questguy(i).want.type=0 then
+        if rnd_range(1,100)<30 then 'standard
+            l=rnd_range(1,7)
+        else 'Specific
+            l=questguy(i).job+7
         endif
-        select case roll
-        case roll<=33 'Eris does bad stuff
-            select case rnd_range(1,100)
-                case 0 to 10
-                    select case rnd_range(1,100)
-                    case 0 to 33
-                        rlprint "Eris looks at your engine",15
-                        if player.engine>1 then player.engine-=1
-                    case 34 to 66
-                        rlprint "Eris looks at your sensors",15
-                        if player.engine>0 then player.sensors-=1
-                    case else
-                        rlprint "Eris looks at your shields",15
-                        if player.shieldmax>0 then player.shieldmax-=1
-                    end select
-                case 11 to 20
-                    rlprint "Eris examines your hull",15
-                    if player.hull>0 then player.hull-=1
-                    player.h_maxhull-=1
-                case 21 to 30
-                    a=rnd_crewmember
-                    for b=1 to 12
-                        crew(a).augment(b)=0
-                    next
-                    rlprint  "Eris looks at "&crew(a).n &" 'Oh you are ugly!'",15
-                case 31 to 40
-                    roll2=rnd_range(1,6)
-                    rlprint "Eris yells 'Fight for my amusement'",15
-                    no_key=keyin
-                    noa=1
-                    if roll2=4 then noa=rnd_range(1,6) +rnd_range(1,6)
-                    if roll2=5 then noa=rnd_range(1,3)
-                    if roll2=6 then noa=rnd_range(1,2)
-                    for a=1 to noa
-                        en.ty=9
-                        en.mem(a)=make_ship(23+roll)
-                    next
-                    spacecombat(en,rnd_range(1,11))
-                case 41 to 50
-                    rlprint "Eris shows you that you have a fuel leak",15
-                    player.fuel-=rnd_range(1,100)
-                    if player.fuel<15 then player.fuel=15
-                case 51 to 60
-                    rlprint "Eris informs you that it is not nice to point guns at people",15
-                    player.weapons(1)=weap
-                case 61 to 70
-                    rlprint "Eris asks 'Have you got some change?",15
-                    player.money-=rnd_range(10,1000)
-                    if player.money<0 then player.money=0
-                case 71 to 80
-                    rlprint "Eris takes a stroll through the cargo hold.",15
-                    for a=1 to 5
-                        if player.cargo(a).x>1 then player.cargo(a).x=1
-                    next
-                case 81 to 90
-                    rlprint "Eris thinks your ship is too big",15
-                    upgradehull(rnd_range(1,4),player,1)
-                case 91 to 95
-                    rlprint "Eris says 'You are buff!",15
-                    a=rnd_crewmember
-                    crew(a).hp-=1
-                    crew(a).hpmax-=1
-                case else
-                    rlprint "Eris curses your ship!",15
-                    player.cursed=1
-            end select
-        case roll>=66 'Eris does good stuff
-            select case rnd_range(1,100)
-                case 0 to 10
-                    select case rnd_range(1,100)
-                    case 0 to 33
-                        rlprint "Eris looks at your engine",15
-                        if player.engine<6 then player.engine+=1
-                    case 34 to 66
-                        rlprint "Eris looks at your sensors",15
-                        if player.engine<6 then player.sensors+=1
-                    case else
-                        rlprint "Eris looks at your shields",15
-                        if player.shieldmax<6 then player.shieldmax+=1
-                    end select
-                case 11 to 20
-                    rlprint "Eris examines your hull",15
-                    player.hull+=5
-                    player.h_maxhull+=5
-                case 21 to 30
-                    rlprint "Eris takes a look at your cargo hold",15
-                    player.h_maxcargo+=1
-                    player.cargo(player.h_maxcargo).x=1
-                case 31 to 40
-                    a=rnd_crewmember
-                    rlprint "Eris looks at "&crew(a).n &" 'my, my are you fragile!",15
-                    crew(a).hp+=1
-                    crew(a).hpmax+=1
-                case 41 to 50
-                    rlprint "Eris looks at "&crew(a).n &" and starts laughing",15
-                    a=rnd_crewmember
-                    rlprint gain_talent(a),c_gre
-                case 51 to 60
-                    rlprint "Eris looks at "&crew(a).n &" and starts laughing",15
-                    a=rnd_crewmember
-                    rlprint gainxp(a),c_gre
-                case 61 to 70
-                    rlprint "Eris says 'Are you sure you have enough fuel to get home?",15
-                    player.fuel+=200
-                case 71 to 80
-                    rlprint "I found this, can you use it?",15
-                    findartifact(0)
-                case 81 to 90
-                    rlprint "Eris is worried that you might need money",15
-                    player.money+=rnd_range(1,1000)
-                case 91 to 95
-                    rlprint "Eris takes a stroll through the cargo hold.",15
-                    for a=1 to 5
-                        if player.cargo(a).x=1 then player.cargo(a).x=rnd_range(2,6)
-                    next
-                case else
-                    rlprint "Eris declares all curses lifted!",15
-                    player.cursed=0
-            end select
-        case else 'Just does stuff
-            select case rnd_range(1,100)
-                case 0 to 10
-                    rlprint "Eris says: 'I don't want to deal with you right now, why don't you just go over there?",15
-                    select case rnd_range(1,100)
-                    case 0 to 66
-                        player.c=movepoint(player.c,5)
-                    case 67 to 90
-                        player.c=map(rnd_range(1,wormhole+laststar)).c
-                    case else
-                        player.c.x=rnd_range(0,sm_x)
-                        player.c.y=rnd_range(0,sm_y)
-                    end select
-                case 11 to 20
-                    rlprint "Eris says: 'You have very interesting diplomatic relations.",15
-                    faction(0).war(rnd_range(1,5))+=10-rnd_range(1,20)
-                case 21 to 30
-                    rlprint "Eris asks: 'Where is Apollo?",15
-                case 31 to 40
-                    rlprint "Eris takes a stroll through the cargo hold.",15
-                    for a=1 to 5
-                        if player.cargo(a).x>1 then player.cargo(a).x=rnd_range(1,5)
-                    next
-                case 41 to 50
-                    rlprint "Is that your space station, there?",15
-                    basis(rnd_range(0,2)).c.x=rnd_range(0,sm_x)
-                    basis(rnd_range(0,2)).c.y=rnd_range(0,sm_y)
-                case 51 to 60
-                    rlprint "Eris screws around with time",15
-                    tVersion.gameturn=tVersion.gameturn+5-rnd_range(1,10)
-                case 61 to 70
-                    rlprint "Eris snaps with her fingers",15
-                    drifting(rnd_range(1,lastdrifting)).x=player.c.x
-                    drifting(rnd_range(1,lastdrifting)).y=player.c.y
-                case 71 to 80
-                    rlprint "Eris seems bored",15
-                case 81 to 90
-                    rlprint "Eris is looking at the stars",15
-                    map(rnd_range(0,laststar)).c=rnd_point
-                    map(rnd_range(0,laststar)).c=rnd_point
-                case 91 to 100
-                    eris_doesnt_like_your_ship
-            end select
-        end select
-    else
-        rlprint "Eris doesn't seem to be interested in you.",15
-        if rnd_range(1,100)<66 then
-            select case rnd_range(1,100)
-            case 0 to 66
-                player.c=movepoint(player.c,5)
-            case 67 to 90
-                player.c=map(rnd_range(1,wormhole+laststar)).c
-            case else
-                player.c.x=rnd_range(0,sm_x)
-                player.c.y=rnd_range(0,sm_y)
-            end select
+        DbgPrint("adding want from line "&l)
+        if rnd_range(1,100)<50 then
+            questguy(i).want.type=wanttable(l,1)
+        else
+            questguy(i).want.type=wanttable(l,2)
+        endif
+        if questguy(i).want.type=0 then
+            l=rnd_range(1,7)
+            if rnd_range(1,100)<50 then
+                questguy(i).want.type=wanttable(l,1)
+            else
+                questguy(i).want.type=wanttable(l,2)
+            endif
+        endif
+'#if __FB_DEBUG__
+'        IF debug>0 then questguy(i).want.type=debug
+'#endif
+        make_questitem(i,q_want)
+        questguy(i).want.motivation=rnd_range(0,2)
+    endif    
+    if questguy(i).has.type=0 then
+        if rnd_range(1,100)<30 then 'standard
+            l=rnd_range(1,7)
+        else 'Specific
+            l=questguy(i).job+7
+        endif
+        DbgPrint("adding has from line "&l)
+        if rnd_range(1,100)<50 then
+            questguy(i).has.type=hastable(l,1)
+        else
+            questguy(i).has.type=hastable(l,2)
+        endif
+        if questguy(i).has.type=0 then
+            l=rnd_range(1,7)
+            if rnd_range(1,100)<50 then
+                questguy(i).has.type=hastable(l,1)
+            else
+                questguy(i).has.type=hastable(l,2)
+            endif
+        endif
+'#if __FB_DEBUG__
+'        IF debug>0 then questguy(i).has.type=debug
+'#endif
+        make_questitem(i,q_has)
+        questguy(i).want.motivation=rnd_range(0,2)
+    endif
+    if questguy(i).want.type=questguy(i).has.type then
+        if rnd_range(1,100)<=50 then
+            questguy(i).want.type=0
+        else
+            
+            questguy(i).has.type=0
         endif
     endif
     return 0
 end function
 
-#define cut2bottom
+
 #endif'main
 
 #if (defined(main) or defined(test))

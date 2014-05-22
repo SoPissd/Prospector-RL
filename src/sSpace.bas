@@ -49,8 +49,8 @@ declare function make_clouds() as short
 declare function civ_adapt_tiles(slot as short) as short
 declare function make_civilisation(slot as short,m as short) as short
 
-'private function add_company_shop(slot as short,mt as short) as short
-'private function make_alienship(slot as short,t as short) as short
+'declare function add_company_shop(slot as short,mt as short) as short
+'declare function make_alienship(slot as short,t as short) as short
 
 #endif'head
 #ifdef main

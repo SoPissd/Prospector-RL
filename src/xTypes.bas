@@ -34,25 +34,6 @@ end function
 end namespace'tTypes
 
 
-Type _transfer
-    from As _cords
-    dest As _cords
-    tile As Short
-    col As Short
-    ti_no As UInteger
-    oneway As Short
-    discovered As Short
-    desig As String*64
-    tumod As Short 'the higher the more tunnels
-    dimod As Short 'the higher the more digloops
-    spmap As Short 'make specialmap if non0
-    froti As Short 'from what tile
-End Type
-
-Dim Shared portal(1024) As _transfer
-Dim Shared lastportal As Short
-
-
 Type _comment
     c As _cords
     t As String*32
@@ -61,27 +42,6 @@ End Type
 
 Dim Shared coms(255) As _comment
 
-
-Type _disease
-    no As UByte
-    desig As String
-    ldesc As String
-    cause As String
-    incubation As UByte
-    duration As UByte
-    fatality As UByte
-    contagio As UByte
-    causeknown As Byte
-    cureknown As Byte
-    att As Byte
-    hal As Byte
-    bli As Byte
-    nac As Byte
-    oxy As Byte
-    wounds As Byte
-End Type
-
-Dim Shared disease(17) As _disease
 
 
 'type MODE

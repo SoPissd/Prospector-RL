@@ -71,20 +71,20 @@ Dim Shared lastshare As Short
 
 Dim Shared companystats(5) As _company
 
-'private function tCompany
-'private function tCompany
-'private function private pay_bonuses(st as short) as short
-'private function private unload_s(s as _ship,st as short) as _ship    
-'private function private unload_f(f as _fleet, st as short) as _fleet
-'private function sellshares(comp as short,n as short) as short
-'private function getshares(comp as short) as short
-'private function buyshares(comp as short,n as short) as short
-'private function getsharetype() as short
-'private function portfolio(x as short,y2 as short) as short
-'private function dividend() as short
-'private function cropstock() as short
-'private function display_stock() as short
-'private function stockmarket(st as short) as short
+'declare function tCompany
+'declare function tCompany
+'declare function pay_bonuses(st as short) as short
+'declare function unload_s(s as _ship,st as short) as _ship    
+'declare function unload_f(f as _fleet, st as short) as _fleet
+'declare function sellshares(comp as short,n as short) as short
+'declare function getshares(comp as short) as short
+'declare function buyshares(comp as short,n as short) as short
+'declare function getsharetype() as short
+'declare function portfolio(x as short,y2 as short) as short
+'declare function dividend() as short
+'declare function cropstock() as short
+'declare function display_stock() as short
+'declare function stockmarket(st as short) as short
 declare function unload_f(f as _fleet, st as short) as _fleet
 
 declare function init(iAction as integer) as integer
@@ -194,7 +194,7 @@ function company(st as short) as short
     dim as string s
     dim towed as _ship
     dim p as _cords
-    display_ship(0)
+    pDisplayship(0)
     m=player.money
     if configflag(con_autosale)=0 then q=-1
     rlprint "you enter the company office"                    
@@ -764,7 +764,7 @@ function getsharetype() as short
     b+=1
     if text<>"" then
         text="Company/"&text &"Exit"
-        a=textmenu(bg_parent,text,"",2,2)
+        a=textmenu(text,"",2,2)
         if a>0 and a<b then 
             return cn(a)
         else
@@ -885,7 +885,7 @@ function stockmarket(st as short) as short
         portfolio(2,17)
         a=textmenu(bg_stock,"/Buy/Sell/Exit","",2,12)
         if a=1 then
-            b=textmenu(bg_parent,text &"/Exit",,2,2)
+            b=textmenu(text &"/Exit",,2,2)
             if b>0 and b<last+1 then
                 if cn(b)>0 then
                     rlprint "How many shares of "&companyname(cn(b))&" do you want to buy?"
@@ -902,7 +902,7 @@ function stockmarket(st as short) as short
         if a=2 then
             set__color(11,0)
             cls
-            display_ship
+            pDisplayship()
             b=getsharetype
             if b>0 then
                 c=getshares(b)

@@ -28,11 +28,11 @@
 declare function colonize_planet(st as short) as short
 declare function grow_colonies() as short
 
-'private function score_planet(i as short,st as short) as short
-'private function score_system(s as short,st as short) as short
-'private function get_com_colon_candidate(st as short) as short
-'private function count_tiles(i as short,map as short) as short
-'private function grow_colony(map as short) as short
+'declare function score_planet(i as short,st as short) as short
+'declare function score_system(s as short,st as short) as short
+'declare function get_com_colon_candidate(st as short) as short
+'declare function count_tiles(i as short,map as short) as short
+'declare function grow_colony(map as short) as short
 
 #endif'head
 #ifdef main

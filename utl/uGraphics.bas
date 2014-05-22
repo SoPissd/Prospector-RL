@@ -60,7 +60,7 @@ declare function bmp_load( ByRef filename As String ) As Any Ptr
 
 declare function background overload (bg as integer=0) as integer
 declare function background overload (fn as string) as integer
-'private function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for windows less than 60 tiles wide
+'declare function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for windows less than 60 tiles wide
 
 #endif'head
 #ifdef main

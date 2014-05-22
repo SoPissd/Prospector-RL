@@ -1,11 +1,5 @@
 'tPlanet.
 '
-'defines:
-'deletemonsters=49, isgardenworld=10, isgasgiant=15, isasteroidfield=1,
-', system_text=1, make_unflags=3, uniques_html=1, uniques=3,
-', nextplan=0, prevplan=0, display_portal=2, display_portals=1,
-', dtile=6, display_sysmap=0, display_system=3, getplanet=0
-'
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -14,19 +8,46 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tPlanet -=-=-=-=-=-=-=-
-
 #undef intest
+
+'#include "../utl/bFoundation.bi"
+#include "file.bi"
+#include "../utl/uDefines.bas"
+#include "../utl/uModule.bas"
+#include "../utl/uDefines.bas"
+#include "../utl/uDebug.bas"
+#include "../utl/uRng.bas"
+#include "../utl/uCoords.bas"
+#include "../utl/uMath.bas"
+#include "../utl/uScreen.bas"
+#include "../utl/uColor.bas"
+#include "../utl/uUtils.bas"
+#include "../utl/uVersion.bas"
+#include "vTiledata.bas"
+#include "vTiles.bas"
+#include "vSettings.bas"
+#include "sStars.bas"
+#include "gEnergycounter.bas"
+#include "gWeapon.bas"
+#include "pMonster.bas"
+'#include "file.bi"
+'#include "gUtils.bas"
+
+
 #define test
 #endif'test
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+
 Type _planetsave
     awayteam As _monster
     enemy(256) As _monster
@@ -79,10 +100,29 @@ Type _planet
     wallset As Byte
 End Type
 
+
 Const max_maps=2047
 Dim Shared planets(max_maps) As _planet
 Dim Shared savefrom(16) As _planetsave
 Dim Shared planets_flavortext(max_maps) As String
+Dim Shared lastplanet As Short
+Dim Shared whplanet As Short
+
+
+Dim Shared spectraltype(10) As Short
+Dim Shared spectralname(10) As String
+Dim Shared spectralshrt(10) As String
+
+Dim Shared atmdes(16) As String
+    
+Dim Shared As Short walking
+
+type tDigger as function(byval p as _cords,map() as short,d as byte,ti as short=2,stopti as short=0) as short
+dim Shared pDigger as tDigger
+
+type tRndPoint as function (m as short=-1,w as short=-1,t as short=-1,vege as short=-1)as _cords
+dim shared pRnd_point as tRndPoint
+
 
 #endif'types
 
@@ -97,15 +137,10 @@ declare function system_text(a as short) as string
 declare function make_unflags(unflags() as byte) as short
 declare function uniques_html(unflags() as byte) as string
 declare function uniques(unflags() as byte) as string
-declare function display_portal(b as short,slot as short,osx as short) as short
-declare function display_portals(slot as short,osx as short) as short
-declare function dtile(x as short,y as short, tiles as _tile,visible as byte) as short
-declare function display_system(in as short,forcebar as byte=0,hi as byte=0) as short
-declare function getplanet(sys as short,forcebar as byte=0) as short
 
-'private function nextplan(p as short,in as short) as short
-'private function prevplan(p as short,in as short) as short
-'private function display_sysmap(x as short, y as short, in as short, hi as short=0,bl as string,br as string) as short
+'declare function nextplan(p as short,in as short) as short
+'declare function prevplan(p as short,in as short) as short
+'declare function display_sysmap(x as short, y as short, in as short, hi as short=0,bl as string,br as string) as short
 
 
 #endif'head
@@ -118,6 +153,59 @@ function init(iAction as integer) as integer
 	For i=0 To max_maps
 	    planets(i).darkness=5
 	Next
+    
+    atmdes(1)="No"
+    '
+    atmdes(2)="remnants of an"
+    atmdes(3)="thin"
+    atmdes(4)="earthlike"
+    atmdes(5)="dense"
+    atmdes(6)="very dense"
+    '
+    atmdes(7)="remnants of an exotic"
+    atmdes(8)="thin, exotic"
+    atmdes(9)="exotic"
+    atmdes(10)="dense, exotic"
+    atmdes(11)="very dense, exotic"
+    '
+    atmdes(12)="remnants of a corrosive"
+    atmdes(13)="thin, corrosive"
+    atmdes(14)="corrosive"
+    atmdes(15)="dense, corrosive"
+    atmdes(16)="very dense, corrosive"
+	'
+    spectraltype(1)=12
+    spectraltype(2)=192
+    spectraltype(3)=14
+    spectraltype(4)=15
+    spectraltype(5)=10
+    spectraltype(6)=137
+    spectraltype(7)=9
+    spectraltype(8)=0
+    spectraltype(9)=11
+    spectraltype(10)=0
+	'
+    spectralname(1)="red sun (spectral class M)"
+    spectralshrt(1)="M"
+    spectralname(2)="orange sun (spectral class K)"
+    spectralshrt(2)="K"
+    spectralname(3)="yellow sun (spectral class G)"
+    spectralshrt(3)="G"
+    spectralname(4)="white sun (spectral class F)"
+    spectralshrt(4)="F"
+    spectralname(5)="green sun (spectral class A)"
+    spectralshrt(5)="A"
+    spectralname(6)="white giant (spectral class N)"
+    spectralshrt(6)="N"
+    spectralname(7)="blue giant (spectral class O)"
+    spectralshrt(7)="O"
+    spectralname(8)="a rogue planet"
+    spectralshrt(8)="r"
+    spectralname(9)="a wormhole"
+    spectralshrt(9)="w"
+    spectralname(10)="rogue gasgiant"
+    spectralshrt(10)="R"
+	'
 	return 0
 end function
 end namespace'tPlanet
@@ -298,86 +386,6 @@ end function
 
 '
 
-function display_portal(b as short,slot as short,osx as short) as short
-    dim as short x
-    
-    x=portal(b).from.x-osx
-    if x<0 then x+=61
-    if x>60 then x-=61
-    if x>=0 and x<=_mwx then
-        if portal(b).from.m=slot and portal(b).discovered=1 and portal(b).oneway<2 then
-            if configflag(con_tiles)=0 then
-                put ((x)*_tix,portal(b).from.y*_tiy),gtiles(gt_no(portal(b).ti_no)),trans
-#if __FB_DEBUG__
-                draw string(portal(b).from.x*_fw1,portal(b).from.y*_fh1),""&portal(b).ti_no,,Font2,custom,@_col
-#endif
-            else
-                set__color( portal(b).col,0)
-                draw string(portal(b).from.x*_fw1,portal(b).from.y*_fh1),chr(portal(b).tile),,Font1,custom,@_col
-            endif
-        endif
-    endif
-    x=portal(b).dest.x-osx
-    if x<0 then x+=61
-    if x>60 then x-=61
-
-    if x>=0 and x<=_mwx then
-        if portal(b).oneway=0 and portal(b).dest.m=slot and portal(b).discovered=1 then
-            if configflag(con_tiles)=0 then
-                put ((x)*_tix,portal(b).dest.y*_tiy),gtiles(gt_no(portal(b).ti_no)),trans
-            else
-                set__color( portal(b).col,0)
-                draw string(portal(b).dest.x*_fw1,portal(b).dest.y*_fh1),chr(portal(b).tile),,Font1,custom,@_col
-            endif
-        endif
-    endif
-    return 0
-end function
-
-function display_portals(slot as short,osx as short) as short
-    dim as short b
-    for b=0 to lastportal
-        display_portal(b,slot,osx)
-    next
-    return 0
-end function
-
-
-function dtile(x as short,y as short, tiles as _tile,visible as byte) as short
-    dim as short col,bgcol,slot,tino
-    slot=player.map
-    col=tiles.col
-    bgcol=tiles.bgcol
-    tino=tiles.ti_no
-    if tino>1000 then
-        tino=2500+(tino-2500)+planets(slot).wallset*10
-    endif
-    'if tiles.walktru=5 then bgcol=1
-    if tiles.col<0 and tiles.bgcol<0 then
-        col=col*-1
-        bgcol=bgcol*-1
-        col=rnd_range(col,bgcol)
-        bgcol=0
-    endif
-    if configflag(con_tiles)=0 then
-        if visible=1 then
-            put (x*_tix,y*_tiy),gtiles(gt_no(tino)),pset
-        else
-            put (x*_tix,y*_tiy),gtiles(gt_no(tino)),alpha,196
-        endif
-    else
-        if configflag(con_showvis)=0 and visible>0 and bgcol=0 then
-            bgcol=234
-        endif
-        set__color( col,bgcol,visible)
-        draw string (x*_fw1,y*_fh1),chr(tiles.tile),,Font1,custom,@_col
-    endif
-    set__color( 11,0)
-    return 0
-end function
-
-
-
 function display_sysmap(x as short, y as short, in as short, hi as short=0,bl as string,br as string) as short
     dim as short a,b,c,bg,yof,ptile,alp,spec
     dim t as string
@@ -503,228 +511,6 @@ function display_sysmap(x as short, y as short, in as short, hi as short=0,bl as
 end function
 
 
-function display_system(in as short,forcebar as byte=0,hi as byte=0) as short
-    dim as short a,b,bg,x,y,fw1
-    dim as string bl,br
-
-    if _fw1<_tix then
-        fw1=_fw1
-    else
-        fw1=_tix
-    endif
-    
-    if configflag(con_onbar)=0 or forcebar=1 then
-        y=21
-        x=_mwx/2-2
-        bl=chr(180)
-        br=chr(195)
-    else
-        x=((map(in).c.x-player.osx)*fw1-12*_fw2)/_fw1
-        y=map(in).c.y+1-player.osy
-        if x<0 then x=0
-        if configflag(con_sysmaptiles)=0 then
-            if x*fw1+18*_tix>_mwx*fw1 then x=(_mwx*fw1-18*_tix)/fw1
-        else
-            if x*fw1+24*_fw2>_mwx*fw1 then x=(_mwx*fw1-24*_fw2)/fw1
-        endif
-        'if x*fw1+(25*_fw2)/fw1>_mwx*fw1 then x=_mwx*fw1-(25*_fw2)/fw1
-        bl="["
-        br="]"
-    endif
-    display_sysmap(x*fw1,y*_fh1,in,hi,bl,br)
-    set__color( 11,0)
-#if __FB_DEBUG__
-    bl=""
-    for a=1 to 9
-        bl=bl &map(in).planets(a)&" "
-        if map(in).planets(a)>0 then
-            bl=bl &"ms:"&map(in).planets(a)
-        endif
-    next
-    rlprint bl &":"& hi  &" - "&x
-#endif
-    return 0
-end function
-
-
-function getplanet(sys as short,forcebar as byte=0) as short
-    dim as short r,p,a,b
-    dim as string text,key
-    dim as _cords p1
-    if sys<0 or sys>laststar then
-        rlprint ("ERROR:System#:"&sys,14)
-        return -1
-    endif
-    map(sys).discovered=2
-    p=liplanet
-    if p<1 then p=1
-    if p>9 then p=9
-    if map(sys).planets(p)=0 then p=nextplan(p,sys)
-    for a=1 to 9
-        if map(sys).planets(a)<>0 then b=1
-    next
-    if b>0 then
-        rlprint "Enter to select, arrows to move,ESC to quit"
-        if show_mapnr=1 then rlprint map(sys).planets(p)&":"&isgasgiant(map(sys).planets(p))
-        do
-            display_system(sys,,p)
-            key=""
-            key=keyin
-            if uConsole.keyplus(key) or key=key_east or key=key_north then p=nextplan(p,sys)
-            if uConsole.keyminus(key) or key=key_west or key=key_south then p=prevplan(p,sys)
-            if key=key_comment then
-                if map(sys).planets(p)>0 then
-                    rlprint "Enter comment on planet: "
-                    p1=locEOL
-                    planets(map(sys).planets(p)).comment=gettext(p1.x,p1.y,60,planets(map(sys).planets(p)).comment)
-                endif
-            endif
-            if key="q" or key="Q" or key=key__esc then r=-1
-            if (key=key__enter or key=key_sc or key=key_la) and map(sys).planets(p)<>0 then r=p
-        loop until r<>0
-        liplanet=r
-
-    else
-        r=-1
-    endif
-    return r
-end function
-
-'function getplanet(sys as short,forcebar as byte=0) as short
-'    dim as short a,r,p,x,xo,yo
-'    dim text as string
-'    dim key as string
-'    dim firstplanet as short
-'    dim lastplanet as short
-'    dim p1 as _cords
-'    if sys<0 or sys>laststar then
-'        rlprint ("ERROR:System#:"&sys,14)
-'        return -1
-'    endif
-'    for a=1 to 9
-'        if map(sys).planets(a)<>0 then
-'            lastplanet=a
-'            x=x+1
-'        endif
-'    next
-'    for a=9 to 1 step-1
-'        if map(sys).planets(a)<>0 then firstplanet=a
-'    next
-'    p=liplanet
-'    if p<1 then p=1
-'    if p>9 then p=9
-'    if map(sys).planets(p)=0 then
-'        do
-'            p=p+1
-'            if p>9 then p=1
-'        loop until map(sys).planets(p)<>0 or lastplanet=0
-'    endif
-'    if p>9 then p=firstplanet
-'    if lastplanet>0 then
-'        if _onbar=0 or forcebar=1 then
-'            xo=31
-'            yo=22
-'        else
-'            xo=map(sys).c.x-9-player.osx
-'            yo=map(sys).c.y+2-player.osy
-'            if xo<=4 then xo=4
-'            if xo+18>58 then xo=42
-'        endif
-'        rlprint "Enter to select, arrows to move,ESC to quit"
-'        if show_mapnr=1 then rlprint map(sys).planets(p)&":"&isgasgiant(map(sys).planets(p))
-'        do
-'            displaysystem(sys)
-'            if keyplus(key) or a=6 then
-'                do
-'                    p=p+1
-'                    if p>9 then p=1
-'                loop until map(sys).planets(p)<>0
-'            endif
-'            if keyminus(key) or a=4 then
-'                do
-'                    p=p-1
-'                    if p<1 then p=9
-'                loop until map(sys).planets(p)<>0
-'            endif
-'            if p<1 then p=lastplanet
-'            if p>9 then p=firstplanet
-'            x=xo+(p*2)
-'            if left(displaytext(25),14)<>"Asteroid field" or left(displaytext(25),15)<>"Planet at orbit" then rlprint "System " &map(sys).desig &"."
-'            if map(sys).planets(p)>0 then
-'                if planets(map(sys).planets(p)).comment="" then
-'                    if isasteroidfield(map(sys).planets(p))=1 then
-'                        displaytext(25)= "Asteroid field at orbit " &p &"."
-'                    else
-'                        if planets(map(sys).planets(p)).mapstat<>0 then
-'                            if isgasgiant(map(sys).planets(p))<>0 then
-'                                if p>1 and p<7 then displaytext(25)= "Planet at orbit " &p &". A helium-hydrogen gas giant."
-'                                if p>6 then displaytext(25)= "Planet at orbit " &p &". A methane-ammonia gas giant."
-'                                if p=1 then displaytext(25)= "Planet at orbit " &p &". A hot jupiter."
-'                            else
-'                                if isgasgiant(map(sys).planets(p))=0 and isasteroidfield(map(sys).planets(p))=0 then displaytext(25)="Planet at orbit " &p &". " &atmdes(planets(map(sys).planets(p)).atmos) &" atm., " &planets(map(sys).planets(p)).grav &"g grav."
-'                            endif
-'                        else
-'                            displaytext(25)= "Planet at orbit " &p &"."
-'                        endif
-'                    endif
-'                endif
-'                if planets(map(sys).planets(p)).comment<>"" then
-'                    if isasteroidfield(map(sys).planets(p))=1 then
-'                        displaytext(25)= "Asteroid field at orbit " &p &": " &planets(map(sys).planets(p)).comment &"."
-'                    else
-'                        displaytext(25)= "Planet at orbit " &p &": " &planets(map(sys).planets(p)).comment &"."
-'                    endif
-'                endif
-'                rlprint ""
-'                locate yo,x
-'                set__color( 15,3
-'                if isgasgiant(map(sys).planets(p))=0 and isasteroidfield(map(sys).planets(p))=0 then print "o"
-'                if isgasgiant(map(sys).planets(p))>0 then print "O"
-'                if isasteroidfield(map(sys).planets(p))=1 then print chr(176)
-'                set__color( 11,0
-'            endif
-'
-'            if map(sys).planets(p)<0 then
-'                if map(sys).planets(p)<0 then
-'                    if isgasgiant(map(sys).planets(p))=0 then
-'                        displaytext(25)= "Asteroid field at orbit " &p &"."
-'                    else
-'                        if map(sys).planets(p)=-20001 then displaytext(25)= "Planet at orbit " &p &". A helium-hydrogen gas giant."
-'                        if map(sys).planets(p)=-20002 then displaytext(25)= "Planet at orbit " &p &". A methane-ammonia gas giant."
-'                        if map(sys).planets(p)=-20003 then displaytext(25)= "Planet at orbit " &p &". A hot jupiter."
-'                    endif
-'                    rlprint ""
-'                endif
-'                locate yo,x
-'                set__color( 15,3
-'                if isgasgiant(map(sys).planets(p))=0 then
-'                    print chr(176)
-'                else
-'                    print "O"
-'                endif
-'                set__color( 11,0
-'            endif
-'            key=keyin
-'            if key=key_comment then
-'                rlprint "Enter comment on planet: "
-'                p1=locEOL
-'                planets(map(sys).planets(p)).comment=gettext(p1.x,p1.y,60,planets(map(sys).planets(p)).comment)
-'            endif
-'            a=Getdirection(key)
-'
-'
-'            if key="q" or key="Q" or key=key__esc then r=-1
-'            if (key=key__enter or key=key_sc or key=key_la) and map(sys).planets(p)<>0 then r=p
-'        loop until r<>0
-'        liplanet=r
-'    else
-'        r=-1
-'    endif
-'    return r
-'end function
-'
-
-#define cut2bottom
 #endif'main
 
 #if (defined(main) or defined(test))

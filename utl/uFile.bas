@@ -60,7 +60,7 @@ dim FilenameOpenedLast as String		'updated by Openfile
 dim FileError as String					'assembled by Openerror 
 
 declare function Closefile(ByRef fileno as integer) as integer
-'private function Openerror(filename as string, fileno as integer, filemode as tFileOpenMode) as integer
+'declare function Openerror(filename as string, fileno as integer, filemode as tFileOpenMode) as integer
 declare function Openfile(filename as string, ByRef fileno as integer, filemode as tFileOpenMode=fmInput) as integer
 declare function OpenInput(filename as string,ByRef fileno as integer) as integer
 declare function OpenOutput(filename as string,ByRef fileno as integer) as integer
@@ -77,9 +77,9 @@ declare function Countlines(filename as string,nonblank as integer=1) as integer
 declare function Filesize(filename as string) as integer
 declare function FilesizeInMb(filename as string) as string
 
-'private function = Close(#fileno)
-'private function private Openerror(filename as string, fileno as integer, filemode as tFileOpenMode) as integer
-'private function ttest() as Integer
+'declare function = Close(#fileno)
+'declare function Openerror(filename as string, fileno as integer, filemode as tFileOpenMode) as integer
+'declare function ttest() as Integer
 
 #endif'head
 #ifdef main

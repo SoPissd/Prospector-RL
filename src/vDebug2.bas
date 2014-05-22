@@ -27,19 +27,19 @@
 '     -=-=-=-=-=-=-=- HEAD: debug2 -=-=-=-=-=-=-=-
 
 
-'private function _WeapdumpCSV() as Short
-'private function _PlanetTempCSV() as Short
-'private function _TilesCSV() as Short
-'private function _PricesCSV() as Short
-'private function _MonsterCSV() as Short
-'private function _ItemsCSV() as Short
-'private function _Items2CSV() as Short
-'private function _ItemDump() as Short
-'private function _PortalsCSV() as Short
-'private function _FactionsCSV() as Short
-'private function _FleetsCSV() as Short
-'private function _FleetsDump() as Short
-'private function _DbgLogMQI(text as string) as Short
+'declare function _WeapdumpCSV() as Short
+'declare function _PlanetTempCSV() as Short
+'declare function _TilesCSV() as Short
+'declare function _PricesCSV() as Short
+'declare function _MonsterCSV() as Short
+'declare function _ItemsCSV() as Short
+'declare function _Items2CSV() as Short
+'declare function _ItemDump() as Short
+'declare function _PortalsCSV() as Short
+'declare function _FactionsCSV() as Short
+'declare function _FleetsCSV() as Short
+'declare function _FleetsDump() as Short
+'declare function _DbgLogMQI(text as string) as Short
 
 #endif'head
 #ifdef main

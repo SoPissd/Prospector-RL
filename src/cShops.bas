@@ -1,9 +1,5 @@
 'tShops.
 '
-'defines:
-'reroll_shops=5, place_shop_order=0, shop=111, mudds_shop=2,
-', sell_alien=4, botsanddrones_shop=2, makemudsshop=4
-'
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -12,27 +8,57 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tShops -=-=-=-=-=-=-=-
-
 #undef intest
 #define test
 #endif'test
+
+#ifdef types
+'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+Enum shops
+    sh_shipyard
+    sh_modules
+    sh_equipment
+    sh_used
+    sh_mudds
+    sh_bots
+End Enum
+
+Enum moduleshops
+    ms_energy
+    ms_projectile
+    ms_modules
+End Enum
+
+Enum slse
+    slse_arena
+    slse_zoo
+    slse_slaves
+End Enum
+
+Dim Shared moduleshopname(ms_modules) As String
+Dim Shared shop_order(2) As Short
+
+
+#endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tShops -=-=-=-=-=-=-=-
 
+declare function get_biodata(e as _monster) as integer
 declare function reroll_shops() as short
 declare function shop(sh as short,pmod as single,shopn as string) as short
-declare function mudds_shop() as short
 declare function sell_alien(sh as short) as short
 declare function botsanddrones_shop() as short
-declare function makemudsshop(slot as short, x1 as short, y1 as short)  as short
+declare function buy_weapon(st as short) as short
 
-'private function place_shop_order(sh as short) as short
+'declare function place_shop_order(sh as short) as short
 
 #endif'head
 #ifdef main
@@ -40,17 +66,20 @@ declare function makemudsshop(slot as short, x1 as short, y1 as short)  as short
 
 namespace tShops
 function init(iAction as integer) as integer
+    moduleshopname(ms_energy)="OBE High Energy Research Lab"
+    moduleshopname(ms_projectile)="SHI Weapons Division ltd."
+    moduleshopname(ms_modules)="Triax Ship-Accesoirs"
+    
 	return 0
 end function
 end namespace'tShops
 
 
-#define cut2top
-
 
 function reroll_shops() as short
+    dim it as _items 
+    dim delit as _items 
     dim as short a,b,i,c,sh,flag,roll,spec,shopno
-    dim  as _items it,delit
     dim sortinvlist(20) as _items
     dim dummynumber(20) as short
     for shopno=0 to 29
@@ -450,7 +479,10 @@ function shop(sh as short,pmod as single,shopn as string) as short
     i=20
     order=-2
     t=shopn
-    pmod=pmod*haggle_("DOWN")
+    
+    assert(pHaggle<>null)
+    pmod=pmod* pHaggle("DOWN")
+    
     for a=1 to 9999
         for b=1 to i
             if shopitem(b,sh).ty=a then
@@ -483,9 +515,12 @@ function shop(sh as short,pmod as single,shopn as string) as short
     ex=b
     t=t & "/Exit"
     desc=desc &"/"
-    display_ship()
+    
+    assert(pDisplayShip<>null)
+    pDisplayShip()
+    
     rlprint("")
-    c=textmenu(bg_parent,t,desc,2,2)
+    c=textmenu(t,desc,2,2)
     select case c
     case order
         place_shop_order(sh)
@@ -614,27 +649,19 @@ function shop(sh as short,pmod as single,shopn as string) as short
 end function
 
 
-function mudds_shop() as short
-    dim as short a,b
-    rlprint "An overweight gentleman greets you 'Welcome to Mudds Incredible Bargains' Do you wish to buy or sell?"
-    do
-        display_ship
-        a=textmenu(bg_parent,"Mudds Shop/Buy/Sell/Exit")
-        if a=1 then 
-            do
-                b=shop(7,2.5,"Mudds Incredible Bargains")
-                display_ship
-            loop until b=-1
-        endif
-        if a=2 then buysitems("","",0,.1)
-    loop until a=3 or a=-1
-    return 0
+function get_biodata(e as _monster) as integer
+    if e.hp>0 then
+        return (50)*(1+e.stunres/2)*e.biomod+cint(2*e.biomod*(e.hpmax^2)/3)
+    else
+        return e.biomod*(e.hpmax^2/3)
+    endif
 end function
+
 
 function sell_alien(sh as short) as short
     dim t as string
     dim as short i,c,biodata
-DbgLogExplorePlanet("sell_alien: " &sh &"; lastcagedmonster: " &lastcagedmonster &"; ub cagedmonster: " &ubound(cagedmonster))
+'DbgLogExplorePlanet("sell_alien: " &sh &"; lastcagedmonster: " &lastcagedmonster &"; ub cagedmonster: " &ubound(cagedmonster))
     if lastcagedmonster=0 then
         rlprint "You have nothing to sell."
         return 0
@@ -645,8 +672,8 @@ DbgLogExplorePlanet("sell_alien: " &sh &"; lastcagedmonster: " &lastcagedmonster
             t=t &"/"&cagedmonster(i).sdesc
         next
         t=t & "/Exit"
-DbgLogExplorePlanet("sell_alien: " & t)
-        c=textmenu(bg_parent,t)
+'DbgLogExplorePlanet("sell_alien: " & t)
+        c=textmenu(t)
         if c>0 and c<=lastcagedmonster then
             biodata=get_biodata(cagedmonster(c))
             select case sh
@@ -682,84 +709,140 @@ end function
 function botsanddrones_shop() as short
     dim as integer a,b,c,il(lastitem),price
     dim as string wreckquestion
-    price=15*haggle_("UP")
+    
+    assert(pHaggle<>null)
+    price= 15 * pHaggle("UP")
     do
-    display_ship
-    rlprint "Welcome to the Bot-Bin! This sectors most sophisticated 2nd hand robot store."
-    a=textmenu(bg_parent,"The Bot-bin/Buy/Sell/Exit")
-    if a=1 then 
-        do
-            b=shop(25,0.8,"The Bot-bin")
-            display_ship
-        loop until b=-1
-    endif
-    if a=2 then
-        if askyn("Always looking for spare parts we offer " &price & " Cr. for bot and rover debris. Do you want to sell? (y/n)") then
-            for b=0 to lastitem
-                if item(b).w.s<0 then
-                    if item(b).id=65 then
-                        c+=1
-                        il(c)=b
-                    endif
-                endif
-            next
-            if c>0 then
-                if c=1 then wreckquestion="You have "&c &" wreck. Do you want to sell them?(y/n)"
-                if c>1 then wreckquestion="You have "&c &" wrecks. Do you want to sell them?(y/n)"
-                if askyn(wreckquestion) then
-                    addmoney(c*price,mt_quest2)
-                    for b=1 to c
-                        item(il(b)).w.s=99
-                    next
-                    for b=0 to lastitem
-                        if item(b).w.s=99 then
-                            item(b)=item(lastitem)
-                            lastitem-=1
-                        endif
-                    next
-                endif
-            else
-                rlprint "You don't have any debris to sell."
-            endif
-        endif
-    endif
+	
+	    assert(pDisplayShip<>null)
+	    pDisplayShip()
+	
+	    rlprint "Welcome to the Bot-Bin! This sectors most sophisticated 2nd hand robot store."
+	    a=textmenu("The Bot-bin/Buy/Sell/Exit")
+	    if a=1 then 
+	        do
+	            b=shop(25,0.8,"The Bot-bin")
+			    
+	        loop until b=-1
+	    endif
+	    if a=2 then
+	        if askyn("Always looking for spare parts we offer " &price & " Cr. for bot and rover debris. Do you want to sell? (y/n)") then
+	            for b=0 to lastitem
+	                if item(b).w.s<0 then
+	                    if item(b).id=65 then
+	                        c+=1
+	                        il(c)=b
+	                    endif
+	                endif
+	            next
+	            if c>0 then
+	                if c=1 then wreckquestion="You have "&c &" wreck. Do you want to sell them?(y/n)"
+	                if c>1 then wreckquestion="You have "&c &" wrecks. Do you want to sell them?(y/n)"
+	                if askyn(wreckquestion) then
+	                    addmoney(c*price,mt_quest2)
+	                    for b=1 to c
+	                        item(il(b)).w.s=99
+	                    next
+	                    for b=0 to lastitem
+	                        if item(b).w.s=99 then
+	                            item(b)=item(lastitem)
+	                            lastitem-=1
+	                        endif
+	                    next
+	                endif
+	            else
+	                rlprint "You don't have any debris to sell."
+	            endif
+	        endif
+	    endif
     loop until a=3
     return 0
 end function
 
-function makemudsshop(slot as short, x1 as short, y1 as short)  as short
-    dim as short x,y
-    dim as _cords p3
-    if x1<3 then x1=3
-    if x1>57 then x1=57
-    if y1<3 then y1=3
-    if y1>17 then y1=17
-    planetmap(x1,y1,slot)=-262
-    planetmap(x1-1,y1,slot)=-32
-    planetmap(x1+1,y1,slot)=-32
-    planetmap(x1,y1+1,slot)=-31
-    planetmap(x1,y1-1,slot)=-31
-    planetmap(x1-2,y1,slot)=-68
-    planetmap(x1+2,y1,slot)=-68
-    planetmap(x1,y1+2,slot)=-68
-    planetmap(x1,y1-2,slot)=-68
+
+
+function buy_weapon(st as short) as short
+    dim as short a,b,c,d,i,mod1,mod2,mod3,mod4,ex
+    dim as short last
+    dim it as _items 
+    dim weapons as string
+    dim key as string
+    dim wmenu as string
+    dim help as string
     
-    p3.x=x1+2
-    p3.y=y1+2
-    if p3.x+3<60 and p3.y+3<20 and rnd_range(1,100)<10 then 
-        for x=p3.x to p3.x+3
-            for y=p3.y to p3.y+3
-                planetmap(x,y,slot)=68
-            next
+    assert(pHaggle<>null)   
+    assert(pDisplayShip<>null)
+    
+    do
+        i=0
+        for a=1 to 20
+            if makew(a,st)<>0 then i+=1
         next
-        planetmap(p3.x+1,p3.y,slot)=70
-        planetmap(p3.x+2,p3.y,slot)=71
-    
-    endif
+        weapons="Weapons:"
+        help=""
+        for a=1 to i
+            b=_swidth-len(trim(wsinv(a).desig))-len(credits(wsinv(a).p*pHaggle("down")))
+            weapons=weapons &"/ " &trim(wsinv(a).desig) & space(b) &credits(wsinv(a).p*pHaggle("down"))&" Cr."
+            help=help &"/"&make_weap_helptext(wsinv(a))
+        next
+
+        weapons=weapons &"/Exit"
+        help=help &" /"
+        last=i
+        ex=i+1
+        
+        tScreen.set(0)
+        set__color(11,0)
+        cls
+	    pDisplayShip()
+        rlprint ""
+        
+        d=textmenu(weapons,help,2,2)
+        tScreen.update()
+        if d>=1 and d<=last then
+            b=player.h_maxweaponslot
+            wmenu="Weapon Slot/"
+            for a=1 to b
+                if player.weapons(a).desig="" then
+                    wmenu=wmenu & "-Empty-/"
+                else
+                    wmenu=wmenu & player.weapons(a).desig & "/"
+                endif
+            next
+            wmenu=wmenu+"Exit"
+            b=b+1            
+            c=textmenu(wmenu)
+            if c<b then
+                if player.weapons(c).desig<>"" and d<>5 then 
+                    if not(askyn("Do you want to replace your "&player.weapons(c).desig &"(y/n)")) then c=b
+                endif
+                if c<b then
+                    if paystuff(wsinv(d).p*pHaggle("down")) then
+                        if wsinv(d).made<=14 then
+                            rlprint "You buy "&add_a_or_an(wsinv(d).desig,0) &"."
+                        else
+                            rlprint "You buy "&wsinv(d).desig &"."
+                        endif
+                        player.weapons(c)=wsinv(d)
+                        for i=d to last
+                            wsinv(d)=wsinv(d+1)
+                            makew(d,st)=makew(d+1,st)
+                        next
+                        wsinv(last)=make_weapon(0)
+                        makew(last,st)=0
+                    endif
+                endif
+            endif
+        endif
+
+		assert(pRecalcshipsbays<>null)
+        pRecalcshipsbays()
+
+    loop until d=ex
     return 0
 end function
 
-#define cut2bottom
+
 #endif'main
 
 #if (defined(main) or defined(test))

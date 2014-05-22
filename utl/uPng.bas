@@ -39,7 +39,7 @@ declare function savepng( _
     byval image as any ptr = 0, _
     byval save_alpha as integer = 0) as integer
 
-'private function bswap(byval n as uinteger) as uinteger
+'declare function bswap(byval n as uinteger) as uinteger
 
 #endif'head
 #ifdef main

@@ -69,14 +69,14 @@ declare function maximum(a as double,b as double) as double
 declare function minimum(a as double,b as double) as double
 declare function fill_rect(r as _rect,wall as short, flor as short,map() as short) as short
 
-'private function C_to_F(c as single) as single
-'private function find_high(list() as short,last as short, start as short=1) as short
-'private function sub0(a as single,b as single) as single
-'private function findrect(tile as short,map() as short,er as short=10,fi as short=60) as _rect
-'private function getany(possible() as short) as short
-'private function nextpoint(byval start as _cords, byval target as _cords) as _cords
-'private function line_in_points(b as _cords,c as _cords,p() as _cords) as short
-'private function rndrectwall(r as _rect,d as short=5) as _cords
+'declare function C_to_F(c as single) as single
+'declare function find_high(list() as short,last as short, start as short=1) as short
+'declare function sub0(a as single,b as single) as single
+'declare function findrect(tile as short,map() as short,er as short=10,fi as short=60) as _rect
+'declare function getany(possible() as short) as short
+'declare function nextpoint(byval start as _cords, byval target as _cords) as _cords
+'declare function line_in_points(b as _cords,c as _cords,p() as _cords) as short
+'declare function rndrectwall(r as _rect,d as short=5) as _cords
 
 #endif'head
 #ifdef main

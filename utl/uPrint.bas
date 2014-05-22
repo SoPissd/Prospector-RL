@@ -55,8 +55,8 @@ Const c_yel=14
 
 declare function rlprint(t as string, col as short=11) as short
 
-'private function scrollup(b as short) as short
-'private function locEOL() as _cords
+'declare function scrollup(b as short) as short
+'declare function locEOL() as _cords
 
 #endif'head
 #ifdef main

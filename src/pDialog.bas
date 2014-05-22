@@ -1,10 +1,5 @@
 'tDialog.
 '
-'defines:
-'load_dialog_quests=1, load_dialog=1, update_questguy_dialog=0,
-', questguy_message=0, adapt_nodetext=0, add_passenger=2, dialog_effekt=0,
-', node_menu=0, do_dialog=14
-'
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -13,18 +8,25 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
-'
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tDialog -=-=-=-=-=-=-=-
-
 #undef intest
 #define test
 #endif'test
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+
+Enum QUEST
+    Q_WANT
+    Q_HAS
+    Q_ANSWER
+End Enum
+
 Type _dialogoption
     no As UShort
     answer As String
@@ -37,6 +39,55 @@ Type _dialognode
     param(5) As Short
     Option(16) As _dialogoption
 End Type
+
+Dim Shared questguydialog(22,2,2) As String
+Dim Shared questguyquestion(22,1) As String
+
+Enum stphrase
+    sp_greetfriendly
+    sp_greetneutral
+    sp_greethostile
+    sp_gotalibi
+    sp_gotmoney
+    sp_cantpayback
+    sp_notenoughmoney
+    sp_gotreport
+    sp_last
+End Enum
+
+Dim Shared standardphrase(sp_last-1,2) As String
+
+Dim Shared talent_desc(29) As String
+Dim Shared talent_desig(29) As String
+
+Dim Shared ano_money As Short
+
+
+type tIsPassenger as function(i as short) as short
+dim shared pIsPassenger as tIsPassenger
+
+type tCaptainName as function() as string
+dim shared pCaptainName as tCaptainName
+
+type tFreecrewslot as function() as short
+dim shared pFreecrewslot as tFreecrewslot
+
+type tAddpassenger as function(n as string,typ as short, price as short, bonus as short, target as short, sTime as short, gender as short) as short
+dim shared pAddpassenger as tAddpassenger
+
+type tEnjoyConcert as function() as Integer
+dim shared pEnjoyConcert as tEnjoyConcert
+
+type tGetitem as function(ty as short=0,ty2 as short=0,byref num as short=0,noequ as short=0) as short
+dim shared pGetitem as tGetitem
+
+type tSellItem as function(p() as short, a as short) as Integer
+dim shared pSellItem as tSellItem
+
+type tShowteam as function(from as short, r as short=0,text as string="") as short
+dim shared pShowteam as tShowteam
+
+
 #endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tDialog -=-=-=-=-=-=-=-
@@ -45,15 +96,14 @@ declare function questguy_dialog(i as short) as short
 
 declare function load_dialog_quests() as short
 declare function load_dialog(fn as string, n() as _dialognode) as short
-declare function add_passenger(n as string,typ as short, price as short, bonus as short, target as short, sTime as short, gender as short) as short
 declare function do_dialog(no as short,e as _monster, fl as short) as short
+declare function rndsentence(e as _monster) as short
 
-'private function update_questguy_dialog(i as short,node() as _dialognode,iteration as short) as short
-'private function questguy_message(c as short) as short
-'private function adapt_nodetext(t as string, e as _monster,fl as short,qgindex as short=0) as string
-'private function dialog_effekt(effekt as string,p() as short,e as _monster, fl as short) as short
-'private function node_menu(no as short,node() as _dialognode,e as _monster, fl as short,qgindex as short=0) as short
-'private function questguy_dialog(i as short) as short
+'declare function update_questguy_dialog(i as short,node() as _dialognode,iteration as short) as short
+'declare function questguy_message(c as short) as short
+'declare function adapt_nodetext(t as string, e as _monster,fl as short,qgindex as short=0) as string
+'declare function dialog_effekt(effekt as string,p() as short,e as _monster, fl as short) as short
+'declare function node_menu(no as short,node() as _dialognode,e as _monster, fl as short,qgindex as short=0) as short
 
 #endif'head
 #ifdef main
@@ -61,6 +111,91 @@ declare function do_dialog(no as short,e as _monster, fl as short) as short
 
 namespace tDialog
 function init(iAction as integer) as integer
+    standardphrase(sp_greetfriendly,0)="Hello! Glad to meet you!"
+    standardphrase(sp_greetfriendly,1)="Greetings! How do you do?"
+    standardphrase(sp_greetfriendly,2)="How do you do? Happy to see you!"
+    standardphrase(sp_greetneutral,0)="Hello. How can I help you?"
+    standardphrase(sp_greetneutral,1)="Hi. Everything OK?"
+    standardphrase(sp_greetneutral,2)="Erm. Can I help you?"
+    standardphrase(sp_greethostile,0)="What do you want?"
+    standardphrase(sp_greethostile,1)="What's up?"
+    standardphrase(sp_greethostile,2)="Why do you disturb me?"
+    standardphrase(sp_gotalibi,0)="I got you an alibi."
+    standardphrase(sp_gotalibi,1)="I think I can help you with your problem."
+    standardphrase(sp_gotalibi,2)="I think I found somebody who can vouch for you."    
+    standardphrase(sp_gotmoney,0)="I have got your money."
+    standardphrase(sp_gotmoney,1)="I met 1<CHAR>. He sends you your money."
+    standardphrase(sp_gotmoney,2)="I got your money."
+    standardphrase(sp_gotreport,0)="Of course I have information on <CORP>. I have this report here."
+    standardphrase(sp_gotreport,1)="There is some interesting things in this report, if you know where to look."
+    standardphrase(sp_gotreport,2)="This report should cover the things you are interested in."
+    standardphrase(sp_cantpayback,0)="I would love to pay it back, but I can't at this time."
+    standardphrase(sp_cantpayback,1)="Sorry. Don't have enough money to pay it back right now."
+    standardphrase(sp_cantpayback,2)="Things haven't been easy lately. I am afraid I can't spare a single credit!"
+    '
+    talent_desig(1)="Competent"
+    talent_desc(1)="Competent: Is better suited to take over other officers jobs."
+    talent_desig(2)="Haggler"
+    talent_desc(2)="Haggler: Gets better prices at shops"
+    talent_desig(3)="Confident"
+    talent_desc(3)="Confident: Better chance to get company quests"
+    talent_desig(4)="Charming"
+    talent_desc(4)="Charming: Better morale for crewmembers"
+    talent_desig(5)="Gambler"
+    talent_desc(5)="Gambler: Better chance to win in the casino"
+    talent_desig(6)="Merchant"
+    talent_desc(6)="Merchant: Gets better prices when buying and selling cargo"
+    
+    talent_desig(7)="Evasion" 
+    talent_desig(8)="High grav training"
+    talent_desig(9)="Asteroid miner"
+    talent_desc(7)="Evasion: Has a better chance to get away when fleeing from space battles"
+    talent_desc(8)="High grav training: Has a better chance to land successfully"
+    talent_desc(9)="Asteroid miner: Finds more ore in asteroids, and catches them easier"
+
+    talent_desig(10)="Tactics expert"
+    talent_desc(10)="Tactics expert: Increases effect from tactics setting"
+    talent_desig(11)="Leadership"
+    talent_desc(11)="Leadership: +1 on all to hit rolls for entire awayteam"
+    talent_desig(12)="Ships weapons expert"
+    talent_desc(12)="+1 to hit for ship weapons."
+    talent_desig(13)="Improvise mines"
+    talent_desc(13)="Improvise mines: Can turn a certain amount of ship fuel into jury rigged mines"
+    
+    talent_desig(14)="Linguist"
+    talent_desig(15)="Biologist"
+    talent_desig(16)="Sensor expert"
+    talent_desc(14)="Linguist: Better chance to understand aliens"
+    talent_desc(15)="Biologist: Better results from scanning plants and recording alien biodata"
+    talent_desc(16)="Sensor expert: Is better at using sensors"    
+
+    talent_desig(17)="Disease expert"
+    talent_desig(18)="First aid expert"
+    talent_desig(19)="Field medic"
+    talent_desc(17)="Disease expert: Increased chance to cure diseases"
+    talent_desc(18)="First aid expert: Better results from using medpacks"
+    talent_desc(19)="Field medic: Higher regeneration rate"
+    
+    talent_desig(20)="Tough"
+    talent_desig(21)="Defensive"
+    talent_desig(22)="Close combat expert"
+    talent_desig(23)="Sharp shooter"
+    talent_desig(24)="Fast"
+    talent_desig(25)="Strong"
+    talent_desig(26)="Aim"
+    
+    talent_desc(20)="Tough: +1 to hitpoints"
+    talent_desc(21)="Defensive: -1 on enemies to hit rolls"
+    talent_desc(22)="Close combat expert: +1 to close combat to hit"
+    talent_desc(23)="Sharpshooter: +.1 to ranged weapons damage"
+    talent_desc(24)="Fast: Increased speed"
+    talent_desc(25)="Strong: +.1 to close combat damage"
+    talent_desc(26)="Aim: +1 to ranged weapons to hit"
+    
+    talent_desig(27)="Squad Leader"
+    talent_desig(28)="Sniper"
+    talent_desig(29)="Paramedic"
+    '
 	return 0
 end function
 end namespace'tDialog
@@ -332,15 +467,15 @@ function update_questguy_dialog(i as short,node() as _dialognode,iteration as sh
         node(1).option(o).no=41
         node(41).effekt="TEACHTALENT"
         node(41).param(0)=i
-        if questguy(i).friendly(0)=2 then node(41).param(1)=200*haggle_("DOWN")
-        if questguy(i).friendly(0)=1 then node(41).param(1)=500*haggle_("DOWN")
+        if questguy(i).friendly(0)=2 then node(41).param(1)=200*pHaggle("DOWN")
+        if questguy(i).friendly(0)=1 then node(41).param(1)=500*pHaggle("DOWN")
     endif
     
     o+=1
     node(1).option(o).answer="Let's have a drink."
     node(1).option(o).no=21
     o+=1
-    if is_passenger(i) then
+    if pIsPassenger(i) then
         node(1).option(o).answer="Let's get you to your destination." 
     else
         node(1).option(o).answer="Bye" 
@@ -568,7 +703,7 @@ function questguy_message(c as short) as short
     for i=0 to lastitem
         if item(i).ty=58 and item(i).w.s=-1 and item(i).v2=c then
             if askyn("Do you want to deliver the message?(y/n)") then
-                d=rnd_range(1,6)*(1+questguy(item(i).v2).want.motivation)*haggle_("UP")
+                d=rnd_range(1,6)*(1+questguy(item(i).v2).want.motivation)*pHaggle("UP")
                 rlprint "You get a "& d &" Cr. tip"
                 addmoney(d,mt_quest2)
                 destroyitem(i)
@@ -623,7 +758,7 @@ function adapt_nodetext(t as string, e as _monster,fl as short,qgindex as short=
         if word(i)="<OCHAR>" then word(i)=questguy(questguy(qgindex).flag(5)).n
         if word(i)="<GOAL>" then word(i)="station-"&fleet(fl).con(3)+1
         if word(i)="<FLEET>" then word(i)=""&abs(fl)
-        if word(i)="<PLAYER>" then word(i)="captain "&crew(1).n &" of the "&player.desig
+        if word(i)="<PLAYER>" then word(i)="captain "&pCaptainName &" of the "&player.desig
         if word(i)="<COORDS>" then 
             if fl>0 then 
                 word(i)=fleet(fl).c.x &":"& fleet(fl).c.y
@@ -665,34 +800,6 @@ function adapt_nodetext(t as string, e as _monster,fl as short,qgindex as short=
 end function
 
 
-function add_passenger(n as string,typ as short, price as short, bonus as short, target as short, sTime as short, gender as short) as short
-    dim c as short
-    c=get_freecrewslot
-    if c>0 then
-        crew(c).n=n
-        crew(c).icon="p"
-        crew(c).equips=1
-        crew(c).hpmax=1
-        crew(c).hp=1
-        crew(c).typ=typ
-        crew(c).target=target
-        crew(c).time=sTime
-        crew(c).price=price
-        crew(c).bonus=bonus
-        crew(c).onship=1
-        crew(c).morale=150
-        crew(c).story(10)=gender
-        if rnd_range(1,100)<5 then
-            infect(c,rnd_range(1,12))
-        endif
-    else
-        rlprint "You don't have enough room"
-    endif
-    return 0
-end function
-
-
-
 function dialog_effekt(effekt as string,p() as short,e as _monster, fl as short) as short
     dim as short f,a,i,t,ph,dh,dis,goal,answer,h,hc,c
     dim as integer rew,price
@@ -715,27 +822,19 @@ function dialog_effekt(effekt as string,p() as short,e as _monster, fl as short)
     
     if effekt="BUYSHIP" then
         sh=gethullspecs(p(1),"data/ships.csv")
-        price=sh.h_price*haggle_("down")*((90-p(2)*5)/100)
+        price=sh.h_price* pHaggle("down")*((90-p(2)*5)/100)
         textbox(makehullbox(p(1),"data/ships.csv"),2,2,35,11,1)
-        
+        assert(pBuyShip<>null)
         if askyn("Do you want to buy the "& sh.h_desig &" for "&credits(price)&" Cr.?(y/n)") then
-	            if buy_ship(p(1),sh.h_desig,price)=-1 then player.cursed=rnd_range(1,p(2))
+	            if pBuyShip(p(1),sh.h_desig,price)=-1 then player.cursed= rnd_range(1,p(2))
         endif
     endif
     
     if effekt="CONCERT" then
         if askyn(questguy(p(0)).n &" wants "&credits(p(1))&" to perform for your crew. Do you agree? (y/n)") then
             if paystuff(p(1)) then
-                for a=2 to 128
-                    if crew(a).hp>0 and rnd_range(1,20)<12+add_talent(1,4,5) then 
-                        h=a
-                        hc+=1
-                        crew(a).morale+=rnd_range(1,4)+add_talent(1,4,1)
-                    endif
-                next
-                rlprint "You enjoy a show with your crew."
-                if hc>1 then rlprint "Some in your crew seem to enjoy it.",c_gre
-                if hc=1 then rlprint crew(h).n &" seems to enjoy it.",c_gre
+            	assert(pEnjoyConcert<>null)
+            	pEnjoyConcert()
             endif
         endif
     endif
@@ -765,27 +864,8 @@ function dialog_effekt(effekt as string,p() as short,e as _monster, fl as short)
     endif
     
     if effekt="SELL" then
-        if p(0)=1 then
-            a=get_item
-            if a>0 then
-                if item(a).ty=2 or item(a).ty=7 or item(a).ty=4 then
-                    item(a).w.p=e.no
-                    item(a).w.s=0
-                    it=make_item(96,-1,-3)
-                    placeitem(it,0,0,0,0,-1)
-                    reward(2)=reward(2)+it.v5
-                    rlprint "The reptile gladly accepts the weapon 'This will help us in eradicating the other side' and hands you some "&it.desig
-                endif
-            endif
-        endif
-        if p(0)=2 then 'Questitem
-            rlprint "You sell your "&item(p(1)).desig &" for "& credits(item(p(1)).price*p(2)*(1+crew(1).talents(2)/10)) &" Cr."
-            addmoney(item(p(1)).price*p(2)*(1+crew(1).talents(2)/10),mt_trading)
-            
-            item(p(1))=item(lastitem)
-            lastitem-=1
-            
-        endif
+		assert(pSellitem<>null)
+		pSellitem(p(),a)
     endif
     
     if effekt="GIVEHAS" then
@@ -803,7 +883,8 @@ function dialog_effekt(effekt as string,p() as short,e as _monster, fl as short)
                     if questguy(p(0)).flag(10)<=6 then
                          a=1
                     else
-                         a=showteam(0,1,talent_desig(questguy(p(0)).flag(10)))
+                    	assert(pShowteam<>null)
+						a=pShowteam(0,1,talent_desig(questguy(p(0)).flag(10)))
                     endif
                     if a>0 and can_learn_skill(a,questguy(p(0)).flag(10)) then
                         rlprint "You train long and hard. "& gain_talent(a,questguy(p(0)).flag(10))
@@ -839,9 +920,9 @@ function dialog_effekt(effekt as string,p() as short,e as _monster, fl as short)
         case 4 to 6
             if (questguy(p(0)).friendly(0)=2 or questguy(p(0)).want.given>0) and questguy(p(0)).flag(0)=0 then
                 rlprint "Of course!"
-                if questguy(p(0)).job=4 then rlprint gainxp(4,urn(0,3,1,0)),c_gre
-                if questguy(p(0)).job=5 then rlprint gainxp(3,urn(0,3,1,0)),c_gre
-                if questguy(p(0)).job=6 then rlprint gainxp(5,urn(0,3,1,0)),c_gre
+                if questguy(p(0)).job=4 then rlprint pGainxp(4,urn(0,3,1,0)),c_gre
+                if questguy(p(0)).job=5 then rlprint pGainxp(3,urn(0,3,1,0)),c_gre
+                if questguy(p(0)).job=6 then rlprint pGainxp(5,urn(0,3,1,0)),c_gre
                 questguy(p(0)).flag(0)=1
                 return 0
             else
@@ -1112,7 +1193,7 @@ function dialog_effekt(effekt as string,p() as short,e as _monster, fl as short)
     if effekt="LEARNSKILL" then 'p0=price p1=skill
         
         if player.money>=p(0) then
-            a=showteam(0,0,"Learn "&talent_desig(p(1)))
+            a=pShowteam(0,0,"Learn "&talent_desig(p(1)))
             if a>=0 then
                 if can_learn_skill(a,p(1))=-1 then
                     crew(a).talents(p(1))+=1
@@ -1147,8 +1228,9 @@ function dialog_effekt(effekt as string,p() as short,e as _monster, fl as short)
                 i=1
             endif
             if i=1 then
-                factionadd(0,fleet(fl).ty,3)
-                playerfightfleet(fl)
+                factionadd(0,fleet(fl).ty,3)                
+                assert(pPlayerfightfleet<>null)
+                pPlayerfightfleet(fl)
             endif
         else
             'Drop cargo
@@ -1339,11 +1421,73 @@ function do_dialog(no as short,e as _monster, fl as short) as short
     last=load_dialog("data/dialog" &no & ".csv",node())
     no=1
     do
-        display_ship(0)
+        pDisplayship(0)
         DbgPrint(node(no).effekt)
         no=node_menu(no,node(),e,fl)
         DbgPrint("Next node:"&no)
     loop until no=0
+    return 0
+end function
+
+
+function rndsentence(e as _monster) as short
+    dim as short aggr,intel
+    dim s as string
+    dim r as short
+    aggr=e.aggr
+    intel=e.intel
+    if aggr=0 then
+    r=rnd_range(1,8)
+        if r=1 then rlprint "It says: 'Die monster from another world!'"
+        if r=2 then rlprint "It says: 'You look tasty!'"
+        if r=3 then rlprint "It says: 'The metal gods of old demand your death!'"
+        if r=4 then rlprint "It says: 'Intruder! Flee or be destroyed'"
+        if r=5 then rlprint "It says: 'Your magic is powerfull but my arms are strong!'"
+        if r=6 then rlprint "It says: 'The time for talking is over!'"
+        if r=7 then rlprint "It says: 'I am going to kill you!'"
+        if r=8 then rlprint "It says: 'Resistance is useless!'"
+    endif
+    if aggr=1 then
+    r=rnd_range(1,11)
+        if r=1 then do_dialog(902,e,0)
+        if r=2 then rlprint "It says: 'You are not from around, are you?'"
+        if r=3 then rlprint "It says: 'Do you have a gift for me?'"
+        if r=4 then rlprint "It says: 'I always wondered if there were other beings out there.'"
+        if r=5 then rlprint "It says: 'You can't be from another world! Faster than light travel is impossible!'"
+        if r=6 then rlprint "It says: 'I haven't seen a creature like you before!'"
+        if r=7 then rlprint "It says: 'Are you here for the festival?'"
+        if r=8 then rlprint "It says: 'You can have my food if you want.'"
+        if r=9 then rlprint "It says: 'I always wondered if there were other beings like us up there.'"
+        if r=10 then 
+            if askyn("It says: 'I pay you 5000 zrongs if you tell me all your technological secrets.' Do you agree? (y/n)") then
+                placeitem(make_item(88),0,0,0,0,-1)
+                s="it hands you a bag of local currency while you"
+                if skill_test(player.science(location),st_hard-e.intel,"Science:") then
+                    r=rnd_range(1,6)
+                    if r=1 then s=s &" teach it some basic newtonian physics."
+                    if r=2 then s=s &" teach it some basic chemistry."
+                    if r=3 then s=s &" teach it some basic biology."
+                    if r=4 then s=s &" teach it some basic astronomy."
+                    if r=5 then s=s &" teach it some how to make fire."
+                    if r=6 then s=s &" teach it some how to make wheels."
+                else 
+                    s=s &" fail to teach it anything because you just can't find the terms it would understand."
+                endif
+                rlprint s
+            endif
+        endif
+        if r=11 then do_dialog(901,e,0)
+    endif
+    if aggr=2 then
+    r=rnd_range(1,7)
+        if r=1 then rlprint "It says: 'Help! Help! It's an alien invasion!'"
+        if r=2 then rlprint "It says: 'Don't kill me!'"
+        if r=3 then rlprint "It says: 'Don't point those things at me!'"
+        if r=4 then rlprint "It says: 'Don't eat me!'"
+        if r=5 then rlprint "It says: 'I surrender!'"
+        if r=6 then rlprint "It says: 'Have mercy!'"
+        if r=7 then rlprint "It says: 'Gods! Save me from the evil aliens!'"
+    endif
     return 0
 end function
 

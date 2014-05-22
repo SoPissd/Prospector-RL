@@ -11,6 +11,8 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
@@ -23,9 +25,6 @@
 #endif'test
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tArtifacts -=-=-=-=-=-=-=-
-
-Const lastartifact=25
-Dim Shared artflag(lastartifact) As Short
 
 declare function artifacts_html(artflags() as short) as string
 declare function list_artifacts(artflags() as short) as string
@@ -196,12 +195,12 @@ end function
 function artifact(c as short) as short
     dim as short a,b,d,e,f
     dim text as string
+    
     if c=1 then
         rlprint "It is an improved fuel system!"
         player.equipment(se_fuelsystem)=5
         player.fueluse=0.5
-    endif
-    
+    endif    
     
     if c=3 then
         rlprint "It is a very powerful portable scanner!"
@@ -234,7 +233,9 @@ function artifact(c as short) as short
                 f=d
             endif
         loop until f=d
-        recalcshipsbays
+        
+        assert(pRecalcshipsbays<>null)
+        pRecalcshipsbays()
         cls
     endif
     
@@ -275,8 +276,7 @@ function artifact(c as short) as short
     endif 
     if c=12 then
         rlprint "It's a ships cloaking device!"
-        placeitem(make_item(87),0,0,0,-1)
-        
+        placeitem(make_item(87),0,0,0,-1)        
     endif
     
     if c=13 then

@@ -11,6 +11,8 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
@@ -24,8 +26,8 @@
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tParty -=-=-=-=-=-=-=-
 
+declare function display_ship_weapons(m as short=0) as short
 declare function display_ship(show as byte=0) as short
-declare function recalcshipsbays() as short
 
 
 #endif'head
@@ -34,6 +36,7 @@ declare function recalcshipsbays() as short
 
 namespace tParty
 function init(iAction as integer) as integer
+	pDisplayShip = @display_ship
 	return 0
 end function
 end namespace'tParty
@@ -41,6 +44,53 @@ end namespace'tParty
 
 #define cut2top
 
+
+function display_ship_weapons(m as short=0) as short
+    dim as short a,b,bg,wl,ammo,ammomax,c,empty
+    dim as string text
+    set__color( 15,0)
+    draw string ((_mwx+1)*_fw1+_fw2,7*_fh2), "Weapons:",,font2,custom,@_col
+    set__color( 11,0)
+    wl=9
+    for a=1 to player.h_maxweaponslot
+        if m<>0 and a=m then
+            bg=1
+        else
+            bg=0
+        endif
+        if player.weapons(a).ammomax>0 then 
+            ammo+=player.weapons(a).ammo
+            ammomax+=player.weapons(a).ammomax
+        endif
+        text=weapon_text(player.weapons(a))
+        if text<>"" then
+            c += textbox(trim("{15}"&text), sidebar, (8+c)*_fh2, 20,,bg,1)+1
+        else
+            empty += 1
+        endif
+    next
+
+    if empty>0 then
+        set__color(15,0)
+        if empty=1 then draw string(sidebar,(8+c)*_fh2), "Empty turret",,Font2,custom,@_col
+        if empty>1 then draw string(sidebar,(8+c)*_fh2), empty &" empty turrets",,Font2,custom,@_col
+        c+=1
+    endif
+    c+=1
+    if ammo>0 then
+        set__color(15,0)
+        draw string(sidebar,(8+c)*_fh2), "Loadout ("& ammomax &"/"&ammo &"):",,Font2,custom,@_col
+        set__color(11,0)
+        draw string(sidebar,(9+c)*_fh2), ammotypename(player.loadout),,Font2,custom,@_col
+        draw string(sidebar,(10+c)*_fh2), "Damage: "&player.loadout+1,,Font2,custom,@_col
+        wl+=3
+    endif
+    set__color( 11,0)
+
+
+    wl=wl+c
+    return wl
+end function
 
 
 function display_ship(show as byte=0) as short
@@ -180,74 +230,6 @@ function display_ship(show as byte=0) as short
 end function
 
 
-function recalcshipsbays() as short
-    dim soll as short
-    dim haben as short
-    dim as short a,b,c
-    dim del as _crewmember
-    dim dif as short
-    
-    for c=0 to 9
-        for b=1 to 9
-            if player.weapons(b).desig="" then swap player.weapons(b),player.weapons(b+1) 
-            'if player.cargo(b).x<player.cargo(b+1).x then swap player.cargo(b),player.cargo(b+1)
-        next
-    next
-    player.fuelpod=0
-    player.crewpod=0
-    soll=player.h_maxcargo
-    for a=1 to 10
-        if a>player.h_maxweaponslot then player.weapons(a)=make_weapon(-1)
-        if player.weapons(a).desig="Cargo Bay" then soll=soll+1
-        if player.weapons(a).desig="Fuel Tank" then player.fuelpod=player.fuelpod+50
-        if trim(player.weapons(a).desig)="Crew Quarters" then player.crewpod=player.crewpod+10
-    next
-    for a=1 to 25
-        if player.cargo(a).x>0 then haben=haben+1
-    next
-    if soll>haben then
-        dif=soll-haben
-        do
-        for a=1 to 25
-            if player.cargo(a).x=0 and dif>0 then
-                player.cargo(a).x=1
-                dif=dif-1
-            endif
-        next
-        loop until dif<=0
-    endif
-    if haben>soll then
-        dif=haben-soll
-        for b=1 to 5
-            for a=1 to 25
-                if player.cargo(a).x=b and dif>0 then
-                    player.cargo(a).x=0 
-                    dif=dif-1
-                endif
-            next
-        next
-    endif
-    for c=1 to 9
-        for b=1 to 9
-          if player.cargo(b).x<player.cargo(b+1).x then swap player.cargo(b),player.cargo(b+1)
-      next        
-    next
-    if player.fuel>player.fuelmax+player.fuelpod then player.fuel=player.fuelmax+player.fuelpod
-    for c=6 to player.h_maxcrew+player.crewpod+player.cryo
-        if crew(c).hp<>0 then player.security=c
-    next
-    for c=5+player.cryo+(player.h_maxcrew+player.crewpod-5)*2+1 to 255
-        crew(c)=del
-    next    
-    player.addhull=0
-    for a=1 to 5
-        if player.weapons(a).made=87 then player.addhull=player.addhull+5
-    next
-    if player.hull>max_hull(player) then player.hull=max_hull(player)
-    return 0
-end function
-
-#define cut2bottom
 #endif'main
 
 #if (defined(main) or defined(test))

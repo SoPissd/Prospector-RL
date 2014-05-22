@@ -7,6 +7,8 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
@@ -20,6 +22,18 @@
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+
+Enum movetypes
+    mt_walk
+    mt_hover
+    mt_fly
+    mt_flyandhover
+    mt_teleport
+    mt_climb 'Can move across mountains, but not water (For spiders)
+    mt_dig 'Can move through walls, but not water (For worms)
+    mt_ethereal 'Can move through anything
+    mt_fly2
+End Enum
 
 Type _monster
     e As _energycounter
@@ -128,11 +142,15 @@ Dim Shared lastcagedmonster As UByte
 Dim Shared cagedmonster(128) As _monster
 Dim Shared awayteam As _monster
 
+
+type tMakemonster as function(a as short, map as short, forcearms as byte=0) as _monster
+dim Shared pMakemonster as tMakemonster
+
+
 #endif'types
 
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tMonster -=-=-=-=-=-=-=-
-declare function caged_monster_text() as string
 
 #endif'head
 #ifdef main
@@ -144,17 +162,6 @@ function init(iAction as integer) as integer
 end function
 end namespace'tMonster
 
-
-function caged_monster_text() as string
-    dim i as short
-    dim as string t
-    t="Captured lifeforms: "&lastcagedmonster &"|"
-    for i=1 to lastcagedmonster
-        t=t &"|"&cagedmonster(i).sdesc
-        if i<lastcagedmonster and cagedmonster(i).c.s<>cagedmonster(i+1).c.s or i=lastcagedmonster then t=t &" in a "&item(cagedmonster(i).c.s).desig &"."
-    next
-    return t
-end function
 
 #endif'main
 

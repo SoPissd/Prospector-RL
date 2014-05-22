@@ -1,8 +1,5 @@
 'tSpacecombat.
 '
-'defines:
-'spacecombat=9, playerfightfleet=6
-'
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -32,11 +29,13 @@ declare function playerfightfleet(f as short) as short
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tSpacecombat -=-=-=-=-=-=-=-
 
-namespace tSpacecombat
+namespace nsSpacecombat
 function init(iAction as integer) as integer
+	pPlayerfightfleet= @playerfightfleet
+	pSpacecombat= @spacecombat
 	return 0
 end function
-end namespace'tSpacecombat
+end namespace'nsSpacecombat
 
 
 function spacecombat(byref atts as _fleet,ter as short) as short

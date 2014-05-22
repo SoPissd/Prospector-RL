@@ -552,7 +552,7 @@ function Declarepublicfunctions(ByRef aSource as tSource) as String
 			Wend
 			if j<len(a1) then a1=mid(a1,1,j)
 			'
-			a1="'private function "+a1
+			a1="'declare function "+a1
 			a0=a0+a1+chr(13)+chr(10)
 		EndIf
 	Wend

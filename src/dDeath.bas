@@ -31,8 +31,8 @@ Dim Shared endstory As String
 declare function messages() as short
 declare function death_message(iBg as short,iShowMS as integer=0) as short
 
-'private function get_death() as string
-'private function death_text() as string
+'declare function get_death() as string
+'declare function death_text() as string
 
 #endif'head
 #ifdef main
@@ -122,6 +122,7 @@ function get_death() as string
     if player.dead=32 then death="Died in battle with the "&civ(0).n 
     if player.dead=33 then death="Died in battle with the "&civ(1).n
 #else
+#print "dDeath.bas: compiled without access to civ()"
     if player.dead=32 then death="Died in battle with the <civ(0).n>" 
     if player.dead=33 then death="Died in battle with the <civ(1).n>"
 #endif    

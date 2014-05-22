@@ -28,8 +28,8 @@ declare function dplanet(p as _planet,orbit as short,scanned as short,slot as sh
 declare function bioreport(slot as short) as short
 declare function logbook() as short
 
-'private function lb_listmake(lobk() as string, lobn() as short, lobc() as short,lobp()as _cords) as short
-'private function lb_filter(lobk() as string, lobn() as short, lobc() as short,lobp() as _cords,last as short) as short
+'declare function lb_listmake(lobk() as string, lobn() as short, lobc() as short,lobp()as _cords) as short
+'declare function lb_filter(lobk() as string, lobn() as short, lobc() as short,lobp() as _cords,last as short) as short
 
 #endif'head
 #ifdef main

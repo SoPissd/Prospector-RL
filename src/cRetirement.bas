@@ -30,13 +30,13 @@
 '     -=-=-=-=-=-=-=- HEAD: tRetirement -=-=-=-=-=-=-=-
 
 
-'private function tRetirement
-'private function tRetirement
-'private function hasassets() as short
-'private function sellassetts () as string
-'private function es_living(byref pmoney as single) as string
-'private function es_title(byref pmoney as single) as string
-'private function es_part1() as string
+'declare function tRetirement
+'declare function tRetirement
+'declare function hasassets() as short
+'declare function sellassetts () as string
+'declare function es_living(byref pmoney as single) as string
+'declare function es_title(byref pmoney as single) as string
+'declare function es_part1() as string
 
 #endif'head
 

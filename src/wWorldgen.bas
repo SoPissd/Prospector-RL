@@ -26,8 +26,8 @@
 
 declare function make_spacemap(iBg as short=0) as short
 
-'private function findcompany(c as short) as short
-'private function create_spacemap() as short
+'declare function findcompany(c as short) as short
+'declare function create_spacemap() as short
 
 #endif'head
 #ifdef main
@@ -51,6 +51,7 @@ function findcompany(c as short) as short
     return 0
 end function
 
+Dim Shared scount(10) As Short
 
 function create_spacemap(iBg as short=0) as short
     dim as short a,f,b,c,d,e,astcou,gascou,x,y,i

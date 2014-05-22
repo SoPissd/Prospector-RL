@@ -67,17 +67,17 @@ End Type
 
 declare function play_poker(st as short) as short
 
-'private function poker_eval(cardin() as integer, acehigh as short,knowall as short) as _handrank
-'private function better_hand(h1 as _handrank,h2 as _handrank) as short
-'private function ace_highlo_eval(c() as integer,knowall as short) as _handrank
-'private function draw_poker_table(p() as _pokerplayer,reveal as short=0,winner as short=0,r as _pokerrules) as short
-'private function poker_next(i as short,p() as _pokerplayer) as short
-'private function sort_cards(card() as integer,knowall as short=0) as short
-'private function card_shuffle(card() as integer) as short
-'private function player_eval(p() as _pokerplayer,i as short,rules as _pokerrules) as short
-'private function highest_pot(p() as _pokerplayer) as short
-'private function poker_winner(p() as _pokerplayer) as short
-'private function swap_card(cardin() as integer) as short
+'declare function poker_eval(cardin() as integer, acehigh as short,knowall as short) as _handrank
+'declare function better_hand(h1 as _handrank,h2 as _handrank) as short
+'declare function ace_highlo_eval(c() as integer,knowall as short) as _handrank
+'declare function draw_poker_table(p() as _pokerplayer,reveal as short=0,winner as short=0,r as _pokerrules) as short
+'declare function poker_next(i as short,p() as _pokerplayer) as short
+'declare function sort_cards(card() as integer,knowall as short=0) as short
+'declare function card_shuffle(card() as integer) as short
+'declare function player_eval(p() as _pokerplayer,i as short,rules as _pokerrules) as short
+'declare function highest_pot(p() as _pokerplayer) as short
+'declare function poker_winner(p() as _pokerplayer) as short
+'declare function swap_card(cardin() as integer) as short
 
 #endif'head
 #ifdef main

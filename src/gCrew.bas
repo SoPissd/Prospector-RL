@@ -1,14 +1,5 @@
 'tCrew.
 '
-'defines:
-'SetCaptainsprite=2, character_name=0, add_talent=44, tohit_gun=1,
-', tohit_close=1, crew_bio=1, count_crew=0, augment_text=0, skill_text=0,
-', crew_html=2, crew_text=1, low_morale_message=2, Crewblock=0,
-', countdeadofficers=1, get_item_list=0, items_table=0, equipment_value=4,
-', list_inventory=11, captain_sprite=5, item_assigned=0, first_unused=0,
-', haggle_=21, paystuff=60, buy_weapon=2, bunk_multi=1, changemoral=4,
-', is_passenger=1
-'
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -17,6 +8,8 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
@@ -24,12 +17,83 @@
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tCrew -=-=-=-=-=-=-=-
 #undef intest
+
+#include "file.bi"
+#include "../utl/uDefines.bas"
+#include "../utl/uModule.bas"
+#include "../utl/uDefines.bas"
+#include "../utl/uDebug.bas"
+#include "../utl/uRng.bas"
+#include "../utl/uCoords.bas"
+#include "../utl/uIndex.bas"
+#include "../utl/uMath.bas"
+#include "../utl/uScreen.bas"
+#include "../utl/uColor.bas"
+#include "../utl/uUtils.bas"
+#include "../utl/uTime.bas"
+#include "../utl/uVersion.bas"
+#include "../utl/uConsole.bas"
+#include "../utl/uPrint.bas"
+#include "../utl/uTextbox.bas"
+#include "../utl/uFile.bas"
+#include "../utl/uGraphics.bas"
+#include "../utl/uMainmenu.bas"
+#include "gUtils.bas"
+#include "vTiledata.bas"
+#include "vTiles.bas"
+#include "vSettings.bas"
+#include "sStars.bas"
+#include "gEnergycounter.bas"
+#include "gWeapon.bas"
+#include "pMonster.bas"
+#include "sCoords.bas"
+#include "sPortal.bas"
+#include "cItems.bas"
+#include "cItem.bas"
+#include "gShip.bas"
+#include "gMenu.bas"
+#include "vPlayer.bas"
+#include "gBasis.bas"
+#include "wMakeship.bas"
+#include "cRetirement.bas"
+#include "vInput.bas"
+#include "gFaction.bas"
+#include "gCivilisation.bas"
+#include "pPlanet.bas"
+#include "gCommandstring.bas"
+#include "cCargo.bas"
+#include "dSpacemap.bas"
+#include "gFleet.bas"
+#include "dPlanetmap.bas"
+#include "cModifyitem.bas"
+#include "wMakeitem.bas"
+#include "wMakePlanet.bas"
+#include "wSpecialPlanet.bas"
+'#include "pRadio.bas"
+#include "cShops.bas"
+#include "cShipyard.bas"
+#include "cArtifacts.bas"
+#include "cQuest.bas"
+#include "cPeople.bas"
+#include "pDialog.bas"
+#include "gCommunicate.bas"
+#include "cTrading.bas"
+#include "gPirates.bas"
+#include "cQuests.bas"
+#include "gFleet.bas"
+
+'#include "pAwayteam.bas"
+
+'#include "dParty.bas"
+
+
 #define test
 #endif'test
 
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+
 Type _crewmember
     ICON As String*1
     n As String*20
@@ -66,14 +130,18 @@ Type _crewmember
 End Type
 
 Dim Shared crew(255) As _crewmember
-Dim Shared As Byte startingweapon
+Dim Shared startingweapon As Byte 
 Dim Shared crew_desig(16) As String
+
+Dim Shared itemcat(11) As String  
+Dim Shared unattendedtribbles As Short
+
+
 #endif'types
 
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tCrew -=-=-=-=-=-=-=-
 
-declare function SetCaptainsprite(nr as Byte) as short
 declare function add_talent(cr as short, ta as short, value as single) as single
 declare function tohit_gun(a as short) as short
 declare function tohit_close(a as short) as short
@@ -84,23 +152,44 @@ declare function low_morale_message() as short
 declare function countdeadofficers(sMax as short) as short
 declare function equipment_value() as integer
 declare function list_inventory() as string
-declare function captain_sprite() as short
-declare function haggle_(way as string) as single
-declare function buy_weapon(st as short) as short
+
 declare function bunk_multi() as single
 declare function changemoral(value as short, where as short) as short
+
 declare function is_passenger(i as short) as short
+declare function add_passenger(n as string,typ as short, price as short, bonus as short, target as short, sTime as short, gender as short) as short
+
 declare function character_name(byref gender as byte) as string
 declare function count_crew(crew() as _crewmember) as short
-declare function get_item_list(invit() as _items, invnit()as short,ty as short=0,ty2 as short=0,ty3 as short=0,ty4 as short=0,noequip as short=0) as short
-declare function items_table() as string
-declare function skill_text(c as _crewmember) as string
 
+declare function get_item_list(invit() as _items, invnit()as short,ty as short=0,ty2 as short=0,ty3 as short=0,ty4 as short=0,noequip as short=0) as short
+declare function get_item(ty as short=0,ty2 as short=0,byref num as short=0,noequ as short=0) as short
+declare function items_table() as string
+
+declare function skill_text(c as _crewmember) as string
+declare function upgradehull(t as short,byref s as _ship,forced as short=0) as short
+declare function buy_ship(st as short,ds as string,pr as short) as short
+declare function used_ships() as short
+declare function shipstatus(heading as short=0) as short
+declare function recalcshipsbays() as short
+
+declare function SetCaptainsprite(nr as Byte) as short
+declare function captain_sprite() as short
+declare function CaptainName() as string
+declare function EnjoyConcert() as Integer
+declare function Crewblock() as string
+
+declare function haggle_(way as string) as single
+declare function merchant() as single
 
 declare function augment_text(c as _crewmember) as string
-declare function Crewblock() as string
-'private function item_assigned(i as short) as short
-'private function first_unused(i as short) as short
+declare function infect(a as short,dis as short) as short
+
+declare function rnd_crewmember(onship as short=0) as short
+declare function eris_does() as short
+
+'declare function item_assigned(i as short) as short
+'declare function first_unused(i as short) as short
 
 #endif'head
 #ifdef main
@@ -108,7 +197,31 @@ declare function Crewblock() as string
 
 namespace tCrew
 function init(iAction as integer) as integer
-	return 0
+	pHaggle= @haggle_
+	pMerchant= @merchant
+
+	pCrewblock= @Crewblock
+	pBuyShip= @buy_ship
+	pIsPassenger= @is_passenger
+	pAddpassenger= @add_passenger
+	pCaptainName= @CaptainName
+	pEnjoyConcert= @EnjoyConcert
+	pGetitem= @get_item
+
+    itemcat(0)="None"
+    itemcat(1)="Transport"
+    itemcat(2)="Ranged Weapons"
+    itemcat(3)="Armor"
+    itemcat(4)="Close combat weapons"
+    itemcat(5)="Medical supplies"
+    itemcat(6)="Grenades"
+    itemcat(7)="Artwork"
+    itemcat(8)="Resources"
+    itemcat(9)="Equipment"
+    itemcat(10)="Space ship equipment"
+    itemcat(11)="Miscellaneous"
+
+ 	return 0
 end function
 end namespace'tCrew
 
@@ -121,6 +234,48 @@ function SetCaptainsprite(nr as Byte) as short
 	crew(1).story(3)=nr
 	return 0
 End function
+    	
+function CaptainName() as string
+	return crew(1).n
+End function
+    	
+
+function rnd_crewmember(onship as short=0) as short
+    dim pot(128) as short
+    dim as short p,a
+    for a=0 to 128
+        if crew(a).hp>0 and crew(a).onship=onship then
+            p+=1
+            pot(p)=a
+        endif
+    next
+    return pot(rnd_range(1,p))
+end function
+
+function UnAugmentRandomCrewmember() as string
+	dim as integer a,b
+    a=rnd_crewmember
+    for b=1 to 12
+        crew(a).augment(b)=0
+    next
+    return crew(a).n
+end function     
+    	
+
+function EnjoyConcert() as Integer
+	dim as integer a,h,hc	
+    for a=2 to 128
+        if crew(a).hp>0 and rnd_range(1,20)<12+add_talent(1,4,5) then 
+            h=a
+            hc+=1
+            crew(a).morale+=rnd_range(1,4)+add_talent(1,4,1)
+        endif
+    next
+    rlprint "You enjoy a show with your crew."
+    if hc>1 then rlprint "Some in your crew seem to enjoy it.",c_gre
+    if hc=1 then rlprint crew(h).n &" seems to enjoy it.",c_gre
+    return hc	
+End Function
     	
 
 function character_name(byref gender as byte) as string
@@ -241,17 +396,19 @@ function crew_bio(i as short) as string
         next
 
         for a=1 to 25
-            if crew(i).talents(a)>0 then t=t &" |"&talent_desc(a)
+            if crew(i).talents(a)>0 then t=t &" |"& talent_desc(a)
         next
+        
 #if __FB_DEBUG__
         if debug=1 then
             if crew(i).story(10)=0 then
                 t=t & "W"
             else
-                t=t &"M"
+                t=t & "M"
             endif
         endif
 #endif
+
     endif
     if crew(i).target<>0 then t="Passenger for station "&crew(i).target &"."
     return t
@@ -903,6 +1060,82 @@ end function
 
 
 
+function get_item(ty as short=0,ty2 as short=0,byref num as short=0,noequ as short=0) as short
+    dim as short last,i,c,j
+    dim as _items inv(1024)
+    dim as short invn(1024)
+    dim as string key,helptext
+    static as short marked=0
+    
+    i=1
+    DbgPrint("Getting itemlist:ty:"&ty &"ty2"&ty2)
+    last=get_item_list(inv(),invn(),,,,,noequ)
+    if ty<>0 or ty2<>0 then
+        marked=1
+        do
+            if invn(i)<0 then
+                for j=i to last
+                    invn(j)=invn(j+1)
+                    inv(j)=inv(j+1)
+                next
+                c+=1
+            endif
+            if inv(i).ty<>ty and inv(i).ty<>ty2 and inv(i).ty<>0 then
+                DbgPrint("Removing "&inv(i).desig)
+                for j=i to last
+                    invn(j)=invn(j+1)
+                    inv(j)=inv(j+1)
+                next
+                c+=1
+            else
+                i+=1
+            endif
+        loop until i>last
+        DbgPrint("removed "&c &" items" &last-c)
+        last-=c
+        if last=1 then return inv(last).w.s
+        if last<=0 then return -1
+    endif
+    if marked=0 then
+        do
+            marked+=1
+            if marked>last then marked=0
+        loop until invn(marked)>0
+    endif
+    do
+        display_item_list(inv(),invn(),marked,last,2,2)
+        helptext=inv(marked).describe
+        if inv(marked).ty=26 then helptext=helptext & caged_monster_text
+        'helptext = ""&marked &" " &last
+        c=textbox(helptext,22,2,25,11,1)
+        key=uConsole.keyinput(key_north &key_south)
+        for i=0 to c
+            draw string (22*_fw1,2*_fh1+i*_fh2),space(25),,font2,custom,@_col
+        next
+        if key=key_north then
+            do
+                marked-=1
+                if marked<1 then marked=last
+            loop until invn(marked)>0
+        endif
+        if key=key_south then
+            do
+                marked+=1
+                if marked>last then marked=1
+            loop until invn(marked)>0
+        endif
+    loop until key=key__enter or key=key__esc
+    if key=key__enter then
+        
+        num=invn(marked)
+        return inv(marked).w.s
+    else
+        return -1
+    endif
+end function
+
+
+
 function items_table() as string
     dim as string t
     dim as _items inv(1024)
@@ -1034,86 +1267,6 @@ function haggle_(way as string) as single
 end function
 
 
-function buy_weapon(st as short) as short
-    dim as short a,b,c,d,i,mod1,mod2,mod3,mod4,ex
-    dim as short last
-    dim it as _items 
-    dim weapons as string
-    dim key as string
-    dim wmenu as string
-    dim help as string
-    do
-        i=0
-        for a=1 to 20
-            if makew(a,st)<>0 then i+=1
-        next
-        weapons="Weapons:"
-        help=""
-        for a=1 to i
-            b=_swidth-len(trim(wsinv(a).desig))-len(credits(wsinv(a).p*haggle_("down")))
-            weapons=weapons &"/ " &trim(wsinv(a).desig) & space(b) &credits(wsinv(a).p*haggle_("down"))&" Cr."
-            help=help &"/"&make_weap_helptext(wsinv(a))
-        next
-        
-       
-        
-        weapons=weapons &"/Exit"
-        help=help &" /"
-        last=i
-        ex=i+1
-        
-        tScreen.set(0)
-        set__color(11,0)
-        cls
-        display_ship()        
-        rlprint ""
-        d=textmenu(bg_parent,weapons,help,2,2)
-        tScreen.update()
-        if d>=1 and d<=last then
-            b=player.h_maxweaponslot
-            wmenu="Weapon Slot/"
-            for a=1 to b
-                if player.weapons(a).desig="" then
-                    wmenu=wmenu & "-Empty-/"
-                else
-                    wmenu=wmenu & player.weapons(a).desig & "/"
-                endif
-            next
-            wmenu=wmenu+"Exit"
-            b=b+1            
-            c=textmenu(bg_parent,wmenu)
-            if c<b then
-                if player.weapons(c).desig<>"" and d<>5 then 
-                    if not(askyn("Do you want to replace your "&player.weapons(c).desig &"(y/n)")) then c=b
-                endif
-                if c<b then
-                    if paystuff(wsinv(d).p*haggle_("down")) then
-                        if wsinv(d).made<=14 then
-                            rlprint "You buy "&add_a_or_an(wsinv(d).desig,0) &"."
-                        else
-                            rlprint "You buy "&wsinv(d).desig &"."
-                        endif
-                        player.weapons(c)=wsinv(d)
-                        for i=d to last
-                            wsinv(d)=wsinv(d+1)
-                            makew(d,st)=makew(d+1,st)
-                        next
-                        wsinv(last)=make_weapon(0)
-                        makew(last,st)=0
-                    endif
-                endif
-            endif
-        endif
-        
-           
-        recalcshipsbays
-        
-    loop until d=ex
-                      
-    return 0
-end function
-
-
 function bunk_multi() as single
     dim as short b,here,sMax
     sMax=(player.h_maxcrew+player.crewpod)+player.cryo
@@ -1163,7 +1316,534 @@ function is_passenger(i as short) as short
     next
     return 0
 end function
-#define cut2bottom
+
+
+function upgradehull(t as short,byref s as _ship,forced as short=0) as short
+    dim as short f,flg,a,b,cargobays,weapons,tfrom,tto,m
+    dim n as _ship
+    dim d as _crewmember
+    dim as string ques
+    dim as string word(10)
+    dim as string text
+    if t<20 then
+        n=gethullspecs(t,"data/ships.csv")
+    else
+        n=gethullspecs(t-22,"data/customs.csv")
+    endif
+    for a=1 to 10
+        if s.cargo(a).x>0 then cargobays=cargobays+1
+        if s.weapons(a).desig<>"" then weapons=weapons+1
+    next
+
+    'compare
+    if s.h_maxhull>n.h_maxhull then ques=ques &"The new ship will have a lower maximum armor capacity than your current one. "
+    if s.engine>n.h_maxengine and s.engine<6 then ques=ques &"You will need to downgrade your engine for the new hull. "
+    if s.shieldmax>n.h_maxshield then ques=ques &"You will need to downgrade your shield generators for the new hull."
+    if s.sensors>n.h_maxsensors and s.sensors<6 then ques=ques &"You will need to downgrade your sensors for the new hull."
+    if cargobays>n.h_maxcargo then ques=ques &"The new ship will have less cargo space. "
+    if s.h_maxcrew>n.h_maxcrew then ques=ques &"The new ship will have less space for crewmen. "
+    if s.h_maxweaponslot>n.h_maxweaponslot then ques=ques &"The new ship will have fewer weapon turrets. "
+    if s.h_maxfuel>n.h_maxfuel then ques=ques &"The new ship will have a lower fuel capacity than your current one."
+    if forced=1 then
+        ques=""
+        flg=-1
+    endif
+    if ques<>"" then
+        rlprint ques,14 
+        if askyn("Do you really want to transfer to the new hull?") then 
+            flg=-1
+        else
+            flg=0
+        endif
+    else
+        flg=-1
+    endif
+    if flg=-1 then
+        s.ti_no=n.h_no
+        if s.ti_no=18 then s.ti_no=17 'ASCS is one step lower
+        if s.ti_no>18 then s.ti_no=9
+        s.h_no=n.h_no
+        s.h_price=n.h_price
+        s.h_desig=n.h_desig
+        s.h_sdesc=n.h_sdesc
+        s.h_maxhull=n.h_maxhull
+        s.h_maxengine=n.h_maxengine
+        s.h_maxsensors=n.h_maxsensors
+        s.h_maxshield=n.h_maxshield
+        s.h_maxcargo=n.h_maxcargo
+        s.h_maxcrew=n.h_maxcrew
+        if s.engine<6 and s.engine>s.h_maxengine then s.engine=s.h_maxengine
+        if s.sensors<6 and s.sensors>s.h_maxsensors then s.sensors=s.h_maxsensors
+        if s.shieldmax>s.h_maxshield then s.shieldmax=s.h_maxshield
+        
+        s.h_maxweaponslot=n.h_maxweaponslot
+        s.h_maxfuel=n.h_maxfuel
+        if s.hull=0 then s.hull=s.h_maxhull*0.8
+        if s.hull>s.h_maxhull then s.hull=s.h_maxhull
+        if s.fuel=0 or s.fuel>s.h_maxfuel then s.fuel=s.h_maxfuel
+        if s.h_maxweaponslot<weapons then
+            poolandtransferweapons(n,s)
+'            do
+'                tfrom=(s.h_maxweaponslot -tto)
+'                text="Chose weapons to transfer ("&tfrom &"):"
+'                b=1
+'                for a=1 to 10
+'                    if s.weapons(a).desig<>"" then 
+'                        text=text &"/"&s.weapons(a).desig
+'                        b=b+1
+'                    endif
+'                next
+'                text=text &"/Exit"
+'                a=menu(text)
+'                if a<b then
+'                    tto=tto+1
+'                    n.weapons(tto)=s.weapons(a)
+'                    rlprint "Transfering "&s.weapons(a).desig &" to slot "&tto
+'                    weapons=weapons-1
+'                endif
+'                if a=b then
+'                    if not(askyn("Do you really want to lose your remaining weapons(y/n)?")) then a=0
+'                endif
+'            loop until a=b or tto=s.h_maxweaponslot
+'            for a=0 to 10
+'                s.weapons(a)=n.weapons(a)
+'            next
+        endif
+        
+        recalcshipsbays
+        
+        if s.security>s.h_maxcrew+player.crewpod+player.cryo then
+            s.security=s.h_maxcrew
+            for a=s.h_maxcrew+player.crewpod+player.cryo to 255
+                crew(a)=d
+            next
+        endif
+        s.fuelmax=s.h_maxfuel+s.fuelpod
+    endif
+    return flg
+end function
+
+
+function buy_ship(st as short,ds as string,pr as short) as short
+
+    if paystuff(pr) then
+        if st<>player.h_no then
+            if upgradehull(st,player)=-1 then
+                rlprint "you buy "&add_a_or_an(ds,0)&" hull"
+                return -1
+            else
+                player.money=player.money+pr'Just returning the money
+            endif             
+        else
+            rlprint "You already have that hull."
+            player.money=player.money+pr'Just returning the money
+        endif
+    endif
+    return 0
+end function
+
+
+function used_ships() as short
+    dim as short yourshipprice,i,a,yourshiphull,price(8),l
+    dim s as _ship
+    dim as single pmod
+    dim as string mtext,htext,desig(8)
+    do
+        yourshiphull=player.h_no
+        s=gethullspecs(yourshiphull,"data/ships.csv")
+        yourshipprice=s.h_price*.1
+        mtext="Used ships (" &credits(yourshipprice)& " Cr. for your ship.)/"
+        htext="/"
+        for i=1 to 8
+            pmod=(80-usedship(i).y*3)/100
+            s=gethullspecs(usedship(i).x,"data/ships.csv")
+            l=len(trim(s.h_desig))+len(credits(s.h_price*pmod))
+            mtext=mtext &s.h_desig &space(45-l)&credits(s.h_price*pmod) &" Cr./"
+            price(i)=s.h_price*pmod-yourshipprice
+            desig(i)=s.h_desig
+            htext=htext &makehullbox(s.h_no,"data/ships.csv") &"/"
+        next
+        mtext=mtext &"Bargain bin/Sell equipment/Exit"
+        a=textmenu(bg_shiptxt,mtext,htext,2,2)
+        if a>=1 and a<=8 then
+            if buy_ship(a,desig(a),price(a)) then
+                usedship(a).x=yourshiphull
+                player.cursed=usedship(a).y
+                usedship(a).y=0
+            endif
+        endif
+        if a=9 then shop(30,0.8,"Bargain bin")
+        if a=10 then buysitems("","",0,.5)
+    loop until a=11 or a=-1        
+    return 0
+end function
+
+
+function shipstatus(heading as short=0) as short
+'    dim as short c1,c2,c3,c4,c5,c6,c7,c8,sick,offset,mjs,filter
+'    dim as short a,b,c,lastinv,set,tlen,cx,cy
+'    dim as string text,key
+'    dim inv(256) as _items
+'    dim invn(256) as short
+'    dim cargo(12) as string
+'    dim cc(12) as short
+    dim as short cw,turrets,a,offset
+    set__color( 0,0)
+    cls
+    do
+        cw=(tScreen.x-16*_fw2)/3.5
+        cw=cw/_fw2
+        if heading=0 then textbox("{15}Name: {11}"&player.desig &"{15} Type:{11}" &player.h_desig,1,0,40)
+
+        textbox(shipstatsblock &"||" & weapon_string &"|" & cargo_text ,1,2,cw)
+
+        textbox(Crewblock(),(2+cw)*_fw2/_fw1,2,16)
+
+        textbox(list_artifacts(artflag()),(2+18+cw)*_fw2/_fw1,2,cw)
+
+        if heading=0 then
+            textbox(list_inventory,(2+18+2*cw)*_fw2/_fw1,2,cw,,,,,offset)
+
+            no_key=uConsole.keyinput()
+            if no_key="+" then offset+=1
+            if no_key="-" then offset-=1
+        endif
+    loop until not(no_key="+" or no_key="-")
+    cls
+    return 0
+end function
+
+
+function recalcshipsbays() as short
+    dim soll as short
+    dim haben as short
+    dim as short a,b,c
+    dim del as _crewmember
+    dim dif as short
+    
+    for c=0 to 9
+        for b=1 to 9
+            if player.weapons(b).desig="" then swap player.weapons(b),player.weapons(b+1) 
+            'if player.cargo(b).x<player.cargo(b+1).x then swap player.cargo(b),player.cargo(b+1)
+        next
+    next
+    player.fuelpod=0
+    player.crewpod=0
+    soll=player.h_maxcargo
+    for a=1 to 10
+        if a>player.h_maxweaponslot then player.weapons(a)=make_weapon(-1)
+        if player.weapons(a).desig="Cargo Bay" then soll=soll+1
+        if player.weapons(a).desig="Fuel Tank" then player.fuelpod=player.fuelpod+50
+        if trim(player.weapons(a).desig)="Crew Quarters" then player.crewpod=player.crewpod+10
+    next
+    for a=1 to 25
+        if player.cargo(a).x>0 then haben=haben+1
+    next
+    if soll>haben then
+        dif=soll-haben
+        do
+        for a=1 to 25
+            if player.cargo(a).x=0 and dif>0 then
+                player.cargo(a).x=1
+                dif=dif-1
+            endif
+        next
+        loop until dif<=0
+    endif
+    if haben>soll then
+        dif=haben-soll
+        for b=1 to 5
+            for a=1 to 25
+                if player.cargo(a).x=b and dif>0 then
+                    player.cargo(a).x=0 
+                    dif=dif-1
+                endif
+            next
+        next
+    endif
+    for c=1 to 9
+        for b=1 to 9
+          if player.cargo(b).x<player.cargo(b+1).x then swap player.cargo(b),player.cargo(b+1)
+      next        
+    next
+    if player.fuel>player.fuelmax+player.fuelpod then player.fuel=player.fuelmax+player.fuelpod
+    for c=6 to player.h_maxcrew+player.crewpod+player.cryo
+        if crew(c).hp<>0 then player.security=c
+    next
+    for c=5+player.cryo+(player.h_maxcrew+player.crewpod-5)*2+1 to 255
+        crew(c)=del
+    next    
+    player.addhull=0
+    for a=1 to 5
+        if player.weapons(a).made=87 then player.addhull=player.addhull+5
+    next
+    if player.hull>max_hull(player) then player.hull=max_hull(player)
+    return 0
+end function
+
+
+function merchant() as single
+    dim as single m
+    m=(70+5*crew(1).talents(6))/100
+    if m>0.9 then merchant=0.9
+    return m
+end function
+
+function infect(a as short,dis as short) as short
+    dim as short roll
+    roll=rnd_range(1,6) +rnd_range(1,6)+player.doctor(location)
+    if roll<maximum(3,dis) and crew(a).hp>0 and crew(a).hpmax>0 then
+        crew(a).disease=dis
+        crew(a).oldonship=crew(a).onship
+        crew(a).duration=disease(dis).duration
+        crew(a).incubation=disease(dis).incubation
+        if dis>player.disease then player.disease=dis
+    endif
+    return 0
+end function
+
+
+
+function add_passenger(n as string,typ as short, price as short, bonus as short, target as short, sTime as short, gender as short) as short
+    dim c as short
+    assert(pFreecrewslot<>null)
+    c=pFreecrewslot()
+    if c>0 then
+        crew(c).n=n
+        crew(c).icon="p"
+        crew(c).equips=1
+        crew(c).hpmax=1
+        crew(c).hp=1
+        crew(c).typ=typ
+        crew(c).target=target
+        crew(c).time=sTime
+        crew(c).price=price
+        crew(c).bonus=bonus
+        crew(c).onship=1
+        crew(c).morale=150
+        crew(c).story(10)=gender
+        if rnd_range(1,100)<5 then
+            infect(c,rnd_range(1,12))
+        endif
+    else
+        rlprint "You don't have enough room"
+    endif
+    return 0
+end function
+
+
+
+function eris_does() as short
+    dim as short roll,roll2,a,noa,b
+    dim en as _fleet
+    dim weap as _weap
+    dim awayteam as _monster
+    if rnd_range(1,100)<33 then
+        if planets(specialplanet(1)).visited<>0 then
+            if askyn("Eris asks: 'Do you know where apollo is?' Do you want to tell her (y/n)") then
+                for a=3 to lastfleet
+                    if fleet(a).ty=10 then
+                        fleet(a).t=4068
+                        b=sysfrommap(specialplanet(1))
+                        targetlist(4068).x=map(b).c.x
+                        targetlist(4068).y=map(b).c.y
+                    endif
+                next
+                return 0
+            endif
+            roll=rnd_range(1,66)
+            select case roll
+                case roll<=33
+                    rlprint "Eris decides to punish you for your insolence"
+                case roll>=66 
+                    rlprint "Eris decides to show you how she could reward you for the information"
+                case else
+                    rlprint "Eris doesn't seem to care"
+            end select
+            
+        else
+            roll=rnd_range(1,100)
+        endif
+        select case roll
+        case roll<=33 'Eris does bad stuff
+            select case rnd_range(1,100)
+                case 0 to 10
+                    select case rnd_range(1,100)
+                    case 0 to 33
+                        rlprint "Eris looks at your engine",15
+                        if player.engine>1 then player.engine-=1
+                    case 34 to 66
+                        rlprint "Eris looks at your sensors",15
+                        if player.engine>0 then player.sensors-=1
+                    case else
+                        rlprint "Eris looks at your shields",15
+                        if player.shieldmax>0 then player.shieldmax-=1
+                    end select
+                case 11 to 20
+                    rlprint "Eris examines your hull",15
+                    if player.hull>0 then player.hull-=1
+                    player.h_maxhull-=1
+            	case 21 to 30
+            		
+				    rlprint  "Eris looks at "& pUnAugmentRandomCrewmember() &" 'Oh you are ugly!'",15
+            	case 31 to 40
+                    roll2=rnd_range(1,6)
+                    rlprint "Eris yells 'Fight for my amusement'",15
+                    no_key=uConsole.keyinput()
+                    noa=1
+                    if roll2=4 then noa=rnd_range(1,6) +rnd_range(1,6)
+                    if roll2=5 then noa=rnd_range(1,3)
+                    if roll2=6 then noa=rnd_range(1,2)
+                    for a=1 to noa
+                        en.ty=9
+                        en.mem(a)=make_ship(23+roll)
+                    next
+                    assert(pSpacecombat<>null)
+                    pSpacecombat(en,rnd_range(1,11))
+                case 41 to 50
+                    rlprint "Eris shows you that you have a fuel leak",15
+                    player.fuel-=rnd_range(1,100)
+                    if player.fuel<15 then player.fuel=15
+                case 51 to 60
+                    rlprint "Eris informs you that it is not nice to point guns at people",15
+                    player.weapons(1)=weap
+                case 61 to 70
+                    rlprint "Eris asks 'Have you got some change?",15
+                    player.money-=rnd_range(10,1000)
+                    if player.money<0 then player.money=0
+                case 71 to 80
+                    rlprint "Eris takes a stroll through the cargo hold.",15
+                    for a=1 to 5
+                        if player.cargo(a).x>1 then player.cargo(a).x=1
+                    next
+                case 81 to 90
+                    rlprint "Eris thinks your ship is too big",15
+                    upgradehull(rnd_range(1,4),player,1)
+                case 91 to 95
+                    rlprint "Eris says 'You are buff!",15
+                    a=rnd_crewmember
+                    crew(a).hp-=1
+                    crew(a).hpmax-=1
+                case else
+                    rlprint "Eris curses your ship!",15
+                    player.cursed=1
+            end select
+        case roll>=66 'Eris does good stuff
+            select case rnd_range(1,100)
+                case 0 to 10
+                    select case rnd_range(1,100)
+                    case 0 to 33
+                        rlprint "Eris looks at your engine",15
+                        if player.engine<6 then player.engine+=1
+                    case 34 to 66
+                        rlprint "Eris looks at your sensors",15
+                        if player.engine<6 then player.sensors+=1
+                    case else
+                        rlprint "Eris looks at your shields",15
+                        if player.shieldmax<6 then player.shieldmax+=1
+                    end select
+                case 11 to 20
+                    rlprint "Eris examines your hull",15
+                    player.hull+=5
+                    player.h_maxhull+=5
+                case 21 to 30
+                    rlprint "Eris takes a look at your cargo hold",15
+                    player.h_maxcargo+=1
+                    player.cargo(player.h_maxcargo).x=1
+                case 31 to 40
+                    a=rnd_crewmember
+                    rlprint "Eris looks at "&crew(a).n &" 'my, my are you fragile!",15
+                    crew(a).hp+=1
+                    crew(a).hpmax+=1
+                case 41 to 50
+                    rlprint "Eris looks at "&crew(a).n &" and starts laughing",15
+                    a=rnd_crewmember
+                    rlprint gain_talent(a),c_gre
+                case 51 to 60
+                    rlprint "Eris looks at "&crew(a).n &" and starts laughing",15
+                    a=rnd_crewmember
+                    rlprint pGainxp(a),c_gre
+                case 61 to 70
+                    rlprint "Eris says 'Are you sure you have enough fuel to get home?",15
+                    player.fuel+=200
+                case 71 to 80
+                    rlprint "I found this, can you use it?",15
+                    findartifact(0)
+                case 81 to 90
+                    rlprint "Eris is worried that you might need money",15
+                    player.money+=rnd_range(1,1000)
+                case 91 to 95
+                    rlprint "Eris takes a stroll through the cargo hold.",15
+                    for a=1 to 5
+                        if player.cargo(a).x=1 then player.cargo(a).x=rnd_range(2,6)
+                    next
+                case else
+                    rlprint "Eris declares all curses lifted!",15
+                    player.cursed=0
+            end select
+        case else 'Just does stuff
+            select case rnd_range(1,100)
+                case 0 to 10
+                    rlprint "Eris says: 'I don't want to deal with you right now, why don't you just go over there?",15
+                    select case rnd_range(1,100)
+                    case 0 to 66
+                        player.c=movepoint(player.c,5)
+                    case 67 to 90
+                        player.c=map(rnd_range(1,wormhole+laststar)).c
+                    case else
+                        player.c.x=rnd_range(0,sm_x)
+                        player.c.y=rnd_range(0,sm_y)
+                    end select
+                case 11 to 20
+                    rlprint "Eris says: 'You have very interesting diplomatic relations.",15
+                    faction(0).war(rnd_range(1,5))+=10-rnd_range(1,20)
+                case 21 to 30
+                    rlprint "Eris asks: 'Where is Apollo?",15
+                case 31 to 40
+                    rlprint "Eris takes a stroll through the cargo hold.",15
+                    for a=1 to 5
+                        if player.cargo(a).x>1 then player.cargo(a).x=rnd_range(1,5)
+                    next
+                case 41 to 50
+                    rlprint "Is that your space station, there?",15
+                    basis(rnd_range(0,2)).c.x=rnd_range(0,sm_x)
+                    basis(rnd_range(0,2)).c.y=rnd_range(0,sm_y)
+                case 51 to 60
+                    rlprint "Eris screws around with time",15
+                    tVersion.gameturn=tVersion.gameturn+5-rnd_range(1,10)
+                case 61 to 70
+                    rlprint "Eris snaps with her fingers",15
+                    drifting(rnd_range(1,lastdrifting)).x=player.c.x
+                    drifting(rnd_range(1,lastdrifting)).y=player.c.y
+                case 71 to 80
+                    rlprint "Eris seems bored",15
+                case 81 to 90
+                    rlprint "Eris is looking at the stars",15
+                    map(rnd_range(0,laststar)).c=rnd_point
+                    map(rnd_range(0,laststar)).c=rnd_point
+                case 91 to 100
+                    eris_doesnt_like_your_ship
+            end select
+        end select
+    else
+        rlprint "Eris doesn't seem to be interested in you.",15
+        if rnd_range(1,100)<66 then
+            select case rnd_range(1,100)
+            case 0 to 66
+                player.c=movepoint(player.c,5)
+            case 67 to 90
+                player.c=map(rnd_range(1,wormhole+laststar)).c
+            case else
+                player.c.x=rnd_range(0,sm_x)
+                player.c.y=rnd_range(0,sm_y)
+            end select
+        endif
+    endif
+    return 0
+end function
+
+    	
+
 #endif'main
 
 #if (defined(main) or defined(test))
@@ -1174,4 +1854,5 @@ end function
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tCrew -=-=-=-=-=-=-=-
 #endif'test
+
 

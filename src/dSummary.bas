@@ -35,17 +35,17 @@
 declare function income_expenses() as string
 declare function score() as integer
 
-'private function income_expenses_html() as string
-'private function space_mapbmp() as short
-'private function explper() as short
-'private function exploration_text() as string
-'private function ship_table() as string
-'private function planet_artifacts_table() as string
-'private function crew_table() as string
-'private function exploration_text_html() as string
-'private function acomp_table() as string
-'private function postmort_html(text as string) as short
-'private function post_mortemII(text as string) as short
+'declare function income_expenses_html() as string
+'declare function space_mapbmp() as short
+'declare function explper() as short
+'declare function exploration_text() as string
+'declare function ship_table() as string
+'declare function planet_artifacts_table() as string
+'declare function crew_table() as string
+'declare function exploration_text_html() as string
+'declare function acomp_table() as string
+'declare function postmort_html(text as string) as short
+'declare function post_mortemII(text as string) as short
 
 #endif'head
 #ifdef main

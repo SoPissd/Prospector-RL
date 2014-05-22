@@ -11,6 +11,8 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
@@ -21,15 +23,22 @@
 #undef intest
 #define test
 #endif'test
+
+#ifdef types
+'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+Dim Shared As Byte _NoPB=2
+Dim Shared piratebase(_NoPB) As Short 'Mapnumber of piratebase
+
+#endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tSpacemap -=-=-=-=-=-=-=-
 
 declare function nearest_base(c as _cords) as short
 declare function make_vismask(c as _cords, sight as short,m as short,ad as short=0) as short
 
-'private function dispbase(c as _cords) as single
-'private function vis_test(a as _cords,p as _cords,test as short) as short
-'private function distributepoints(result() as _cords, ps() as _cords, last as short) as single
+'declare function dispbase(c as _cords) as single
+'declare function vis_test(a as _cords,p as _cords,test as short) as short
+'declare function distributepoints(result() as _cords, ps() as _cords, last as short) as single
 
 #endif'head
 #ifdef main

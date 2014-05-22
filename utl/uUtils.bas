@@ -63,9 +63,9 @@ declare function roman(i as integer) as string
 declare function html_color(c as string, indent as short=0, wid as short=0) as string
 declare function text_to_html(text as string) as string
 
-'private function Texttofile(text as string) as string
-'private function lev_minimum( a As Integer, b As Integer, c As Integer ) As Integer
-'private function fuzzymatch( s As String, t As String ) As single
+'declare function Texttofile(text as string) as string
+'declare function lev_minimum( a As Integer, b As Integer, c As Integer ) As Integer
+'declare function fuzzymatch( s As String, t As String ) As single
 
 #endif'head
 #ifdef main

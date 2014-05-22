@@ -12,6 +12,8 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
@@ -26,52 +28,20 @@
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
-Type _questitem
-    generic As Byte 'If new is generated, and last one was generic, next one is specific
-    motivation As Byte
-    Type As Byte
-    price As Integer'Relative price of the QI for the QG
-    given As Byte
-    'id as integer
-    it As _items
-End Type
 
-Const lastquestguy=15
 
-Type _questguy
-    gender As Byte
-    n As String*25
-    job As Short
-    location As Short
-    talkedto As Short'1 Knows, 2 asked want
-    lastseen As Short
-    knows(lastquestguy) As Byte
-    systemsknown(255) As Byte
-    money As Short
-    risk As Short
-    friendly(lastquestguy) As Short
-    loan As Short
-    want As _questitem
-    has As _questitem
-    flag(15) As Short '0=Compared notes 1=Other 3=System 4=System,6=Corp,10 Skill known
-End Type
-
-Dim Shared questguy(lastquestguy) As _questguy
 Dim Shared questguyjob(18) As String
-Dim Shared questguydialog(22,2,2) As String
-Dim Shared questguyquestion(22,1) As String
 
 #endif'types
 
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tPeople -=-=-=-=-=-=-=-
 
-declare function questguy_newquest(i as short) as short
 declare function has_questguy_want(i as short,byref t as short) as short
 
-'private function rnd_questguy_byjob(jo as short,self as short=0) as short
-'private function get_other_questguy(i as short,sameplace as byte=0) as short
-'private function get_highestrisk_questguy(st as short) as short
+'declare function rnd_questguy_byjob(jo as short,self as short=0) as short
+'declare function get_other_questguy(i as short,sameplace as byte=0) as short
+'declare function get_highestrisk_questguy(st as short) as short
 
 #endif'head
 #ifdef main
@@ -110,96 +80,6 @@ end function
 
 
 
-
-function questguy_newquest(i as short) as short
-    DimDebugL(qt_travel)    
-    dim wanttable(25,2) as short
-    dim hastable(25,2) as short
-    dim as short f,j,l
-    dim as string w(5),li
-    
-    f=freefile
-    open "data/wanthas.csv" for input as #f
-    do
-        line input #f,li
-        j+=1
-        w(0)=""
-        w(1)=""
-        w(2)=""
-        w(3)=""
-        w(4)=""
-        w(5)=""
-        string_towords(w(),li,";")
-        wanttable(j,0)=val(w(0))
-        wanttable(j,1)=val(w(1))
-        wanttable(j,2)=val(w(2))
-        hastable(j,0)=val(w(0))
-        hastable(j,1)=val(w(3))
-        hastable(j,2)=val(w(4))
-    loop until eof(f)
-    close #f
-    if questguy(i).want.type=0 then
-        if rnd_range(1,100)<30 then 'standard
-            l=rnd_range(1,7)
-        else 'Specific
-            l=questguy(i).job+7
-        endif
-        DbgPrint("adding want from line "&l)
-        if rnd_range(1,100)<50 then
-            questguy(i).want.type=wanttable(l,1)
-        else
-            questguy(i).want.type=wanttable(l,2)
-        endif
-        if questguy(i).want.type=0 then
-            l=rnd_range(1,7)
-            if rnd_range(1,100)<50 then
-                questguy(i).want.type=wanttable(l,1)
-            else
-                questguy(i).want.type=wanttable(l,2)
-            endif
-        endif
-#if __FB_DEBUG__
-        IF debug>0 then questguy(i).want.type=debug
-#endif
-        make_questitem(i,q_want)
-        questguy(i).want.motivation=rnd_range(0,2)
-    endif    
-    if questguy(i).has.type=0 then
-        if rnd_range(1,100)<30 then 'standard
-            l=rnd_range(1,7)
-        else 'Specific
-            l=questguy(i).job+7
-        endif
-        DbgPrint("adding has from line "&l)
-        if rnd_range(1,100)<50 then
-            questguy(i).has.type=hastable(l,1)
-        else
-            questguy(i).has.type=hastable(l,2)
-        endif
-        if questguy(i).has.type=0 then
-            l=rnd_range(1,7)
-            if rnd_range(1,100)<50 then
-                questguy(i).has.type=hastable(l,1)
-            else
-                questguy(i).has.type=hastable(l,2)
-            endif
-        endif
-#if __FB_DEBUG__
-        IF debug>0 then questguy(i).has.type=debug
-#endif
-        make_questitem(i,q_has)
-        questguy(i).want.motivation=rnd_range(0,2)
-    endif
-    if questguy(i).want.type=questguy(i).has.type then
-        if rnd_range(1,100)<=50 then
-            questguy(i).want.type=0
-        else
-            
-            questguy(i).has.type=0
-        endif
-    endif
-    return 0
-end function
 
 function has_questguy_want(i as short,byref t as short) as short
     dim as short a,b,c
@@ -312,7 +192,7 @@ function has_questguy_want(i as short,byref t as short) as short
         next
         fl=20-cc
         if fl<0 then fl=0
-        cc=textmenu(bg_parent,text,,0,fl)
+        cc=textmenu(text,,0,fl)
         if cc>0 then 
             t=il(cc)
             return il(cc)
