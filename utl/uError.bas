@@ -118,8 +118,7 @@ function Errorhandler(ErrWhere as string) As integer
 	if ErrorNr=0 and ErrText="" then
 		if tModule.fErrOut>0 then
 			'print #tModule.fErrOut,"All done."
-			close #tModule.fErrOut
-			tModule.fErrOut= 0
+			tFile.Closefile(tModule.fErrOut)
 		endif
 		return 0
 	EndIf
