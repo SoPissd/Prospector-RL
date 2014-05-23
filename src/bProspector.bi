@@ -20,16 +20,6 @@ inc("cCasino.bas",				"")
 inc("cPoker.bas",				"")
 inc("cSlotmachine.bas",			"")
 
-inc("vKeys.bas",				"save, load, configure keys")
-inc("vConfig.bas",				"")
-inc("vFonts.bas",				"compute/load fonts/graphics-mode")
-inc("vDebug2.bas",				"disabled csv printing")
-inc("dDeath.bas",				"")
-inc("dHighscore.bas",			"")
-inc("vGame.bas",				"game menu. gives about 1/3rd the units a workout without anything on top")
-
-inc("cRumors.bas",				"get_rumor")
-inc("cStockmarket.bas",			"just a template")
 
 inc("cFuel.bas",				"")
 inc("dCockpit.bas",				"")

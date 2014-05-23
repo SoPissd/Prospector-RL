@@ -26,8 +26,6 @@
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
-Dim Shared As Byte _NoPB=2
-Dim Shared piratebase(_NoPB) As Short 'Mapnumber of piratebase
 
 #endif'types
 #ifdef head

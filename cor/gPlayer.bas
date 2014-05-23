@@ -78,8 +78,9 @@ Enum locat
 End Enum
 
 Dim Shared location As Byte
-Dim Shared As Byte wage=10
-Dim Shared As Byte captainskill=-5
+Dim Shared wage As Byte = 10
+Dim Shared captainskill As Byte = -5
+Dim Shared bonesflag As Short
 
 
 #endif'types

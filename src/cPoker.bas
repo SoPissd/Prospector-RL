@@ -276,7 +276,7 @@ function draw_poker_table(p() as _pokerplayer,reveal as short=0,winner as short=
     tacticname(8)="Very bold"
     tacticname(9)="Extremly bold"
     
-    display_ship(0)
+    pDisplayship(0)
     p(4).win=ace_highlo_eval(p(4).card(),1)
     for i=1 to 4
         set__color(11,0)
@@ -592,10 +592,11 @@ function play_poker(st as short) as short
                 curcard+=1
                 draw_poker_table(p(),,,rules)
                 
-                If (ScreenEvent(@evkey)) then speedup=1
+                If uConsole.EventPending then speedup=1
                 If speedup=0 then sleep 220
             next
         next
+        uConsole.ClearEvents
         
         for l=1 to 4
             sort_cards(p(l).card(),0)
@@ -614,7 +615,7 @@ function play_poker(st as short) as short
         while l>0
             rlprint "Swap cards (1-5,0 to exit)"
             do
-                no_key=keyin("012345")
+                no_key=uConsole.keyinput("012345")
             loop until val(no_key)<=5
             if val(no_key)>0 then
                 p(4).card(val(no_key))=card(curcard)
@@ -740,7 +741,7 @@ function play_poker(st as short) as short
             endif
         endif
         if folded<4 then
-            no_key=keyin
+            no_key=uConsole.keyinput()
         else
             rlprint "No winner."
         endif

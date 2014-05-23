@@ -171,7 +171,7 @@ function casino(staked as short=0, st as short=-1) as short
     else
         passenger=0
     endif
-    bg_parent=bg_noflip
+'    bg_parent=bg_noflip
     
     tScreen.set(1)
     do
@@ -191,9 +191,9 @@ function casino(staked as short=0, st as short=-1) as short
         next
         menustring=menustring &"Leave"
         cls
-        display_ship(0)
+        pDisplayship(0)
         drawroulettetable()
-        a=textmenu(bg_parent,menustring)
+        a=textmenu(menustring)
         if a=1 then
         do 
             drawroulettetable()
@@ -212,7 +212,7 @@ function casino(staked as short=0, st as short=-1) as short
                 rlprint "how much? (0-"& mbet &")"
                 bet=getnumber(0,mbet,0)
                 player.money=player.money-bet
-                display_ship()
+                pDisplayship()
                 if bet>0 then
                     changemoral(bet/3,0)
                     locate 14,25
@@ -299,7 +299,7 @@ function casino(staked as short=0, st as short=-1) as short
                 endif
                 
             endif
-            display_ship
+            pDisplayship()
             drawroulettetable()
             if b=6 and staked=1 then
                 drawroulettetable()
@@ -490,7 +490,7 @@ function casino(staked as short=0, st as short=-1) as short
                 endif
            endif
         endif
-        display_ship
+        pDisplayship()
         drawroulettetable()
         if a>=5 and a<leave then questguy_dialog(qgindex(a))
     loop until a=leave or a=-1

@@ -131,7 +131,6 @@ dim shared pRnd_point as tRndPoint
 
 declare function deletemonsters(a as short) as short
 declare function isgardenworld(m as short) as short
-declare function isgasgiant(m as short) as short
 declare function isasteroidfield(m as short) as short
 declare function system_text(a as short) as string
 declare function make_unflags(unflags() as byte) as short
@@ -237,17 +236,6 @@ function isgardenworld(m as short) as short
     return -1
 end function
 
-
-function isgasgiant(m as short) as short
-    if m<-20000 then return 1
-    if m=specialplanet(21) then return 21
-    if m=specialplanet(22) then return 22
-    if m=specialplanet(23) then return 23
-    if m=specialplanet(24) then return 24
-    if m=specialplanet(25) then return 25
-    if m=specialplanet(43) then return 43
-    return 0
-end function
 
 function isasteroidfield(m as short) as short
     if m>=-20000 and m<0 then return 1

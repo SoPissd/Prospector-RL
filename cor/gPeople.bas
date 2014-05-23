@@ -38,10 +38,10 @@ Dim Shared questguyjob(18) As String
 '     -=-=-=-=-=-=-=- HEAD: tPeople -=-=-=-=-=-=-=-
 
 declare function has_questguy_want(i as short,byref t as short) as short
+declare function get_highestrisk_questguy(st as short) as short
 
 'declare function rnd_questguy_byjob(jo as short,self as short=0) as short
 'declare function get_other_questguy(i as short,sameplace as byte=0) as short
-'declare function get_highestrisk_questguy(st as short) as short
 
 #endif'head
 #ifdef main

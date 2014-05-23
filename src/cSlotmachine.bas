@@ -47,7 +47,7 @@ function play_slot_machine() as short
     do
         set__color(11,0)
         cls
-        display_ship
+        pDisplayship()
         rlprint "How much do you want to bet(0-100)"
         bet=getnumber(0,100,0)
         if bet>player.money then bet=0

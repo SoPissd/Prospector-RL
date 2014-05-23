@@ -14,15 +14,15 @@
 'set build mode
 'set build mode
 '#define build_justfoundation
-'#define build_justgamecore
-#define build_prospector		'<< that's the one to build_everything. turn the build_others off
+#define build_justgamecore
+'#define build_prospector		'<< that's the one to build_everything. turn the build_others off
 '
 'annoying experiment(s)
 '#define build_justpoker
 '
 'set options
 'set options
-#define useLibFoundation
+'#define useLibFoundation			'use utl/libbFoundation.a utility code
 #define useLibTileData
 #define useLibbProspector			'refers to the cor/GameCore code-library	
 #define makesound					'are we even going to bind in any sound-library code 

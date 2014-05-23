@@ -139,6 +139,7 @@ Dim shared as tActionmethod IdleMethod
 declare function dTimer() as double			'prevent wrap-around errors
 '
 declare function EventPending() as short	'0 if nothing pending, 1 has buffered
+declare function ClearEvents() as short		'process buffered events for close-window.
 
 declare function iInKey() as Integer
 declare function iGetKey(iMilliSeconds as integer=0) as integer
@@ -226,6 +227,25 @@ End Function
 function EventPending() as short		'0 if nothing pending, 1 has buffered
 	return Screenevent(0)
 End Function
+
+function ClearEvents() as short
+	dim e as FB.Event
+	dim aKey as string
+	while Screenevent(@e)
+		'http://www.freebasic.net/wiki/wikka.php?wakka=KeyPgScreenevent
+		' states that you need to inkey after any of these: ...
+        select case e.type
+        	case FB.EVENT_KEY_PRESS
+    	    	aKey=aInkey()
+        	case FB.EVENT_KEY_RELEASE	'no idea what to expect on release, or why via inkey 
+	       		aKey=aInkey()        
+        	case FB.EVENT_KEY_REPEAT         
+	        	aKey=aInkey()
+        End Select		
+	wend
+	return true
+End Function
+
 
 '
 'freely convert between one of each form of key-expression

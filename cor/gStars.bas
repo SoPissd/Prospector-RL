@@ -48,6 +48,8 @@ Dim Shared specialflag(lastspecial) As Byte
 '     -=-=-=-=-=-=-=- HEAD: tStars -=-=-=-=-=-=-=-
 
 declare function is_special(m as short) as short
+declare function isgasgiant(m as short) as short
+
 declare function UpdateMapSize(size as short) as Short
 declare function sysfrommap(a as short)as short
 declare function orbitfrommap(a as short) as short
@@ -101,6 +103,17 @@ function orbitfrommap(a as short) as short
         next
     endif
     return -1
+end function
+
+function isgasgiant(m as short) as short
+    if m<-20000 then return 1
+    if m=specialplanet(21) then return 21
+    if m=specialplanet(22) then return 22
+    if m=specialplanet(23) then return 23
+    if m=specialplanet(24) then return 24
+    if m=specialplanet(25) then return 25
+    if m=specialplanet(43) then return 43
+    return 0
 end function
 
 function count_gas_giants_area(c as _cords,r as short) as short

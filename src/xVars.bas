@@ -39,7 +39,6 @@ end namespace'tVars
 Dim Shared pixelsize As Integer
 
 
-Dim Shared bonesflag As Short
 Dim Shared farthestexpedition As Integer
 
 

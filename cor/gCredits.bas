@@ -17,16 +17,20 @@
 '
 #ifdef intest
 '     -=-=-=-=-=-=-=- TEST: tCredits -=-=-=-=-=-=-=-
-
 #undef intest
 #define test
 #endif'test
+
+#ifdef types
+'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+Dim Shared As Byte _NoPB=2
+Dim Shared piratebase(_NoPB) As Short 'Mapnumber of piratebase
+
+#endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tCredits -=-=-=-=-=-=-=-
-
 declare function mission_type() as string
 declare function money_text() as string
-
 
 #endif'head
 #ifdef main

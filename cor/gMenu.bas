@@ -58,7 +58,7 @@ end function
 
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: gMenu -=-=-=-=-=-=-=-
-	tModule.register("gUtils",@gUtils.init()) ',@gMenu.load(),@gMenu.save())
+	tModule.register("gMenu",@gMenu.init()) ',@gMenu.load(),@gMenu.save())
 #endif'main
 
 #ifdef test
