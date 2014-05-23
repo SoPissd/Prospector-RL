@@ -81,9 +81,6 @@ dim shared pEnjoyConcert as tEnjoyConcert
 type tGetitem as function(ty as short=0,ty2 as short=0,byref num as short=0,noequ as short=0) as short
 dim shared pGetitem as tGetitem
 
-type tSellItem as function(p() as short, a as short) as Integer
-dim shared pSellItem as tSellItem
-
 type tShowteam as function(from as short, r as short=0,text as string="") as short
 dim shared pShowteam as tShowteam
 
@@ -98,11 +95,11 @@ declare function load_dialog_quests() as short
 declare function load_dialog(fn as string, n() as _dialognode) as short
 declare function do_dialog(no as short,e as _monster, fl as short) as short
 declare function rndsentence(e as _monster) as short
+declare function dialog_effekt(effekt as string,p() as short,e as _monster, fl as short) as short
 
 'declare function update_questguy_dialog(i as short,node() as _dialognode,iteration as short) as short
 'declare function questguy_message(c as short) as short
 'declare function adapt_nodetext(t as string, e as _monster,fl as short,qgindex as short=0) as string
-'declare function dialog_effekt(effekt as string,p() as short,e as _monster, fl as short) as short
 'declare function node_menu(no as short,node() as _dialognode,e as _monster, fl as short,qgindex as short=0) as short
 
 #endif'head
@@ -864,8 +861,25 @@ function dialog_effekt(effekt as string,p() as short,e as _monster, fl as short)
     endif
     
     if effekt="SELL" then
-		assert(pSellitem<>null)
-		pSellitem(p(),a)
+        if p(0)=1 then
+            a=get_item
+            if a>0 then
+                if item(a).ty=2 or item(a).ty=7 or item(a).ty=4 then
+                    item(a).w.p=e.no
+                    item(a).w.s=0
+                    it=make_item(96,-1,-3)
+                    placeitem(it,0,0,0,0,-1)
+                    reward(2)=reward(2)+it.v5
+                    rlprint "The reptile gladly accepts the weapon 'This will help us in eradicating the other side' and hands you some "&it.desig
+                endif
+            endif
+        endif
+        if p(0)=2 then 'Questitem
+            rlprint "You sell your "&item(p(1)).desig &" for "& credits(item(p(1)).price*p(2)*(1+crew(1).talents(2)/10)) &" Cr."
+            addmoney(item(p(1)).price*p(2)*(1+crew(1).talents(2)/10),mt_trading)
+            item(p(1))=item(lastitem)
+            lastitem-=1            
+        endif
     endif
     
     if effekt="GIVEHAS" then
