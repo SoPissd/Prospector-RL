@@ -216,7 +216,7 @@ function explore_planet(from As _cords, orbit As Short) As _cords
     Dim lsp As Short
     Dim ti As Short
     
-    DbgLogExplorePlanet("Starting ep loop")
+'    DbgLogExplorePlanet("Starting ep loop")
     
     bg_parent=bg_awayteamtxt
     
@@ -352,7 +352,7 @@ function explore_planet(from As _cords, orbit As Short) As _cords
             loadmonsters=1
         EndIf
     Next
-    DbgLogExplorePlanet("loadmonsters:"&loadmonsters)
+'    DbgLogExplorePlanet("loadmonsters:"&loadmonsters)
     If loadmonsters=0 Then 'No saved status, monsters need to be generated
         c=0
         For a=0 To 16
@@ -554,7 +554,7 @@ EndIf
         planets(slot).mon_template(a).slot=a
     Next
     
-    DbgLogExplorePlanet("Move rovers")
+'    DbgLogExplorePlanet("Move rovers")
     move_rover(slot)
     'if planets(slot).colony<>0 then growcolony(slot)
 
@@ -685,7 +685,7 @@ EndIf
         equip_awayteam(slot)
     EndIf
     
-    DbgLogExplorePlanet("equip")
+'    DbgLogExplorePlanet("equip")
     equip_awayteam(slot)
 
     c=0
@@ -700,7 +700,7 @@ EndIf
         EndIf
     Next
     
-    DbgLogExplorePlanet("locallists")
+'    DbgLogExplorePlanet("locallists")
     make_locallist(slot)
 
     lsp=0
@@ -766,7 +766,7 @@ EndIf
 
     dawn=rnd_range(1,60)
     
-    DbgLogExplorePlanet("Tile effects")
+'    DbgLogExplorePlanet("Tile effects")
     For a=0 To 5
        ep_tileeffects(areaeffect(),last_ae,lavapoint(),nightday(),localtemp(),cloudmap())
     Next
@@ -795,7 +795,7 @@ EndIf
     
     osx=calcosx(awayteam.c.x,planets(slot).depth)
     
-    DbgLogExplorePlanet("Displaystuff")
+'    DbgLogExplorePlanet("Displaystuff")
     tScreen.set(0)
     set__color(11,0)
     Cls
@@ -821,7 +821,7 @@ EndIf
     '
     '***********************
     Do
-        DbgLogExplorePlanet("1")
+'        DbgLogExplorePlanet("1")
         If show_all=1 Then
             set__color( 15,0)
             Locate 21,1
@@ -842,7 +842,7 @@ EndIf
 
         If configflag(con_warnings)=0 And nightday(awayteam.c.x)=1 And nightday(old.x)<>1 Then rlprint "The sun rises"
         If configflag(con_warnings)=0 And nightday(awayteam.c.x)=2 And nightday(old.x)<>2 Then rlprint "The sun sets"
-        DbgLogExplorePlanet("Update masks")
+'        DbgLogExplorePlanet("Update masks")
         lsp=ep_updatemasks(spawnmask(),mapmask(),nightday(),dawn,dawn2)
         mapmask(awayteam.c.x,awayteam.c.y)=-9
         
@@ -857,7 +857,7 @@ EndIf
                 tVersion.gameturn+=1
             EndIf
             
-            DbgLogExplorePlanet("2")
+'            DbgLogExplorePlanet("2")
             ep_tileeffects(areaeffect(),last_ae,lavapoint(),nightday(),localtemp(),cloudmap())
             ep_lava(lavapoint())
             lastenemy=ep_spawning(spawnmask(),lsp,diesize,nightday())
@@ -876,7 +876,7 @@ EndIf
         EndIf
         
         
-        DbgLogExplorePlanet("3 ae" & awayteam.e.e)
+'        DbgLogExplorePlanet("3 ae" & awayteam.e.e)
         deadcounter=ep_monstermove(spawnmask(),lsp,mapmask(),nightday())
 
         If player.dead>0 Or awayteam.hp<=0 Then allowed=""
@@ -885,7 +885,7 @@ EndIf
         If ship_landing>0 Then ep_landship(ship_landing, nextlanding, nextmap)
 
         
-        DbgLogExplorePlanet("4 ae" & awayteam.e.e)
+'        DbgLogExplorePlanet("4 ae" & awayteam.e.e)
         
         If  tmap(awayteam.c.x,awayteam.c.y).resources>0 Or planetmap(awayteam.c.x,awayteam.c.y,slot)=17 Or  (tmap(awayteam.c.x,awayteam.c.y).no>2 And tmap(awayteam.c.x,awayteam.c.y).gives>0 And player.dead=0 And (awayteam.c.x<>old.x Or awayteam.c.y<>old.y))  Then
             old=awayteam.c
@@ -914,7 +914,7 @@ EndIf
             walking=0
         EndIf
 
-        DbgLogExplorePlanet("5  ae" & awayteam.e.e & nextmap.m)
+'        DbgLogExplorePlanet("5  ae" & awayteam.e.e & nextmap.m)
         If (player.dead=0 And awayteam.e.tick=-1) Then
             
             tScreen.set(0)
@@ -938,7 +938,7 @@ EndIf
             tScreen.update()
             
             If nextmap.m=0 Then Key=(keyin(allowed,walking))
-            DbgLogExplorePlanet("&" & key)
+'            DbgLogExplorePlanet("&" & key)
             If Key="" Then
                 tScreen.set(0)
                 Cls
@@ -956,7 +956,7 @@ EndIf
                 if awayteam.hp<0 then player.dead=14
             endif
             
-            DbgLogExplorePlanet("&heal")
+'            DbgLogExplorePlanet("&heal")
             
             heal_awayteam(awayteam,0)
 
@@ -1019,21 +1019,21 @@ EndIf
                 EndIf
             EndIf
             
-            DbgLogExplorePlanet("hitmonster")
+'           DbgLogExplorePlanet("hitmonster")
             ep_playerhitmonster(old,mapmask())
-            DbgLogExplorePlanet("checkmove")
+'            DbgLogExplorePlanet("checkmove")
             ep_checkmove(old,Key)
             If old.x<>awayteam.c.x Or old.y<>awayteam.c.y Or Key=key_portal Or Key=key_inspect Then nextmap=ep_Portal()
-            DbgLogExplorePlanet("nextmap"&nextmap.m)
+'            DbgLogExplorePlanet("nextmap"&nextmap.m)
             
             ep_planeteffect(shipfire(),sf,lavapoint(),localturn,cloudmap())
-            DbgLogExplorePlanet("PE")
+'            DbgLogExplorePlanet("PE")
             ep_areaeffects(areaeffect(),last_ae,lavapoint(),cloudmap())
-            DbgLogExplorePlanet("AE")
+'            DbgLogExplorePlanet("AE")
             If old.x<>awayteam.c.x Or old.y<>awayteam.c.y Or Key=key_pickup Then ep_pickupitem(Key)
-            DbgLogExplorePlanet("PU")
+'            DbgLogExplorePlanet("PU")
             If Key=key_inspect Or _autoinspect=0 And (old.x<>awayteam.c.x Or old.y<>awayteam.c.y) Then ep_inspect(localturn)
-            DbgLogExplorePlanet("in")
+'            DbgLogExplorePlanet("in")
             If vacuum(awayteam.c.x,awayteam.c.y)=1 And awayteam.helmet=0 Then ep_helmet()
             If vacuum(awayteam.c.x,awayteam.c.y)=0 And vacuum(old.x,old.y)=1 And awayteam.helmet=1 Then ep_helmet
         'Display all stuff
@@ -1062,7 +1062,7 @@ EndIf
             Next
             rlprint ""
             tScreen.update()
-            DbgLogExplorePlanet("drew everything again and flipped")
+'            DbgLogExplorePlanet("drew everything again and flipped")
             'tScreen.set(1)
 
             If rnd_range(1,100)<disease(awayteam.disease).nac Then
@@ -1187,10 +1187,10 @@ EndIf
         ' and the world moves on
         update_world(0)
                 
-        DbgLogExplorePlanet("end loop" & nextmap.m)
+'        DbgLogExplorePlanet("end loop" & nextmap.m)
     Loop Until awayteam.hp<=0 Or nextmap.m<>0 Or player.dead<>0
     
-    DbgLogExplorePlanet("1" & nextmap.m)
+'    DbgLogExplorePlanet("1" & nextmap.m)
     '
     ' END exploring
 
@@ -1346,7 +1346,7 @@ EndIf
     'if slot=specialplanet(12) and player.dead<>0 then player.dead=17
     If player.dead<>0 Then screenshot(3)
     
-    DbgLogExplorePlanet("exit" & nextmap.m)
+'    DbgLogExplorePlanet("exit" & nextmap.m)
     Return nextmap
 End function
 

@@ -610,7 +610,7 @@ end function
 
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: tSpacecombat -=-=-=-=-=-=-=-
-	tModule.register("tSpacecombat",@tSpacecombat.init()) ',@tSpacecombat.load(),@tSpacecombat.save())
+	tModule.register("nsSpacecombat",@nsSpacecombat.init()) ',@nsSpacecombat.load(),@nsSpacecombat.save())
 #endif'main
 
 #ifdef test

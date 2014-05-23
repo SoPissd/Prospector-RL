@@ -14,19 +14,19 @@
 'set build mode
 'set build mode
 '#define build_justfoundation
-#define build_justgamecore
-'#define build_prospector		'<< that's the one to build_everything. turn the build_others off
+'#define build_justgamecore
+#define build_prospector		'<< that's the one to build_everything. turn the build_others off
 '
 'annoying experiment(s)
 '#define build_justpoker
 '
 'set options
 'set options
-'#define useLibFoundation
+#define useLibFoundation
 #define useLibTileData
-'#define useLibbProspector			'refers to the cor/GameCore code-library	
-'#define makesound					'are we even going to bind in any sound-library code 
-'#define makezlib 					'turn this on when you need png and compressed saves. 
+#define useLibbProspector			'refers to the cor/GameCore code-library	
+#define makesound					'are we even going to bind in any sound-library code 
+#define makezlib 					'turn this on when you need png and compressed saves. 
 '
 
 'you can build this as a library containing 'phase1' code. then use that library while working on 'phase2'
@@ -55,8 +55,8 @@
 		#print using libTileData. reading tile headers...
 		#define types
 		#define head
-		#include "src/vTiledata.bas"
-		#libpath "src"
+		#include "cor/vTiledata.bas"
+		#libpath "cor"
 		#inclib "vTiledata"
 		#undef types
 		#undef head
@@ -86,15 +86,14 @@
 #if not __FB_OUT_LIB__ 
 
 	#ifdef build_prospector
-		#print build everything...
-		make("cor/bGameCore.bi")				' build the game-core. types, commerce, fundamental classes
-		#define phase1
-		#define phase2
+		#ifndef useLibProspector
+			#print building game-core...
+			make("cor/bGameCore.bi")			' turns into libProspector because of the name of this file
+		#endif
+		#print build the game...
 		make("src/bProspector.bi")				' and everything planet/space map/exploration/combat related
-		#undef phase1
-		#undef phase2
 	#endif'build_prospector
-
+	
 
 	namespace tMain
 	#ifndef build_justfoundation
@@ -103,6 +102,8 @@
 			Print tModule.status()
 			Print
 			chdir exepath
+			? "hello"
+			uConsole.pressanykey
 			return tModule.Run(iAction)
 		end function
 	#else

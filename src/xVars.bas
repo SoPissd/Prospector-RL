@@ -59,7 +59,6 @@ Dim Shared As Byte _narrowscreen=0
 dim shared as byte optoxy
 
 Dim Shared As Short ranoutoffuel
-Dim Shared As Short walking
 
 Dim Shared As String shopname(4)
 

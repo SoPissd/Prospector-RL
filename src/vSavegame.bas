@@ -783,10 +783,10 @@ function loadgame(filename as string="empty.sav") as short
     
     'cls
     
-    DbgPortalsCSV
-    DbgItems2CSV
-	DbgFactionsCSV
-	DbgFleetsCSV
+'   DbgPortalsCSV
+'   DbgItems2CSV
+'	DbgFactionsCSV
+'	DbgFleetsCSV
     return 0
 end function
 

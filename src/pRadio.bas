@@ -41,7 +41,6 @@ End Type
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tRadio -=-=-=-=-=-=-=-
 
-declare function shipstatus(heading as short=0) as short
 declare function ep_radio(ByRef nextlanding As _cords,ByRef ship_landing As Short, shipfire() As _shipfire,lavapoint() As _cords, ByRef sf As Single,nightday() As Byte,localtemp() As Single) As Short
 declare function space_radio() As Short
 

@@ -681,7 +681,7 @@ function add_caves() as short
             endif
 #endif
     next
-	DbgPortalsCSV
+'	DbgPortalsCSV
     return 0
 end function
 

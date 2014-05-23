@@ -1,6 +1,16 @@
 #ifndef useLibTileData
 inc("vTiledata.bas",			"data about each tile")
 #endif
+
+inc("vKeys.bas",				"save, load, configure keys")
+inc("vConfig.bas",				"")
+inc("vFonts.bas",				"compute/load fonts/graphics-mode")
+inc("vDebug2.bas",				"disabled csv printing")
+inc("dDeath.bas",				"")
+inc("dHighscore.bas",			"")
+inc("vGame.bas",				"game menu. gives about 1/3rd the units a workout without anything on top")
+
+
 inc("cCredits.bas",				"")
 inc("gBasis.bas",				"")
 inc("gUtils.bas",				"")
@@ -16,7 +26,7 @@ inc("cItems.bas",				"")
 inc("cItem.bas",				"")
 inc("gShip.bas",				"")
 inc("gMenu.bas",				"")
-inc("vPlayer.bas",				"")
+inc("vPlayer.bas",				"player functions. the type long ago declared as _ship in Ship.bas")
 inc("wMakeship.bas",			"")
 inc("cRetirement.bas",			"")
 inc("vInput.bas",				"")
@@ -47,3 +57,4 @@ inc("cTrading.bas",				"")
 inc("gPirates.bas",				"")
 inc("cQuests.bas",				"")
 inc("gCrew.bas",				"")
+

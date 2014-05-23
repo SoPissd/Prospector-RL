@@ -77,7 +77,7 @@ End function
 function ep_atship() As Short
     Dim As Short slot,a
     slot=player.map
-DbgLogExplorePlanet("ep_atship")
+'DbgLogExplorePlanet("ep_atship")
     If awayteam.c.y=player.landed.y And awayteam.c.x=player.landed.x And slot=player.landed.m Then
         location=lc_onship
         rlprint "You are at the ship. Press "&key_la &" to launch."
