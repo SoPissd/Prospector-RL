@@ -43,10 +43,10 @@ End Type
 
 declare function ep_radio(ByRef nextlanding As _cords,ByRef ship_landing As Short, shipfire() As _shipfire,lavapoint() As _cords, ByRef sf As Single,nightday() As Byte,localtemp() As Single) As Short
 declare function space_radio() As Short
+declare function display_monsters(osx as short) as short
 
 
 'declare function ep_heatmap(lavapoint() As _cords,lastlavapoint As Short) As Short
-'declare function display_monsters(osx as short) as short
 
 #endif'head
 #ifdef main

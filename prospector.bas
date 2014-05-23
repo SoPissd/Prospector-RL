@@ -23,17 +23,20 @@
 'set options
 'set options
 '#define useLibFoundation			'use utl/libbFoundation.a utility code
-#define useLibTileData
-#define useLibbProspector			'refers to the cor/GameCore code-library	
+'#define useLibTileData
+'#define useLibbProspector			'refers to the cor/GameCore code-library	
 #define makesound					'are we even going to bind in any sound-library code 
 #define makezlib 					'turn this on when you need png and compressed saves. 
 '
 
-'you can build this as a library containing 'phase1' code. then use that library while working on 'phase2'
-'the 'phases' set conditionals in bProspector.bi and control what's included where.  
+'you can build this as a library containing the core game and use that library while working on the rest  
 
+'
+'assert that something is to be done (only one of these should be true!)
 #assert defined(build_justfoundation) or defined(build_justgamecore) or defined(build_prospector) or __FB_OUT_LIB__
+'
 
+'
 #ifdef useLibFoundation
 	#include "utl/libFoundation.bi"		'use core utilities from utl/libFoundation.a
 #else
@@ -55,9 +58,9 @@
 		#print using libTileData. reading tile headers...
 		#define types
 		#define head
-		#include "cor/vTiledata.bas"
+		#include "cor/gTiledata.bas"
 		#libpath "cor"
-		#inclib "vTiledata"
+		#inclib "gTiledata"
 		#undef types
 		#undef head
 	#endif

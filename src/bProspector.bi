@@ -1,11 +1,10 @@
-'experiments/duplicate the inc's
- 
+
 #ifdef justpoker
 inc("gUtils.bas",				"game utils")
-inc("vInput.bas",				"gettext & getnumber")
+inc("gInput.bas",				"gettext & getnumber")
 inc("cCasino.bas",				"")
 inc("cSlotmachine.bas",			"")
-inc("dCards.bas",				"Playing card rendering")
+inc("cCards.bas",				"Playing card rendering")
 inc("cPoker.bas",				"")
 #endif
 
@@ -15,40 +14,42 @@ inc("xTypes.bas",				"")
 inc("xEnums.bas",				"")
 inc("xVars.bas",				"")
 
-inc("dCards.bas",				"Playing card rendering")
+inc("cCards.bas",				"Playing card rendering")
 inc("cCasino.bas",				"")
 inc("cPoker.bas",				"")
 inc("cSlotmachine.bas",			"")
 
 
-inc("cFuel.bas",				"")
-inc("dCockpit.bas",				"")
-inc("dLogbook.bas",				"")
-inc("dParty.bas",				"")
-inc("dSpacecombatmap.bas",		"")
-inc("dSummary.bas",				"")
-inc("pAttack.bas",				"")
-inc("pAutoexplore.bas",			"")
-inc("pAwayteam.bas",			"")
-inc("pExploreplanet.bas",		"")
-inc("pLanding.bas",				"")
-inc("pRadio.bas",				"")
-inc("pRover.bas",				"")
+inc("gFuel.bas",				"")
+inc("gCockpit.bas",				"")
+inc("gLogbook.bas",				"")
+inc("gParty.bas",				"")
+inc("gSpacecombatmap.bas",		"")
+inc("gSummary.bas",				"")
+inc("gAttack.bas",				"")
+inc("gAutoexplore.bas",			"")
+inc("gAwayteam.bas",			"")
+inc("gMonstermove.bas",			"")
+inc("gExploreplanet.bas",		"")
+inc("gLanding.bas",				"")
+inc("gRadio.bas",				"")
+inc("gRover.bas",				"")
 inc("gExplore.bas",				"")
 inc("gWaypoints.bas",			"")
-inc("sAutopilot.bas",			"")
-inc("sExplorespace.bas",		"")
-inc("sProbes.bas",				"")
-inc("sSpace.bas",				"")
-inc("sSpacecombat.bas",			"")
-inc("sSpacecombatfunctions.bas","")
-inc("wBones.bas",				"")
-inc("wColony.bas",				"")
-inc("wPlaneteffect.bas",		"")
-inc("wWorldgen.bas",			"")
-inc("vSavegame.bas",			"universe and player ... via compression")
-inc("vGameinit.bas",			"final initialization coordination")
-inc("vGamekeys.bas",			"'legacy' action-wiring")
+inc("gAutopilot.bas",			"")
+inc("gExplorespace.bas",		"")
+inc("gProbes.bas",				"")
+inc("gSpace.bas",				"")
+inc("gSpacecombat.bas",			"")
+inc("gSpacecombatfunctions.bas","")
+inc("gBones.bas",				"")
+inc("gColony.bas",				"")
+inc("gPlanetmenu.bas",			"")
+inc("gPlaneteffect.bas",		"")
+inc("gWorldgen.bas",			"")
+inc("gSavegame.bas",			"universe and player ... via compression")
+inc("gGameinit.bas",			"final initialization coordination")
+inc("gGamekeys.bas",			"'legacy' action-wiring")
 
 'inc("vMenu.bas",				"menu with graphics as before, for reference. should wind up with an override maybe")
 
@@ -57,9 +58,6 @@ inc("vGamekeys.bas",			"'legacy' action-wiring")
 
 
 
-' for real - unique inc's
-
-'
 'basics
 '
 #ifdef gbasics2

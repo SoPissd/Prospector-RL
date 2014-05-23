@@ -1,5 +1,5 @@
 #ifndef useLibTileData
-inc("vTiledata.bas",			"data about each tile")
+inc("gTiledata.bas",			"data about each tile")
 #endif
 
 inc("gMenu.bas",				"")
@@ -20,6 +20,7 @@ inc("gCredits.bas",				"")
 inc("gBasis.bas",				"")
 inc("gUtils.bas",				"")
 inc("gTiles.bas",				"")
+inc("gTilesload.bas",			"")
 inc("gSettings.bas",			"")
 inc("gInput.bas",				"")
 
@@ -34,7 +35,7 @@ inc("gItem.bas",				"")
 inc("gShip.bas",				"")
 inc("gPlayer.bas",				"player functions. the type long ago declared as _ship in Ship.bas")
 
-#if false
+'#if false
 
 inc("gMakeship.bas",			"")
 inc("gFaction.bas",				"")
@@ -65,4 +66,4 @@ inc("gPirates.bas",				"")
 inc("gQuests.bas",				"")
 inc("gCrew.bas",				"")
 
-#endif
+'#endif

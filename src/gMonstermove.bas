@@ -26,13 +26,14 @@
 '     -=-=-=-=-=-=-=- HEAD: tMonstermove -=-=-=-=-=-=-=-
 
 
+declare function ep_monstermove(spawnmask() As _cords, lsp As Short, mapmask() As Byte,nightday() As Byte) As Short
+
 'declare function monsterhit(attacker As _monster, defender As _monster,vis As Byte) As _monster
 'declare function ep_changemood(i As Short,message() As Byte) As Short
 'declare function move_monster(i As short, target As _cords,flee as byte,rollover as byte,mapmask() As Byte) As short
 'declare function ep_monsterupdate(i As Short, spawnmask() as _cords,lsp as short,mapmask() As Byte,nightday() As Byte,message() As Byte) As Short
 'declare function ep_friendfoe(i As Short,j As Short) As Short
 'declare function ep_nearest(i As Short) As Short
-'declare function ep_monstermove(spawnmask() As _cords, lsp As Short, mapmask() As Byte,nightday() As Byte) As Short
 
 #endif'head
 #ifdef main
