@@ -58,9 +58,9 @@
 		#print using libTileData. reading tile headers...
 		#define types
 		#define head
-		#include "cor/gTiledata.bas"
+		#include "cor/cTiledata.bas"
 		#libpath "cor"
-		#inclib "gTiledata"
+		#inclib "cTiledata"
 		#undef types
 		#undef head
 	#endif

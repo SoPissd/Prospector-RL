@@ -1,28 +1,28 @@
 #ifndef useLibTileData
-inc("gTiledata.bas",			"data about each tile")
+inc("cTiledata.bas",			"data about each tile")
 #endif
 
-inc("gMenu.bas",				"")
-inc("gKeys.bas",				"save, load, configure keys")
-inc("gConfig.bas",				"")
-inc("gFonts.bas",				"compute/load fonts/graphics-mode")
-inc("gDebug2.bas",				"disabled csv printing")
+inc("cMenu.bas",				"")
+inc("cKeys.bas",				"save, load, configure keys")
+inc("cConfig.bas",				"")
+inc("cFonts.bas",				"compute/load fonts/graphics-mode")
+inc("cDebug2.bas",				"disabled csv printing")
+
+inc("cUtils.bas",				"")
+inc("cTiles.bas",				"")
+inc("cTilesload.bas",			"")
+inc("cSettings.bas",			"")
+inc("cInput.bas",				"")
 
 inc("gRetirement.bas",			"")
 inc("gDeath.bas",				"")
 inc("gHighscore.bas",			"")
-inc("gGame.bas",				"game menu. gives about 1/3rd the units a workout without anything on top")
-
-inc("gRumors.bas",				"get_rumor")
-inc("gStockmarket.bas",			"just a template")
+inc("cGame.bas",				"game menu")
 
 inc("gCredits.bas",				"")
 inc("gBasis.bas",				"")
-inc("gUtils.bas",				"")
-inc("gTiles.bas",				"")
-inc("gTilesload.bas",			"")
-inc("gSettings.bas",			"")
-inc("gInput.bas",				"")
+inc("gRumors.bas",				"get_rumor")
+inc("gStockmarket.bas",			"just a template")
 
 inc("gStars.bas",				"")
 inc("gEnergycounter.bas",		"")
@@ -33,7 +33,7 @@ inc("gPortal.bas",				"")
 inc("gItems.bas",				"")
 inc("gItem.bas",				"")
 inc("gShip.bas",				"")
-inc("gPlayer.bas",				"player functions. the type long ago declared as _ship in Ship.bas")
+inc("gPlayer.bas",				"player functions.")
 
 '#if false
 
