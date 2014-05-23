@@ -266,8 +266,12 @@ sub drawfx(df_x as integer=0,df_y as integer=0)
 	
 End Sub
 
+'' these are 1-based, just like text-mode!
+
 sub draws(ds_x as integer,ds_y as integer,ds_text as string,ds_font as string="",aProc as DrawStringCustom=null)
 	'Draw String ( ds_x , ds_y ), ds_text
+	DbgAssert(ds_x>=0,"x")
+	DbgAssert(ds_y>=0,"y")
 	if ds_font="" then
 		Draw String (erw+ds_x*dsx,erh+ds_y*dsy),	ds_text
 	else
@@ -276,6 +280,10 @@ sub draws(ds_x as integer,ds_y as integer,ds_text as string,ds_font as string=""
 End sub
 
 sub draw1c(ds_x as integer,ds_y as integer,ds_text as string)
+	ds_x -=1
+	ds_y -=1
+	DbgAssert(ds_x>=0,"x")
+	DbgAssert(ds_y>=0,"y")
 	if FONT2=null then
 		Draw String (erw+ds_x*dsx,erh+ds_y*dsy),	ds_text
 	else
@@ -284,6 +292,10 @@ sub draw1c(ds_x as integer,ds_y as integer,ds_text as string)
 End sub
 
 sub draw2c(ds_x as integer,ds_y as integer,ds_text as string)
+	ds_x -=1
+	ds_y -=1
+	DbgAssert(ds_x>=0,"x")
+	DbgAssert(ds_y>=0,"y")
 	if FONT2=null then
 		Draw String (erw+ds_x*dsx,erh+ds_y*dsy),	ds_text
 	else
@@ -292,6 +304,10 @@ sub draw2c(ds_x as integer,ds_y as integer,ds_text as string)
 End sub
 
 sub drawtt(ds_x as integer,ds_y as integer,ds_text as string)	
+	ds_x -=1
+	ds_y -=1
+	DbgAssert(ds_x>=0,"x")
+	DbgAssert(ds_y>=0,"y")
 	if TITLEFONT=null then
 		Draw String (erw+ds_x*dsx,erh+ds_y*dsy),	ds_text
 	else

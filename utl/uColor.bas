@@ -75,6 +75,7 @@ declare function load_palette(filename as string="p.pal") as short
 End Namespace
 
 declare function set__color(fg As Short,bg As Short=0,visible As Byte=1) As Short
+declare function text_to_html(text as string) as string
 
 'declare function tColor
 'declare function argb(c as short) As String
@@ -190,6 +191,36 @@ end namespace
 function set__color(fg As Short,bg As Short=0,visible As Byte=1) As Short
 	return tColor.set(fg,bg,visible)
 End Function
+
+function text_to_html(text as string) as string
+    dim as string t,w(1024)
+    dim as short wcount,i,first,c
+    for i=0 to len(text)
+        if mid(text,i,1)="{" or mid(text,i,1)="|" then wcount+=1
+        w(wcount)=w(wcount)&mid(text,i,1)
+        if mid(text,i,1)=" " or mid(text,i,1)="|" or  mid(text,i,1)="}" then wcount+=1
+    next
+
+    for i=0 to wcount
+        if w(i)="|" then w(i)="<br>"
+        if Left(trim(w(i)),1)="{" and Right(trim(w(i)),1)="}" then
+            c=numfromstr(w(i))
+            if first=1 then
+                w(i)="</span>"
+            else
+                w(i)=""
+            endif
+            w(i) +=html_color("rgb(" & tColor.argb(c) & ")")
+            first=1
+        endif
+    next
+    for i=0 to wcount
+        t=t &w(i)
+    next
+
+    return t
+end function
+
 
 #ifndef head
 	tModule.Register("tColor",@tColor.Init())

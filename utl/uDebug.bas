@@ -112,6 +112,10 @@
 		#define DbgEnd
 	#endif
 	'	
+	#macro DbgAssert(x,msg)
+	if not (x) then DbgPrint("DbgAssert failed @ " +ucase(Namebase(__FILE__))+":"+__FUNCTION__+"." &__LINE__ &"> " +msg)
+	#EndMacro
+	'
 #else
 	#ifdef __FB_WIN32__					'windows
 		#print Windows Release mode
@@ -126,6 +130,7 @@
 	'									'NOTICE!! these must be on their own line.  no IF x THEN DbgPrint()! 
 	#define _DbgPrintMode -1
 	#define DbgPrint(text)
+	#define DbgAssert(x)
 	#define DbgEnd
 #endif
 

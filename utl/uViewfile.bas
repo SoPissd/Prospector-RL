@@ -21,14 +21,14 @@
 #include "uDefines.bas"
 #include "uModule.bas"
 #include "uDefines.bas"
-#include "uScreen.bas"
+#include "uUtils.bas"
 #include "uDebug.bas"
+#include "uScreen.bas"
 #include "file.bi"
 #include "uFile.bas"
 #include "uColor.bas"
 #include "uConsole.bas"
 #include "uVersion.bas"
-#include "uUtils.bas"
 #include "uError.bas"
 #include "uWindows.bas"
 #include "uTextbox.bas"
@@ -41,8 +41,8 @@
 #endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tViewfile -=-=-=-=-=-=-=-
-declare function ViewArray(lines() as string,nlines as integer,bAutoColor as integer=false) as integer
-declare function Viewfile(filename as string,nlines as integer=2048,bAutoColor as integer=false) as integer
+declare function ViewArray(lines() as string,nlines as integer,bScrollbar as integer=true,bAutoColor as integer=false) as integer
+declare function Viewfile(filename as string,nlines as integer=2048,bScrollbar as integer=true,bAutoColor as integer=false) as integer
 
 #endif'head
 #ifdef main
@@ -54,7 +54,7 @@ function init(iAction as integer) as integer
 end function
 end namespace'tViewfile
 
-function ViewArray(lines() as string,nlines as integer,bAutoColor as integer=false) as integer
+function ViewArray(lines() as string,nlines as integer,bScrollbar as integer=true,bAutoColor as integer=false) as integer
 	'dbgprint(offset)
 	'dbgprint(nlines)
 	'dbgprint(height)
@@ -84,11 +84,10 @@ function ViewArray(lines() as string,nlines as integer,bAutoColor as integer=fal
 	'DbgPrint("erw:"&tScreen.erw &" erh:"& tScreen.erh)
 
     if tScreen.isGraphic then
-    	xWidth= tScreen.gtw -1
-    	height= tScreen.gth -1
+    	xWidth= tScreen.gtw 
+    	height= tScreen.gth 
     else
 	    xwidth=(width() and &hFFFF)		' width is easy.
-		'xwidth -= 1						' print to col 1+ (0 to xwidth) 
 	    height=(width() shr (4*4))		' gives screen/console height
 	    if (height>25) then height=25	' limit console height to 25 (at least on windows)    	
     EndIf
@@ -119,14 +118,13 @@ function ViewArray(lines() as string,nlines as integer,bAutoColor as integer=fal
             if bAutoColor then set__color( col(i+offset),0)
             '
 			if tScreen.isGraphic then
-			    tScreen.draw2c(0,i,text)
+			    tScreen.draw2c(1,i+1,text)
 			else
-	            locate i+1,1
-	            print text;
+				tScreen.xy(1,i+1,text)
 			endif
         next
 
-	scroll_bar( offset, nlines, pheight, height, xwidth, 0, 14) 
+	scroll_bar( offset, nlines, pheight, height, xwidth, 1, 14) 
 	if tScreen.isGraphic then tScreen.drawfx(8,8)
 
         '
@@ -134,13 +132,13 @@ function ViewArray(lines() as string,nlines as integer,bAutoColor as integer=fal
 
         set__color( 14,0)
         dim x as integer = (xwidth-len(key))\2+1
+        if x<1 then x=1
 		if tScreen.isGraphic then
 		    tScreen.draw2c(x,height,key)
 			'DbgPrint("dsx:"&tScreen.dsx &" dsy:"& tScreen.dsy)
 			'DbgPrint(""&x &" "& height &" "& key)
 		else
-	        locate height,x
-        	print key; 
+			tScreen.xy(x,height,key) 
 		endif
 			
 		'
@@ -185,7 +183,7 @@ function ViewArray(lines() as string,nlines as integer,bAutoColor as integer=fal
 			'if offset>nlines then offset=nlines
 	        if offset>nlines-height+1 then offset=nlines-height+1
 	        if offset<0 then offset=0
-	        if offsetx>longest-xwidth then offsetx=longest-xwidth
+	        if offsetx>longest-(xwidth-1) then offsetx=longest-(xwidth-1)
 	        if (offsetx<0) or (xwidth>=longest) then offsetx=0
 			'
 			if (i>0) or uConsole.Closing<>0 or uConsole.keyonwards(key) then
@@ -197,7 +195,7 @@ function ViewArray(lines() as string,nlines as integer,bAutoColor as integer=fal
 End Function
 
 
-function Viewfile(filename as string,nlines as integer=2048,bAutoColor as integer=false) as integer
+function Viewfile(filename as string,nlines as integer=2048,bScrollbar as integer=true,bAutoColor as integer=false) as integer
     dim as integer f
     dim as Integer c,lastspace
     dim lines(nlines) as string
@@ -213,7 +211,7 @@ function Viewfile(filename as string,nlines as integer=2048,bAutoColor as intege
     	tError.log("Viewfile:"+tFile.FileError)
     EndIf
     '
-    ViewArray(Lines(),c,bAutoColor)
+    ViewArray(Lines(),c,bScrollbar,bAutoColor)
     return 0
 end function
 
@@ -245,6 +243,7 @@ end function
 	
 	Viewfile(tVersion.ErrorlogFilename())
 	cls
+	tScreen.x=200
 	tScreen.y=50
 	tScreen.res	
 	Viewfile(tVersion.ErrorlogFilename())

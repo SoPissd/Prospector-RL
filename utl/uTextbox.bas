@@ -223,34 +223,37 @@ function scroll_bar(iStartingline as short, iTotalLines as short, iLinesShown as
 	if iLinesShown>=iTotalLines then iStartingline=0		'already viewing the whole thing
 	if iStartingline>iTotalLines-iLinesShown then iStartingline= iTotalLines-iLinesShown	'keep the scroller visible at the bottom
 	
+		
 	dim as integer bReserveSpace, bShowMarkers
-	bShowMarkers= iScrollerHeight>=6	'leaves 3 spaces to indicate the position
-	bReserveSpace= iScrollerHeight>=5	'reserve top and bottom slots to indicate bof/eof
+	'bShowMarkers= iScrollerHeight>=6	'leaves 3 spaces to indicate the position
+	'bReserveSpace= iScrollerHeight>=5	'reserve top and bottom slots to indicate bof/eof
+
+	iScrollerHeight -=1 'now its 0-based internally
 	
-	if bReserveSpace then iTotalLines -=2 'reserve top and bottom scrollbar positions
+	if bReserveSpace then iTotalLines -=2 'reserve top and bottom scrollbar positions vis 2 lines
 	 
 	'DbgPrint("--")
 	'DbgPrint(iStartingline &" "& oneline  &" "& balkenh &" " & offset2)				
 	'DbgPrint(iTotalLines &" "& iLinesShown  &" "& iScrollerHeight &" " )				
 	'
 	dim as integer f,t
-	f=1
-	t=iScrollerHeight-2
+	f=0 '1
+	t=iScrollerHeight-1 'iScrollerHeight-2
 	'
+	'tScreen.drawfx(_fw1,_fh1)
     set__color(fg,0)
+    '
     if bShowMarkers then
 		if tScreen.isGraphic then
-'		    tScreen.drawfx(_fw1,_fh1)
-		    tScreen.draw2c(x,y,chr(220))			'put a marker on top
-		    tScreen.draw2c(x,y+iScrollerHeight-1,chr(223))	'put a marker below
+		    tScreen.draw2c(x,y,chr(220))					'put a marker on top
+		    tScreen.draw2c(x,y+iScrollerHeight,chr(223))	'put a marker below
 		else
-			'text mode is 1-based..
-		    tScreen.xy(x,y,chr(220))			'put a marker on top
-		    tScreen.xy(x,y+iScrollerHeight-1,chr(223))	'put a marker below
+		    tScreen.xy(x,y,chr(220))						'put a marker on top
+		    tScreen.xy(x,y+iScrollerHeight,chr(223))		'put a marker below
 		endif
-    else 
-    	f -= 1
-    	t += 1
+    	f += 1
+    	t -= 1
+    else
 	endif
 	'
     if bReserveSpace then
@@ -260,7 +263,7 @@ function scroll_bar(iStartingline as short, iTotalLines as short, iLinesShown as
 			else
 				tScreen.xy(x,y+f,chr(178))							'indicate contents
 			endif
-		elseif (iStartingline=iTotalLines-iLinesShown+2) then		'at the bottom
+		elseif (iStartingline=iTotalLines-iLinesShown) then		'at the bottom
 			if tScreen.isGraphic then
 	    	    tScreen.draw2c(x,y+t,chr(178))						'indicate contents
 			else
@@ -274,20 +277,20 @@ function scroll_bar(iStartingline as short, iTotalLines as short, iLinesShown as
 				tScreen.xy(x,y+f,chr(250))							'indicate no-contents
 				tScreen.xy(x,y+t,chr(250))							'indicate no-contents
 			endif
-			f +=1		'reserve top and bottom scrollbar positions
-			t -=1
 		endif
-	endif
+		f +=1		'reserve top and bottom scrollbar positions
+		t -=1
+    endif
 	'
     oneline=(t-f+1)/iTotalLines						'% of total represented by one scrollbar-unit
 '    oneline=(iScrollerHeight-2)/iTotalLines			'% of total represented by one scrollbar-unit
-    balkenh=iLinesShown*oneline						'% of total lines shown in scrollbar-units
-    offset2=iStartingline*oneline					'starting line in scrollbar-units
-    if balkenh=0 then balkenh=1
-    if offset2=0 then offset2=1
+    balkenh=fix(iLinesShown*oneline)					'% of total lines shown in scrollbar-units
+    offset2=fix((iStartingline+1)*oneline)				'starting line in scrollbar-units
+    'if balkenh=0 then balkenh=1
+    'if offset2=0 then offset2=1
 	'
-	
-DbgPrint( "f:" & f &" t:" & t &" :" & oneline &" :" & balkenh &" :" & offset2 )	
+tScreen.xy(1,2)	
+DbgPrint( "f:" & f &" t:" & t &" iStartingline:" & iStartingline &" oneline:" & oneline &" balkenh:" & balkenh &" offset2:" & offset2 )	
 'popup(""& balkenh &" "& offset2) 	
 	dim as integer i
     set__color(fg,0)
@@ -299,7 +302,7 @@ DbgPrint( "f:" & f &" t:" & t &" :" & oneline &" :" & balkenh &" :" & offset2 )
 	    	    tScreen.draw2c(x,y+i,chr(250))
 	        endif
 		else
-	        if i>=offset2 and i<offset2+balkenh then
+	        if i>=offset2 and i<=offset2+balkenh then
 				tScreen.xy(x,y+i,chr(178))
 	        else
 				tScreen.xy(x,y+i,chr(250))'" ") 
