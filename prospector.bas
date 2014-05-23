@@ -35,14 +35,7 @@
 #assert defined(build_justfoundation) or defined(build_justbasic) or defined(build_prospector) or __FB_OUT_LIB__
 
 #ifdef useLibFoundation
-	#print using libFoundation
-	#define types
-	#define head
-	#include once "utl/bFoundation.bas"	'build the core pieces  
-	#libpath "utl"
-	#inclib "bFoundation"
-	#undef types
-	#undef head
+	#include "utl/libFoundation.bi"		'use core utilities from utl/libFoundation.a
 #else
 	#include once "utl/bFoundation.bas"	'build the core pieces  
 	'build module 'build' for types, head and main
