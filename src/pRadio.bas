@@ -36,26 +36,6 @@ Type _shipfire
     stun As Byte
 End Type
 
-Type _disease
-    no As UByte
-    desig As String
-    ldesc As String
-    cause As String
-    incubation As UByte
-    duration As UByte
-    fatality As UByte
-    contagio As UByte
-    causeknown As Byte
-    cureknown As Byte
-    att As Byte
-    hal As Byte
-    bli As Byte
-    nac As Byte
-    oxy As Byte
-    wounds As Byte
-End Type
-
-Dim Shared disease(17) As _disease
 
 #endif'types
 #ifdef head
