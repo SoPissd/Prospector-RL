@@ -20,11 +20,12 @@
 #undef intest
 '     -=-=-=-=-=-=-=- TEST: tColor -=-=-=-=-=-=-=-
 #print "tColor test"
+#include "file.bi"
 #include "uDefines.bas"
 #include "uModule.bas"
 #include "uDefines.bas"
 #include "uScreen.bas"
-#include "file.bi"
+#include "uWindows.bas"
 
 '#ifdef intest
 ''     -=-=-=-=-=-=-=- TEST: tPalette -=-=-=-=-=-=-=-

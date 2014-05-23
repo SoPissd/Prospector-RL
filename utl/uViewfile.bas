@@ -41,8 +41,8 @@
 #endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tViewfile -=-=-=-=-=-=-=-
-declare function ViewArray(lines() as string,nlines as integer) as integer
-declare function Viewfile(filename as string,nlines as integer=2048) as integer
+declare function ViewArray(lines() as string,nlines as integer,bAutoColor as integer=false) as integer
+declare function Viewfile(filename as string,nlines as integer=2048,bAutoColor as integer=false) as integer
 
 #endif'head
 #ifdef main
@@ -54,7 +54,7 @@ function init(iAction as integer) as integer
 end function
 end namespace'tViewfile
 
-function ViewArray(lines() as string,nlines as integer) as integer
+function ViewArray(lines() as string,nlines as integer,bAutoColor as integer=false) as integer
 	'dbgprint(offset)
 	'dbgprint(nlines)
 	'dbgprint(height)
@@ -66,52 +66,83 @@ function ViewArray(lines() as string,nlines as integer) as integer
     dim col(nlines) as short
     dim as string text
     dim as string key
-   
-    for i=1 to nlines
-        col(i)=11
-        if left(lines(i),2)="==" then
-            col(i)=7
-            col(i-1)=14
-        endif
-        'if left(lines(a),1)="*" then col(a)=14
-    next
-    
-    xwidth=(width() and &hFFFF)	' width is easy.
-    height=(width() shr (4*4))	' gives screen/console height
-    if (tScreen.isGraphic=0) and (height>25) then height=25	' limit console height to 25 (at least on windows)
+
+   	if bAutoColor then 
+	    for i=0 to nlines-1
+	        col(i)=11
+	        if left(lines(i),2)="==" then
+	            col(i)=7
+	            col(i-1)=14
+	        elseif left(lines(i),1)="*" then 
+	        	col(i)=14
+	        endif
+	    next
+	endif
+
+	if tScreen.isGraphic then tScreen.drawfx(8,8)
+	'DbgPrint("dsx:"&tScreen.dsx &" dsy:"& tScreen.dsy)
+	'DbgPrint("erw:"&tScreen.erw &" erh:"& tScreen.erh)
+
+    if tScreen.isGraphic then
+    	xWidth= tScreen.gtw -1
+    	height= tScreen.gth -1
+    else
+	    xwidth=(width() and &hFFFF)		' width is easy.
+		'xwidth -= 1						' print to col 1+ (0 to xwidth) 
+	    height=(width() shr (4*4))		' gives screen/console height
+	    if (height>25) then height=25	' limit console height to 25 (at least on windows)    	
+    EndIf
+
    	pheight=height-1			' take off 1 line for instructions and we get the viewport
     if pheight>nlines then		' viewport-height is more than lines of text to show 
    		pheight=nlines
     EndIf
 
-	xwidth -= 1
+	'DbgPrint("width:"&xWidth &" height:"& height)
+	'DbgPrint("offset:"& offset)
     
+
+'	if tScreen.isGraphic then tScreen.drawfx(_fw1,_fh1)
     'set__color( 15,0)
     do
         cls
         set__color( 11,0)
         for i=0 to pheight-1
         	if i+offset>ubound(col) then exit for
-            locate i+1,1
-            set__color( col(i+offset),0)
             text= lines(i+offset)
             iwid=len(text)
             if iwid>longest then
             	longest=iwid
             EndIf
             text= mid(text,offsetx+1,xwidth)
-            print text;
+            '
+            if bAutoColor then set__color( col(i+offset),0)
+            '
+			if tScreen.isGraphic then
+			    tScreen.draw2c(0,i,text)
+			else
+	            locate i+1,1
+	            print text;
+			endif
         next
 
-	'scroll_bar(offset,linetot,lineshow ,winhigh as short, x as short,y as short,col as short) as short
-	scroll_bar( offset, nlines, pheight, 4, xwidth+1, 1, 15) 
-'	scroll_bar( offset, nlines, pheight, pheight, xwidth+1, 1, 15) 
+	scroll_bar( offset, nlines, pheight, height, xwidth, 0, 14) 
+	if tScreen.isGraphic then tScreen.drawfx(8,8)
 
         '
-        set__color( 14,0)
         key="Use Arrows and +/- to browse " & nlines & " lines. Enter to close: "
-        locate height,(xwidth-len(key))\2+1
-        print key; 
+
+        set__color( 14,0)
+        dim x as integer = (xwidth-len(key))\2+1
+		if tScreen.isGraphic then
+		    tScreen.draw2c(x,height,key)
+			'DbgPrint("dsx:"&tScreen.dsx &" dsy:"& tScreen.dsy)
+			'DbgPrint(""&x &" "& height &" "& key)
+		else
+	        locate height,x
+        	print key; 
+		endif
+			
 		'
 		while true
 	        key=uConsole.keyinput() '("12346789 ")'            key=keyin("12346789 ",1)
@@ -166,7 +197,7 @@ function ViewArray(lines() as string,nlines as integer) as integer
 End Function
 
 
-function Viewfile(filename as string,nlines as integer=2048) as integer
+function Viewfile(filename as string,nlines as integer=2048,bAutoColor as integer=false) as integer
     dim as integer f
     dim as Integer c,lastspace
     dim lines(nlines) as string
@@ -182,7 +213,7 @@ function Viewfile(filename as string,nlines as integer=2048) as integer
     	tError.log("Viewfile:"+tFile.FileError)
     EndIf
     '
-    ViewArray(Lines(),c)
+    ViewArray(Lines(),c,bAutoColor)
     return 0
 end function
 
@@ -212,6 +243,10 @@ end function
 		tFile.Closefile(f)
 	EndIf
 	
+	Viewfile(tVersion.ErrorlogFilename())
+	cls
+	tScreen.y=50
+	tScreen.res	
 	Viewfile(tVersion.ErrorlogFilename())
 		
 #endif'test

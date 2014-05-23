@@ -8,7 +8,8 @@
     '
     type tagConPrintObject
         declare function ConsoleCheck() as HANDLE
-        declare function ConsolePrint(outtext as string ="",CRLF as string ="") as integer
+        declare function ConsolePrint overload (outtext as integer,CRLF as string ="") as integer
+        declare function ConsolePrint overload (outtext as string ="",CRLF as string ="") as integer
         declare function ConsoleLocate(row as integer =0,col as integer =0) as integer
         declare function ConsoleColor(foreground as integer,background as integer) as integer
         declare function ConsoleCursor(size as integer =10,visible as integer =TRUE) as integer
@@ -38,8 +39,12 @@
     '
     end function
     '
+
+    function tagConPrintObject.ConsolePrint(outtext as integer,CRLF as string="") as integer
+    	return ConsolePrint(""& outtext, CRLF)
+    End Function
+    
     function tagConPrintObject.ConsolePrint(outtext as string,CRLF as string="") as integer
-    '
         this.status=0
         '
         dim as HANDLE chand=Consolecheck
