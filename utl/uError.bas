@@ -119,6 +119,7 @@ function Errorhandler(ErrWhere as string) As integer
 		if tModule.fErrOut>0 then
 			'print #tModule.fErrOut,"All done."
 			close #tModule.fErrOut
+			tModule.fErrOut= 0
 		endif
 		return 0
 	EndIf
