@@ -3,18 +3,18 @@
 'clear all flags, for reference.
 'dont mess up "fbc -d options"  
 #undef build_justfoundation
-#undef build_justbasic
+#undef build_justgamecore
 #undef build_prospector
 #undef useLibFoundation
 #undef useLibTileData
 #undef useLibProspector
-#undef makesound				'active or blank wrappers for sound-dll
-#undef makezlib					'active or blank wrappers for zlib and png. the linked library has no debug symbols and delays loading the debugger. 
+#undef makesound				'active or blank wrappers for _FBSOUND(default) or _FMODSOUND sound-dll
+#undef makezlib					'the linked library has no debug symbols and can be excluded so the debugger is quiet. 
 '
 'set build mode
 'set build mode
 '#define build_justfoundation
-#define build_justbasic
+#define build_justgamecore
 '#define build_prospector		'<< that's the one to build_everything. turn the build_others off
 '
 'annoying experiment(s)
@@ -24,15 +24,15 @@
 'set options
 '#define useLibFoundation
 #define useLibTileData
-'#define useLibbProspector	
-'#define makesound   
-'#define makezlib 
+'#define useLibbProspector			'refers to the cor/GameCore code-library	
+'#define makesound					'are we even going to bind in any sound-library code 
+'#define makezlib 					'turn this on when you need png and compressed saves. 
 '
 
 'you can build this as a library containing 'phase1' code. then use that library while working on 'phase2'
 'the 'phases' set conditionals in bProspector.bi and control what's included where.  
 
-#assert defined(build_justfoundation) or defined(build_justbasic) or defined(build_prospector) or __FB_OUT_LIB__
+#assert defined(build_justfoundation) or defined(build_justgamecore) or defined(build_prospector) or __FB_OUT_LIB__
 
 #ifdef useLibFoundation
 	#include "utl/libFoundation.bi"		'use core utilities from utl/libFoundation.a
@@ -52,7 +52,7 @@
 	#endif
 
 	#ifdef useLibTileData
-		#print using libTileData
+		#print using libTileData. reading tile headers...
 		#define types
 		#define head
 		#include "src/vTiledata.bas"
@@ -64,23 +64,19 @@
 
 	#ifdef useLibProspector
 	#if __FB_OUT_LIB__	 
-		#print using libbProspector
+		#print using libbProspector. reading game-core headers...
 		#define types
 		#define head
-		#define phase1
-		#include "src/bProspector.bi"
-		#libpath "src"
+		#include "cor/bGameCore.bi"
 		#inclib "bProspector"
 	#endif
 	#endif
 
 	#ifndef useLibProspector
-		#ifdef build_justbasic
-			#print build just basic...
-			#define phase1
-			make("src/bProspector.bi")
-			#undef phase1
-		#endif'build_justbasic
+		#ifdef build_justgamecore
+			#print build just the game-core...
+			make("cor/bGameCore.bi")			' turns into libProspector because of the name of this file
+		#endif'build_gamecore
 	#endif
 		
 #endif'not build_justfoundation
@@ -91,9 +87,10 @@
 
 	#ifdef build_prospector
 		#print build everything...
+		make("cor/bGameCore.bi")				' build the game-core. types, commerce, fundamental classes
 		#define phase1
 		#define phase2
-		make("src/bProspector.bi")
+		make("src/bProspector.bi")				' and everything planet/space map/exploration/combat related
 		#undef phase1
 		#undef phase2
 	#endif'build_prospector

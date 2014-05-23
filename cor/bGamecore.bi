@@ -1,3 +1,6 @@
+#ifndef useLibTileData
+inc("vTiledata.bas",			"data about each tile")
+#endif
 inc("cCredits.bas",				"")
 inc("gBasis.bas",				"")
 inc("gUtils.bas",				"")
