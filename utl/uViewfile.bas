@@ -79,7 +79,6 @@ function ViewArray(lines() as string,nlines as integer,bScrollbar as integer=tru
 	    next
 	endif
 
-	if tScreen.isGraphic then tScreen.drawfx(8,8)
 	'DbgPrint("dsx:"&tScreen.dsx &" dsy:"& tScreen.dsy)
 	'DbgPrint("erw:"&tScreen.erw &" erh:"& tScreen.erh)
 
@@ -98,11 +97,13 @@ function ViewArray(lines() as string,nlines as integer,bScrollbar as integer=tru
     EndIf
 
 	'DbgPrint("width:"&xWidth &" height:"& height)
-	'DbgPrint("offset:"& offset)
-    
+	'DbgPrint("offset:"& offset)    
 
-'	if tScreen.isGraphic then tScreen.drawfx(_fw1,_fh1)
     'set__color( 15,0)
+    
+	dim wScrollbar as integer=0 
+	if bScrollbar then wScrollbar= 1
+
     do
         cls
         set__color( 11,0)
@@ -113,7 +114,7 @@ function ViewArray(lines() as string,nlines as integer,bScrollbar as integer=tru
             if iwid>longest then
             	longest=iwid
             EndIf
-            text= mid(text,offsetx+1,xwidth)
+            text= mid(text,offsetx+1,xwidth-wScrollbar)
             '
             if bAutoColor then set__color( col(i+offset),0)
             '
@@ -124,8 +125,7 @@ function ViewArray(lines() as string,nlines as integer,bScrollbar as integer=tru
 			endif
         next
 
-	scroll_bar( offset, nlines, pheight, height, xwidth, 1, 14) 
-	if tScreen.isGraphic then tScreen.drawfx(8,8)
+		if bScrollbar then scroll_bar( offset, nlines, pheight, height, xwidth, 1, 14)		
 
         '
         key="Use Arrows and +/- to browse " & nlines & " lines. Enter to close: "
@@ -183,7 +183,7 @@ function ViewArray(lines() as string,nlines as integer,bScrollbar as integer=tru
 			'if offset>nlines then offset=nlines
 	        if offset>nlines-height+1 then offset=nlines-height+1
 	        if offset<0 then offset=0
-	        if offsetx>longest-(xwidth-1) then offsetx=longest-(xwidth-1)
+	        if offsetx>longest-(xwidth-wScrollbar) then offsetx=longest-(xwidth-wScrollbar)
 	        if (offsetx<0) or (xwidth>=longest) then offsetx=0
 			'
 			if (i>0) or uConsole.Closing<>0 or uConsole.keyonwards(key) then
@@ -245,7 +245,10 @@ end function
 	cls
 	tScreen.x=200
 	tScreen.y=50
-	tScreen.res	
+	tScreen.res()
+	'
+	DbgPrint("dsx:"&tScreen.dsx &" dsy:"& tScreen.dsy)
+	
 	Viewfile(tVersion.ErrorlogFilename())
 		
 #endif'test

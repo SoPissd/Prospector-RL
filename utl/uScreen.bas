@@ -101,7 +101,7 @@ namespace tScreen
 
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tScreen -=-=-=-=-=-=-=-
-Dim Shared as integer isGraphic=0		'decide on print vs draw-string
+Dim Shared as integer isGraphic= false		'decide on print vs draw-string
 
 Dim Shared As integer x=800
 Dim Shared As integer y=600
@@ -155,10 +155,10 @@ function init(iAction as integer) as integer
         'setting the driver to gdi makes the window appear on top as needed for windows.						
         ScreenControl FB.SET_DRIVER_NAME, "GDI"
     #endif
-	_FH1=24
-	_FH2=16
-	_FW1=16
-	_FW2=16
+	_FH1=8
+	_FH2=8
+	_FW1=8
+	_FW2=8
 	_mwx=60
     drawfx() 'compute initial values    
 	return 0
@@ -171,23 +171,25 @@ Dim Shared as UShort LastRow=0		'console position tracker
 
 function res(flags as integer= GFX_WINDOWED ) As Short
     screenres x,y,16,2,flags
-	isGraphic=1
+	drawfx()
+	isGraphic= true
 	return 0
 End Function
 
 function mode(iMode as integer=0) As Short
     isGraphic= iMode<>0
     Screen iMode
+	drawfx()
 	return 0
 End Function
 
 function set(fg As Short=1,bg As Short=1) As Short
-    if isGraphic<>0 then Screenset fg,bg
+    if isGraphic then Screenset fg,bg
 	return 0
 End Function
 
 function col(fg As UInteger,bg As UInteger=0) As UInteger
-    if isGraphic=0 then return 0
+    if not isGraphic then return 0
 	color fg,bg
 	_fgcolor_= fg
 	_bgcolor_= bg	
@@ -195,12 +197,12 @@ function col(fg As UInteger,bg As UInteger=0) As UInteger
 End Function
 
 function rbgcolor(sr As Short=255,sg As Short=255,sb As Short=255) As UInteger 'sets fg to rgb, bg to 0
-    if isGraphic= 0 then return 0 
+    if not isGraphic then return 0
 	return col((sr shl 16)+(sg shl 8)+(sb),0)
 End Function
 
 function update() As Short
-    if isGraphic<>0 then flip	
+    if not isGraphic then flip	
 	return 0
 End Function
 
@@ -210,7 +212,7 @@ function size(irows As Short=25,icols As Short=80) As Short
 End Function
 
 function loc(iRow As Short=0,iCol As Short=0,aText as string="") As Short
-	if iCol=0 and (isGraphic>0) then iCol=LastCol else LastCol=iCol
+	if iCol=0 and isGraphic then iCol=LastCol else LastCol=iCol
 	if iRow=0 then iRow=CsrLin
 	LastRow=iRow
 	Locate iRow,iCol
@@ -252,8 +254,8 @@ End Sub
 	'(x, y), text [,color [, font [, method [, (alpha|blender) [, parameter] ] ] ] ]
 
 sub drawfx(df_x as integer=0,df_y as integer=0)
-	dsx= df_x: if dsx<1 then dsx=1
-	dsy= df_y: if dsy<1 then dsy=1
+	dsx= df_x: if dsx<1 then dsx= _fw1 '1
+	dsy= df_y: if dsy<1 then dsy= _fh1 '1
 	
 	gtw=x\dsx			'we can fit this many chars integrally
 	gth=y\dsy
