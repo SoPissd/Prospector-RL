@@ -27,6 +27,8 @@
 #include "uModule.bas"
 #include "uDefines.bas"
 
+#include "uUtils.bas"
+#include "uDebug.bas"
 #include "uScreen.bas"
 #include "uColor.bas"
 '#include "uPng.bas"
@@ -534,13 +536,13 @@ sub ascii_table()
 	? "000:";
 	for i= 0 to 255
 		if i=7 or i=8 or i=9 or i=10 or i=13 then 	
-			?"   "; 
+			? "   "; 
 		else
 			? "  ";chr(i);
 		EndIf
 		if i<255 and (i+1) mod 16 = 0 then 
 			?
-			?mid(""&1000+i,2,3);":";
+			? mid(""&1001+i,2,3);":";
 		EndIf
 	Next
 	?

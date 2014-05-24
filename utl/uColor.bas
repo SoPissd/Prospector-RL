@@ -25,6 +25,7 @@
 #include "uModule.bas"
 #include "uDefines.bas"
 #include "uScreen.bas"
+#include "uUtils.bas"
 #include "uWindows.bas"
 
 '#ifdef intest
