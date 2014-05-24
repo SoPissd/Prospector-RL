@@ -24,14 +24,14 @@
 #include "uDefines.bas"
 #include "uModule.bas"
 #include "uDefines.bas"
-#include "uScreen.bas"
+#include "uUtils.bas"
 #include "uDebug.bas"
+#include "uScreen.bas"
 #include "file.bi"
 #include "uFile.bas"
 #include "uColor.bas"
 #include "uConsole.bas"
 #include "uVersion.bas"
-#include "uUtils.bas"
 #include "uError.bas"
 #include "uRng.bas"
 #include "uCoords.bas"
@@ -173,9 +173,7 @@ function textbox(text as string, x as short, y as short, wid as short,_
 	'	tScreen.draw2c(x+i,y+lcount+1,right(""&i,1))    	
 	'Next
 	'DbgPrint(x &" "& y &" "& longestline &" "& maxlines)				
-
-
-DbgPrint(""&y &" "& lcount &" "& maxlines)
+	'DbgPrint(""&y &" "& lcount &" "& maxlines)
     
     if y+lcount>=maxlines then									' a full-screen textbox... for the finale
 
@@ -185,7 +183,7 @@ DbgPrint(""&y &" "& lcount &" "& maxlines)
             set__color(14,0,0)
         endif
         
-wid -=1        
+		wid -=1        
         tScreen.draw2c(x+wid,y            ,chr(24))
         tScreen.draw2c(x+wid,y+1          ,"-")
         
@@ -196,7 +194,7 @@ wid -=1
         endif
         tScreen.draw2c(x+wid,maxlines-2	,"+")
         tScreen.draw2c(x+wid,maxlines-1	,chr(25))
-wid +=1        
+		wid +=1        
 
         scroll_bar(offset, lcount, maxlines-y, maxlines-y -1 -4,x+wid,y+2,14)
 	endif
@@ -312,15 +310,6 @@ end function
 
 function draw_border(xoffset as short) as short
     dim as short fh1,fw1,fw2,a
-'    if configflag(con_tiles)=0 then
-'        fh1=16
-'        fw1=8
-'        fw2=_fw2
-'    else
-        fh1=_fh1
-        fw1=_fw1
-        fw2=_fw2
-'    endif
     set__color( 224,1)
     if xoffset>0 then draw string(xoffset*fw2,21*_fh1),chr(195),,Font1,Custom,@_col
     for a=(xoffset+1)*fw2 to (_mwx+1)*_fw1 step fw1
@@ -342,32 +331,38 @@ end function
 
 function draw_border(xoffset as short,yoffset as short,mwx as short,mhy as short) as short
     dim as short a
-    'dim as short fh1,fw1,fw2,a
-    'if configflag(con_tiles)=0 then
-    '    fh1=16
-    '    fw1=8
-    '    fw2=_fw2
-    'else
-    '    fh1=_fh1
-    '    fw1=_fw1
-    '    fw2=_fw2
-    'endif
     set__color( 224,1)
 
-    tScreen.draw1c(xoffset,yoffset,chr(195))
-    tScreen.draw1c(xoffset,yoffset+mhy-1,chr(195))
-    for a=1 to mwx-1
-        tScreen.draw1c(xoffset+a,yoffset,chr(196))
-        tScreen.draw1c(xoffset+a,yoffset+mhy-1,chr(196))
-    next
-    for a=yoffset to yoffset+mhy-1
-        set__color( 224,1)
-        'draw string ((_mwx+1)*_fw1,a),chr(179),,Font1,custom,@_col
-        tScreen.draw1c(xoffset,a,chr(179))
-        tScreen.draw1c(xoffset+mwx-1,a,chr(179))
-        'set__color(0,0)
-        'tScreen.draw1c(xoffset+mwx+2,a,space(25))
-    next
+	if tScreen.isGraphic then
+	    for a=1 to mwx-1
+	        tScreen.draw1c(xoffset+a,yoffset,		chr(196))
+	        tScreen.draw1c(xoffset+a,yoffset+mhy-1,	chr(196))
+	    next
+	    for a=yoffset to yoffset+mhy-1
+	        'draw string ((_mwx+1)*_fw1,a),chr(179),,Font1,custom,@_col
+	        tScreen.draw1c(xoffset,a,				chr(179))
+	        tScreen.draw1c(xoffset+mwx-1,a,			chr(179))
+	        'tScreen.draw1c(xoffset+mwx+2,a,space(25))
+	    next
+	    tScreen.xy(xoffset,			yoffset,		chr(218))
+	    tScreen.xy(xoffset,			yoffset+mhy-1,	chr(192))
+	    tScreen.xy(xoffset+mwx-1,	yoffset,		chr(191))
+	    tScreen.xy(xoffset+mwx-1,	yoffset+mhy-1,	chr(217))
+	else
+	    for a=1 to mwx-1
+	        tScreen.xy(xoffset+a,	yoffset,		chr(196))
+	        tScreen.xy(xoffset+a,	yoffset+mhy-1,	chr(196))
+	    next
+	    for a=1 to mhy-1
+	        tScreen.xy(xoffset,		yoffset+a,		chr(179))
+	        tScreen.xy(xoffset+mwx-1,yoffset+a,		chr(179))
+	    next
+	    tScreen.xy(xoffset,			yoffset,		chr(218))
+	    tScreen.xy(xoffset,			yoffset+mhy-1,	chr(192))
+	    tScreen.xy(xoffset+mwx-1,	yoffset,		chr(191))
+	    tScreen.xy(xoffset+mwx-1,	yoffset+mhy-1,	chr(217))
+	endif
+	
     set__color( 11,0)
     return 0
 end function
@@ -407,20 +402,18 @@ Next
 dim fg as short			= 15
 dim bg as short			= 5
 
-_fw1=10
-_fh1=10
-
-
+draw_border(1,1,40,30)
+sleep
 tScreen.res
 tScreen.drawfx(8,8)
 tScreen.rbgcolor(255,255,255)
 
-tScreen.xy(10,3,tModule.Status())
+tScreen.xy(10,2,tModule.Status())
 tScreen.xy(10,5)
 
-draw_border(1,0,40,30)
-draw_border(2,2,40,30)
-draw_border(4,4,40,30)
+draw_border(1,1,40,30)
+draw_border(3,3,40,30)
+draw_border(5,5,40,30)
 
 dim as short x,y,h
 
