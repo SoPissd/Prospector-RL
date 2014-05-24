@@ -54,6 +54,7 @@ Const c_gre=10
 Const c_yel=14
 
 declare function rlprint(t as string, col as short=11) as short
+declare function askyn(q as string,col as short=11,sure as short=0) as short
 
 'declare function scrollup(b as short) as short
 'declare function locEOL() as _cords
@@ -262,7 +263,7 @@ end function
 
 function askyn(q as string,col as short=11,sure as short=0) as short
     dim key as string '*1
-'    rlprint (q,col)
+    rlprint (q,col)
     do
         key=uConsole.keyinput()
 '? key        

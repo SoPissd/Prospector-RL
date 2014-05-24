@@ -229,8 +229,22 @@ End Function
 ' check to see if something is pending at all.
 '   screenevent needs to get used by inkey if we want to track get/loose focus in the app
 
-function EventPending() as short		'0 if nothing pending, 1 has buffered
-	return Screenevent(0)
+function EventPending() as short		'0 if nothing pending, -1 has buffered
+	'clears status on read!
+	'silently fails in the console
+	dim b as integer=false 
+	dim e as FB.Event
+	while true
+		if not Screenevent(@e) then exit while
+		'we get notified once. the keys stay ready for inkey
+        select case e.type
+        	case FB.EVENT_KEY_PRESS
+	        	b=true
+	        	'keypending=true .. reset on inkey empty.
+        	case FB.EVENT_KEY_RELEASE,FB.EVENT_KEY_REPEAT         
+        End Select				
+	Wend
+	return b
 End Function
 
 function ClearEvents() as short

@@ -62,7 +62,9 @@
 	inc("uSound.bas",				"define 'makesound' and the sound methods will start to use the dll code. else they do nothing.")	'*need test*'
 '	inc("uPalette.bas",				"parse a text-file into uColor's palette")
 	inc("uPrint.bas",				"rlprints to graphics console, screen-info, some input")
-	inc("uTextbox.bas",				"Draws a box with text?")
+	inc("uBorder.bas",				"Draws boxes")
+	inc("uScroller.bas",			"Scrolls any-thing, any-area, any-array")
+	inc("uTextbox.bas",				"Wrappers for uScroller")
 	inc("uViewfile.bas",			"File and List Viewers rendering in text mode")
 	inc("uMainLoop.bas",			"Generic Eventloop")
 	inc("uMainMenu.bas",			"Generic Mainmenu")
