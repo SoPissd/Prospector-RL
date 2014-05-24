@@ -136,6 +136,9 @@ Dim shared as double		Fpstime		'time of most recent fps
 
 Dim shared as tActionmethod IdleMethod
 
+Dim shared as integer ttw = 80 'needs to be real
+Dim shared as integer tth = 25 
+
 '
 
 declare function dTimer() as double			'prevent wrap-around errors
@@ -154,9 +157,9 @@ declare function aKey2i(aKey as String) as Integer
 declare function Pressanykey(aRow as Integer=2,aCol as Integer=0,aFg as Integer=0,aBg as Integer=0) as Integer
 declare function ClearKeys() as integer
 
-declare function keyaccept overload (ByRef aKey as string,allowed as string="") as short
-declare function keyaccept overload (iKey as integer,allowed as string="") as short
-declare function keyinput(allowed as string="") as string
+declare function keyaccept overload (ByRef aKey as string,allow as string="",deny as string="") as short
+declare function keyaccept overload (iKey as integer,allow as string="",deny as string="") as short
+declare function keyinput(allow as string="",deny as string="") as string
 
 declare function isKeyYes(aKey as string="") as short
 declare function isKeyNo(aKey as string="") as short
@@ -392,22 +395,24 @@ function validateaccept(ByRef allowed as string) as short
     return 0 
 end function
 
-function keyaccept(ByRef aKey as string,allowed as string="") as short
-	validateaccept(allowed)'validates against a comma delimited list of keys
-    return (aKey<>"" and (allowed="" or allowed="," or (instr(","+allowed,","+aKey)>0))) 
+function keyaccept(ByRef aKey as string,allow as string="",deny as string="") as short
+	validateaccept(allow)'validates against a comma delimited list of keys
+    return (aKey<>"") _
+    	and (allow="" or allow="," or (instr(","+allow,","+aKey)>0)) _ 
+    	and (deny="" or deny="," or (instr(","+deny,","+aKey)=0)) 
 end function
 
-function keyaccept (iKey as integer,allowed as string="") as short
-	return keyaccept(iKey2a(iKey),allowed)
+function keyaccept (iKey as integer,allow as string="",deny as string="") as short
+	return keyaccept(iKey2a(iKey),allow,deny)
 End Function
 
-function keyinput(allowed as string="") as string
+function keyinput(allow as string="",deny as string="") as string
 	'accepts a comma delimited list of keys to accept. or it just takes any.
     dim as String aKey
 	ClearKeys
     do        
 		aKey=aGetKey()
-    loop until Closing or keyaccept(aKey,allowed) 
+    loop until Closing or keyaccept(aKey,allow,deny) 
     return aKey
 end function
 

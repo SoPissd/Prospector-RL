@@ -60,10 +60,10 @@ function ViewArray(lines() as string,nlines as integer,bScrollbar as integer=tru
 	'dbgprint(height)
 	'dbgprint(tScreen.isGraphic)
 	'uconsole.pressanykey
-    dim as Integer height, pheight, xwidth, i, di
-    dim as Integer offset, offsetx 
-    dim as Integer iwid, longest 
-    dim col(nlines) as short
+	dim a as tScroller
+    dim as Integer i, di
+    dim as Integer iwid 
+    dim as short  col(nlines)
     dim as string text
     dim as string key
 
@@ -82,41 +82,27 @@ function ViewArray(lines() as string,nlines as integer,bScrollbar as integer=tru
 	'DbgPrint("dsx:"&tScreen.dsx &" dsy:"& tScreen.dsy)
 	'DbgPrint("erw:"&tScreen.erw &" erh:"& tScreen.erh)
 
-    if tScreen.isGraphic then
-    	xWidth= tScreen.gtw 
-    	height= tScreen.gth 
-    else
-	    xwidth=(width() and &hFFFF)		' width is easy.
-	    height=(width() shr (4*4))		' gives screen/console height
-	    if (height>25) then height=25	' limit console height to 25 (at least on windows)    	
-    EndIf
+	a.init(nlines,bScrollbar)
 
-   	pheight=height-1			' take off 1 line for instructions and we get the viewport
-    if pheight>nlines then		' viewport-height is more than lines of text to show 
-   		pheight=nlines
-    EndIf
 
 	'DbgPrint("width:"&xWidth &" height:"& height)
 	'DbgPrint("offset:"& offset)    
 
     'set__color( 15,0)
-    
-	dim wScrollbar as integer=0 
-	if bScrollbar then wScrollbar= 1
-
+    	
     do
         cls
         set__color( 11,0)
-        for i=0 to pheight-1
-        	if i+offset>ubound(col) then exit for
-            text= lines(i+offset)
+        for i=0 to a.pheight-1
+        	if i+a.offset>ubound(col) then exit for
+            text= lines(i+a.offset)
             iwid=len(text)
-            if iwid>longest then
-            	longest=iwid
+            if iwid>a.longest then
+            	a.longest=iwid
             EndIf
-            text= mid(text,offsetx+1,xwidth-wScrollbar)
+            text= mid(text,a.offsetx+1,a.xwidth)
             '
-            if bAutoColor then set__color( col(i+offset),0)
+            if bAutoColor then set__color( col(i+a.offset),0)
             '
 			if tScreen.isGraphic then
 			    tScreen.draw2c(1,i+1,text)
@@ -125,74 +111,26 @@ function ViewArray(lines() as string,nlines as integer,bScrollbar as integer=tru
 			endif
         next
 
-		if bScrollbar then scroll_bar( offset, nlines, pheight, height, xwidth, 1, 14)		
+		if bScrollbar then scroll_bar( a.offset, a.nlines, a.pheight, a.height, a.xwidth, 1, 14)		
 
         '
         key="Use Arrows and +/- to browse " & nlines & " lines. Enter to close: "
 
         set__color( 14,0)
-        dim x as integer = (xwidth-len(key))\2+1
+        dim x as integer = (a.xwidth-len(key))\2+1
         if x<1 then x=1
 		if tScreen.isGraphic then
-		    tScreen.draw2c(x,height,key)
+		    tScreen.draw2c(x,a.height,key)
 			'DbgPrint("dsx:"&tScreen.dsx &" dsy:"& tScreen.dsy)
 			'DbgPrint(""&x &" "& height &" "& key)
 		else
-			tScreen.xy(x,height,key) 
+			tScreen.xy(x,a.height,key) 
 		endif
-			
-		'
-		while true
-	        key=uConsole.keyinput() '("12346789 ")'            key=keyin("12346789 ",1)
-			i=0
-			di=uConsole.getdirection(key)
-	        if 	   di=7 then
-	        	offset=0
-	        	offsetx=0
-	        	i=1
-	        elseif di=1 then
-	        	offset=nlines-pheight
-	        	offsetx=0
-	        	i=1
-	        elseif di=2 then
-	        	offset=offset+1
-	        	i=1
-	        elseif di=8 then
-	        	offset=offset-1
-	        	i=1
-	        elseif di=4 then
-	        	offsetx=offsetx-1
-	        	i=1
-	        elseif di=6 then
-	        	offsetx=offsetx+1
-	        	i=1
-	        elseif uConsole.keyaccept(key,keyl_menup) then 
-	        	offset=offset-(height-1)
-	        	i=1
-	        elseif uConsole.keyaccept(key,keyl_mendn) then 
-	        	offset=offset+(height-1)
-	        	i=1
-	        elseif key=key__Ins then 
-	        	offsetx=offsetx-(xwidth\2)
-	        	i=1
-	        elseif key=key__Del then 
-	        	offsetx=offsetx+(xwidth\2)
-	        	i=1
-	        endif
-			'
-			'if offset>nlines then offset=nlines
-	        if offset>nlines-height+1 then offset=nlines-height+1
-	        if offset<0 then offset=0
-	        if offsetx>longest-(xwidth-wScrollbar) then offsetx=longest-(xwidth-wScrollbar)
-	        if (offsetx<0) or (xwidth>=longest) then offsetx=0
-			'
-			if (i>0) or uConsole.Closing<>0 or uConsole.keyonwards(key) then
-				exit while
-			EndIf
-		wend
-    loop until uConsole.Closing<>0 or uConsole.keyonwards(key)
+		
+    loop until uConsole.Closing<>0 or uConsole.keyonwards(a.GetKey())
     return 0
 End Function
+			
 
 
 function Viewfile(filename as string,nlines as integer=2048,bScrollbar as integer=true,bAutoColor as integer=false) as integer

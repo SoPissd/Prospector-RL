@@ -183,8 +183,13 @@ function mode(iMode as integer=0) As Short
 	return 0
 End Function
 
-function set(fg As Short=1,bg As Short=1) As Short
+function set(fg As Short=1,bg As Short=0) As Short
     if isGraphic then Screenset fg,bg
+	return 0
+End Function
+
+function update() As Short
+    if not isGraphic then flip	
 	return 0
 End Function
 
@@ -199,11 +204,6 @@ End Function
 function rbgcolor(sr As Short=255,sg As Short=255,sb As Short=255) As UInteger 'sets fg to rgb, bg to 0
     if not isGraphic then return 0
 	return col((sr shl 16)+(sg shl 8)+(sb),0)
-End Function
-
-function update() As Short
-    if not isGraphic then flip	
-	return 0
 End Function
 
 function size(irows As Short=25,icols As Short=80) As Short
