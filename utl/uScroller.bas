@@ -71,16 +71,19 @@ type tAreaScroller extends tScroller
 End Type
 
 
-type tArrayScroller extends tAreaScroller 
+type tWordScroller extends tAreaScroller 
 	declare constructor()
 	declare destructor()
 	'
-	text as string							'textbox text 
+    wcount as integer 
+    words(6023) as string
+    '  
 	wid as Integer							'textbox width to be used
 	'mhy as integer							'set text, wid and mhy, then scrollbox!
 	'
     'ancestor longestline as integer 		'computed with bCount
     lcount as integer						'computed with bCount
+	declare function setwords(atext as string="") as Integer
 	declare function Textbox(bCount as integer=false) as integer	
 	'
 	bFit as integer= true
@@ -88,6 +91,24 @@ type tArrayScroller extends tAreaScroller
 	declare function Scrollbox() as integer
 End Type
 
+type tArrayScroller extends tAreaScroller 
+	declare constructor()
+	declare destructor()
+	'
+    lines(6023) as string
+	'text as string							'textbox text 
+	wid as Integer							'textbox width to be used
+	'mhy as integer							'set text, wid and mhy, then scrollbox!
+	'
+    'ancestor longestline as integer 		'computed with bCount
+    lcount as integer						'computed with bCount
+	declare function setlines(atext as string="",cSep as string="") as Integer '"|"
+	declare function Textbox() as integer	
+	'
+	bFit as integer= true
+	bScrollbar as Integer
+	declare function Scrollbox() as integer
+End Type
 
 #endif'types
 #ifdef head
@@ -347,6 +368,7 @@ end function
 
 '
 
+
 Constructor tArrayScroller()
 	bFit= true
 End Constructor
@@ -354,7 +376,154 @@ End Constructor
 Destructor tArrayScroller()
 End Destructor
 
-function tArrayScroller.textbox(bCount as integer=false) as Integer
+function tArrayScroller.setlines(atext as string="",cSep as string="") as Integer '"|"
+	nlines=0
+	dim as Integer i,j
+	while atext<>""
+		i=instr(atext,chr(10))				'find lf
+		j=instr(atext,cSep)					'or the custom divider
+		if (i=0) orelse (j>0) andalso (j<i) then i=j	'pick the earlier one
+		if i>0 then
+			lines(nlines)=trim(left(atext,i-1),chr(10)+chr(13))
+			nlines +=1
+			atext=mid(atext,i+1)
+		else
+			lines(nlines)=trim(atext,chr(10)+chr(13))
+			nlines +=1
+			atext=""
+		EndIf
+	Wend
+	return nlines
+End Function
+
+function tArrayScroller.textbox() as Integer
+    set__color(fg,bg)
+    'line count needs to be in lcount
+    
+    'restrain offset
+    if offset>0 and lcount-offset<height-1 then offset=lcount-height-1
+    if offset<0 then offset=0
+
+	'DbgPrint("lcount "& lcount  &" height "& height  &" offset "& offset)				
+    
+    dim as integer i,j
+    dim as string w
+
+'    lcount=0
+    set__color(fg,bg)
+    for i=0 to lcount
+		w= trim(lines(i))
+       	j= i-offset
+		if j>=height then exit for
+		if j>=0 then
+            if bIdx andalso j=idx then set__color(bg,fg)
+			tScreen.draw2c(x,y+j,w)				
+            if bIdx andalso j=idx then set__color(fg,bg)
+		EndIf
+		'DbgPrint(lcount &" "& j &" "& longestline &" "& xw &" " & len(w) &" "& ":"+w+":")
+    next
+
+    set__color(11,0)
+    return lcount
+end function
+
+
+function tArrayScroller.Scrollbox() as integer'byref atext as string,iWid as integer=20) as integer
+	dim as short h 
+	dim as short w 
+	dim as short w2 
+    dim as string l
+    dim as integer i 
+
+	if bDrawborder then wid -=2
+
+	if bFit then
+	    longestline=0 
+	    for i=0 to lcount
+	    	if i>=ubound(lines) then exit for
+			l= trim(lines(i))
+			if len(l)>longestline then 
+				longestline=len(l)
+			EndIf
+	    next
+	EndIf
+
+	if bDrawborder then
+		xoffset=x:	x +=1
+		yoffset=y:	y +=1
+		wid +=2
+		mwx= wid	' sets mwx. do/es not touch mhy
+		'mhy= lcount+2	
+		'mhy= 10
+		h=Drawborder() 'accept and draw a border. returns actual height used.
+		mwx -=2
+		mhy -=2 'adjusts both x and y for the border		
+		h -=2	'take off the offsets and we now know the height of the visible text
+	else
+		h=mhy
+	EndIf
+		'DbgPrint("wid:"& wid &" longestline:"& longestline &" lcount:"& lcount &" visible:"& h)		
+	
+	h= mhy
+
+	init(lcount,true)
+	xwidth=		Wid	
+	height=		h
+	pheight=	height+3
+	
+	Textbox()' text ,x,y,xwidth,fg,bg,0,0,offset)	'now place the text
+
+	if bDrawborder then
+		x -=1
+		y -=1
+		mwx +=2
+		mhy +=2 'adjusts both x and y back now that the border is there		
+	EndIf
+
+	'DbgPrint("a.offset, a.nlines, a.pheight, a.height, x+a.xwidth")
+	'DbgPrint(offset & " " & nlines & " " & pheight & " " & height & " " & x+xwidth+1)
+	
+	if bScrollbar then
+		if not bDrawborder then
+	'		x +=1
+			pheight -=2
+		EndIf
+			x += xwidth -1
+				Scrollbar() 
+			x -= xwidth -1		
+		if not bDrawborder then
+	'		x -=1
+			pheight +=2
+		EndIf
+	EndIf
+	return true
+end function
+
+'
+
+Constructor tWordScroller()
+	bFit= true
+End Constructor
+
+Destructor tWordScroller()
+End Destructor
+
+function tWordScroller.setwords(atext as string="") as Integer
+    dim as integer i
+    dim as string  c
+    wcount=0
+    for i=0 to len(atext)
+    	c=mid(atext,i,1)
+        if c="{" or c="|" then wcount+=1
+        words(wcount) +=c
+'        if c=" " or c="|" or c="}" then wcount+=1
+        if c=" " or c="|" then wcount+=1
+        if wcount+1>=ubound(words) then exit for 'need to leave 1 empty word at the end
+    next
+    return wcount
+End Function
+
+function tWordScroller.textbox(bCount as integer=false) as Integer
     'dim as integer maxlines
 	'if tScreen.isGraphic then
 	'    maxlines=tScreen.gth	'tScreen.gth	'graphic terminal height
@@ -365,22 +534,22 @@ function tArrayScroller.textbox(bCount as integer=false) as Integer
     set__color(fg,bg)
 
     'Store and count words
-    dim as integer i
-    dim as integer wcount
-    dim as string  words(6023)
-    dim as string  c
-    for i=0 to len(text)
-    	c=mid(text,i,1)
-        if c="{" or c="|" then wcount+=1
-        words(wcount) +=c
-'        if c=" " or c="|" or c="}" then wcount+=1
-        if c=" " or c="|" then wcount+=1
-        if wcount+1>=ubound(words) then exit for 'need to leave 1 empty word at the end
-    next
+'    dim as integer i
+'    dim as integer wcount
+'    dim as string  words(6023)
+'    dim as string  c
+'    for i=0 to len(text)
+'    	c=mid(text,i,1)
+'        if c="{" or c="|" then wcount+=1
+'        words(wcount) +=c
+''        if c=" " or c="|" or c="}" then wcount+=1
+'        if c=" " or c="|" then wcount+=1
+'        if wcount+1>=ubound(words) then exit for 'need to leave 1 empty word at the end
+'    next
    
     'Count lines
     dim as string w
-    dim as integer xw,xwn 
+    dim as integer i,xw,xwn 
     lcount=0    
     longestline=0 
     for i=0 to wcount
@@ -517,7 +686,7 @@ end function
 
 '
 
-function tArrayScroller.Scrollbox() as integer'byref atext as string,iWid as integer=20) as integer
+function tWordScroller.Scrollbox() as integer'byref atext as string,iWid as integer=20) as integer
 	dim as short h 
 	dim as short w 
 	dim as short w2 
@@ -609,7 +778,7 @@ end function
 		for w2=1 to 200
 			atext +="|"& w2 &text
 		Next
-		aText ="1-border|2-small|3-big|4-|"&aText
+		aText ="1-border|2-small|3-big|4-done|"&aText
 		
 		'draw_border(1,1,40,30)
 		'sleep
@@ -620,7 +789,8 @@ end function
 		tScreen.res
 		tScreen.drawfx(8,8)
 		
-		dim a as tArrayScroller
+		dim a as tWordScroller
+		a.setwords(aText)
 		a.x=	8
 		a.y=	16
 		a.fg=	15
@@ -642,7 +812,7 @@ end function
 				draw_border(3,3,42,30)
 				draw_border(5,5,42,30)
 			
-				a.text= aText
+				'a.text= aText
 				a.wid= w
 				a.mhy= h
 				'a.bDrawborder= not a.bDrawborder
@@ -674,6 +844,8 @@ end function
 				a.y=	1
 				w=		tScreen.gtw'-1
 				h=		tScreen.gth'-1		
+			elseif a.index=3 then
+				exit while
 			else
 				'exit while
 			EndIf			
