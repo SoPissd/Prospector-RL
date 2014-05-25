@@ -3,7 +3,8 @@
 DeclareDependencies()
 #include "file.bi"
 '#include "windows.bi"
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 
 namespace tFile	
 
@@ -292,7 +293,7 @@ End Namespace
 		uConsole.Pressanykey()	
 		'? "sleep": sleep
 	#else
-		tModule.registertest("tFile",@tFile.Filetest())
+		tModule.registertest("uFile",@tFile.Filetest())
 	#endif'test
 #endif'test
 

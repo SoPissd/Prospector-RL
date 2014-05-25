@@ -1,12 +1,12 @@
 'tScroller.
 #include once "uDefines.bi"
 DeclareDependencies()
-
+#include "fbGfx.bi"
 #include "uUtils.bas"
 #include "uDebug.bas"
-#include "uScreen.bas"
 #include "file.bi"
 #include "uFile.bas"
+#include "uScreen.bas"
 #include "uColor.bas"
 #include "uConsole.bas"
 #include "uVersion.bas"
@@ -14,10 +14,12 @@ DeclareDependencies()
 #include "uRng.bas"
 #include "uCoords.bas"
 #include "uWindows.bas"
-#include "uPrint.bas"
 #include "uBorder.bas"
+#include "uPrint.bas"
+#define test
+#endif'DeclareDependencies()
 
-DeclareDependenciesDone()
+'#define test #endif'DeclareDependencies()()
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
@@ -522,6 +524,7 @@ end function
 		'draw_border(1,1,40,30)
 		'sleep
 		
+		tScreen.y=300
 		tScreen.res
 		tScreen.drawfx(8,8)
 		

@@ -47,31 +47,15 @@
 '
 	#undef both
 	#undef test	
+	#undef intest	
 	#undef types
 	#undef head
 	#undef main
 	
-	#if false
-		#define types
-		#define head
-		#define main		
-			#include once "bFoundation.bi"
-		#undef types
-		#undef head
-		#undef main
-	#else
-		#print loading types and head..
-		#define types
-		#define head
-			#include "bFoundation.bi"
-		#undef types
-		#undef head
-		#print loading test and main
-		#define main		
-		#define registerTests
-		#undef test
-			#include "bFoundation.bi"
-		#undef main
-		#undef registerTests
-		#include "bTestmenu.bas"
-	#endif
+	#define types
+	#define head
+	#define main		
+		#include once "bFoundation.bi"
+	#undef types
+	#undef head
+	#undef main

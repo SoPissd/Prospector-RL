@@ -2,7 +2,8 @@
 #include once "uDefines.bi"
 DeclareDependencies()
 #include "uScreen.bas"
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
@@ -162,6 +163,6 @@ end namespace
 		tVersion.Versiontest()
 		'? "sleep": sleep
 	#else
-		tModule.registertest("tVersion",@tVersion.Versiontest())
+		tModule.registertest("uVersion",@tVersion.Versiontest())
 	#endif'test
 #endif'test

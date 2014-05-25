@@ -8,7 +8,8 @@ declare function Namebase(aFile as string) as string 'name nothing else
 #include "uScreen.bas"
 #include "file.bi"
 
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 
 #ifdef types
 	const FilenameSlashOk = "/"		'ok on windows and linux
@@ -344,6 +345,6 @@ end function
 		tUtils.Utilstest()
 		? "sleep": sleep
 	#else
-		tModule.registertest("tUtils",@tUtils.Utilstest())
+		tModule.registertest("uUtils",@tUtils.Utilstest())
 	#endif'test
 #endif'test

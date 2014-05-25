@@ -27,7 +27,8 @@ DeclareDependencies()
 '#include "tMenu.bas"
 '#include "uConsole.bas"
 '#include "tFonts.bas"
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 
 
 #ifdef types

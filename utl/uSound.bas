@@ -1,7 +1,8 @@
 'tSound.
 #include once "uDefines.bi"
 DeclareDependencies()
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 
 namespace uSound
 

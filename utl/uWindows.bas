@@ -1,7 +1,8 @@
 'uWindows.bas
 #include once "uDefines.bi"
 DeclareDependencies()
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 
 #ifndef __WINDOWS_BI__
 #undef DebugBreak
@@ -186,7 +187,7 @@ End Function
 		
 		'ShellExecute(HWND_DESKTOP,"open","cmd.exe","","",SW_SHOW)
 		#if __FB_Debug__
-		? "this console will close when you click ok.."
+		? "this console will close when you click ok the MessageBox.."
 		#endif
 		
 		MessageBox(HWND_DESKTOP,"Test","Hello",MB_OK)
@@ -198,6 +199,6 @@ End Function
 		nsWindows.windowstest()
 		'? "sleep": sleep
 	#else
-		tModule.registertest("nsWindows",@nsWindows.windowstest())
+		tModule.registertest("uWindows",@nsWindows.windowstest())
 	#endif'test
 #endif'test

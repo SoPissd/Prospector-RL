@@ -17,7 +17,8 @@ DeclareDependencies()
 #include "uTextbox.bas"
 #include "uGraphics.bas"
 #include "uWindows.bas" 'auto-close
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 
@@ -425,7 +426,7 @@ end function
 		  
 		
 		cls
-			tscreen.res
+		tscreen.res
 		tGraphics.LoadLogo("graphics/prospector.bmp")
 		tGraphics.Randombackground()		    	    
 		while not uConsole.Closing
@@ -435,10 +436,10 @@ end function
 			   	draw string(26,26),"PROSPECTOR"',,titlefont,custom,@_col
 			endif
 			Mainmenu.menu()
-			tScreen.xy(10,22, "you chose: "&Mainmenu.e)
-			tScreen.xy(10,24)
+			tScreen.draw2c(10,22, "you chose: "&Mainmenu.e)
+			tScreen.draw2c(10,24,"")
 			if uConsole.keyaccept(uConsole.pressanykey(0),keyl_onwards) then exit while
-			tScreen.xy(10,22, pad(15,""))
+			tScreen.draw2c(10,22, pad(15,""))
 		wend
 	End Sub
 
@@ -448,6 +449,6 @@ end function
 		nuMenu.Menutest()
 		'? "sleep": sleep
 	#else
-		tModule.registertest("nuMenu",@nuMenu.Menutest())
+		tModule.registertest("uMainmenu",@nuMenu.Menutest())
 	#endif'test
 #endif'test

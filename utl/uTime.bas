@@ -4,7 +4,8 @@ DeclareDependencies()
 #include "uUtils.bas"
 #include "uScreen.bas"
 #include "uColor.bas"
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 #endif'types

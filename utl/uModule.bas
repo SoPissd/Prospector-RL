@@ -3,7 +3,8 @@
 #include once "uDefines.bi"
 DeclareDependenciesBasic()
 #include "uDefines.bas"
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 #endif'types

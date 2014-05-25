@@ -31,7 +31,8 @@ DeclareDependencies()
 
 '#undef main
 
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 type tGetMouse

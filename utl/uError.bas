@@ -8,7 +8,8 @@ DeclareDependencies()
 #include "uUtils.bas"
 #include "uConsole.bas"
 #include "uVersion.bas"
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 
 namespace tError
 

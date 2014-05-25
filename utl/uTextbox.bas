@@ -17,7 +17,8 @@ DeclareDependencies()
 '#include "uPrint.bas"
 '#include "uBorder.bas"
 '#include "uScroller.bas"
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 #endif'types

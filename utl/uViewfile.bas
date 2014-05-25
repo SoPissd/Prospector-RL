@@ -13,7 +13,8 @@ DeclareDependencies()
 #include "uError.bas"
 #include "uWindows.bas"
 #include "uTextbox.bas"
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 #endif'types
@@ -182,6 +183,6 @@ end function
 		tViewfile.Viewfiletest()
 		'? "sleep": sleep
 	#else
-		tModule.registertest("tViewfile",@tViewfile.Viewfiletest())
+		tModule.registertest("uViewfile",@tViewfile.Viewfiletest())
 	#endif'test
 #endif'test

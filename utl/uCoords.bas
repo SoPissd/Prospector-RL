@@ -2,7 +2,8 @@
 #include once "uDefines.bi"
 DeclareDependencies()
 #include "uRng.bas"
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 

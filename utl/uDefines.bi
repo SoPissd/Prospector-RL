@@ -8,7 +8,6 @@
 	#if not (defined(types) or defined(head) or defined(main))
 		#define intest
 		#define both
-		#define _test
 	#endif'test
 	#if defined(both)
 		#undef both
@@ -22,10 +21,12 @@
 
 #macro DeclareDependenciesDone()
 #endif'test
-#ifdef _test
-	#define test
-	#undef _test
+#ifdef test
+#print "something"
+#else	
+#print "nothing"	
 #endif'test
+
 #EndMacro
 
 #macro DeclareDependencies()

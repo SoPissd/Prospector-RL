@@ -4,7 +4,8 @@ DeclareDependencies()
 #include "fbGfx.bi"
 #include "uUtils.bas"
 #include "uDebug.bas"
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 
 #ifndef __fbgfx_bi__
 #print uScreen.bas: late including fbGfx.bi
@@ -116,6 +117,8 @@ declare function xy(iCol As Short=0,iRow As Short=0,aText as string="") As Short
 declare function col(fg As UInteger,bg As UInteger=0) As UInteger
 declare function rbgcolor(sr As Short=255,sg As Short=255,sb As Short=255) As UInteger 'sets fg to rgb, bg to 0
 
+'declare function Pressanykey(aRow as Integer=2,aCol as Integer=0,aFg as Integer=0,aBg as Integer=0) as Integer
+
 declare sub pushpos()		'remember and restore console cursor.  with plenty stack.
 declare sub poppos()
 
@@ -203,6 +206,17 @@ function xy(iCol As Short=0,iRow As Short=0,aText as string="") As Short
 	return loc(iRow,iCol,aText)	
 End Function
 
+'function Pressanykey(aRow as Integer=2,aCol as Integer=0,aFg as Integer=0,aBg as Integer=0) as Integer
+'	if not isGraphic then return uConsole.Pressanykey(aRow,aCol,aFg,aBg)
+'
+'	dim key as integer
+'	if (aFg>0) then
+'		col(aFg,aBg)
+'	EndIf
+'	tScreen.draw2c(aRow,aCol,"Press any key to exit")
+'	uConsole.ClearKeys
+'	return uConsole.iGetKey()
+'End function
 '
 
 dim Shared rowcol(20) as uinteger 
@@ -360,6 +374,6 @@ end namespace
 		tScreen.xy(10,44)
 		uConsole.pressanykey
 	#else
-		tModule.registertest("tScreen",@tScreen.Screentest())
+		tModule.registertest("uScreen",@tScreen.Screentest())
 	#endif'test
 #endif'test

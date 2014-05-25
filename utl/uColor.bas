@@ -7,7 +7,8 @@ DeclareDependencies()
 #include "uDebug.bas"
 #include "uScreen.bas"
 #include "uWindows.bas"
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 
 #ifndef __FILE_BI__
 #print uColor.bas: late including file.bi

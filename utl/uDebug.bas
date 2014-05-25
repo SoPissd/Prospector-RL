@@ -1,7 +1,8 @@
 'tDebug.
 #include once "uDefines.bi"
 DeclareDependencies()
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tDebug -=-=-=-=-=-=-=-

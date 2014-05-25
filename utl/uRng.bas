@@ -1,7 +1,8 @@
 'tRng.
 #include once "uDefines.bi"
 DeclareDependencies()
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()()
 '
 'rng with retrievable seed
 'algo from https://en.wikipedia.org/wiki/Random_number_generation
@@ -221,6 +222,6 @@ end namespace
 		'? "sleep": sleep
 	#endif
 	#ifdef registerTests
-		tModule.registertest("tRng",@go(),"Random number generator")
+		tModule.registertest("uRng",@go(),"Random number generator")
 	#endif
 #endif'test

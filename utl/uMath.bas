@@ -3,7 +3,8 @@
 DeclareDependencies()
 #include "uRng.bas"
 #include "uCoords.bas"
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 Type vector

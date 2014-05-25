@@ -11,7 +11,8 @@ DeclareDependencies()
 '#include "uCoords.bas"
 '#include "uPrint.bas"
 #include "uUtils.bas"
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 
 namespace tGraphics
 

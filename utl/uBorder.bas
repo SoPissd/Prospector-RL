@@ -16,7 +16,8 @@ DeclareDependencies()
 #include "uPrint.bas"
 #include "uWindows.bas"
 
-DeclareDependenciesDone()
+#define test 
+#endif'DeclareDependencies()
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
