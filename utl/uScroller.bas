@@ -1,29 +1,7 @@
 'tScroller.
-'
-'defines:
-'scroll_bar=1, textbox=31
-'
+#include once "uDefines.bi"
+DeclareDependencies()
 
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: tScroller -=-=-=-=-=-=-=-
-#undef intest
-
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
 #include "uUtils.bas"
 #include "uDebug.bas"
 #include "uScreen.bas"
@@ -39,8 +17,8 @@
 #include "uWindows.bas"
 #include "uBorder.bas"
 
-#define test
-#endif'test
+DeclareDependenciesDone()
+
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 

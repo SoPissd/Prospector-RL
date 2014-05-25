@@ -192,12 +192,13 @@ function tGameloop.DoInitProc() as integer
 	'setglobals
 	'DbgWeapdumpCSV
     'DbgTilesCSV
+	DbgPrint("tGameloop.DoInitProc() "&iCmd)
 	
 	return iCmd '- interprets -1 to abort
 end function
 
 function tGameloop.DoCmdProc() as integer
-	'DbgPrint(iCmd)
+	DbgPrint("tGameloop.DoCmdProc() "&iCmd)
 	'
 	select case iCmd
 	case 1 ' main menu

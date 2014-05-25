@@ -1,31 +1,11 @@
 'uMainloop.
-'
-'namespace: uMainloop
-
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: uMainloop -=-=-=-=-=-=-=-
-#undef intest
+#include once "uDefines.bi"
+DeclareDependencies()
 
 #include "fbGfx.bi"
 #include "zlib.bi"
 #include "File.bi"
 
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
 #include "uWindows.bas"
 #include "uDebug.bas"
 #include "uFile.bas"
@@ -49,13 +29,9 @@
 #include "uTextbox.bas"
 #include "uMainMenu.bas"
 
-#undef main
+'#undef main
 
-#undef intest
-#define test
-#endif'test
-
-
+DeclareDependenciesDone()
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 type tGetMouse
@@ -197,8 +173,8 @@ function tMainloop.run(iAction as Integer) as Integer
 	iCmd=iAction
 	iCmd=DoInitProc
 '?"	iCmd=DoInitProc",iCmd
-
-   	while (not uConsole.Closing) and (iCmd<>true)
+	DbgPrint("tMainloop.run() "& iCmd  & "  " &(iCmd<>true))
+   	while (not uConsole.Closing) and (iCmd<>-1)
 		
 		' icmd=0 	- find something to do, idle as needed
 		' icmd=-1 	- abort the main loop

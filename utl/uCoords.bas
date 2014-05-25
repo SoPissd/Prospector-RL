@@ -1,35 +1,8 @@
 'tCoords.
-'
-'defines:
-'cords=33, distance=225, sort_by_distance=3, furthest=0, rndwallpoint=0,
-', rndwall=0
-'
-
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: tCoords -=-=-=-=-=-=-=-
-#undef intest
-
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
+#include once "uDefines.bi"
+DeclareDependencies()
 #include "uRng.bas"
-
-#define test
-#endif'test
-
+DeclareDependenciesDone()
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 

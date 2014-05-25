@@ -1,4 +1,7 @@
 'tRng.
+#include once "uDefines.bi"
+DeclareDependencies()
+DeclareDependenciesDone()
 '
 'rng with retrievable seed
 'algo from https://en.wikipedia.org/wiki/Random_number_generation
@@ -16,29 +19,6 @@
 
 'outputs 32bit but maintains
 'random pool with a 64 bit state 
-
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: tRng -=-=-=-=-=-=-=-
-#undef intest
-
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
-
-#define test
-#endif'test
-
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-

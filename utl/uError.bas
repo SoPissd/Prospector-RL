@@ -1,33 +1,6 @@
 'tError.
-'
-'namespace: tError
-
-'
-'
-'defines:
-'init=16, log_error=0, log_warning=0, Errorhandler=0
-'
-
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: tError -=-=-=-=-=-=-=-
-#undef intest
-
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
+#include once "uDefines.bi"
+DeclareDependencies()
 #include "file.bi"
 #include "uFile.bas"
 #include "uScreen.bas"
@@ -35,9 +8,7 @@
 #include "uUtils.bas"
 #include "uConsole.bas"
 #include "uVersion.bas"
-
-#define test
-#endif'test
+DeclareDependenciesDone()
 
 namespace tError
 

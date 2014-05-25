@@ -1,31 +1,7 @@
 'uMenu.
-'
-'defines:
-'menu=12
-'
-
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: uMenu -=-=-=-=-=-=-=-
-#undef intest
-#print     -=-=-=-=-=-=-=- TEST: uMenu -=-=-=-=-=-=-=-
-
+#include once "uDefines.bi"
+DeclareDependencies()
 #include "fbGfx.bi"
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
 #include "uDebug.bas"
 #include "uUtils.bas"
 #include "uScreen.bas"
@@ -41,66 +17,63 @@
 #include "uTextbox.bas"
 #include "uGraphics.bas"
 #include "uWindows.bas" 'auto-close
-
-
-#define test
-#endif'test
+DeclareDependenciesDone()
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 
 Type tMenuCore Extends Object
-  declare constructor()
-  declare virtual destructor() 
-  '
-  declare virtual function init() as integer
-  declare virtual function before() as integer
-  declare abstract function DoProcess() as integer
-  declare virtual function after() as integer
-  declare virtual function finish() as integer
-  '
-  declare function menu() as integer
-  declare function go(te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as integer
-  '
-  declare function ClearChoices() as integer
-  declare function AddChoice(aTe as string, aTh as string="") as integer  
-'
-    dim a as short			=0
-    dim e as short			=0
-    dim te as string		=""
-    dim th as string		="" 
-    dim x as short			=2 
-    dim y as short			=2 
-    dim blocked as short	=0 
-    dim markesc as short	=0
-    dim st as short			=-1
-    dim loca as short		=1
-    dim iLines as short
+	declare constructor()
+	declare virtual destructor() 
+	'
+	declare virtual function init() as integer
+	declare virtual function before() as integer
+	declare abstract function DoProcess() as integer
+	declare virtual function after() as integer
+	declare virtual function finish() as integer
+	'
+	declare function menu() as integer
+	declare function go(te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as integer
+	'
+	declare function ClearChoices() as integer
+	declare function AddChoice(aTe as string, aTh as string="") as integer  
+	'
+	dim a as short			=0
+	dim e as short			=0
+	dim te as string		=""
+	dim th as string		="" 
+	dim x as short			=2 
+	dim y as short			=2 
+	dim blocked as short	=0 
+	dim markesc as short	=0
+	dim st as short			=-1
+	dim loca as short		=1
+	dim iLines as short
 Private:
-    ' 0= headline 1=first entry
-    dim as short blen
-    dim as string text,help
-    'dim as string bgname
-    dim lines(256) as string
-    dim helps(256) as string
-    dim shrt(256) as string
-    dim as string key,delhelp
-    dim b as short
-    dim c as short
-    'static loca as short
-    'dim loca as short
-    dim l as short
-    dim hfl as short
-    dim hw as short
-    dim lastspace as short
-    dim tlen as short
-    dim longest as short
-    dim as integer ofx= 1
-    dim as integer l2
-    dim as integer longestbox
-    dim as integer longesthelp
-    dim as integer backpic
-    dim as integer offset
-    '
+	' 0= headline 1=first entry
+	dim as short blen
+	dim as string text,help
+	'dim as string bgname
+	dim lines(256) as string
+	dim helps(256) as string
+	dim shrt(256) as string
+	dim as string key,delhelp
+	dim b as short
+	dim c as short
+	'static loca as short
+	'dim loca as short
+	dim l as short
+	dim hfl as short
+	dim hw as short
+	dim lastspace as short
+	dim tlen as short
+	dim longest as short
+	dim as integer ofx= 1
+	dim as integer l2
+	dim as integer longestbox
+	dim as integer longesthelp
+	dim as integer backpic
+	dim as integer offset
+	'
 End Type
 
 type tMainmenu extends tMenuCore
@@ -426,38 +399,49 @@ end function
 '      -=-=-=-=-=-=-=- INIT: uMenu -=-=-=-=-=-=-=-
 	tModule.register("uMenu",@nuMenu.init()) ',@nuMenu.load(),@nuMenu.save())
 #endif'main
+#if (defined(test) or defined(testload))
+#print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
 
-#ifdef test
-#print -=-=-=-=-=-=-=- TEST: uMenu -=-=-=-=-=-=-=-
-#undef test
-chdir exepath
-chdir ".."
+	namespace nuMenu
 
+	sub Menutest()
+		chdir exepath
+		chdir ".."
+		
+		
+		dim Mainmenu as tMainmenu
+		  Mainmenu.ClearChoices()
+		  Mainmenu.AddChoice("testing",	"this could be a title")  
+		  Mainmenu.AddChoice("one",		"test the menu")  
+		  Mainmenu.AddChoice("two",		"more help")  
+		  Mainmenu.AddChoice("three",	"and thrirdly..")
+		
+		  
+		
+		cls
+			tscreen.res
+		tGraphics.LoadLogo("graphics/prospector.bmp")
+		tGraphics.Randombackground()		    	    
+		while not uConsole.Closing
+			tscreen.res
+			tGraphics.background(0)
+			if not tGraphics.putlogo(39,69) then
+			   	draw string(26,26),"PROSPECTOR"',,titlefont,custom,@_col
+			endif
+			Mainmenu.menu()
+			tScreen.xy(10,22, "you chose: "&Mainmenu.e)
+			tScreen.xy(10,24)
+			if uConsole.keyaccept(uConsole.pressanykey(0),keyl_onwards) then exit while
+			tScreen.xy(10,22, pad(15,""))
+		wend
+	End Sub
 
-dim Mainmenu as tMainmenu
-  Mainmenu.ClearChoices()
-  Mainmenu.AddChoice("testing",	"this could be a title")  
-  Mainmenu.AddChoice("one",		"test the menu")  
-  Mainmenu.AddChoice("two",		"more help")  
-  Mainmenu.AddChoice("three",	"and thrirdly..")
-
-  
-
-cls
-	tscreen.res
-tGraphics.LoadLogo("graphics/prospector.bmp")
-tGraphics.Randombackground()		    	    
-while not uConsole.Closing
-	tscreen.res
-	tGraphics.background(0)
-	if not tGraphics.putlogo(39,69) then
-	   	draw string(26,26),"PROSPECTOR"',,titlefont,custom,@_col
-	endif
-	Mainmenu.menu()
-	tScreen.xy(10,22, "you chose: "&Mainmenu.e)
-	tScreen.xy(10,24)
-	if uConsole.keyaccept(uConsole.pressanykey(0),keyl_onwards) then exit while
-	tScreen.xy(10,22, pad(15,""))
-wend
-
+	end namespace'nuMenu
+	
+	#ifdef test
+		nuMenu.Menutest()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("nuMenu",@nuMenu.Menutest())
+	#endif'test
 #endif'test

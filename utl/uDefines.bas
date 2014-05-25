@@ -1,3 +1,4 @@
+#print "udefines.bas"
 'tDefines.
 'Define rudiments
 'note: at first this code was structured to require includes to define and register itself in two steps 
@@ -64,15 +65,11 @@
 
 #DEFINE _WindowsConsoleAutoClose 1 	' <--
 
+type tSub As Sub()
 type tErrorMethod As Function(ErrWhere as String="") As integer
 type tActionmethod As Function(iAction as integer) As Integer
 type tTextmethod As Function(aText as string) As Integer
 type tTextIntegermethod As Function(aText as string,iAction as integer) As Integer
-
-
-#endif'tErrorMethod
-
-#ifdef tModule									'register if possible'
 
 namespace tDefines
 function init(iAction as integer) as integer
@@ -80,17 +77,31 @@ function init(iAction as integer) as integer
 end function
 end namespace'tDefines
 
-tModule.register("tDefines",@tDefines.init()) ',@tDefines.load(),@tDefines.save())
+#endif'tErrorMethod
 
-#endif'tModule
+'#ifdef tModule									'register if possible'
 
-#ifdef test
+'tModule.register("uDefines",@tDefines.init()) ',@tDefines.load(),@tDefines.save())
+
+#if (defined(test) or defined(testload))
 #print -=-=-=-=-=-=-=- TEST: tDefines -=-=-=-=-=-=-=-
-#undef test
 
-? "TRUE", TRUE
-? "FALSE", FALSE
-? "NULL", NULL
-?
-sleep
+	namespace tDefines
+
+	sub definestest()
+		? "TRUE", TRUE
+		? "FALSE", FALSE
+		? "NULL", NULL
+		?
+	End Sub
+
+	end namespace'tDefines
+	
+	#ifdef test
+		tDefines.definestest()
+		sleep
+	#else
+		'tModule.registertest("uDefines",@tDefines.definestest())
+	#endif'test
 #endif'test
+'#endif'tModule

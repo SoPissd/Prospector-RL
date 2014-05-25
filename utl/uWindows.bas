@@ -1,39 +1,20 @@
 'uWindows.bas
+#include once "uDefines.bi"
+DeclareDependencies()
+DeclareDependenciesDone()
 
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: uWindows -=-=-=-=-=-=-=-
-#undef intest
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
-
-#define test
-#endif'test
 #ifndef __WINDOWS_BI__
 #undef DebugBreak
 #print uWindows.bas: late including windows.bi
 #include once "windows.bi"
 #endif
-#ifndef EnumProcesses
+#ifndef __win_psapi_bi__
 #print uWindows.bas: late including win\psapi.bi
 #include once "win\psapi.bi"
 #endif
 
-
 #ifdef types
+'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 
 type tTheEnd extends object
 	declare Destructor()
@@ -79,11 +60,11 @@ End Destructor
 
 '
 
-namespace uWindows
+namespace nsWindows
 function init(iAction as integer) as integer
 	return 0
 end function
-end namespace'uWindows
+end namespace'nsWindows
 
 '
 
@@ -189,21 +170,34 @@ End Function
 #endif'main
 
 
+
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: uWindows -=-=-=-=-=-=-=-
-	tModule.register("uWindows",@uWindows.init()) ',@uWindows.load(),@uWindows.save())
+	tModule.register("nsWindows",@nsWindows.init()) ',@uWindows.load(),@uWindows.save())
 #endif'main
 
-#ifdef test
-#print -=-=-=-=-=-=-=- TEST: uWindows -=-=-=-=-=-=-=-
-#undef test
-ReplaceConsole()
+#if (defined(test) or defined(testload))
+#print -=-=-=-=-=-=-=- TEST: tModule -=-=-=-=-=-=-=-
 
-'ShellExecute(HWND_DESKTOP,"open","cmd.exe","","",SW_SHOW)
-#if __FB_Debug__
-? "this console will close when you click ok.."
-#endif
+	namespace nsWindows
 
-MessageBox(HWND_DESKTOP,"Test","Hello",MB_OK)
+	sub windowstest()
+		ReplaceConsole()
+		
+		'ShellExecute(HWND_DESKTOP,"open","cmd.exe","","",SW_SHOW)
+		#if __FB_Debug__
+		? "this console will close when you click ok.."
+		#endif
+		
+		MessageBox(HWND_DESKTOP,"Test","Hello",MB_OK)
+	End Sub
 
+	end namespace'nsWindows
+	
+	#ifdef test
+		nsWindows.windowstest()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("nsWindows",@nsWindows.windowstest())
+	#endif'test
 #endif'test

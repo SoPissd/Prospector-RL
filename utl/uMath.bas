@@ -1,38 +1,9 @@
 'tMath.
-'
-'defines:
-'urn=13, round_nr=2, C_to_F=0, round_str=4, find_high=0, find_low=1,
-', sub0=0, content=9, findrect=0, maximum=14, minimum=15, getany=0,
-', nextpoint=0, line_in_points=0, nearest=15, farthest=4, fill_rect=3,
-', rndrectwall=0, movepoint=6
-'
-
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: tMath -=-=-=-=-=-=-=-
-#undef intest
-
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
+#include once "uDefines.bi"
+DeclareDependencies()
 #include "uRng.bas"
 #include "uCoords.bas"
-
-#define test
-#endif'test
-
+DeclareDependenciesDone()
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 Type vector

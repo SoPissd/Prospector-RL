@@ -1,44 +1,20 @@
 'tUtils.
-'
-'defines:
-'string_towords=5, numfromstr=1, lastword=2, stripFileExtension=2,
-', first_lc=1, first_uc=1, add_a_or_an=56, credits=134, lev_minimum=0,
-', fuzzymatch=0, roman=5, Texttofile=0, screenshot_nextfilename=0,
-', screenshot=12
-'
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: tUtils -=-=-=-=-=-=-=-
-#undef intest
+#include once "uDefines.bi"
+DeclareDependencies()
 
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
+declare function Namebase(aFile as string) as string 'name nothing else
+
+#include "uDebug.bas"
 #include "uScreen.bas"
 #include "file.bi"
-#include "uColor.bas"
 
-#define test
-#endif'test
-
+DeclareDependenciesDone()
 
 #ifdef types
 	const FilenameSlashOk = "/"		'ok on windows and linux
 	const FilenameSlashNg = "\"		'not ok on linus
-#endif'types
 
+#endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tUtils -=-=-=-=-=-=-=-
 
@@ -50,7 +26,10 @@ declare function FixSlashes(aFile as string) as string
 declare function FilePath(aFile as string) as string 'just path/
 declare function NoFilePath(aFile as string) as string 'just name.ext
 declare function NoFileExt(aFile as string) as string 'just path/name
+
+#ifndef Namebase
 declare function Namebase(aFile as string) as string 'name nothing else
+#endif
 
 declare function string_towords(word() as string, s as string, break as string, punct as short=0) as short
 declare function numfromstr(t as string) as short
@@ -333,24 +312,38 @@ end function
 	tModule.register("tUtils",@tUtils.init()) ',@tUtils.load(),@tUtils.save())
 #endif'main
 
-#ifdef test
-#print -=-=-=-=-=-=-=- TEST: tUtils -=-=-=-=-=-=-=-
-#undef test
-?"TEST: tUtils"
+#if (defined(test) or defined(testload))
+#print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
 
-'	const FilenameSlashOk = "/"		'ok on windows and linux
-'	const FilenameSlashNg = "\"		'not ok on linus
+	namespace tUtils
 
+	sub Utilstest()
+		?"TEST: tUtils"
+		
+		'	const FilenameSlashOk = "/"		'ok on windows and linux
+		'	const FilenameSlashNg = "\"		'not ok on linus
+		
+		
+		? command(0)
+		? FixSlashes(command(0))
+		? NoFilePath(command(0))
+		? NoFilePath(FixSlashes(command(0)))
+		? FilePath(command(0))
+		? NoFilePath(NoFileExt(command(0)))
+		? NoFilePath(NoFileExt("test"))
+		? __FILE__
+		? lastword(command(0),"\")
+		? lastword(command(0),"/")
+		?
+		? tModule.Status
+	End Sub
 
-? command(0)
-? FixSlashes(command(0))
-? NoFilePath(command(0))
-? NoFilePath(FixSlashes(command(0)))
-? FilePath(command(0))
-? NoFilePath(NoFileExt(command(0)))
-? NoFilePath(NoFileExt("test"))
-? __FILE__
-? lastword(command(0),"\")
-? lastword(command(0),"/")
-
+	end namespace'
+	
+	#ifdef test
+		tUtils.Utilstest()
+		? "sleep": sleep
+	#else
+		tModule.registertest("tUtils",@tUtils.Utilstest())
+	#endif'test
 #endif'test

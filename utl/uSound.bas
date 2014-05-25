@@ -1,32 +1,7 @@
 'tSound.
-'
-'defines:
-'set_volume=4, load_sounds=1, play_sound=19
-'
-
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: tSound -=-=-=-=-=-=-=-
-#undef intest
-
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
-
-#define test
-#endif'test
+#include once "uDefines.bi"
+DeclareDependencies()
+DeclareDependenciesDone()
 
 namespace uSound
 

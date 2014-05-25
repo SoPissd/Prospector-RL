@@ -1,32 +1,11 @@
 'tScreen.
-'
-'namespace: tScreen
-
-
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: tScreen -=-=-=-=-=-=-=-
-#undef intest
+#include once "uDefines.bi"
+DeclareDependencies()
 #include "fbGfx.bi"
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
+#include "uUtils.bas"
+#include "uDebug.bas"
+DeclareDependenciesDone()
 
-#define test
-#endif'test
 #ifndef __fbgfx_bi__
 #print uScreen.bas: late including fbGfx.bi
 #include once "fbGfx.bi"
@@ -317,8 +296,8 @@ sub drawtt(ds_x as integer,ds_y as integer,ds_text as string)
 	EndIf
 End sub
 
-end namespace
 #endif'main
+end namespace
 
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: tScreen -=-=-=-=-=-=-=-
@@ -333,47 +312,54 @@ end namespace
 #include "uColor.bas"
 #include "uConsole.bas"
 #include "uWindows.bas" 'auto-close
-#include "uDebug.bas"
+'#include "uDebug.bas"
+#define test
+#endif'test
 
-tScreen.res
-DbgScreeninfo				
-tScreen.drawfx( 8,8)
-?
-? tScreen.dsx,tScreen.dsy
-? tScreen.gtw,tScreen.gth
-? tScreen.erw,tScreen.erh
+#if (defined(test) or defined(testload))
+#print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
 
-set__color(14,1):				tScreen.draws( 05,21,"yellow on light blue")
-set__color(14,1):				tScreen.draws( 05,22, hex(_fgcolor_)+" "+hex(_bgcolor_))
+	namespace tScreen
 
-Width 80, 25
-Locate 1,1: Color 14, 9 : Print "yellow text on bg 9"
-   ''  the color nightmare continues. no bg color is set
-
-
-tScreen.rbgcolor(255,255,0):	tScreen.draws( 05,20,"OK!")
-tScreen.rbgcolor(0,255,255):	tScreen.draws( 10,30,"OK!")
-tScreen.rbgcolor(255,255,255):	tScreen.draws( 10,31,"OK!")
-'tScreen.rbgcolor(255,0,255):	tScreen.draws( 15,100,"OK!")
-'tScreen.rbgcolor(255,0,0):	tScreen.draws( 40,20,"OK!")
-'tScreen.rbgcolor(0,255,0):	tScreen.draws( 50,60,"OK!")
-'tScreen.rbgcolor(0,0,255):	tScreen.draws( 100,100,"OK!")
-
-AllocConsole
-DbgPrint("uDebug loaded")		
-
-sub s 
-	DbgPrint("uDebug loaded")				
-End Sub
-
-s
+	sub Screentest()
+		tScreen.res
+		DbgScreeninfo				
+		tScreen.drawfx( 8,8)
+		?
+		? tScreen.dsx,tScreen.dsy
+		? tScreen.gtw,tScreen.gth
+		? tScreen.erw,tScreen.erh
 		
-'for i as integer =1 to 10
-'    conprint->ConsolePrint("With linefeeds")
-'next
+		set__color(14,1):				tScreen.draws( 05,21,"yellow on light blue")
+		set__color(14,1):				tScreen.draws( 05,22, hex(_fgcolor_)+" "+hex(_bgcolor_))
+		
+		Width 80, 25
+		Locate 1,1: Color 14, 9 : Print "yellow text on bg 9"
+		   ''  the color nightmare continues. no bg color is set		
+		
+		tScreen.rbgcolor(255,255,0):	tScreen.draws( 05,20,"OK!")
+		tScreen.rbgcolor(0,255,255):	tScreen.draws( 10,30,"OK!")
+		tScreen.rbgcolor(255,255,255):	tScreen.draws( 10,31,"OK!")
+		'tScreen.rbgcolor(255,0,255):	tScreen.draws( 15,100,"OK!")
+		'tScreen.rbgcolor(255,0,0):	tScreen.draws( 40,20,"OK!")
+		'tScreen.rbgcolor(0,255,0):	tScreen.draws( 50,60,"OK!")
+		'tScreen.rbgcolor(0,0,255):	tScreen.draws( 100,100,"OK!")
+		
+		AllocConsole
+		DbgPrint("uDebug loaded")		
+		DbgPrint(tModule.Status)				
+		'for i as integer =1 to 10
+		'    conprint->ConsolePrint("With linefeeds")
+		'next
+	End Sub
 
-
-tScreen.xy(10,44)
-uConsole.pressanykey
-
+	end namespace'
+	
+	#ifdef test
+		tScreen.Screentest()
+		tScreen.xy(10,44)
+		uConsole.pressanykey
+	#else
+		tModule.registertest("tScreen",@tScreen.Screentest())
+	#endif'test
 #endif'test

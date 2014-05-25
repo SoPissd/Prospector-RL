@@ -1,66 +1,34 @@
 'version.
-'
-'namespace: tVersion
-
-'
-'
-'defines:
-'Init=6, Load=3, Save=4, ErrorlogFilename=0, Errorscreen=0, DisplayError=0
-'
-
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: version -=-=-=-=-=-=-=-
-#undef intest
-
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
+#include once "uDefines.bi"
+DeclareDependencies()
 #include "uScreen.bas"
+DeclareDependenciesDone()
 
-#define test
-#endif'test
+#ifdef types
+'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+
+	#include "uVersion.bi"
+
+#endif'types
+
+namespace tVersion
+
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: version -=-=-=-=-=-=-=-
 
-
-'declare function tVersion
-'declare function tVersion
-'declare function tVersion
-'declare function tVersion
-'declare function tVersion
-'declare function tVersion
-
+	type tAction As Function as Integer
+		
+	Dim Shared Gamerunning as byte =0
+	Dim Shared Gamescore As UInteger =0
+	Dim Shared Gameturn As UInteger =0
+	Dim Shared Gamedesig as string 
+	dim Shared SavegameMethod as tAction
+	Dim Shared logerror as byte =1
+	
 #endif'head
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: version -=-=-=-=-=-=-=-
 '
-#include "uVersion.bi"
-
-type tAction As Function as Integer
-
-
-namespace tVersion
-	
-Dim Shared Gamerunning as byte =0
-Dim Shared Gamescore As UInteger =0
-Dim Shared Gameturn As UInteger =0
-Dim Shared Gamedesig as string 
-dim Shared SavegameMethod as tAction
-Dim Shared logerror as byte =1
-
 
 public function Init(iAction as integer) as integer
 	Gamedesig	=""
@@ -162,12 +130,12 @@ End function
 end namespace
 
 
-#ifdef testing
-	' patch up expectations during testing.
-	Function savegame(crash as short=0) As Short
-		return 0
-	End Function
-#endif		
+'#ifdef testing
+'	' patch up expectations during testing.
+'	Function savegame(crash as short=0) As Short
+'		return 0
+'	End Function
+'#endif		
 
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: version -=-=-=-=-=-=-=-

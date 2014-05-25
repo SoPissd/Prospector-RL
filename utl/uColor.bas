@@ -1,55 +1,13 @@
 'uColor.
-'
-'namespace: tColor
-
-
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-
-#ifdef intest
-#undef intest
-'     -=-=-=-=-=-=-=- TEST: tColor -=-=-=-=-=-=-=-
+#include once "uDefines.bi"
+DeclareDependencies()
 #print "tColor test"
 #include "file.bi"
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
-#include "uDebug.bas"
 #include "uUtils.bas"
+#include "uDebug.bas"
 #include "uScreen.bas"
 #include "uWindows.bas"
-
-'#ifdef intest
-''     -=-=-=-=-=-=-=- TEST: tPalette -=-=-=-=-=-=-=-
-'#if not (defined(types) or defined(head) or defined(main)) 'test
-'#print "tPalette test"
-'#define main
-'#include "file.bi"
-'#include "tDefines.bas"
-'#include "tModule.bas"
-'#include "tScreen.bas"
-'#include "tColor.bas"
-'#include "kbinput.bas"
-'#include "tUtils.bas"
-'#undef main
-'
-'# define gen_include
-'#ifdef gen_include
-'dim shared fout as integer
-'#endif 
-
-#define test
-#endif'test
+DeclareDependenciesDone()
 
 #ifndef __FILE_BI__
 #print uColor.bas: late including file.bi

@@ -1,35 +1,16 @@
 'tModule.
-'
-'namespace: tModule
-'
-'
-'defines:
-'Init=6, Register=0
-'
+#print "umodule.bas"
+#include once "uDefines.bi"
+DeclareDependenciesBasic()
+#include "uDefines.bas"
+DeclareDependenciesDone()
+#ifdef types
+'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+#endif'types
 
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: tModule -=-=-=-=-=-=-=-
-#undef intest
-#include "uDefines.bas"
-#define test
-#endif'test
-#ifndef tActionmethod
-#print uModule.bas: late including uDefines.bas
-#include "uDefines.bas"
-#endif
+'#ifndef tActionmethod
+'#print uModule.bas: late including uDefines.bas
+'#include "uDefines.bas"
 
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tModule -=-=-=-=-=-=-=-
@@ -41,27 +22,27 @@ namespace tModule
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
-type _Module											'the module now registering
-	aName as string
-	fInit as tActionmethod	
-	fLoad as tActionmethod	
-	fSave as tActionmethod	
-End Type
 
-const _maxModules = 128+32
+Dim shared as tActionmethod	 		RunMethod		'this runs as 'the main program' 
+Dim shared as tErrormethod 			ErrorMethod		'error handler (passed in)
 
-dim shared modules(_maxModules) as _Module
-dim shared lastmodule as integer = 0
-
-Dim as tActionmethod	 	RunMethod					'this runs as 'the main program' 
-Dim as tErrormethod 		ErrorMethod					'error handler (passed in)
-
-Dim as tTextIntegermethod 	LogoutMethod				'logfilewriter methods
-Dim as tTextmethod 			ErrLogMethod
+Dim shared as tTextIntegermethod 	LogoutMethod	'logfilewriter methods
+Dim shared as tTextmethod 			ErrLogMethod
 
 #endif'types
+
+	
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tModule -=-=-=-=-=-=-=-
+
+
+declare function Register(aName as string,_
+	fInit as tActionmethod =null,_	
+	fLoad as tActionmethod =null,_	
+	fSave as tActionmethod =null) as integer
+	
+declare function Registertest(aName as string,fTest as tSub =null,aComment as string="") as integer
+
 
 declare function LogWrite(aText as string,fileno as integer=0) as integer
 declare function ErrorLog(aText as string) as integer
@@ -70,39 +51,75 @@ declare function Status() as string
 declare function Run(iAction as integer) as Integer		'used as 'the run method'
 
 #endif'head
+
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tModule -=-=-=-=-=-=-=-
+
 dim shared as integer fLogOut							'file-handles to system consoles
 dim shared as integer fErrOut
 
+const _maxModules = 128+32
 
-public function Init(iAction as integer) as integer
+'
+type _Module											'the module now registering
+	aName as string
+	fInit as tActionmethod	
+	fLoad as tActionmethod	
+	fSave as tActionmethod	
+End Type
+
+dim shared modules(_maxModules) as _Module
+dim shared lastmodule as integer = 0
+
+'
+type _Test											'the test now registering
+	aName as string
+	fTest as tSub	
+	aComment as string
+End Type
+
+dim shared Tests(_maxModules) as _Test
+dim shared lasttest as integer = 0
+
+
+function Init(iAction as integer) as integer
 	fErrOut=freefile
 	open err for output as fErrOut
 	fLogOut= fErrOut
-	return 0 'ErrorNr
+	return true 'ErrorNr
 End Function
 
 
-public function Register(aName as string,_
+function Register(aName as string,_
 	fInit as tActionmethod =null,_	
 	fLoad as tActionmethod =null,_	
 	fSave as tActionmethod =null) as integer
 	'
-	Dim amodule As _Module
+	Dim amodule As tModule._Module
 	amodule.aName	=aName
 	amodule.fInit	=fInit	
 	amodule.fLoad	=fLoad	
 	amodule.fSave	=fSave
 	'
-	lastmodule+=1
 	modules(lastmodule)=amodule
+	lastmodule+=1
 	'
 	'? amodule.aName +".Init()"
 	'? amodule.aName +" ";
 	'tError.ErrorNr= 	
 	return amodule.fInit(0)
 End Function
+
+function Registertest(aName as string,fTest as tSub =null,aComment as string="") as integer
+	Dim atest As _Test
+	atest.aName	=aName
+	atest.fTest =fTest	
+	atest.aComment =aComment	
+	tests(lasttest)=atest
+	lasttest+=1
+	return true
+End Function
+
 
 function LogWrite(aText as string,fileno as integer=0) as integer
 	if fileno<=0 then fileno=fLogOut
@@ -120,7 +137,7 @@ End Function
 
 '
 public function Status() as string
-	return "" &lastmodule &" modules initialized."
+	return "" &lastmodule &" modules initialized. " &lasttest &" tests loaded."
 End Function
 
 function Run(iAction as integer) as Integer
@@ -135,7 +152,10 @@ End Function
 
 '
 #endif'main
+
 end namespace'tModule
+
+
 
 #ifdef main
 
@@ -146,25 +166,55 @@ End Function
 function ErrOut(aText as String) as Integer
 	return tModule.ErrorLog(aText)
 End Function
+
 #endif'main
+'#endif'actionmethod
 
 
-#if (defined(main) or defined(test))
+#if defined(main) or defined(test)
 '      -=-=-=-=-=-=-=- INIT: tModule -=-=-=-=-=-=-=-
-	tModule.register("tModule",@tModule.init()) ',@tModule.load(),@tModule.save())
+	tModule.register("uDefines",@tDefines.init()) ',@tDefines.load(),@tDefines.save())
+	tModule.register("uModule",@tModule.init()) ',@tModule.load(),@tModule.save())
 #endif'main
-
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tModule -=-=-=-=-=-=-=-
-	#undef test
-	#include "uDefines.bas"
-	'
-	? tModule.Status: ?
-	'
-	print #tModule.fLogOut,"#fLogOut: log console open as #" &tModule.fLogOut &"!"
-	print #tModule.fErrOut,"#fErrOut: error console open as #" &tModule.fErrOut &"!"
-	'
-	LogOut("using log console")
-	ErrOut("using error console")
+'	#undef test
+'	#include "uDefines.bas"
+'	#define test
+#endif'test
+#if (defined(test) or defined(testload))
+#print -=-=-=-=-=-=-=- TEST: tModule -=-=-=-=-=-=-=-
+
+	namespace tModule
+
+	sub moduletest()
+		? Status: ?
+		'
+		print #tModule.fLogOut,"#fLogOut: log console open as #" &tModule.fLogOut &"!"
+		LogOut(chr(9)+"using log console.. ok!")
+		print #tModule.fErrOut,"#fErrOut: error console open as #" &tModule.fErrOut &"!"
+		ErrOut(chr(9)+"using error console.. ok!")
+		'
+		dim i as Integer
+		?
+		? "Modules:"
+		for i= 0 to lastmodule-1
+			? chr(9)+modules(i).aName
+		Next
+		?
+		? "Tests:"
+		for i= 0 to lasttest-1
+			? chr(9)+tests(i).aName, tests(i).aComment
+		Next
+	End Sub
+
+	end namespace'tModule
 	
+	#ifdef test
+	'	tModule.registertest("uModule",@tModule.moduletest())
+		tModule.moduletest()
+		sleep
+	#else
+		tModule.registertest("uModule",@tModule.moduletest())
+	#endif'test
 #endif'test

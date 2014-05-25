@@ -1,32 +1,9 @@
 'uConsole.
-'
-'namespace: uConsole
-
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: uConsole -=-=-=-=-=-=-=-
-#undef intest
-
+#include once "uDefines.bi"
+DeclareDependencies()
 #include "fbGfx.bi"
 '#include "zlib.bi"
 #include "file.bi"
-
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
-
 #include "uUtils.bas"
 #include "uDebug.bas"
 #include "uScreen.bas"
@@ -50,9 +27,7 @@
 '#include "tMenu.bas"
 '#include "uConsole.bas"
 '#include "tFonts.bas"
-
-#define test
-#endif'test
+DeclareDependenciesDone()
 
 
 #ifdef types

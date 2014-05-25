@@ -1,35 +1,13 @@
 'tTime.
-'
-'defines:
-'display_time=8, date_string=2
-'
-
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: tTime -=-=-=-=-=-=-=-
-#undef intest
-
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
+#include once "uDefines.bi"
+DeclareDependencies()
+#include "uUtils.bas"
 #include "uScreen.bas"
 #include "uColor.bas"
-#include "uUtils.bas"
-
-#define test
-#endif'test
+DeclareDependenciesDone()
+#ifdef types
+'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+#endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tTime -=-=-=-=-=-=-=-
 

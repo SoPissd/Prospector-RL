@@ -1,49 +1,15 @@
 'tFile.
-'
-'namespace: tFile
-'
-'
-'defines:
-'init=16, Closefile=0, private Openerror=0, Openfile=0, OpenInput=0,
-', OpenOutput=0, OpenAppend=0, OpenBinary=0, OpenLogfile=0, filetostring=0,
-', stringtofile=0, Assertpath=0, Filesize=0, Countlines=0, ttest=0
-'
-
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: tFile -=-=-=-=-=-=-=-
-#undef intest
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
+#include once "uDefines.bi"
+DeclareDependencies()
 #include "file.bi"
 '#include "windows.bi"
-
-#undef intest
-#define test
-#endif'test
+DeclareDependenciesDone()
 
 namespace tFile	
-
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 #endif'types
-
-
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tFile -=-=-=-=-=-=-=-
 
@@ -53,8 +19,7 @@ Enum tFileOpenMode
 	fmAppend
 	fmBinary
 	fmRandom
-End Enum	
-
+End Enum
 	
 dim FilenameOpenedLast as String		'updated by Openfile
 dim FileError as String					'assembled by Openerror 

@@ -36,4 +36,42 @@
 	#EndMacro
 
 	'build the core pieces
-	#include once "bFoundation.bi"
+	
+	inc("uSound.bi",				"first, include the sound drivers")
+	inc("fbGfx.bi",					"")
+	inc("file.bi",					"")
+	#ifdef makezlib	
+		inc("zlib.bi",				"")
+	#endif
+	'#include once "win\psapi.bi"
+'
+	#undef both
+	#undef test	
+	#undef types
+	#undef head
+	#undef main
+	
+	#if false
+		#define types
+		#define head
+		#define main		
+			#include once "bFoundation.bi"
+		#undef types
+		#undef head
+		#undef main
+	#else
+		#print loading types and head..
+		#define types
+		#define head
+			#include "bFoundation.bi"
+		#undef types
+		#undef head
+		#print loading test and main
+		#define main		
+		#define testload
+			#include "bFoundation.bi"
+		#undef main
+		#undef testload
+		? tModule.Status
+		sleep
+	#endif

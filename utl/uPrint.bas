@@ -1,28 +1,6 @@
 'tPrint.
-'
-'defines:
-'scrollup=0, locEOL=0, rlprint=1759
-'
-
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: tPrint -=-=-=-=-=-=-=-
-#undef intest
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
+#include once "uDefines.bi"
+DeclareDependencies()
 #include "uUtils.bas"
 #include "uDebug.bas"
 #include "uScreen.bas"
@@ -35,21 +13,21 @@
 #include "uRng.bas"
 #include "uCoords.bas"
 #include "uBorder.bas"
-
-#define test
-#endif'test
-#ifdef head
-'     -=-=-=-=-=-=-=- HEAD: tPrint -=-=-=-=-=-=-=-
+DeclareDependenciesDone()
+#ifdef types
+'     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 
 Dim Shared displaytext(255) As String
 Dim Shared dtextcol(255) As Short
-
 Dim Shared As Byte _consoleindent=0
 
-declare function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for windows less than 60 tiles wide
+#endif'types
+#ifdef head
+'     -=-=-=-=-=-=-=- HEAD: tPrint -=-=-=-=-=-=-=-
 
 declare function rlprint(t as string, col as short=11) as short
 declare function askyn(q as string,col as short=11,sure as short=0) as short
+declare function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for windows less than 60 tiles wide
 
 'declare function scrollup(b as short) as short
 'declare function locEOL() as _cords

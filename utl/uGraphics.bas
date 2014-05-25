@@ -1,30 +1,7 @@
 'tGraphics.
-'
-'defines:
-'background=10, bmp_load=2, calcosx=0
-'
-
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: tGraphics -=-=-=-=-=-=-=-
-#undef intest
-
+#include once "uDefines.bi"
+DeclareDependencies()
 #include "fbGfx.bi"
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
 #include "uScreen.bas"
 #include "file.bi"
 #include "uFile.bas"
@@ -34,9 +11,7 @@
 '#include "uCoords.bas"
 '#include "uPrint.bas"
 #include "uUtils.bas"
-
-#define test
-#endif'test
+DeclareDependenciesDone()
 
 namespace tGraphics
 

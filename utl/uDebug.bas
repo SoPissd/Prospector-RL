@@ -1,31 +1,10 @@
 'tDebug.
-
-'needs [head|main|both] defined,
-' builds in test mode otherwise:
-#if not (defined(types) or defined(head) or defined(main))
-#define intest
-#define both
-#endif'test
-#if defined(both)
-#undef both
-#define types
-#define head
-#define main
-#endif'both
-'
-#ifdef intest
-'     -=-=-=-=-=-=-=- TEST: tDebug -=-=-=-=-=-=-=-
-#undef intest
-#include "uDefines.bas"
-#include "uModule.bas"
-#include "uDefines.bas"
-#define test
-#endif'test
-
+#include once "uDefines.bi"
+DeclareDependencies()
+DeclareDependenciesDone()
 
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tDebug -=-=-=-=-=-=-=-
-
 
 ' validate target OS
 #ifdef __FB_WIN32__						'windows ok
@@ -202,6 +181,8 @@
 
 
 #endif'head
+
+#if __FB_Debug__ 
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tDebug -=-=-=-=-=-=-=-
 namespace tDebug
@@ -217,32 +198,39 @@ end namespace'tDebug
 #endif'main
 
 
-#if (defined(test) and __FB_Debug__) 
-#print -=-=-=-=-=-=-=- TEST: tDebug -=-=-=-=-=-=-=-
-#undef test
 
-#include "uWindows.bas"
-'ScreenControl FB.SET_DRIVER_NAME, "GDI"
-'screenres 800,600,16,2,flags
-'cls
-'sleep
-
-
-? "ReplaceConsole()  " & ReplaceConsole()
-
-DbgPrint("_DbgPrintMode "& _DbgPrintMode)		
-
-#include "fbGfx.bi"
-ScreenControl FB.SET_DRIVER_NAME, "GDI"
-screenres 800,600,16,2,0
-cls
-
-DbgPrint("uDebug loaded")		
-
-? "sleep"
-sleep
-		
+#ifdef test
+#print -=-=-=-=-=-=-=- TEST: tModule -=-=-=-=-=-=-=-
+	#undef test
+	#include "fbGfx.bi"
+	#include "uWindows.bas"
+	#define test
 #endif'test
+#if (defined(test) or defined(testload))
+#print -=-=-=-=-=-=-=- TEST: tModule -=-=-=-=-=-=-=-
+
+	namespace tDebug
+
+	sub debugtest()
+		? "ReplaceConsole()  " & ReplaceConsole()		
+		DbgPrint("_DbgPrintMode "& _DbgPrintMode)
+		ScreenControl FB.SET_DRIVER_NAME, "GDI"
+		screenres 800,600,16,2,0
+		cls
+		DbgPrint("uDebug loaded")		
+	End Sub
+
+	end namespace'tDebug
+	
+	#ifdef test
+		tDebug.debugtest()
+		? "sleep"
+		sleep
+	#else
+		tModule.registertest("uDebug",@tDebug.debugtest())
+	#endif'test
+#endif'test
+#endif'__FB_Debug__
 
 
 ' cut 'n paste
