@@ -138,7 +138,7 @@ End Function
 
 '
 public function Status() as string
-	return "" &lastmodule &" modules initialized. " &lasttest &" tests loaded."
+	return "" &lastmodule &" modules initialized." &iif(lasttest>0,"  "& lasttest &" tests loaded.", "")
 End Function
 
 function Run(iAction as integer) as Integer

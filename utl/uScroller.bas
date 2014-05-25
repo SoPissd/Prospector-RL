@@ -32,14 +32,18 @@ type tScroller extends Object
 	offset as Integer						'scrolling starts at
 	offsetx as Integer						'scrolling starts at
 	'
-	pheight as Integer						'represented via the scroller in lines
 	height as Integer						'height/number of visible lines
+	idx as integer							'highlighted row 0..height
+	pheight as Integer						'represented via the scroller in lines
 	'
 	xwidth as Integer						'xwidth/number of visible columns
 	longestline as Integer					'limits horizontal scrolling
 	'
 	bHorizontal as Integer = true			'enable scrolling
 	bVertical as integer = true						
+	bIdx as integer = false						
+	'
+	declare property index as Integer
 	'
 	declare function Getkey(accept as string="",deny as string="") as String
 	declare function Init(iLines as integer, bScrollbar as integer=true) as integer
@@ -79,6 +83,7 @@ type tArrayScroller extends tAreaScroller
     lcount as integer						'computed with bCount
 	declare function Textbox(bCount as integer=false) as integer	
 	'
+	bFit as integer= true
 	bScrollbar as Integer
 	declare function Scrollbox() as integer
 End Type
@@ -125,6 +130,10 @@ function tScroller.Init(iLines as integer, bScrollbar as integer=true) as intege
 end function
 
 
+Property tScroller.index as Integer
+	return offset + idx
+End Property
+
 function tScroller.Getkey(accept as string="",deny as string="") as String		'
 	dim key as String
 	dim i as Integer
@@ -137,31 +146,68 @@ function tScroller.Getkey(accept as string="",deny as string="") as String		'
 
 		i=0
         if di=7 then			'home
+        	if bIdx then idx=0
         	if bVertical then offset=0
         	if bHorizontal then offsetx=0
-        	if bVertical or bHorizontal then i=1
+        	i=1
         elseif di=1 then			'end
+        	if bIdx then idx=(height-1)
         	if bVertical then offset=nlines-(height-1)
         	if bHorizontal then offsetx=0
-        	if bVertical or bHorizontal then i=1
+        	i=1
         EndIf
 		'
 		if bVertical then
 	        'if di=9 then			'pgup
-	        if uConsole.keyaccept(key,keyl_menup) then 
-	        	offset=offset-(height)'-1)
+	        if uConsole.keyaccept(key,keyl_menup) then
+	        	if bIdx then
+	        		if idx>0 then
+	        			idx=0
+	        		else
+			        	offset=offset-(height)'-1)
+	        		EndIf
+	        	else
+		        	offset=offset-(height)'-1)
+	        	EndIf
 	        	i=1
 	        'elseif di=3 then			'pgdn
 	        elseif uConsole.keyaccept(key,keyl_mendn) then 
-	        	offset=offset+(height)'-1)
+	        	if bIdx then
+	        		if idx<(height-1) then
+	        			idx=(height-1)
+	        		else
+			        	offset=offset+(height)'-1)
+	        		EndIf
+	        	else
+	    	    	offset=offset+(height)'-1)
+	        	EndIf
 	        	i=1
 	        elseif di=2 then			
-	        	offset=offset+1
+	        	if bIdx then
+	        		if idx<(height-1) then
+	        			idx +=1
+	        		else
+			        	offset=offset+1
+	        		EndIf
+	        	else
+		        	offset=offset+1
+	        	EndIf
 	        	i=1
 	        elseif di=8 then
-	        	offset=offset-1
+	        	if bIdx then
+	        		if idx>0 then
+	        			idx -=1
+	        		else
+			        	offset=offset-1
+	        		EndIf
+	        	else
+		        	offset=offset-1
+	        	EndIf
 	        	i=1
 	        endif
+	        '
+	        if idx>(height-1) then idx=(height-1)
+	        if idx<0 then idx=0
 	        '
 	        if offset>nlines-(height-1) then offset=nlines-(height-1)
 	        if offset<0 then offset=0
@@ -302,6 +348,7 @@ end function
 '
 
 Constructor tArrayScroller()
+	bFit= true
 End Constructor
 
 Destructor tArrayScroller()
@@ -421,11 +468,16 @@ function tArrayScroller.textbox(bCount as integer=false) as Integer
             EndIf
 			if y+j>=y+height then exit for
        		if xw>0 then xw +=1
-			if j>=0 then tScreen.draw2c(x+xw,y+j,w)
+			if j>=0 then
+	            if bIdx andalso j=idx then set__color(bg,fg)
+				tScreen.draw2c(x+xw,y+j,w)				
+	            if bIdx andalso j=idx then set__color(fg,bg)
+        EndIf
             xw=xw+len(w)
         endif
 		'DbgPrint(lcount &" "& j &" "& longestline &" "& xw &" " & len(w) &" "& ":"+w+":")
     next
+    set__color(fg,bg)
     
 	'tScreen.rbgcolor(255,255,255)
 	'for i=0 to wid-1
@@ -472,24 +524,27 @@ function tArrayScroller.Scrollbox() as integer'byref atext as string,iWid as int
 
 	if bDrawborder then wid -=2
 
-	Textbox(true)	'guess width/height based on wid
-	wid=longestline	'result, longest line
-	Textbox(true)	'better guess width/height
+	if bFit then
+		Textbox(true)	'guess width/height based on wid
+		wid=longestline	'>>result, longest line & lcount
+		Textbox(true)	'better guess width/height
+	EndIf
 
 	if bDrawborder then
 		xoffset=x:	x +=1
 		yoffset=y:	y +=1
 		wid +=2
-		mwx= wid		' sets mwx. does not touch mhy
+		mwx= wid	' sets mwx. do/es not touch mhy
 		'mhy= lcount+2	
 		'mhy= 10
 		h=Drawborder() 'accept and draw a border. returns actual height used.
 		mwx -=2
-		mhy -=2 'adjusts both x and y for the border
-		
-		h -=2			'take off the offsets and we now know the height of the visible text
-		DbgPrint("wid:"& wid &" longestline:"& longestline &" lcount:"& lcount &" visible:"& h)		
+		mhy -=2 'adjusts both x and y for the border		
+		h -=2	'take off the offsets and we now know the height of the visible text
+	else
+		h=mhy
 	EndIf
+		'DbgPrint("wid:"& wid &" longestline:"& longestline &" lcount:"& lcount &" visible:"& h)		
 	
 	h= mhy
 
@@ -549,13 +604,17 @@ end function
 	sub testScrollbox()    
 		dim as string text= "display in the fabulous textbox!"' you know, the one that will get its scrollbars back soon. yeah."
 		dim as string atext
+		dim as string aKey
 		dim as integer w2
 		for w2=1 to 200
 			atext +="|"& w2 &text
 		Next
+		aText ="1-border|2-small|3-big|4-|"&aText
 		
 		'draw_border(1,1,40,30)
 		'sleep
+		dim as integer w=24
+		dim as integer h=12
 		
 		tScreen.y=300
 		tScreen.res
@@ -566,30 +625,58 @@ end function
 		a.y=	16
 		a.fg=	15
 		a.bg=	5
+		a.bIdx=true
 		a.bScrollbar=true
-		
+		'a.bDrawborder= not a.bDrawborder
 		while not uConsole.Closing
-			cls
-			tScreen.set(0)
-			tScreen.rbgcolor(255,255,255)
+			while not uConsole.Closing
+				cls
+				tScreen.set(0)
+				cls
+				tScreen.rbgcolor(255,255,255)
+				
+				tScreen.xy(10,2,tModule.Status())
+				tScreen.xy(10,5)
+				
+				draw_border(1,1,42,30)
+				draw_border(3,3,42,30)
+				draw_border(5,5,42,30)
 			
-			tScreen.xy(10,2,tModule.Status())
-			tScreen.xy(10,5)
-			
-			draw_border(1,1,42,30)
-			draw_border(3,3,42,30)
-			draw_border(5,5,42,30)
-		
-			a.text= aText
-			a.wid= 20
-			a.mhy= 12
-			a.bDrawborder= not a.bDrawborder
-			a.Scrollbox() 'aText,20)
-			
-		    ScreenSync
-			ScreenCopy
-		'   tScreen.set()
-			if uConsole.keyaccept(a.GetKey(),keyl_onwards) then exit while
+				a.text= aText
+				a.wid= w
+				a.mhy= h
+				'a.bDrawborder= not a.bDrawborder
+				tScreen.draw2c(5,5,"a.offset + a.idx = "& a.offset + a.idx )
+				a.Scrollbox() 'aText,20)
+'				if a.index=0 then
+'					a.bDrawborder= not a.bDrawborder
+'				EndIf
+			    ScreenSync
+				ScreenCopy
+			'   tScreen.set()
+				aKey= a.GetKey()
+				if uConsole.keyaccept(aKey,keyl_onwards) then exit while
+			wend
+			'
+			DbgPrint("key:" +aKey)
+			if aKey<>key__enter then exit while 			
+			if a.index=0 then
+				a.bDrawborder= not a.bDrawborder
+			elseif a.index=1 then
+				a.bFit= true
+				a.x=	8
+				a.y=	16
+				w=		24
+				h=		12
+			elseif a.index=2 then
+				a.bFit=false
+				a.x=	1
+				a.y=	1
+				w=		tScreen.gtw'-1
+				h=		tScreen.gth'-1		
+			else
+				'exit while
+			EndIf			
 		wend
 	end sub
 		
@@ -600,6 +687,6 @@ end function
 		testScrollbox()
 		'? "sleep": sleep
 	#else
-		tModule.registertest("uScroller",@testScrollbox(),"testScrollbox")
+		tModule.registertest("uScroller",@testScrollbox(),"Scrollbox()")
 	#endif'test
 #endif'test

@@ -64,8 +64,10 @@ function draw_border(xoffset as short,yoffset as short,mwx as short,mhy as short
     set__color( 224,1)
 
 	if tScreen.isGraphic then
-		if xoffset+mwx-1 > tScreen.gtw then mwx = tScreen.gtw-xoffset+1
-		if yoffset+mhy-1 > tScreen.gth then mhy = tScreen.gth-yoffset+1
+DbgPrint("mwx:"& mwx)		
+		if xoffset+mwx > tScreen.gtw+1 then mwx = tScreen.gtw+1-xoffset
+		if yoffset+mhy > tScreen.gth+1 then mhy = tScreen.gth+1-yoffset
+DbgPrint("mwx>"& mwx)		
 		
 	    for a=1 to mwx-1
 	        tScreen.draw1c(xoffset+a,yoffset,		chr(196))
@@ -82,8 +84,8 @@ function draw_border(xoffset as short,yoffset as short,mwx as short,mhy as short
 	    tScreen.draw1c(xoffset+mwx-1,	yoffset,		chr(191))
 	    tScreen.draw1c(xoffset+mwx-1,	yoffset+mhy-1,	chr(217))
 	else
-		if xoffset+mwx-1 > uConsole.ttw then mwx = uConsole.ttw-xoffset+1
-		if yoffset+mhy-1 > uConsole.tth then mhy = uConsole.tth-yoffset+1
+		if xoffset+mwx > uConsole.ttw+1 then mwx = uConsole.ttw+1-xoffset
+		if yoffset+mhy > uConsole.tth+1 then mhy = uConsole.tth+1-yoffset
 		
 	    for a=1 to mwx-1
 	        tScreen.xy(xoffset+a,	yoffset,		chr(196))

@@ -388,6 +388,7 @@ end function
 
 function keyaccept(ByRef aKey as string,allow as string="",deny as string="") as short
 	validateaccept(allow)'validates against a comma delimited list of keys
+	LastKey= aKey
     return (aKey<>"") _
     	and (allow="" or allow="," or (instr(","+allow,","+aKey)>0)) _ 
     	and (deny="" or deny="," or (instr(","+deny,","+aKey)=0)) 
