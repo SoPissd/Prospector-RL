@@ -59,6 +59,7 @@ type tAreaScroller extends tScroller
 	mwx as Integer		'max width x
 	mhy as Integer		'max height y
 	'
+	bDrawborder as integer= true
 	declare function Drawborder() as integer
 	'
 	cHoriz as string=chr(250)
@@ -72,12 +73,14 @@ type tArrayScroller extends tAreaScroller
 	'
 	text as string							'textbox text 
 	wid as Integer							'textbox width to be used
+	'mhy as integer							'set text, wid and mhy, then scrollbox!
+	'
     'ancestor longestline as integer 		'computed with bCount
     lcount as integer						'computed with bCount
 	declare function Textbox(bCount as integer=false) as integer	
-	
+	'
 	bScrollbar as Integer
-	declare function Scrollbox(byref aText as string,iWid as integer=20) as integer
+	declare function Scrollbox() as integer
 End Type
 
 
@@ -126,7 +129,7 @@ function tScroller.Getkey(accept as string="",deny as string="") as String		'
 	dim key as String
 	dim i as Integer
 	dim di as Integer
-DbgPrint("offset:" & offset & " nlines:" & nlines & " height:" & height)		
+	'DbgPrint("offset:" & offset & " nlines:" & nlines & " height:" & height)		
 	
 	while true
         key=uConsole.keyinput(accept,deny) '("12346789 ")'  key=keyin("12346789 ",1)
@@ -146,11 +149,11 @@ DbgPrint("offset:" & offset & " nlines:" & nlines & " height:" & height)
 		if bVertical then
 	        'if di=9 then			'pgup
 	        if uConsole.keyaccept(key,keyl_menup) then 
-	        	offset=offset-(height-1)
+	        	offset=offset-(height)'-1)
 	        	i=1
 	        'elseif di=3 then			'pgdn
 	        elseif uConsole.keyaccept(key,keyl_mendn) then 
-	        	offset=offset+(height-1)
+	        	offset=offset+(height)'-1)
 	        	i=1
 	        elseif di=2 then			
 	        	offset=offset+1
@@ -162,7 +165,7 @@ DbgPrint("offset:" & offset & " nlines:" & nlines & " height:" & height)
 	        '
 	        if offset>nlines-(height-1) then offset=nlines-(height-1)
 	        if offset<0 then offset=0
-DbgPrint("nlines "& nlines  &" height "& height  &" offset "& offset)				
+			'DbgPrint("nlines "& nlines  &" height "& height  &" offset "& offset)				
 		EndIf
         '
         if bHorizontal then
@@ -184,7 +187,7 @@ DbgPrint("nlines "& nlines  &" height "& height  &" offset "& offset)
 	        if (offsetx<0) or (xwidth>=longestline) then offsetx=0
         EndIf
 		'
-'DbgPrint("offsets x,y:" & offsetx &","& offset)		
+		''DbgPrint("offsets x,y:" & offsetx &","& offset)		
 		if (i>0) or uConsole.Closing<>0 or uConsole.keyonwards(key) then exit while
 	wend	
     return key
@@ -373,7 +376,7 @@ function tArrayScroller.textbox(bCount as integer=false) as Integer
     if offset>0 and lcount-offset<height-1 then offset=lcount-height-1
     if offset<0 then offset=0
 
-DbgPrint("lcount "& lcount  &" height "& height  &" offset "& offset)				
+	'DbgPrint("lcount "& lcount  &" height "& height  &" offset "& offset)				
     
     dim as integer j
     dim as integer isCol=0
@@ -462,41 +465,63 @@ end function
 
 '
 
-function tArrayScroller.Scrollbox(byref atext as string,iWid as integer=20) as integer
+function tArrayScroller.Scrollbox() as integer'byref atext as string,iWid as integer=20) as integer
 	dim as short h 
 	dim as short w 
 	dim as short w2 
-	text= atext
 
-	wid=iWid
-	Textbox(true)	'guess width/height
-	w=longestline
-	wid=w
+	if bDrawborder then wid -=2
+
+	Textbox(true)	'guess width/height based on wid
+	wid=longestline	'result, longest line
 	Textbox(true)	'better guess width/height
 
+	if bDrawborder then
+		xoffset=x:	x +=1
+		yoffset=y:	y +=1
+		wid +=2
+		mwx= wid		' sets mwx. does not touch mhy
+		'mhy= lcount+2	
+		'mhy= 10
+		h=Drawborder() 'accept and draw a border. returns actual height used.
+		mwx -=2
+		mhy -=2 'adjusts both x and y for the border
+		
+		h -=2			'take off the offsets and we now know the height of the visible text
+		DbgPrint("wid:"& wid &" longestline:"& longestline &" lcount:"& lcount &" visible:"& h)		
+	EndIf
 	
-	xoffset=x-1
-	yoffset=y-1
-	mwx= wid+2
-	mhy= lcount+2
-	h=Drawborder() 'accept and draw a border. returns actual height used.
-	h -=2			'take off the offsets and we now know the height of the visible text
-	DbgPrint("wid:"& wid &" longestline:"& longestline &" lcount:"& lcount &" visible:"& h)
+	h= mhy
 
 	init(lcount,true)
-	xwidth=Wid	
-	height=h'mhy'-y-1
-	pheight=height
+	xwidth=		Wid	
+	height=		h
+	pheight=	height+3
 	
 	Textbox(false)' text ,x,y,xwidth,fg,bg,0,0,offset)	'now place the text
-	
-	DbgPrint("a.offset, a.nlines, a.pheight, a.height, x+a.xwidth")
-	DbgPrint(offset & " " & nlines & " " & pheight & " " & height & " " & x+xwidth+1)
+
+	if bDrawborder then
+		x -=1
+		y -=1
+		mwx +=2
+		mhy +=2 'adjusts both x and y back now that the border is there		
+	EndIf
+
+	'DbgPrint("a.offset, a.nlines, a.pheight, a.height, x+a.xwidth")
+	'DbgPrint(offset & " " & nlines & " " & pheight & " " & height & " " & x+xwidth+1)
 	
 	if bScrollbar then
-		x += xwidth
-		Scrollbar() 'a.offset, a.nlines, a.pheight, a.pheight, x+a.xwidth+1, y, fg, chr(124))
-		x -= xwidth		
+		if not bDrawborder then
+			x +=1
+			pheight -=2
+		EndIf
+			x += xwidth -1
+				Scrollbar() 
+			x -= xwidth -1		
+		if not bDrawborder then
+			x -=1
+			pheight +=2
+		EndIf
 	EndIf
 	return true
 end function
@@ -555,7 +580,11 @@ end function
 			draw_border(3,3,42,30)
 			draw_border(5,5,42,30)
 		
-			a.Scrollbox(aText,20)
+			a.text= aText
+			a.wid= 20
+			a.mhy= 12
+			a.bDrawborder= not a.bDrawborder
+			a.Scrollbox() 'aText,20)
 			
 		    ScreenSync
 			ScreenCopy
