@@ -69,6 +69,7 @@
 		#print loading test and main
 		#define main		
 		#define testload
+		#undef test
 			#include "bFoundation.bi"
 		#undef main
 		#undef testload

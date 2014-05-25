@@ -151,72 +151,75 @@ end namespace
 
 
 #ifdef main
-
-'Returns a random short
-function rnd_range(first As Integer, last As Integer) As Integer
-    return tRng.rng.uRange(first, last)
-End function
-
+	'Returns a random short
+	function rnd_range(first As Integer, last As Integer) As Integer
+	    return tRng.rng.uRange(first, last)
+	End function
 #endif'main
 
-#ifdef test
-#print -=-=-=-=-=-=-=- TEST: tRng -=-=-=-=-=-=-=-
-#undef test
+#ifndef format
+	#include once "string.bi"
+#endif
+#if (defined(test) or defined(testload))
+	#print -=-=-=-=-=-=-=- LOAD: tRng -=-=-=-=-=-=-=-
 
-#include once "string.bi"
-
-sub test()
-	cls
-	? "exercising tRng"
-	?
-	
-	dim rng as tRandom
-	dim seed as tRngSeed
-	dim i as Short
-	'
-	Seed= rng.Seed
-	? "found seed: " &seed.w &" " &seed.z
-	? "uValue ";
-	for i= 1 to 6 : ? rng.uValue;" "; :next: ?
-	'
+	sub test()
+		cls
+		? "exercising tRng"
+		?
+		
+		dim rng as tRandom
+		dim seed as tRngSeed
+		dim i as Short
+		'
+		Seed= rng.Seed
+		? "found seed: " &seed.w &" " &seed.z
+		? "uValue ";
+		for i= 1 to 6 : ? rng.uValue;" "; :next: ?	
+	'	
 	rng.Seed= Seed		
-	? "reset: ";
-	for i= 1 to 6 : ? rng.uValue;" "; :next: ?
-	'
+		? "reset: ";
+		for i= 1 to 6 : ? rng.uValue;" "; :next: ?	
+	'	
 	?
-	? "testing dValue:" 	
-	for i= 1 to 9: ? format(rng.dValue,"0.#####");" "; :next: ?
-	'
+		? "testing dValue:" 	
+		for i= 1 to 9: ? format(rng.dValue,"0.#####");" "; :next: ?	
+	'	
 	?
-	? "testing uRange 0..9:" 	
-	for i= 1 to 38 : ? rng.uRange(9,0);" "; :next: ?
-	for i= 1 to 38 : ? rng.uRange(0,9);" "; :next: ?
-	'
+		? "testing uRange 0..9:" 	
+		for i= 1 to 38 : ? rng.uRange(9,0);" "; :next: ?	
+	for i= 1 to 38 : ? rng.uRange(0,9);" "; :next: ?	
+	'	
 	?
-	dim as short n=10,m=(80-8)\2 -5
-	? "testing distribution  0.." &n &":"
-	dim as short r(0 to n)
-	for i= 0 to n*m: r(rng.uRange(0,n)) +=1 :next 	
-	for i= 0 to n  : ? format(i,"00: "); format(r(i),"00: "); spc(r(i));"*";
+		dim as short n=10,m=(80-8)\2 -5
+		? "testing distribution  0.." &n &":"
+		dim as short r(0 to n)
+		for i= 0 to n*m: r(rng.uRange(0,n)) +=1 :next 		
+	for i= 0 to n  : ? format(i,"00: "); format(r(i),"00: "); spc(r(i));"*";	
 		if r(i)<>m then 
-			locate CsrLin, 9+m :?"|"
+				locate CsrLin, 9+m :?"|"
 		else
-			?
+				?
 		EndIf
 	next
-end sub
-
-sub go()
-	width 80,32	
-	do 
-		test()
-		'
-		?
-		? "again? (y)"; 
+	end sub
+	
+	sub go()
+		width 80,32	
+		do 
+			test()
+			'
+			?
+			? "again? (y)"; 
 		do while inkey<>"":loop
-	loop while (getkey=asc("y"))	
-	?"done"
-End Sub
-go()
+		loop while (getkey=asc("y"))	
+		?"done"
+	End Sub
 
+	#ifdef test
+		go()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("tRng",@go(),"Random number generator")
+	#endif'test
 #endif'test

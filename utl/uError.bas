@@ -125,8 +125,8 @@ End Namespace
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tError -=-=-=-=-=-=-=-
 #undef test
-#include "uWindows.bas"
-#include "uDebug.bas"
+'#include "uWindows.bas"
+'#include "uDebug.bas"
 #include "uTextbox.bas"
 #include "uViewfile.bas"
 

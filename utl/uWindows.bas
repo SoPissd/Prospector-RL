@@ -15,12 +15,6 @@ DeclareDependenciesDone()
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
-
-type tTheEnd extends object
-	declare Destructor()
-	dim as integer WindowsConsoleAutoClose = true
-End Type
-
 #endif'types
 
 #ifdef head
@@ -49,18 +43,24 @@ declare function Popup overload (iMsg as integer) as integer
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: uWindows -=-=-=-=-=-=-=-
 
-Destructor tTheEnd()
+namespace nsWindows
+	
+type tWinEnd extends object
+	declare Destructor()
+	dim as integer WindowsConsoleAutoClose = true
+End Type
+
+Destructor tWinEnd()
 	if WindowsConsoleAutoClose then KillCMD()
 End Destructor
 
 #if _WindowsConsoleAutoClose =1
 	#print Activating Console Auto-close!
-	dim TheEnd as tTheEnd
+	dim WinEnd as tWinEnd
 #endif
 
 '
 
-namespace nsWindows
 function init(iAction as integer) as integer
 	return 0
 end function

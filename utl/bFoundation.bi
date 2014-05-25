@@ -9,7 +9,6 @@
 '
 	inc("uDefines.bas",				"head, basic true/false/null")
 	inc("uModule.bas",				"the module loader. first init, then save/load")
-'	inc("uDefines.bas",				"main, register the unit")
 	
 	inc("uDebug.bas",				"debug macros or their null eqivalents. also include loading")
 	#if __FB_Debug__
@@ -30,6 +29,7 @@
 	#endif
 '
 	inc("uFile.bas",				"Openfile++, filetostring, stringtofile, logtofile and more utilities")
+		#undef test
 	inc("uError.bas",				"Errorhandler messages for graphics and console. logging too")
 	inc("uGraphics.bas",			"background and bmp loading.")	'*need test*'
 

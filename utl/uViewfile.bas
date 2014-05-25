@@ -1,3 +1,4 @@
+#print "tViewfile"
 'tViewfile.
 #include once "uDefines.bi"
 DeclareDependencies()
@@ -130,7 +131,7 @@ function Viewfile(filename as string,nlines as integer=2048,bScrollbar as intege
     return 0
 end function
 
-#define cut2bottom
+
 #endif'main
 
 #if (defined(main) or defined(test))
@@ -140,30 +141,47 @@ end function
 
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tViewfile -=-=-=-=-=-=-=-
-#undef test
+	#undef test
 	#include "file.bi"
+	#define test
+#endif'test
 
-	ReplaceConsole(0)
-	chdir exepath
-	chdir ".."
-	
-	if not fileexists(tVersion.ErrorlogFilename()) then
-		dim as Integer f,i
-		assert(tFile.OpenLogfile(tVersion.ErrorlogFilename(),f)>0)
-		for i = 1 to 30 
-			print #f, pad(30," ") &i
-		Next
-		tFile.Closefile(f)
-	EndIf
-	
-	Viewfile(tVersion.ErrorlogFilename())
-	cls
-	tScreen.x=200
-	tScreen.y=50
-	tScreen.res()
-	'
-	DbgPrint("dsx:"&tScreen.dsx &" dsy:"& tScreen.dsy)
-	
-	Viewfile(tVersion.ErrorlogFilename())
+#if (defined(test) or defined(testload))
+#print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
+
+	namespace tViewfile
+
+	sub Viewfiletest()
+		ReplaceConsole(0)
+		chdir exepath
+		chdir ".."
 		
+		if not fileexists(tVersion.ErrorlogFilename()) then
+			dim as Integer f,i
+			assert(tFile.OpenLogfile(tVersion.ErrorlogFilename(),f)>0)
+			for i = 1 to 30 
+				print #f, pad(30," ") &i
+			Next
+			tFile.Closefile(f)
+		EndIf
+		
+		Viewfile(tVersion.ErrorlogFilename())
+		cls
+		tScreen.x=200
+		tScreen.y=50
+		tScreen.res()
+		'
+		DbgPrint("dsx:"&tScreen.dsx &" dsy:"& tScreen.dsy)
+		
+		Viewfile(tVersion.ErrorlogFilename())
+	End Sub
+
+	end namespace'tViewfile
+	
+	#ifdef test
+		tViewfile.Viewfiletest()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("tViewfile",@tViewfile.Viewfiletest())
+	#endif'test
 #endif'test

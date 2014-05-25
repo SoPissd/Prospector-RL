@@ -145,4 +145,23 @@ end namespace
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: version -=-=-=-=-=-=-=-
 #undef test
+#define test
+#endif'test
+
+#if (defined(test) or defined(testload))
+#print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
+
+	namespace tVersion
+
+	sub Versiontest()
+	End Sub
+
+	end namespace'tVersion
+	
+	#ifdef test
+		tVersion.Versiontest()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("tVersion",@tVersion.Versiontest())
+	#endif'test
 #endif'test

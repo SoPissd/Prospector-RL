@@ -1,4 +1,4 @@
-#print "udefines.bas"
+'#print "udefines.bas"
 'tDefines.
 'Define rudiments
 'note: at first this code was structured to require includes to define and register itself in two steps 

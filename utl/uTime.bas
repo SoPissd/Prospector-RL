@@ -93,5 +93,23 @@ end function
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tTime -=-=-=-=-=-=-=-
 #undef test
+#define test
+#endif'test
 
+#if (defined(test) or defined(testload))
+#print -=-=-=-=-=-=-=- TEST: tTime -=-=-=-=-=-=-=-
+
+	namespace tTime
+
+	sub Timetest()
+	End Sub
+
+	end namespace'tTime
+	
+	#ifdef test
+		tTime.Timetest()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("uTime",@tTime.Timetest())
+	#endif'test
 #endif'test

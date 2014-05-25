@@ -13,8 +13,8 @@ DeclareDependencies()
 #include "uError.bas"
 #include "uRng.bas"
 #include "uCoords.bas"
-#include "uPrint.bas"
 #include "uWindows.bas"
+#include "uPrint.bas"
 #include "uBorder.bas"
 
 DeclareDependenciesDone()
@@ -503,51 +503,63 @@ end function
 #print -=-=-=-=-=-=-=- TEST: tScroller -=-=-=-=-=-=-=-
 #undef test
 '#include "uWindows.bas" 'auto-close
-ReplaceConsole()
-    
-    
-sub testScrollbox()    
-	dim as string text= "display in the fabulous textbox!"' you know, the one that will get its scrollbars back soon. yeah."
-	dim as string atext
-	dim as integer w2
-	for w2=1 to 200
-		atext +="|"& w2 &text
-	Next
-	
-	'draw_border(1,1,40,30)
-	'sleep
-	
-	tScreen.res
-	tScreen.drawfx(8,8)
-	
-	dim a as tArrayScroller
-	a.x=	8
-	a.y=	16
-	a.fg=	15
-	a.bg=	5
-	a.bScrollbar=true
-	
-	while not uConsole.Closing
-		cls
-		tScreen.set(0)
-		tScreen.rbgcolor(255,255,255)
-		
-		tScreen.xy(10,2,tModule.Status())
-		tScreen.xy(10,5)
-		
-		draw_border(1,1,42,30)
-		draw_border(3,3,42,30)
-		draw_border(5,5,42,30)
-	
-		a.Scrollbox(aText,20)
-		
-	    ScreenSync
-		ScreenCopy
-	'   tScreen.set()
-		if uConsole.keyaccept(a.GetKey(),keyl_onwards) then exit while
-	wend
-end sub
+#define test
+#endif'test
 
-testScrollbox()
+#if (defined(test) or defined(testload))
+#print -=-=-=-=-=-=-=- TEST: tScroller -=-=-=-=-=-=-=-
 
+'	namespace tScroller
+	    
+	sub testScrollbox()    
+		dim as string text= "display in the fabulous textbox!"' you know, the one that will get its scrollbars back soon. yeah."
+		dim as string atext
+		dim as integer w2
+		for w2=1 to 200
+			atext +="|"& w2 &text
+		Next
+		
+		'draw_border(1,1,40,30)
+		'sleep
+		
+		tScreen.res
+		tScreen.drawfx(8,8)
+		
+		dim a as tArrayScroller
+		a.x=	8
+		a.y=	16
+		a.fg=	15
+		a.bg=	5
+		a.bScrollbar=true
+		
+		while not uConsole.Closing
+			cls
+			tScreen.set(0)
+			tScreen.rbgcolor(255,255,255)
+			
+			tScreen.xy(10,2,tModule.Status())
+			tScreen.xy(10,5)
+			
+			draw_border(1,1,42,30)
+			draw_border(3,3,42,30)
+			draw_border(5,5,42,30)
+		
+			a.Scrollbox(aText,20)
+			
+		    ScreenSync
+			ScreenCopy
+		'   tScreen.set()
+			if uConsole.keyaccept(a.GetKey(),keyl_onwards) then exit while
+		wend
+	end sub
+		
+'	end namespace'tScroller
+	
+	#ifdef test
+		ReplaceConsole()		    
+		testScrollbox()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("uScroller",@testScrollbox(),"testScrollbox")
+	#endif'test
 #endif'test

@@ -251,34 +251,48 @@ End Namespace
 #print -=-=-=-=-=-=-=- TEST: tFile -=-=-=-=-=-=-=-
 #undef test
 #print "tFile testing"
-#include "uScreen.bas"
-#include "uColor.bas"
-#include "uUtils.bas"
-#include "uConsole.bas"
-#include "uVersion.bas"
-
-
-function ttest() as Integer
-	dim as String a1,a2,fn
-	a1=Pad(50,"1234",">")
-	'
-	fn="test.txt"
-	? "temp-file "+fn
-	? "curdir "+curdir
-	? "exepath "+exepath
-	? 
-	?	
-	? "testing string-to-file and file-to-string"
-	tFile.stringtofile(fn,a1)
-	a2=tFile.filetostring(fn)
-	? a1;" len: ";len(a1)
-	? a2;" len: ";len(a2)
-	? "a1=a2 = "; a1=a2
-	?
-	? "zapped temp-file "+fn
-	kill fn
-	return uConsole.Pressanykey()	
-End Function
-
-ttest()
+'#include "uScreen.bas"
+'#include "uColor.bas"
+'#include "uUtils.bas"
+'#include "uConsole.bas"
+'#include "uVersion.bas"
+#define test
 #endif'test
+
+#if (defined(test) or defined(testload))
+#print -=-=-=-=-=-=-=- TEST: tFile -=-=-=-=-=-=-=-
+
+	namespace tFile
+
+	sub Filetest()
+		dim as String a1,a2,fn
+		a1=Pad(50,"1234",">")
+		'
+		fn="test.txt"
+		? "temp-file "+fn
+		? "curdir "+curdir
+		? "exepath "+exepath
+		? 
+		?	
+		? "testing string-to-file and file-to-string"
+		tFile.stringtofile(fn,a1)
+		a2=tFile.filetostring(fn)
+		? a1;" len: ";len(a1)
+		? a2;" len: ";len(a2)
+		? "a1=a2 = "; a1=a2
+		?
+		? "zapped temp-file "+fn
+		kill fn
+	End Sub
+
+	end namespace'tFile
+	
+	#ifdef test
+		tFile.Filetest()
+		uConsole.Pressanykey()	
+		'? "sleep": sleep
+	#else
+		tModule.registertest("tFile",@tFile.Filetest())
+	#endif'test
+#endif'test
+

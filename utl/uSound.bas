@@ -148,5 +148,23 @@ end namespace'uSound
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tSound -=-=-=-=-=-=-=-
 #undef test
+#define test
+#endif'test
 
+#if (defined(test) or defined(testload))
+#print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
+
+	namespace uSound
+
+	sub Soundtest()
+	End Sub
+
+	end namespace'uSound
+	
+	#ifdef test
+		uSound.Soundtest()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("uSound",@uSound.Soundtest())
+	#endif'test
 #endif'test
