@@ -567,14 +567,14 @@ function tArrayScroller.Scrollbox() as integer'byref atext as string,iWid as int
 	
 	if bScrollbar then
 		if not bDrawborder then
-			x +=1
+	'		x +=1
 			pheight -=2
 		EndIf
 			x += xwidth -1
 				Scrollbar() 
 			x -= xwidth -1		
 		if not bDrawborder then
-			x -=1
+	'		x -=1
 			pheight +=2
 		EndIf
 	EndIf

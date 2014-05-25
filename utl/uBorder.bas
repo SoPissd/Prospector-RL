@@ -64,10 +64,10 @@ function draw_border(xoffset as short,yoffset as short,mwx as short,mhy as short
     set__color( 224,1)
 
 	if tScreen.isGraphic then
-DbgPrint("mwx:"& mwx)		
+		'DbgPrint("mwx:"& mwx)
 		if xoffset+mwx > tScreen.gtw+1 then mwx = tScreen.gtw+1-xoffset
 		if yoffset+mhy > tScreen.gth+1 then mhy = tScreen.gth+1-yoffset
-DbgPrint("mwx>"& mwx)		
+		'DbgPrint("mwx>"& mwx)
 		
 	    for a=1 to mwx-1
 	        tScreen.draw1c(xoffset+a,yoffset,		chr(196))
