@@ -312,7 +312,7 @@ end function
 	tModule.register("tUtils",@tUtils.init()) ',@tUtils.load(),@tUtils.save())
 #endif'main
 
-#if (defined(test) or defined(testload))
+#if (defined(test) or defined(registerTests))
 #print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
 
 	namespace tUtils

@@ -1,5 +1,5 @@
 'tModule.
-#print "umodule.bas"
+'#print "umodule.bas"
 #include once "uDefines.bi"
 DeclareDependenciesBasic()
 #include "uDefines.bas"
@@ -182,7 +182,7 @@ End Function
 '	#include "uDefines.bas"
 '	#define test
 #endif'test
-#if (defined(test) or defined(testload))
+#if (defined(test) or defined(registerTests))
 #print -=-=-=-=-=-=-=- TEST: tModule -=-=-=-=-=-=-=-
 
 	namespace tModule
@@ -211,7 +211,7 @@ End Function
 	end namespace'tModule
 	
 	#ifdef test
-	'	tModule.registertest("uModule",@tModule.moduletest())
+		tModule.registertest("uModule",@tModule.moduletest())
 		tModule.moduletest()
 		sleep
 	#else

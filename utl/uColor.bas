@@ -237,7 +237,7 @@ function prt(imax as integer=15) as integer
 	return 0
 End Function
 
-function test() as integer
+function Colortest() as integer
 	? "test()"
 	prt()
 	
@@ -262,6 +262,6 @@ function test() as integer
 	return 0
 End Function
 
-? test()
+? Colortest()
 
 #endif'test

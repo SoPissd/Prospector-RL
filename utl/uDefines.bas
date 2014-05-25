@@ -83,7 +83,7 @@ end namespace'tDefines
 
 'tModule.register("uDefines",@tDefines.init()) ',@tDefines.load(),@tDefines.save())
 
-#if (defined(test) or defined(testload))
+#if (defined(test) or defined(registerTests))
 #print -=-=-=-=-=-=-=- TEST: tDefines -=-=-=-=-=-=-=-
 
 	namespace tDefines

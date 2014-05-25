@@ -316,7 +316,7 @@ end namespace
 #define test
 #endif'test
 
-#if (defined(test) or defined(testload))
+#if (defined(test) or defined(registerTests))
 #print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
 
 	namespace tScreen

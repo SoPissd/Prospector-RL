@@ -68,11 +68,10 @@
 		#undef head
 		#print loading test and main
 		#define main		
-		#define testload
+		#define registerTests
 		#undef test
 			#include "bFoundation.bi"
 		#undef main
-		#undef testload
-		? tModule.Status
-		sleep
+		#undef registerTests
+		#include "bTestmenu.bas"
 	#endif

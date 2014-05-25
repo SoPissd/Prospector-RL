@@ -242,7 +242,7 @@ end function
 
 #if false
 
-#if (defined(test) or defined(testload))
+#if (defined(test) or defined(registerTests))
 #print -=-=-=-=-=-=-=- TEST: tTextbox -=-=-=-=-=-=-=-
 
 	namespace tTextbox

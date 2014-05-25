@@ -176,7 +176,7 @@ End Function
 	tModule.register("nsWindows",@nsWindows.init()) ',@uWindows.load(),@uWindows.save())
 #endif'main
 
-#if (defined(test) or defined(testload))
+#if (defined(test) or defined(registerTests))
 #print -=-=-=-=-=-=-=- TEST: tModule -=-=-=-=-=-=-=-
 
 	namespace nsWindows

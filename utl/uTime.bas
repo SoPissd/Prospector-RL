@@ -96,7 +96,7 @@ end function
 #define test
 #endif'test
 
-#if (defined(test) or defined(testload))
+#if (defined(test) or defined(registerTests))
 #print -=-=-=-=-=-=-=- TEST: tTime -=-=-=-=-=-=-=-
 
 	namespace tTime

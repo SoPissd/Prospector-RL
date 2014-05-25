@@ -23,6 +23,7 @@
 	inc("uConsole.bas",				"all the key and keyboard wrappers, idle and application close support")
 	inc("uVersion.bas",				"provides ErrorlogFilename and Errorscreen. same vars too")  '*need test*'
 '
+		#undef test
 	inc("uRng.bas",					"rng with retrievable seed")
 	#ifdef makezlib	
 		inc("uPng.bas",				"png load? save functions")	'*need test*'

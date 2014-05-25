@@ -48,6 +48,8 @@ Type tMenuCore Extends Object
 	dim st as short			=-1
 	dim loca as short		=1
 	dim iLines as short
+	dim as integer lTe=0
+	dim as integer lTh=0
 Private:
 	' 0= headline 1=first entry
 	dim as short blen
@@ -361,6 +363,8 @@ Function tMenuCore.ClearChoices() as integer
 	te=""
 	th=""
 	iLines=0
+	lTe=0
+	lTh=0
 	return 0	
 End Function
 
@@ -368,6 +372,8 @@ function tMenuCore.AddChoice(aTe as string, aTh as string="") as integer
 	te= te + iif(len(te)>0,"/","") + aTe
 	th=	th + iif(len(th)>0,"/","") + aTh
 	iLines +=1
+	if len(aTe)>lTe then lTe=len(aTe)
+	if len(aTh)>lTh then lTh=len(aTh)	
 	'DbgPrint("AddChoice(aTe,aTh) "& aTe &" , " & aTh )
 	return 0	
 End Function
@@ -399,7 +405,7 @@ end function
 '      -=-=-=-=-=-=-=- INIT: uMenu -=-=-=-=-=-=-=-
 	tModule.register("uMenu",@nuMenu.init()) ',@nuMenu.load(),@nuMenu.save())
 #endif'main
-#if (defined(test) or defined(testload))
+#if (defined(test) or defined(registerTests))
 #print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
 
 	namespace nuMenu

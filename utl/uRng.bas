@@ -160,10 +160,10 @@ end namespace
 #ifndef format
 	#include once "string.bi"
 #endif
-#if (defined(test) or defined(testload))
+#if (defined(test) or defined(registerTests))
 	#print -=-=-=-=-=-=-=- LOAD: tRng -=-=-=-=-=-=-=-
 
-	sub test()
+	sub tRngtest()
 		cls
 		? "exercising tRng"
 		?
@@ -176,30 +176,30 @@ end namespace
 		? "found seed: " &seed.w &" " &seed.z
 		? "uValue ";
 		for i= 1 to 6 : ? rng.uValue;" "; :next: ?	
-	'	
-	rng.Seed= Seed		
+		'	
+		rng.Seed= Seed		
 		? "reset: ";
 		for i= 1 to 6 : ? rng.uValue;" "; :next: ?	
-	'	
-	?
+		'	
+		?
 		? "testing dValue:" 	
 		for i= 1 to 9: ? format(rng.dValue,"0.#####");" "; :next: ?	
-	'	
-	?
+		'	
+		?
 		? "testing uRange 0..9:" 	
 		for i= 1 to 38 : ? rng.uRange(9,0);" "; :next: ?	
-	for i= 1 to 38 : ? rng.uRange(0,9);" "; :next: ?	
-	'	
-	?
+		for i= 1 to 38 : ? rng.uRange(0,9);" "; :next: ?	
+		'	
+		?
 		dim as short n=10,m=(80-8)\2 -5
 		? "testing distribution  0.." &n &":"
 		dim as short r(0 to n)
 		for i= 0 to n*m: r(rng.uRange(0,n)) +=1 :next 		
-	for i= 0 to n  : ? format(i,"00: "); format(r(i),"00: "); spc(r(i));"*";	
+		for i= 0 to n  : ? format(i,"00: "); format(r(i),"00: "); spc(r(i));"*";	
 		if r(i)<>m then 
-				locate CsrLin, 9+m :?"|"
+			locate CsrLin, 9+m :?"|"
 		else
-				?
+			?
 		EndIf
 	next
 	end sub
@@ -207,7 +207,7 @@ end namespace
 	sub go()
 		width 80,32	
 		do 
-			test()
+			tRngtest()
 			'
 			?
 			? "again? (y)"; 
@@ -219,7 +219,8 @@ end namespace
 	#ifdef test
 		go()
 		'? "sleep": sleep
-	#else
+	#endif
+	#ifdef registerTests
 		tModule.registertest("tRng",@go(),"Random number generator")
-	#endif'test
+	#endif
 #endif'test
