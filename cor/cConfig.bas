@@ -62,7 +62,7 @@ function save_config(oldtiles as short) as short
     print #f,"_tiy:"&_tiy
     print #f,"tilefont:"&_FoHi1
     print #f,"textfont:"&_FoHi2
-    print #f,"lines:"&_lines
+'    print #f,"lines:"&_lines
     print #f,"volume:"&_volume
     close #f
     return 0
@@ -106,7 +106,7 @@ function load_config() as short
                 if instr(text,"gtmwx")>0 then gt_mwx=numfromstr(text)
                 if instr(text,"tilefont")>0 then _FoHi1=numfromstr(text)
                 if instr(text,"textfont")>0 then _FoHi2=numfromstr(text)
-                if instr(text,"lines")>0 then _lines=numfromstr(text)
+'                if instr(text,"lines")>0 then _lines=numfromstr(text)
                 if instr(text,"shipcolor")>0 then _shipcolor=numfromstr(text)
                 if instr(text,"teamcolor")>0 then _teamcolor=numfromstr(text)
 
@@ -165,7 +165,7 @@ function load_config() as short
         _tiy=24
         _Fohi1=18
         _Fohi2=16
-        _lines=26
+'        _lines=26
         _volume=1
 		if save_config(configflag(con_tiles))=0 then 
 			load_config()
@@ -215,7 +215,7 @@ function configuration() as short
 
     do
         if configflag(con_customfonts)=1 then
-            res="tiles:"&_fohi1 &" text:"& _fohi2 &" lines:"&_lines
+            res="tiles:"&_fohi1 &" text:"& _fohi2 '&" lines:"&_lines
         else
             res="classic"
         endif
@@ -263,8 +263,8 @@ function configuration() as short
                 _fohi2=Getnumber(8,28,_fohi2)
             endif
             if d=3 then
-                rlprint "Number of display lines:"
-                _lines=Getnumber(22,33,_lines)
+'                rlprint "Number of display lines:"
+'                _lines=Getnumber(22,33,_lines)
             endif
             if d=4 then
                 select case configflag(con_customfonts)

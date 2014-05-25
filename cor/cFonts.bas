@@ -115,7 +115,7 @@ function load_fonts() as short
 
         endif
     endif
-    if _lines<25 then _lines=25
+'    if _lines<25 then _lines=25
     if configflag(con_tiles)=0 then
         '_fohi2=10
         _fohi1=26
@@ -151,8 +151,8 @@ function load_fonts() as short
         _Fh1=_tiy
     endif
 
-    if tScreen.y<>_lines*_fh1 then tScreen.y=_lines*_fh1
-    _textlines=fix((22*_fh1)/_fh2)+fix((tScreen.y-_fh1*22)/_fh2)-1
+'    if tScreen.y<>_lines*_fh1 then tScreen.y=_lines*_fh1
+'    _textlines=fix((22*_fh1)/_fh2)+fix((tScreen.y-_fh1*22)/_fh2)-1
 
 '    tScreen.x=_mwx*_fw1+25*_fw2
 '    tScreen.res()
@@ -211,9 +211,8 @@ function load_fonts() as short
         _Fh1=_tiy
     endif
 
-    if tScreen.y<>_lines*_fh1 then tScreen.y=_lines*_fh1
-    _textlines=fix((22*_fh1)/_fh2)+fix((tScreen.y-_fh1*22)/_fh2)-1
-    
+'    if tScreen.y<>_lines*_fh1 then tScreen.y=_lines*_fh1
+'    
 '    tScreen.x=_mwx*_fw1+25*_fw2
 '    tScreen.res(tScreen.GFX_WINDOWED OR tScreen.GFX_ALWAYS_ON_TOP)
 '    tScreen.res()

@@ -196,7 +196,7 @@ function tMainloop.run(iAction as Integer) as Integer
 	'DoInitProc
 	iCmd=iAction
 	iCmd=DoInitProc
-?"	iCmd=DoInitProc",iCmd
+'?"	iCmd=DoInitProc",iCmd
 
    	while (not uConsole.Closing) and (iCmd<> -1)
 		

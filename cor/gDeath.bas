@@ -48,7 +48,7 @@ end namespace'dDeath
 function messages() as short
     dim as short a,ll
     'screenshot(1)
-    ll=_lines*_fh1/_fh2
+    ll=tScreen.gth  '_lines*_fh1/_fh2
     set__color( 15,0)
     cls
     tScreen.drawfx(0,_fh2)
@@ -207,13 +207,13 @@ function death_message(iBg as short,iShowMS as integer=0) as short
 	            do 
 	                a=a-1
 	            loop until mid(text,a,1)=" "        
-	            tScreen.drawtt(5,_lines/2-4+b,left(text,a))
+	            tScreen.drawtt(5,tScreen.gth/2-4+b,left(text,a))
 	'            tScreen.drawtt(5,_lines/2-4+b*(tScreen.y/15),left(text,a))
 	            text=mid(text,a,(len(text)-a+1))
 	            b=b+1
 	        wend
 	        'draw_string (5*_fw1,(_lines*_fh1)/2-(4*_fh1)+b*(tScreen.y/15),text,TITLEFONT,_tcol)
-	        tScreen.drawtt(5,_lines/2-4+b,text)
+	        tScreen.drawtt(5,tScreen.gth/2-4+b,text)
 	'        tScreen.drawtt(5*_fw1,(_lines*_fh1)/2-(4*_fh1)+b*(tScreen.y/15),text)',TITLEFONT,_tcol)
 		    tScreen.drawfx()        
 	    else
@@ -223,11 +223,11 @@ function death_message(iBg as short,iShowMS as integer=0) as short
 	            do 
 	                a=a-1
 	            loop until mid(text,a,1)=" "        
-	            tScreen.xy(5,_lines/2-4+b,left(text,a))
+	            tScreen.xy(5,tScreen.gth/2-4+b,left(text,a))
 	            text=mid(text,a,(len(text)-a+1))
 	            b=b+1
 	        wend
-			tScreen.xy(5,_lines/2-4+b,text)
+			tScreen.xy(5,tScreen.gth/2-4+b,text)
 	    endif
     EndIf
     
@@ -235,7 +235,7 @@ function death_message(iBg as short,iShowMS as integer=0) as short
 
     if player.dead<99 then 
         if askyn("Do you want to see the last messages again?(y/n)") then messages()
-        high_score(iBg,text2)
+        high_score(text2)
     endif
 
     return 0

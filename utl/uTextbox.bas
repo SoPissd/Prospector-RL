@@ -49,7 +49,7 @@
 '     -=-=-=-=-=-=-=- HEAD: tTextbox -=-=-=-=-=-=-=-
 
 declare function textbox(text as string, x as short, y as short, wid as short,_
-    fg as short=11, bg as short=0,pixel as byte=0,byref op as short=0,byref offset as Integer=0) as short
+    fg as short=11, bg as short=0,pixel as byte=0,byref op as Integer=0,byref offset as Integer=0) as short
 
 declare function scroll_bar(iStartingline as short, iTotalLines as short, iLinesShown as short, _
 	iScrollerHeight as short, x as short=0, y as short=0, fg as short=0,cHoriz as string=chr(250)) as short
@@ -66,10 +66,19 @@ end namespace'tTextbox
 
 
 function textbox(text as string, x as short, y as short, wid as short,_
-    fg as short=11, bg as short=0,pixel as byte=0,byref op as short=0,byref offset as Integer=0) as short
+    fg as short=11, bg as short=0,pixel as byte=0,byref op as Integer=0,byref offset as Integer=0) as short
     'op=1 only count lines, don't print
 
 	assert(pixel=0)
+
+    set__color(fg,bg)
+	dim a as tArrayScroller
+	a.text=	text
+	a.x=	x
+	a.y=	y
+	a.wid=	wid
+	return a.Textbox()
+	
 
     dim as integer maxlines
 	if tScreen.isGraphic then
@@ -338,7 +347,18 @@ sub testScrollbars()
 	
 End Sub
 
+sub testTextbox()
+'declare function textbox(text as string, x as short, y as short, wid as short,_
+'    fg as short=11, bg as short=0,pixel as byte=0,byref op as short=0,byref offset as Integer=0) as short
+dim text as string ="testing, one, two, three... is this thing on?"
+text= text+"|"+text+"|"+text+"|"+text+"|"+text+"|"+text
+'text= text+"|"+text+"|"+text+"|"+text+"|"+text+"|"+text
+	textbox(text,45,5,25,,,,0,0)
+	uConsole.pressanykey(0)
+End Sub
+
 tScreen.res
-testScrollbars()
+'testScrollbars()
+testTextbox()
 
 #endif'test

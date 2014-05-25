@@ -24,8 +24,9 @@
 #include "uDefines.bas"
 #include "uModule.bas"
 #include "uDefines.bas"
-#include "uScreen.bas"
+#include "uDebug.bas"
 #include "uUtils.bas"
+#include "uScreen.bas"
 #include "uWindows.bas"
 
 '#ifdef intest
@@ -69,6 +70,11 @@
 
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tColor -=-=-=-=-=-=-=-
+
+Const c_red=12
+Const c_gre=10
+Const c_yel=14
+
 
 namespace tColor
 declare function set(fg As Short,bg As Short=0,visible As Byte=1) As Short	

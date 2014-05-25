@@ -337,7 +337,7 @@ end namespace
 
 tScreen.res
 DbgScreeninfo				
-tScreen.drawfx( 10,10)
+tScreen.drawfx( 8,8)
 ?
 ? tScreen.dsx,tScreen.dsy
 ? tScreen.gtw,tScreen.gth

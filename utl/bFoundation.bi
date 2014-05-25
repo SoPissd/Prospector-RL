@@ -37,8 +37,9 @@
 	inc("uWindows.bas",				"windows utils used when debugging")
 #endif
 #endif
-	
-	inc("uScreen.bas",				"wrap screen,screenset,locate,width,color so console code works too")
+
+	inc("uUtils.bas",				"string helpers mostly. needs tests to be written")
+	inc("uScreen.bas",				"wrap screen,screenset,locate,width,color so console code works too")	
 	inc("uColor.bas",				"maps color codes to screen via palette")
 	inc("uConsole.bas",				"all the key and keyboard wrappers, idle and application close support")
 	inc("uVersion.bas",				"provides ErrorlogFilename and Errorscreen. same vars too")  '*need test*'
@@ -49,7 +50,6 @@
 #endif
 '
 	inc("uFile.bas",				"Openfile++, filetostring, stringtofile, logtofile and more utilities")
-	inc("uUtils.bas",				"string helpers mostly. needs tests to be written")
 	inc("uError.bas",				"Errorhandler messages for graphics and console. logging too")
 	inc("uGraphics.bas",			"background and bmp loading.")	'*need test*'
 '
@@ -60,9 +60,8 @@
 
 	inc("uTime.bas",				"display_time, date_string")	'*need test*'	
 	inc("uSound.bas",				"define 'makesound' and the sound methods will start to use the dll code. else they do nothing.")	'*need test*'
-'	inc("uPalette.bas",				"parse a text-file into uColor's palette")
-	inc("uPrint.bas",				"rlprints to graphics console, screen-info, some input")
 	inc("uBorder.bas",				"Draws boxes")
+	inc("uPrint.bas",				"rlprints to graphics console, screen-info, some input")
 	inc("uScroller.bas",			"Scrolls any-thing, any-area, any-array")
 	inc("uTextbox.bas",				"Wrappers for uScroller")
 	inc("uViewfile.bas",			"File and List Viewers rendering in text mode")

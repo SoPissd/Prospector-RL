@@ -37,6 +37,7 @@
 #include "uCoords.bas"
 #include "uPrint.bas"
 #include "uWindows.bas"
+#include "uBorder.bas"
 
 #define test
 #endif'test

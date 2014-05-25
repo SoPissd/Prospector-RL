@@ -97,8 +97,8 @@ function ViewArray(lines() as string,nlines as integer,bScrollbar as integer=tru
         	if i+a.offset>ubound(col) then exit for
             text= lines(i+a.offset)
             iwid=len(text)
-            if iwid>a.longest then
-            	a.longest=iwid
+            if iwid>a.longestline then
+            	a.longestline=iwid
             EndIf
             text= mid(text,a.offsetx+1,a.xwidth)
             '

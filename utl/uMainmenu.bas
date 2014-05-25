@@ -26,6 +26,8 @@
 #include "uDefines.bas"
 #include "uModule.bas"
 #include "uDefines.bas"
+#include "uDebug.bas"
+#include "uUtils.bas"
 #include "uScreen.bas"
 #include "file.bi"
 #include "uFile.bas"
@@ -33,12 +35,13 @@
 #include "uConsole.bas"
 #include "uRNG.bas"
 #include "uCoords.bas"
+#include "uBorder.bas"
 #include "uPrint.bas"
-#include "uUtils.bas"
-#include "uDebug.bas"
-#include "uWindows.bas" 'auto-close
+#include "uScroller.bas"
 #include "uTextbox.bas"
 #include "uGraphics.bas"
+#include "uWindows.bas" 'auto-close
+
 
 #define test
 #endif'test
@@ -91,7 +94,12 @@ Private:
     dim lastspace as short
     dim tlen as short
     dim longest as short
-    dim as short ofx,l2,longestbox,longesthelp,backpic,offset
+    dim as integer ofx= 1
+    dim as integer l2
+    dim as integer longestbox
+    dim as integer longesthelp
+    dim as integer backpic
+    dim as integer offset
     '
 End Type
 
@@ -131,67 +139,21 @@ function tMenuCore.before() as integer
 	'LogOut("uMenu.before()")
 	dim as integer i
 	dim as string a1
-    'if bg<>bg_noflip then
-    '    tScreen.set(0)
-    '    set__color(15,0)
-    '    cls
-    '    select case bg
-    '    case bg_title
-    '   		background(backpic &".bmp")
-    '        if logo<>NULL then
-    '            put (39,69),logo,trans
-    '        else
-    '            draw string(26,26),"PROSPECTOR",,titlefont,custom,@_col
-    '        endif
-    '    case bg_ship
-    '        display_ship
-    '    case bg_shiptxt
-    '        display_ship
-    '        rlprint ""
-    '    case bg_shipstars
-    '        display_stars(1)
-    '        display_ship
-    '    case bg_shipstarstxt
-    '        display_stars(1)
-    '        display_ship
-    '        rlprint ""
-    '    case bg_awayteam
-    '        display_awayteam(0)
-    '    case bg_awayteamtxt
-    '        display_awayteam(0)
-    '        rlprint ""
-    '    case bg_randompic
-    '        background(backpic &".bmp")
-    '    case bg_randompictxt
-    '        background(backpic &".bmp")
-    '        rlprint ""
-    '    case bg_stock
-    '        display_ship
-    '        tCompany.display_stock
-    '        tCompany.portfolio(17,2)
-    '        rlprint ""
-    '    	case bg_roulette
-    '        drawroulettetable
-    '        display_ship
-    '        rlprint ""
-    '    case is>=bg_trading
-    '        display_ship()
-    '        displaywares(bg-bg_trading)
-    '    end select
-    'endif    
 	if tScreen.isGraphic then
 	    set__color( 15,0)
-'	    tScreen.drawfx(_fw1,_fh1)    
-	    tScreen.drawfx(_fw2,_fh2)    
+	    tScreen.drawfx(_fw1,_fh1)    
+'	    tScreen.drawfx(_fw2,_fh2)    
 	    tScreen.draw2c(x,y,lines(0)&space(3))    
 	    for i=1 to c
 	        if loca=i then 
 	            if hfl=1 and loca<=c and helps(i)<>"" then blen=textbox(helps(i),ofx,2,hw,15,1,,,offset)
 	            set__color( 15,5)
+	            a1="*"
 	        else
 	            set__color( 11,0)
+	            a1=" "
 	        endif
-	        tScreen.draw2c(x,y+i,shrt(i) &") "& lines(i))
+	        tScreen.draw2c(x,y+i, a1+shrt(i) &") "& lines(i))
 	    next
 	    tScreen.drawfx()    
 	else
@@ -296,7 +258,7 @@ function tMenuCore.init() as integer
     do
         tlen=instr(text,"/")
         lines(c)=left(text,tlen-1)
-? lines(c)
+'? lines(c)
         text=mid(text,tlen+1)
         c=c+1
     loop until len(text)<=0
@@ -310,7 +272,7 @@ function tMenuCore.init() as integer
         do
             tlen=instr(help,"/")
             helps(e)=left(help,tlen-1)
-? helps(e)            
+'? helps(e)            
             'if len(helps(e))>len(delhelp) then delhelp=space(len(helps(e)))
             help=mid(help,tlen+1)
             e=e+1
@@ -433,6 +395,7 @@ function tMenuCore.AddChoice(aTe as string, aTh as string="") as integer
 	te= te + iif(len(te)>0,"/","") + aTe
 	th=	th + iif(len(th)>0,"/","") + aTh
 	iLines +=1
+	'DbgPrint("AddChoice(aTe,aTh) "& aTe &" , " & aTh )
 	return 0	
 End Function
 
@@ -477,12 +440,19 @@ dim Mainmenu as tMainmenu
   Mainmenu.AddChoice("one",		"test the menu")  
   Mainmenu.AddChoice("two",		"more help")  
   Mainmenu.AddChoice("three",	"and thrirdly..")
+
   
 
 cls
+	tscreen.res
+tGraphics.LoadLogo("graphics/prospector.bmp")
 tGraphics.Randombackground()		    	    
 while not uConsole.Closing
 	tscreen.res
+	tGraphics.background(0)
+	if not tGraphics.putlogo(39,69) then
+	   	draw string(26,26),"PROSPECTOR"',,titlefont,custom,@_col
+	endif
 	Mainmenu.menu()
 	tScreen.xy(10,22, "you chose: "&Mainmenu.e)
 	tScreen.xy(10,24)

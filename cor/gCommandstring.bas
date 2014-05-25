@@ -74,7 +74,7 @@ function _commandstring.display(wl As Short) As Short
     Dim As Short last,b,start,room,needed
     If comstr.t="" Then Return 0
     last=string_towords(ws(),comstr.t,";")
-    room=_lines-wl
+    room=tScreen.gth-wl
     needed=last
     lastpage=needed/room
     If lastpage>1 Then

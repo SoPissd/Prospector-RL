@@ -30,7 +30,7 @@ End Type
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tHighscore -=-=-=-=-=-=-=-
 
-declare function high_score(iBg as short, text as string) as short
+declare function high_score(text as string) as short
 
 #endif'head
 #ifdef main
@@ -43,7 +43,7 @@ end function
 end namespace'tHighscore
 
 
-function high_score(iBg as short, text as string) as short
+function high_score(text as string) as short
     dim hScore(11) as _table
     dim in as integer=1
     dim key as string

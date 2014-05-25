@@ -87,6 +87,7 @@ end function
 
 function run(iAction as Integer) as Integer
 '?"debugbreak": debugbreak
+tScreen.res
 	?"function run(iAction as Integer) as Integer"
 	dim aLoop as tGameloop
 	aLoop.run(1)
@@ -113,8 +114,8 @@ end constructor
 destructor tGameloop()
 end destructor
 		
-		' icmd=0 	- find something to do, idle as needed
-		' icmd=-1 	- abort the main loop
+' icmd=0 	- find something to do, idle as needed
+' icmd=-1 	- abort the main loop
 
 ' init
 
@@ -154,7 +155,7 @@ sub register()
 	dim f as integer
 	If Not fileexists("register") Then
     	Cls
-	    If askyn("This is the first time you start prospector. Do you want to see the keybindings before you start?(Y/N)") Then
+	    If askyn("This is the first time you start prospector. Do you want to see the keybindings before you start") Then
     	   keybindings()
 	    EndIf
 	    Cls
@@ -253,6 +254,7 @@ end destructor
 function tGamemenu.DoProcess() as integer
 	dim iAction as short
 	iAction= this.e
+DbgPrint("tGamemenu.DoProcess "& iAction)
     If iAction=0 Then 
     	ClearChoices()
 		AddChoice(__VERSION__)
@@ -265,7 +267,6 @@ function tGamemenu.DoProcess() as integer
 		AddChoice("Quit")
 		return iLines 
     endif 
-
     If iAction=1 Then  
 		if askyn("pStart_new_game") then ?"yes"
     	if tGame.pFrom_savegame<>null then
@@ -278,13 +279,13 @@ function tGamemenu.DoProcess() as integer
     elseif iAction=2 then
 		if tScreen.isGraphic then
 			tScreen.mode(0)
-'			if askyn("pStart_new_game") then ?"yes"
+			if askyn("pStart_new_game") then rlprint ("yes")
 		else
-			load_fonts()
-'			tScreen.res
+'		load_fonts()
+			tScreen.res
 '			tScreen.set
 			DbgScreeninfo
-'			if askyn("pStart_new_game") then ?"yes"
+			if askyn("pStart_new_game") then rlprint ("yes")
 			'uConsole.pressanykey
 '			debugbreak
 			'viewfile("readme.txt",256)
@@ -301,30 +302,35 @@ function tGamemenu.DoProcess() as integer
     	EndIf
     EndIf
     '
-	if (tGame.pPlay_game<>null) and (iAction=1 or iAction=2) then
-		LogOut("pPlay_game")
-    	iAction= tGame.pPlay_game(iAction)
-    	'
-	    If (player.dead>0) and not (configflag(con_restart)=1 or player.dead=99) Then
-		  death_message(0)
-	    EndIf
-		if (tGame.pReset_game<>null) then
-			iAction= tGame.pReset_game(iAction)			
+	if (tGame.pPlay_game<>null) then
+		if (iAction=1 or iAction=2) then
+			LogOut("pPlay_game")
+	    	iAction= tGame.pPlay_game(iAction)
+	    	'
+		    If (player.dead>0) and not (configflag(con_restart)=1 or player.dead=99) Then
+			  death_message(0)
+		    EndIf
+			if (tGame.pReset_game<>null) then
+				iAction= tGame.pReset_game(iAction)			
+			EndIf
 		EndIf
-		'
 	else 
 		LogOut("pPlay_game=null")
 		'iAction=-1
 	EndIf
 
 	'and (configflag(con_restart)=1)
-	if (uConsole.Closing<>0) then
+	if uConsole.Closing then
 	EndIf
 
-	If     iAction=3 Then 'high_score("")
-    elseif iAction=4 Then viewfile("readme.txt",256)
-    elseif iAction=5 Then configuration()
-    elseif iAction=6 Then keybindings
+	If iAction=3 Then
+		high_score("")
+	elseif iAction=4 Then
+		viewfile("readme.txt",256)
+	elseif iAction=5 Then
+		configuration()
+	elseif iAction=6 Then
+		keybindings
 	elseif iAction=7 Then		
     	player.dead=99
 		death_message(0,2600)
@@ -334,9 +340,9 @@ function tGamemenu.DoProcess() as integer
 	elseif iAction=-27 Then loca=7    ' esc becomes last choice
 	EndIf
 	
-	'DbgPrint("return 0")	
     return false 'stay
-	
+    
+	'DbgPrint("return 0")	
 '		if key="8" then
 '			DbgItemsCSV()
 '		endif
@@ -393,14 +399,10 @@ function tGamemenu.mainmenu(a as integer=0) as integer
 		tGraphics.Randombackground()
 	EndIf
 	if a=0 then a=1							'first choice by default 
-	LogOut("_lines,_fh2,_fh1 " &_lines &", " &_fh2 &", " &_fh1 &";" &a)
+'	LogOut("_lines,_fh2,_fh1 " &_lines &", " &_fh2 &", " &_fh1 &";" &a)
 
     x= 40
-	if _fh1>0 then
-	    y= _lines-iLines*_fh2/_fh1
-	else
-	    y= _lines-iLines
-	endif
+	y= tScreen.gth-iLines -2
     markesc= 1
     loca= a
 	a= menu()

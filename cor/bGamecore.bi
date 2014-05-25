@@ -15,15 +15,14 @@ inc("cSettings.bas",			"")
 inc("cInput.bas",				"")
 
 inc("gRetirement.bas",			"")
-inc("gDeath.bas",				"")
 inc("gHighscore.bas",			"")
+inc("gDeath.bas",				"")
 inc("cGame.bas",				"game menu")
 
 inc("gCredits.bas",				"")
 inc("gBasis.bas",				"")
 inc("gRumors.bas",				"get_rumor")
 inc("gStockmarket.bas",			"just a template")
-
 inc("gStars.bas",				"")
 inc("gEnergycounter.bas",		"")
 inc("gWeapon.bas",				"")
@@ -35,7 +34,8 @@ inc("gItem.bas",				"")
 inc("gShip.bas",				"")
 inc("gPlayer.bas",				"player functions.")
 
-'#if false
+
+#if false
 
 inc("gMakeship.bas",			"")
 inc("gFaction.bas",				"")
@@ -66,4 +66,4 @@ inc("gPirates.bas",				"")
 inc("gQuests.bas",				"")
 inc("gCrew.bas",				"")
 
-'#endif
+#endif

@@ -1487,7 +1487,8 @@ function shipstatus(heading as short=0) as short
 '    dim invn(256) as short
 '    dim cargo(12) as string
 '    dim cc(12) as short
-    dim as short cw,turrets,a,offset
+    dim as short cw,turrets,a
+    dim as integer offset
     set__color( 0,0)
     cls
     do
