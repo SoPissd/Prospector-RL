@@ -4,6 +4,7 @@
 'dont mess up "fbc -d options"  
 #undef build_justfoundation
 #undef build_justgamecore
+#undef build_mini
 #undef build_prospector
 #undef useLibFoundation
 #undef useLibTileData
@@ -15,6 +16,7 @@
 'set build mode
 '#define build_justfoundation
 #define build_justgamecore
+#define build_mini 1
 '#define build_prospector		'<< that's the one to build_everything. turn the build_others off
 '
 'annoying experiment(s)

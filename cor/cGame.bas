@@ -8,6 +8,8 @@
 #define both
 #endif'test
 #if defined(both)
+#undef both
+#define types
 #define head
 #define main
 #endif'both
@@ -88,9 +90,10 @@ end function
 function run(iAction as Integer) as Integer
 '?"debugbreak": debugbreak
 tScreen.res
-	?"function run(iAction as Integer) as Integer"
+DbgPrint("function run(iAction as Integer) as Integer")
 	dim aLoop as tGameloop
 	aLoop.run(1)
+DbgPrint("aLoop.run(1) done.")
 	return 0
 end function
 
@@ -200,6 +203,8 @@ function tGameloop.DoCmdProc() as integer
 	case 1 ' main menu
 		dim aMenu as tGamemenu
 		iCmd=aMenu.mainmenu()
+		
+DbgPrint("aMenu.mainmenu() "& iCmd )		
 		return iCmd
 	case else
 		'DbgPrint(iCmd)
@@ -279,13 +284,13 @@ DbgPrint("tGamemenu.DoProcess "& iAction)
     elseif iAction=2 then
 		if tScreen.isGraphic then
 			tScreen.mode(0)
-			if askyn("pStart_new_game") then rlprint ("yes")
+			if askyn("pStart_new_game") then rlprint("yes")
 		else
 '		load_fonts()
 			tScreen.res
 '			tScreen.set
 			DbgScreeninfo
-			if askyn("pStart_new_game") then rlprint ("yes")
+			if askyn("pStart_new_game") then rlprint("yes")
 			'uConsole.pressanykey
 '			debugbreak
 			'viewfile("readme.txt",256)
@@ -406,6 +411,8 @@ function tGamemenu.mainmenu(a as integer=0) as integer
     markesc= 1
     loca= a
 	a= menu()
+DbgPrint("mainmenu:"& a )	
+sleep
     return a
 End function
 

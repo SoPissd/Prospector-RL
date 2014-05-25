@@ -146,7 +146,7 @@ function tMenuCore.before() as integer
 	    tScreen.draw2c(x,y,lines(0)&space(3))    
 	    for i=1 to c
 	        if loca=i then 
-	            if hfl=1 and loca<=c and helps(i)<>"" then blen=textbox(helps(i),ofx,2,hw,15,1,,,offset)
+	            if hfl=1 and loca<=c and helps(i)<>"" then blen=1+textbox(helps(i),ofx,2,hw,15,1,,,offset)
 	            set__color( 15,5)
 	            a1="*"
 	        else
@@ -161,7 +161,7 @@ function tMenuCore.before() as integer
 	    tScreen.xy(x,y,lines(0)&space(3))    
 	    for i=1 to c
 	        if loca=i then 
-	            if hfl=1 and loca<=c and helps(i)<>"" then blen=textbox(helps(i),ofx,2,hw,15,1,,,offset)
+	            if hfl=1 and loca<=c and helps(i)<>"" then blen=1+textbox(helps(i),ofx,2,hw,15,1,,,offset)
 	            tScreen.rbgcolor(255,255,255)
 	            a1="*"
 	        else

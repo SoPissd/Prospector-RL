@@ -198,7 +198,7 @@ function tMainloop.run(iAction as Integer) as Integer
 	iCmd=DoInitProc
 '?"	iCmd=DoInitProc",iCmd
 
-   	while (not uConsole.Closing) and (iCmd<> -1)
+   	while (not uConsole.Closing) and (iCmd<>true)
 		
 		' icmd=0 	- find something to do, idle as needed
 		' icmd=-1 	- abort the main loop

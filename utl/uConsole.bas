@@ -399,10 +399,11 @@ function validateaccept(ByRef allowed as string) as short
 	while i<n
 		if mid(allowed,i,1)=xk then i+=1 'whatever it is, the next char is now included.
 		i+=1
-		if i=n then continue while
+		if i>=n then continue while
 		if mid(allowed,i,1)<>"," then
 			allowed=mid(allowed,1,i-1)+","+mid(allowed,i,1)
 			n+=1			
+DbgPrint("Adjusted keylist ["+allowed+"]")			
 		EndIf			
 		if mid(allowed,i,1)="," then i+=1 'that's just what we wanted
 	Wend 

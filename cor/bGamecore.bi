@@ -35,7 +35,7 @@ inc("gShip.bas",				"")
 inc("gPlayer.bas",				"player functions.")
 
 
-#if false
+#if not defined(build_mini) or (build_mini=1)
 
 inc("gMakeship.bas",			"")
 inc("gFaction.bas",				"")
