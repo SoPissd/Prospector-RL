@@ -194,8 +194,10 @@ function tScroller.Getkey(accept as string="",deny as string="") as String		'
 	        'elseif di=3 then			'pgdn
 	        elseif uConsole.keyaccept(key,keyl_mendn) then 
 	        	if bIdx then
-	        		if idx<(height-1) then
+	        		if (nlines-offset>=height) and idx<(height-1) then
 	        			idx=(height-1)
+	        		elseif (nlines-offset<height) and idx<(nlines-offset) then
+	        			idx=(nlines-offset)
 	        		else
 			        	offset=offset+(height)'-1)
 	        		EndIf
@@ -205,7 +207,7 @@ function tScroller.Getkey(accept as string="",deny as string="") as String		'
 	        	i=1
 	        elseif di=2 then			
 	        	if bIdx then
-	        		if idx<(height-1) then
+	        		if (idx<(height-1)) and (index+1<nlines) then
 	        			idx +=1
 	        		else
 			        	offset=offset+1
@@ -378,23 +380,26 @@ End Destructor
 
 function tArrayScroller.setlines(atext as string="",cSep as string="") as Integer '"|"
 	nlines=0
+	dim as string text= aText
 	dim as Integer i,j
-	while atext<>""
-		i=instr(atext,chr(10))				'find lf
-		j=instr(atext,cSep)					'or the custom divider
-		if (i=0) orelse (j>0) andalso (j<i) then i=j	'pick the earlier one
+	while text<>""
+		i=instr(text,chr(10))				'find lf
+		j=instr(text,cSep)					'or the custom divider
+		if (i=0) orelse ((j>0) andalso (j<i)) then i=j	'pick the earlier one
 		if i>0 then
-			lines(nlines)=trim(left(atext,i-1),chr(10)+chr(13))
+			lines(nlines)=trim(left(text,i-1),chr(10)+chr(13))
 			nlines +=1
-			atext=mid(atext,i+1)
+			text=mid(text,i+1)
 		else
-			lines(nlines)=trim(atext,chr(10)+chr(13))
+			lines(nlines)=trim(text,chr(10)+chr(13))
 			nlines +=1
-			atext=""
+			text=""
 		EndIf
+		'DbgPrint(nlines &"  "& len(text) &" line:"& lines(nlines-1))
 	Wend
 	return nlines
 End Function
+
 
 function tArrayScroller.textbox() as Integer
     set__color(fg,bg)
@@ -404,7 +409,7 @@ function tArrayScroller.textbox() as Integer
     if offset>0 and lcount-offset<height-1 then offset=lcount-height-1
     if offset<0 then offset=0
 
-	'DbgPrint("lcount "& lcount  &" height "& height  &" offset "& offset)				
+	DbgPrint("lcount "& lcount  &" height "& height  &" offset "& offset &" idx "& idx)				
     
     dim as integer i,j
     dim as string w
@@ -770,7 +775,84 @@ end function
 
 '	namespace tScroller
 	    
-	sub testScrollbox()    
+	sub testArrayScrollbox()    
+		dim as string text= "display in the fabulous Array textbox!"' you know, the one that will get its scrollbars back soon. yeah."
+		dim as string atext
+		dim as string aKey
+		dim as integer w2
+		for w2=1 to 200
+			atext +="|"& w2 &text
+		Next
+		aText ="1-border|2-small|3-big|4-done|"&aText
+		
+		'draw_border(1,1,40,30)
+		'sleep
+		dim as integer w=24
+		dim as integer h=12
+		
+		tScreen.y=300
+		tScreen.res
+		tScreen.drawfx(8,8)
+		
+		dim a as tArrayscroller
+		a.setlines(aText,"|")		'figures nlines and longestline
+		a.x=	8
+		a.y=	16
+		a.fg=	15
+		a.bg=	5
+		a.bIdx=true
+		a.bScrollbar=true
+		'a.bDrawborder= not a.bDrawborder
+		while not uConsole.Closing
+			while not uConsole.Closing
+				cls
+				tScreen.set(0)
+				cls
+				tScreen.rbgcolor(255,255,255)
+				
+				tScreen.xy(10,2,tModule.Status())
+				tScreen.xy(10,5)
+				
+				draw_border(1,1,42,30)
+				draw_border(3,3,42,30)
+				draw_border(5,5,42,30)
+			
+				'a.text= aText
+				a.wid= w
+				a.mhy= h
+				'a.bDrawborder= not a.bDrawborder
+				tScreen.draw2c(5,5,"a.offset + a.idx = "& a.offset + a.idx )
+				a.Scrollbox() 'aText,20)
+			    ScreenSync
+				ScreenCopy
+				aKey= a.GetKey()
+				if uConsole.keyaccept(aKey,keyl_onwards) then exit while
+			wend
+			if aKey<>key__enter then exit while 			
+			if a.index=0 then
+				a.bDrawborder= not a.bDrawborder
+			elseif a.index=1 then
+				a.bFit= true
+				a.x=	8
+				a.y=	16
+				w=		24
+				h=		12
+			elseif a.index=2 then
+				a.bFit=false
+				a.x=	1
+				a.y=	1
+				w=		tScreen.gtw'-1
+				h=		tScreen.gth'-1		
+			elseif a.index=3 then
+				exit while
+			else
+				'exit while
+			EndIf			
+		wend
+	end sub
+		
+
+	sub testWordScrollbox()    
 		dim as string text= "display in the fabulous textbox!"' you know, the one that will get its scrollbars back soon. yeah."
 		dim as string atext
 		dim as string aKey
@@ -828,7 +910,7 @@ end function
 				if uConsole.keyaccept(aKey,keyl_onwards) then exit while
 			wend
 			'
-			DbgPrint("key:" +aKey)
+'DbgPrint("key:" +aKey)
 			if aKey<>key__enter then exit while 			
 			if a.index=0 then
 				a.bDrawborder= not a.bDrawborder
@@ -855,10 +937,12 @@ end function
 '	end namespace'tScroller
 	
 	#ifdef test
-		ReplaceConsole()		    
+		ReplaceConsole()
+				    
 		testScrollbox()
 		'? "sleep": sleep
 	#else
-		tModule.registertest("uScroller",@testScrollbox(),"Scrollbox()")
+		tModule.registertest("uScroller",@testArrayScrollbox(),"test ArrayScrollbox()")
+		tModule.registertest("uScroller",@testWordScrollbox(),"test WordScrollbox()")
 	#endif'test
 #endif'test

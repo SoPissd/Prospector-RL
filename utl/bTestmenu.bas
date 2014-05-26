@@ -80,12 +80,13 @@ function testmenu(iAction as Integer) as Integer
 	dim m as Integer
 
 	dim aMenu as tMainmenu
+	aMenu.Clearchoices()
 	aMenu.Addchoice("Choose test")
 	dim i as Integer
 	dim t as tModule._Test
 	for i=0 to tModule.lasttest-1
 		t=tModule.Tests(i)
-		aMenu.Addchoice(t.aName,t.aComment)
+		aMenu.Addchoice(t.aName+" - "+t.aComment,t.aComment)
 	Next
 	
 	aMenu.Addchoice("Exit","Exit the menu")
