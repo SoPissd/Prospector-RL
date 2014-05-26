@@ -158,6 +158,56 @@ end namespace'uSound
 	namespace uSound
 
 	sub Soundtest()
+	dim m as Integer
+
+	dim aMenu as tMainmenu
+	aMenu.Clearchoices()
+	aMenu.Addchoice("Choose sound")
+    Dim nSounds As Short
+    nSounds=12
+    Dim sounds(nSounds) as string
+    sounds(1)="alarm_1"
+    sounds(2)="alarm_2"
+    sounds(3)="weap_1"
+    sounds(4)="weap_1"
+    sounds(5)="wormhole"
+    sounds(6)=""
+    sounds(7)="weap_4"
+    sounds(8)="weap_3"
+    sounds(9)="weap_5"
+    sounds(10)="start"
+    sounds(11)="land"
+	sounds(12)="pain"
+	dim i as Integer
+	for i=1 to nSounds
+		if i=6 then
+			aMenu.Addchoice(""&i)
+		else
+			aMenu.Addchoice(""&i &" - Play "& sounds(i),"data/"+sounds(i)+".wav")
+		EndIf
+	Next
+	
+	aMenu.Addchoice("Load Sounds","Load Sounds")
+	aMenu.Addchoice("Exit","Exit the menu")
+
+	if tScreen.isGraphic then
+		amenu.x= (tscreen.gtw - amenu.lTe -2) \2
+		amenu.y= (tscreen.gth - tModule.lasttest - 10)
+	else
+		amenu.x= (uconsole.ttw - amenu.lTe -2) \2
+		amenu.y= (uconsole.tth - tModule.lasttest -2) \2
+	endif
+	while not uConsole.Closing
+		'clear the menu and get a new choice
+		aMenu.e=0		
+		m=aMenu.menu()
+		if (m<1) or (m=aMenu.iLines) then exit while
+		if m=aMenu.iLines-1 then
+			uSound.Load()
+		else
+			uSound.Play(m)
+		EndIf
+	Wend
 	End Sub
 
 	end namespace'uSound

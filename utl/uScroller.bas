@@ -397,6 +397,7 @@ function tArrayScroller.setlines(atext as string="",cSep as string="") as Intege
 		EndIf
 		'DbgPrint(nlines &"  "& len(text) &" line:"& lines(nlines-1))
 	Wend
+	lcount=nlines
 	return nlines
 End Function
 
@@ -409,22 +410,19 @@ function tArrayScroller.textbox() as Integer
     if offset>0 and lcount-offset<height-1 then offset=lcount-height-1
     if offset<0 then offset=0
 
-	DbgPrint("lcount "& lcount  &" height "& height  &" offset "& offset &" idx "& idx)				
+'	DbgPrint("lcount "& lcount  &" height "& height  &" offset "& offset &" idx "& idx)				
     
     dim as integer i,j
     dim as string w
 
-'    lcount=0
     set__color(fg,bg)
-    for i=0 to lcount
-		w= trim(lines(i))
-       	j= i-offset
-		if j>=height then exit for
-		if j>=0 then
-            if bIdx andalso j=idx then set__color(bg,fg)
-			tScreen.draw2c(x,y+j,w)				
-            if bIdx andalso j=idx then set__color(fg,bg)
-		EndIf
+    for i=0 to height-1
+    	if offset+i>ubound(lines) then exit for
+		w= trim(lines(offset+i))
+	DbgPrint("lcount "& lcount  &" height "& height  &" offset "& offset &" idx "& idx &" i "& i)				
+        if bIdx andalso i=idx then set__color(bg,fg)
+		tScreen.draw2c(x,y+i,w)				
+        if bIdx andalso i=idx then set__color(fg,bg)
 		'DbgPrint(lcount &" "& j &" "& longestline &" "& xw &" " & len(w) &" "& ":"+w+":")
     next
 
@@ -440,7 +438,6 @@ function tArrayScroller.Scrollbox() as integer'byref atext as string,iWid as int
     dim as string l
     dim as integer i 
 
-	if bDrawborder then wid -=2
 
 	if bFit then
 	    longestline=0 
@@ -452,7 +449,9 @@ function tArrayScroller.Scrollbox() as integer'byref atext as string,iWid as int
 			EndIf
 	    next
 	EndIf
-
+	wid= longestline
+'	if bDrawborder then wid +=2
+	
 	if bDrawborder then
 		xoffset=x:	x +=1
 		yoffset=y:	y +=1
@@ -472,7 +471,7 @@ function tArrayScroller.Scrollbox() as integer'byref atext as string,iWid as int
 	h= mhy
 
 	init(lcount,true)
-	xwidth=		Wid	
+	xwidth=		mwx
 	height=		h
 	pheight=	height+3
 	
@@ -490,14 +489,14 @@ function tArrayScroller.Scrollbox() as integer'byref atext as string,iWid as int
 	
 	if bScrollbar then
 		if not bDrawborder then
-	'		x +=1
+			x -=3
 			pheight -=2
 		EndIf
-			x += xwidth -1
+			x += (xwidth +1)
 				Scrollbar() 
-			x -= xwidth -1		
+			x -= (xwidth +1)		
 		if not bDrawborder then
-	'		x -=1
+			x +=3
 			pheight +=2
 		EndIf
 	EndIf
@@ -853,7 +852,7 @@ end function
 		
 
 	sub testWordScrollbox()    
-		dim as string text= "display in the fabulous textbox!"' you know, the one that will get its scrollbars back soon. yeah."
+		dim as string text= "display in the fabulous word scrollbox!"' you know, the one that will get its scrollbars back soon. yeah."
 		dim as string atext
 		dim as string aKey
 		dim as integer w2
@@ -939,7 +938,8 @@ end function
 	#ifdef test
 		ReplaceConsole()
 				    
-		testScrollbox()
+		testArrayScrollbox()
+		testWordScrollbox()
 		'? "sleep": sleep
 	#else
 		tModule.registertest("uScroller",@testArrayScrollbox(),"test ArrayScrollbox()")
