@@ -93,7 +93,7 @@ function ViewArray(lines() as string,nlines as integer,bScrollbar as integer=tru
 		if bScrollbar then scroll_bar( a.offset, a.nlines, a.pheight, a.height, a.xwidth, 1, 14)		
 
         '
-        key="Use Arrows and +/- to browse " & nlines & " lines. Enter to close: "
+        key="Use Arrows and +/- to browse " & nlines & " lines. Enter to continue: "
 
         set__color( 14,0)
         dim x as integer = (a.xwidth-len(key))\2+1

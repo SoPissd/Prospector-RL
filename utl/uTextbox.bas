@@ -50,7 +50,7 @@ function textbox(text as string, x as short, y as short, wid as short,_
 
     set__color(fg,bg)
 	dim a as tArrayScroller
-	a.text=	text
+	a.setlines(text)'=	text
 	a.x=	x
 	a.y=	y
 	a.wid=	wid

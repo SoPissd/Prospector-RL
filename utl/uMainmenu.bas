@@ -23,6 +23,7 @@ DeclareDependencies()
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 
 Type tMenuCore Extends Object
+'Type tMenuCore Extends tArrayScroller
 	declare constructor()
 	declare virtual destructor() 
 	'
@@ -196,18 +197,18 @@ function tMenuCore.after() as integer
 			exit for
         EndIf
     next
-    
+
     if loca<1 then loca=c
     if loca>c then loca=1
 
     if key=key__enter then e=loca
     if key=key__esc then e= -uConsole.aKey2i(key__esc)
-    
+
 '   if player.dead<>0 then e=c
 '   if key=key__esc or player.dead<>0 then e=c
 	return e
 end function
-	          
+
 
 
 function tMenuCore.init() as integer

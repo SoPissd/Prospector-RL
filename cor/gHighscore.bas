@@ -127,7 +127,7 @@ function high_score(text as string) as short
 	    next
 	    set__color( 11,0)
 	    if rank>10 then draw_string (2*_fw2+xo,tScreen.y-yo, hScore(10).points &" Points required to enter highscore. you scored "&s &" Points",font2,_col)
-	    draw_string (2*_fw2+xo,tScreen.y-yo/2, "Esc to continue",font2,_col)
+	    draw_string (2*_fw2+xo,tScreen.y-yo/2, "Enter to continue",font2,_col)
     else
 	    yo=(tScreen.y-22)/2
 	    xo=(tScreen.x-80)/2
@@ -156,11 +156,12 @@ function high_score(text as string) as short
 	    next
 	    set__color( 11,0)
 	    if rank>10 then tScreen.xy(2+xo,tScreen.y-yo, hScore(10).points &" Points required to enter highscore. you scored "&s &" Points")',font2,_col)
-	    tScreen.xy(2+xo,tScreen.y-yo/2, "Esc to continue")',font2,_col)
+	    tScreen.xy(2+xo,tScreen.y-yo/2, "Enter to continue")',font2,_col)
     EndIf
 
-    no_key=uConsole.keyinput(key__esc)'    keyin(key__esc)
+    no_key=uConsole.keyinput(keyl_onwards)'key__esc)'    keyin(key__esc)
 
+    
 
     'save highscore table
     f=freefile    
