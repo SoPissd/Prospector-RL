@@ -219,50 +219,55 @@ end function
 '#endif		
 '#endif'test
 
-#ifdef test
+
+#if (defined(test) or defined(registerTests))
 #print -=-=-=-=-=-=-=- TEST: tColor -=-=-=-=-=-=-=-
-#undef test
 
-function prt(imax as integer=15) as integer
-	dim fg as Integer
-'	tColor.set(15)
-'	for fg = 15 to 0 step -1
-'		? fg, tColor.argb(fg)
-'	Next
-	for fg = imax to 0 step -1
-		tColor.set(fg)
-		? "set__color( " &fg &",0)", tColor.argb(fg)
-	Next
-	sleep	
-	set__color(15)
-	return 0
-End Function
 
-function Colortest() as integer
-	? "test()"
-	prt()
+	function prt(imax as integer=15) as integer
+		dim fg as Integer
+	'	tColor.set(15)
+	'	for fg = 15 to 0 step -1
+	'		? fg, tColor.argb(fg)
+	'	Next
+		for fg = imax to 0 step -1
+			tColor.set(fg)
+			? "set__color( " &fg &",0)", tColor.argb(fg)
+		Next
+		sleep	
+		set__color(15)
+		return 0
+	End Function
 	
-	tScreen.res()
-	? "tScreen.res()"
-	prt(72)
+	function Colortest() as integer
+		? "test()"
+		prt()
+		
+		tScreen.res()
+		? "tScreen.res()"
+		prt(72)
+		
+		return 0
+		
+		tScreen.set(1)
+		? "tScreen.set(1)"
+		prt()
+		
+		tScreen.set(0)
+		? "tScreen.set(0)"
+		prt()
+		
+		tScreen.set(1)
+		? "tScreen.set(1)"
+		prt()
+		
+		return 0
+	End Function
 	
-	return 0
-	
-	tScreen.set(1)
-	? "tScreen.set(1)"
-	prt()
-	
-	tScreen.set(0)
-	? "tScreen.set(0)"
-	prt()
-	
-	tScreen.set(1)
-	? "tScreen.set(1)"
-	prt()
-	
-	return 0
-End Function
-
-? Colortest()
-
+	#ifdef test
+		? Colortest()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("uColor",@Colortest())
+	#endif'test
 #endif'test

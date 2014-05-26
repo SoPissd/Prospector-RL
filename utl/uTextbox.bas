@@ -41,7 +41,6 @@ end function
 end namespace'tTextbox
 
 
-
 function textbox(text as string, x as short, y as short, wid as short,_
     fg as short=11, bg as short=0,pixel as byte=0,byref op as Integer=0,byref offset as Integer=0) as short
     'op=1 only count lines, don't print
@@ -54,160 +53,7 @@ function textbox(text as string, x as short, y as short, wid as short,_
 	a.x=	x
 	a.y=	y
 	a.wid=	wid
-	return a.Textbox()
-	
-
-    dim as integer maxlines
-	if tScreen.isGraphic then
-	    maxlines=tScreen.gth	'tScreen.gth	'graphic terminal height
-	else
-	    maxlines=25 			'uConsole.tth	'text terminal height
-	endif	    
-
-    set__color(fg,bg)
-
-    'Store and count words
-    dim as integer i
-    dim as integer wcount
-    dim as string  words(6023)
-    dim as string  c
-    for i=0 to len(text)
-    	c=mid(text,i,1)
-        if c="{" or c="|" then wcount+=1
-        words(wcount) +=c
-'        if c=" " or c="|" or c="}" then wcount+=1
-        if c=" " or c="|" then wcount+=1
-        if wcount+1>=ubound(words) then exit for 'need to leave 1 empty word at the end
-    next
-   
-    'Count lines
-    dim as string w
-    dim as integer xw,xwn 
-    dim as integer longestline
-    dim as integer lcount
-     
-    for i=0 to wcount
-		w= trim(words(i))
-		if len(w)>wid then continue for 'already accounted for the long word
-        if w="|" then 'New line
-            lcount +=1
-            if xw>longestline then longestline=xw
-            xw=0
-        elseif Left(w,1)<>"{" and Right(w,1)<>"}" then 'Printable word
-        	xwn=len(trim(words(i+1)))
-        	if xwn>wid then
-                lcount += 2 'finish first + long word on a line by itself
-	            if xwn>longestline then longestline=xwn
-                xw=0
-        	else
-        		if xw>0 then xw +=1
-	            xw=xw+len(w)
-	            if xw>wid then
-	                lcount += 1
-		            if xw>longestline then longestline=xw
-	                xw=0
-	            endif
-        	EndIf
-        endif
-	'DbgPrint(lcount &" "& longestline  &" "& xw &" " + w)				
-    next
-    if xw>0 then
-		lcount+=1
-    	xw=0
-    EndIf
-
-    if op<>0 then
-        op=longestline
-        return lcount
-    endif
-    
-    'restrain offset
-    if offset>0 and lcount-offset<maxlines-1 then offset=lcount-maxlines-1
-    if offset<0 then offset=0
-    
-    dim as integer j
-    dim as integer isCol=0
-    
-    
-    set__color(fg,bg)
-    
-'tScreen.draw2c(2,2,""& lcount)
-'	if lcount+y >= tScreen.gth then
-'		lcount= tScreen.gth -1 -y
-'	EndIf    
-'tScreen.draw2c(3,4,""& lcount &" wid:"& wid)
-'
-'    set__color(1,15)
-'
-'    for i=0 to lcount
-'    	tScreen.draw2c(x,y+i,pad(wid,"X")) 'space(wid))
-'    next
-'    set__color(fg,bg)
-    
-
-    lcount=0
-    for i=0 to wcount
-		w= trim(words(i))
-       	j= lcount-offset
-
-        isCol= Left(w,1)="{" and Right(w,1)="}" 					'Color spec'd 
-        if isCol then
-			set__color( numfromstr(w),bg)
-        elseif w="|" then 											'New line
-            if y+j>=maxlines then exit for
-			'if j>=0 then tScreen.draw2c(x+xw,y+j,space(wid-xw))
-            lcount += 1
-            xw=0
-        else			 											'Print word
-            if (len(trim(words(i+1)))>wid) or (xw+len(w)>wid) then	'Newline before long word or line to long
-                if y+j>=maxlines then exit for
-				'if j>=0 then tScreen.draw2c(x+xw,y+j,space(wid-xw))
-                lcount += 1
-		       	j= lcount-offset
-                xw=0
-            EndIf
-			if y+j>=maxlines then exit for
-       		if xw>0 then xw +=1
-			if j>=0 then tScreen.draw2c(x+xw,y+j,w)
-            xw=xw+len(w)
-        endif
-		'DbgPrint(lcount &" "& j &" "& longestline &" "& xw &" " & len(w) &" "& ":"+w+":")
-    next
-    
-	'tScreen.rbgcolor(255,255,255)
-	'for i=0 to wid-1
-	'	tScreen.draw2c(x+i,y+lcount+1,right(""&i,1))    	
-	'Next
-	'DbgPrint(x &" "& y &" "& longestline &" "& maxlines)				
-	'DbgPrint(""&y &" "& lcount &" "& maxlines)
-    
-    'if y+lcount>=maxlines then									' a full-screen textbox... for the finale
-
-    '    if offset>0 then
-    '        set__color(14,0)
-    '    else
-    '        set__color(14,0,0)
-    '    endif
-    '    
-	'	wid -=1        
-    '    tScreen.draw2c(x+wid,y            ,chr(24))
-    '    tScreen.draw2c(x+wid,y+1          ,"-")
-    '    
-    '    if offset+maxlines<lcount-1 then
-    '        set__color(14,0)
-    '    else
-    '        set__color(14,0,0)
-    '    endif
-    '    tScreen.draw2c(x+wid,maxlines-2	,"+")
-    '    tScreen.draw2c(x+wid,maxlines-1	,chr(25))
-	'	wid +=1        
-
-    '    scroll_bar(offset, lcount, maxlines-y, maxlines-y -1 -4,x+wid,y+2,14)
-	'endif
-    
-    set__color(11,0)
-    op=longestline
-    return lcount
+	return a.Textbox()	
 end function
 
 
@@ -241,7 +87,8 @@ end function
 	tModule.register("tTextbox",@tTextbox.init()) ',@tTextbox.load(),@tTextbox.save())
 #endif'main
 
-#if false
+
+'#if false
 
 #if (defined(test) or defined(registerTests))
 #print -=-=-=-=-=-=-=- TEST: tTextbox -=-=-=-=-=-=-=-
@@ -346,4 +193,4 @@ end function
 		tModule.registertest("uTextbox",@tTextbox.testTextbox(),"testTextbox")
 	#endif'test
 #endif'test
-#endif'false
+'#endif'false

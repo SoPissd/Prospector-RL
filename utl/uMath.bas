@@ -440,7 +440,22 @@ end function
 	tModule.register("tMath",@tMath.init()) ',@tMath.load(),@tMath.save())
 #endif'main
 
-#ifdef test
-#print -=-=-=-=-=-=-=- TEST: tMath -=-=-=-=-=-=-=-
-#undef test
+
+
+#if (defined(test) or defined(registerTests))
+#print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
+
+	namespace tMath
+
+	sub Mathtest()
+	End Sub
+
+	end namespace'tMath
+	
+	#ifdef test
+		tMath.Mathtest()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("uMath",@tMath.Mathtest())
+	#endif'test
 #endif'test

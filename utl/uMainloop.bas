@@ -214,35 +214,59 @@ End Function
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: uMainloop -=-=-=-=-=-=-=-
 #undef test
-'	dim shared as uMainloop.tMainloopParams aParams
+#define test
+#endif'test
+
+
+#if (defined(test) or defined(registerTests))
+#print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
+
+	namespace nsMainloop 
+
+	'dim shared as uMainloop.tMainloopParams aParams
+	'
+	'function keypress(aKey as string) as Integer
+	'	? "### " &aKey &" ###"
+	'	if aKey="5" then
+	'		return 3			
+	'	EndIf
+	'	return 0
+	'End Function
+	'
+	'function keypress2(aKey as string) as Integer
+	'	? "@@@ " &aKey &" @@@"
+	'	if aKey="5" then
+	'		return 5			
+	'	EndIf
+	'	return 0
+	'End Function
+	'
+	'function CmdProc(iAction as Integer) as Integer
+	'	if iAction=3 then
+	'		aParams.KeyProc= @keypress2			
+	'	EndIf
+	'	if iAction=5 then
+	'		aParams.KeyProc= @keypress			
+	'	EndIf
+	'	return 0
+	'End Function
 	
-	function keypress(aKey as string) as Integer
-		? aKey
-		if aKey="5" then
-			return 3			
-		EndIf
-		return 0
-	End Function
+
+	sub Mainlooptest()
+		cls
+		'? "swapping keyproc on '5'"
+		'aParams.KeyProc= @keypress 
+		'aParams.CmdProc= @CmdProc
+		dim aLoop as tMainloop 
+		? aLoop.run(0)
+	End Sub 
+
+	end namespace'nsMainloop
 	
-	function keypress2(aKey as string) as Integer
-		? "@@@ " &aKey &" @@@"
-		if aKey="5" then
-			return 5			
-		EndIf
-		return 0
-	End Function
-	
-	function CmdProc(iAction as Integer) as Integer
-		if iAction=3 then
-			aParams.KeyProc= @keypress2			
-		EndIf
-		if iAction=5 then
-			aParams.KeyProc= @keypress			
-		EndIf
-		return 0
-	End Function
-	
-	aParams.KeyProc= @keypress 
-	aParams.CmdProc= @CmdProc 
-	uMainloop.mainloop(aParams)
+	#ifdef test
+		nsMainloop.Mainlooptest()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("uMainloop",@nsMainloop.Mainlooptest())
+	#endif'test
 #endif'test

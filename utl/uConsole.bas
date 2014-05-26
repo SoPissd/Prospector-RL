@@ -522,48 +522,63 @@ End Namespace
 '	uConsole.mainloop(aParams)
 
 
-sub ascii_table()
-	?"showing extended ascii-codes"
-	dim i as Integer
-	? "    ";
-	for i= 0 to 15
-		if i<10 then ? " "; i; else ? i;  
-	Next
-	?
-	? "000:";
-	for i= 0 to 255
-		if i=7 or i=8 or i=9 or i=10 or i=13 then 	
-			? "   "; 
-		else
-			? "  ";chr(i);
-		EndIf
-		if i<255 and (i+1) mod 16 = 0 then 
-			?
-			? mid(""&1001+i,2,3);":";
-		EndIf
-	Next
-	?
-End Sub
 
-cls
-ascii_table()
-?"OK"
+#endif'test
 
-?
-?
-?"showing keycodes"
-?"close window to end loop"
-?
 
-dim a as String
-while not uConsole.Closing
-	a= uConsole.aGetKey()
-	if len(a)>1 then 
-		a="x"+mid(a,2,1)
-	elseif a<" " then 
-		a="#" &asc(a)
-	EndIf
-	? uConsole.getdirection(a),a, asc(mid(a,2,1))
-wend
-
+#if (defined(test) or defined(registerTests))
+#print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
+	
+	sub ascii_table()
+		?"showing extended ascii-codes"
+		dim i as Integer
+		? "    ";
+		for i= 0 to 15
+			if i<10 then ? " "; i; else ? i;  
+		Next
+		?
+		? "000:";
+		for i= 0 to 255
+			if i=7 or i=8 or i=9 or i=10 or i=13 then 	
+				? "   "; 
+			else
+				? "  ";chr(i);
+			EndIf
+			if i<255 and (i+1) mod 16 = 0 then 
+				?
+				? mid(""&1001+i,2,3);":";
+			EndIf
+		Next
+		?
+	End Sub
+	
+	sub Show_keycodes()
+		cls
+		ascii_table()
+		?
+		?
+		?"showing keycodes"
+		?"close window to end loop"
+		?
+		
+		dim a as String
+		while not uConsole.Closing
+			a= uConsole.aGetKey()
+			if len(a)>1 then 
+				a="x"+mid(a,2,1)
+			elseif a<" " then 
+				a="#" &asc(a)
+			EndIf
+			? uConsole.getdirection(a),a, asc(mid(a,2,1))
+		wend
+		uConsole.Closing= false
+	End Sub
+	
+	#ifdef test
+		.test()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("uConsole",@ascii_table(),"Ascii Table")
+		tModule.registertest("uConsole",@Show_keycodes(),"Show Keycodes")
+	#endif'test
 #endif'test

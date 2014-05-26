@@ -255,7 +255,22 @@ end function
 	tModule.register("tAstar",@tAstar.init()) ',@tAstar.load(),@tAstar.save())
 #endif'main
 
-#ifdef test
-#print -=-=-=-=-=-=-=- TEST: tAstar -=-=-=-=-=-=-=-
-#undef test
+
+
+#if (defined(test) or defined(registerTests))
+#print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
+
+	namespace tAstar
+
+	sub Astartest()
+	End Sub
+
+	end namespace'tAstar
+	
+	#ifdef test
+		tAstar.Astartest()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("uAstar",@tAstar.Astartest())
+	#endif'test
 #endif'test

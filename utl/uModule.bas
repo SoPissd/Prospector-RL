@@ -118,6 +118,7 @@ function Registertest(aName as string,fTest as tSub =null,aComment as string="")
 	atest.aComment =aComment	
 	tests(lasttest)=atest
 	lasttest+=1
+DbgPrint(aName + "  " + aComment)
 	return true
 End Function
 

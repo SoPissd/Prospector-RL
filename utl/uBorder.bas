@@ -121,3 +121,23 @@ end function
 ReplaceConsole()
 
 #endif'test
+
+
+
+#if (defined(test) or defined(registerTests))
+#print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
+
+	namespace tBorder
+
+	sub Bordertest()
+	End Sub
+
+	end namespace'tBorder
+	
+	#ifdef test
+		tBorder.Bordertest()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("uBorder",@tBorder.Bordertest())
+	#endif'test
+#endif'test

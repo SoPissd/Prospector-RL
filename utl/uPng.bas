@@ -279,5 +279,22 @@ end function
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tPng -=-=-=-=-=-=-=-
 #undef test
+#define test
+#endif'test
+#if (defined(test) or defined(registerTests))
+#print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
 
+	namespace tPng
+
+	sub Pngtest()
+	End Sub
+
+	end namespace'tPng
+	
+	#ifdef test
+		tPng.test()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("uPng",@tPng.Pngtest())
+	#endif'test
 #endif'test

@@ -183,28 +183,46 @@ end namespace'tGraphics
 #print -=-=-=-=-=-=-=- TEST: tGraphics -=-=-=-=-=-=-=-
 #undef test
 #include "uWindows.bas" 'auto-close
+#define test
+#endif'test
 
 
-cls
-chdir exepath
-chdir ".."
-? curdir
+#if (defined(test) or defined(registerTests))
+#print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
 
+	namespace tGraphics
 
-while not uConsole.Closing
-	tscreen.res
-	? tGraphics.LoadLogo("graphics/prospector.bmp")
+	sub Graphicstest()
 
-	tGraphics.Randombackground()		    	    
-	tGraphics.background(0)
-	if not tGraphics.putlogo(39,69) then
-    	draw string(26,26),"PROSPECTOR"',,titlefont,custom,@_col
-    endif
-	tScreen.xy(10,22, "this is image: "&tGraphics.iBg)
-	tScreen.xy(10,24)
-	if uConsole.keyaccept(uConsole.pressanykey(0),keyl_onwards) then exit while
-	tScreen.xy(10,22, pad(25,""))
-wend
+		cls
+		chdir exepath
+		chdir ".."
+		? curdir
+		
+		
+		while not uConsole.Closing
+			tscreen.res
+			? tGraphics.LoadLogo("graphics/prospector.bmp")
+		
+			tGraphics.Randombackground()		    	    
+			tGraphics.background(0)
+			if not tGraphics.putlogo(39,69) then
+		    	draw string(26,26),"PROSPECTOR"',,titlefont,custom,@_col
+			endif
+			tScreen.xy(10,22, "this is image: "&tGraphics.iBg)
+			tScreen.xy(10,24)
+			if uConsole.keyaccept(uConsole.pressanykey(0),keyl_onwards) then exit while
+			tScreen.xy(10,22, pad(25,""))
+		wend
+		
+	End Sub
 
-
+	end namespace'tGraphics
+	
+	#ifdef test
+		tGraphics.Graphicstest()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("uGraphics",@tGraphics.Graphicstest())
+	#endif'test
 #endif'test

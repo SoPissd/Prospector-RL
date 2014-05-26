@@ -53,7 +53,7 @@
 	#undef main
 	#undef registerTests
 	
-	
+	sleep
 dim shared Fpsshow as short =1
 
 function Fpsupdate(iAction as Integer) as integer
@@ -87,8 +87,9 @@ function testmenu(iAction as Integer) as Integer
 		t=tModule.Tests(i)
 		aMenu.Addchoice(t.aName,t.aComment)
 	Next
-	aMenu.Addchoice("Exit","Exit the menu")
 	
+	aMenu.Addchoice("Exit","Exit the menu")
+
 	if tScreen.isGraphic then
 		amenu.x= (tscreen.gtw - amenu.lTe -2) \2
 		amenu.y= (tscreen.gth - tModule.lasttest - 10)
@@ -96,8 +97,7 @@ function testmenu(iAction as Integer) as Integer
 		amenu.x= (uconsole.ttw - amenu.lTe -2) \2
 		amenu.y= (uconsole.tth - tModule.lasttest -2) \2
 	endif
-
-	while not uConsole.Closing()
+	while not uConsole.Closing
 		'prepare next graphic mode
 		tScreen.x=800
 		tScreen.y=600

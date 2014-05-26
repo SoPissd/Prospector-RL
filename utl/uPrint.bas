@@ -287,23 +287,40 @@ end function
 #print -=-=-=-=-=-=-=- TEST: tPrint -=-=-=-=-=-=-=-
 #undef test
 #include "uWindows.bas" 'auto-close
+#define test
+#endif'test
+#if (defined(test) or defined(registerTests))
+#print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
 
-tScreen.res
-rlprint "testing1"
-rlprint "testing1"
-rlprint "testing1"
-rlprint "testing2"
-rlprint "testing3"
-rlprint "testing4"
-rlprint "testing5"
-rlprint "testing6"
-rlprint "testing6"
-rlprint "testing6"
-rlprint "testing6"
-rlprint ""& askyn("yes")
-'sleep
-tScreen.xy(3,3)
-uConsole.pressanykey
+	namespace tPrint
 
+	sub Printtest()
+		tScreen.res
+		? "Demo rlprint"
+		rlprint "testing1"
+		rlprint "testing1"
+		rlprint "testing1"
+		rlprint "testing2"
+		rlprint "testing3"
+		rlprint "testing4"
+		rlprint "testing5"
+		rlprint "testing6"
+		rlprint "testing6"
+		rlprint "testing6"
+		rlprint "testing6"
+		rlprint ""& askyn("yes")
+		'sleep
+		tScreen.xy(3,3)
+		uConsole.pressanykey
+		
+	End Sub
 
+	end namespace'tPrint
+	
+	#ifdef test
+		tPrint.Printtest()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("uPrint",@tPrint.Printtest())
+	#endif'test
 #endif'test

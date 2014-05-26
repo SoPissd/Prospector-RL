@@ -90,4 +90,22 @@ end function
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tIndex -=-=-=-=-=-=-=-
 #undef test
+#define test
+#endif'test
+#if (defined(test) or defined(registerTests))
+#print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
+
+	namespace tIndex
+
+	sub Indextest()
+	End Sub
+
+	end namespace'tIndex
+	
+	#ifdef test
+		tIndex.Indextest()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("uIndex",@tIndex.Indextest())
+	#endif'test
 #endif'test

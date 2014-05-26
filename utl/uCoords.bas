@@ -216,9 +216,20 @@ end function
 '      -=-=-=-=-=-=-=- INIT: tCoords -=-=-=-=-=-=-=-
 	tModule.register("tCoords",@tCoords.init()) ',@tCoords.load(),@tCoords.save())
 #endif'main
+#if (defined(test) or defined(registerTests))
+#print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
 
-#ifdef test
-#print -=-=-=-=-=-=-=- TEST: tCoords -=-=-=-=-=-=-=-
-#undef test
+	namespace tCoords
 
+	sub Coordstest()
+	End Sub
+
+	end namespace'tCoords
+	
+	#ifdef test
+		tCoords.test()
+		'? "sleep": sleep
+	#else
+		tModule.registertest("uCoords",@tCoords.Coordstest())
+	#endif'test
 #endif'test
