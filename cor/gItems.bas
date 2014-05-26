@@ -62,6 +62,7 @@ Dim Shared shopitem(20,30) As _items
 
 Dim Shared reward(11) As Single
 
+Const lastflag=20
 Const lastartifact=25
 Dim Shared artflag(lastartifact) As Short
 
@@ -78,7 +79,6 @@ dim Shared pMakeitem as tMakeitem
 
 declare function calc_resrev() as short
 declare function findbest(t as short,p as short=0, m as short=0,id as short=0) as short
-declare function make_locallist(slot as short) as short
 declare function sort_items(list() as _items) as short
 declare function destroyitem(b as short) as short     
 declare function destroy_all_items_at(ty as short, wh as short) as short
@@ -88,7 +88,6 @@ declare function better_item(i1 as _items,i2 as _items) as short
 declare function count_items(i as _items) as short
 declare function lowest_by_id(id as short) as short
 
-'declare function make_shipequip(a as short) as _items
 'declare function item_filter() as short
 'declare function next_item(c as integer) as integer
 'declare function getrnditem(fr as short,ty as short) as short
@@ -106,12 +105,44 @@ end function
 end namespace'tItems
 
 	
+function _items.describe() as string
+    dim t as string
+    select case ty
+    case 1
+        return ldesc &"||Capacity:"&v2 &" passengers."
+    case 2,4
+        t=ldesc &"|"
+        if v1>0 then t=t & "|Damage: "&v1
+        if v3>0 then t=t & "|Accuracy: "&v3
+        if v2>0 then t=t & "|Range: "&v2
+        return t
+    case 3,103
+        t=ldesc
+        if v4>0 then t=t &"| !This suit is damaged! |"
+        t=t &"||Armor: "&v1 &"|Oxygen: "&v3
+        if v2>0 then t=t &"|Camo rating "&v2
+        return t
+    case 18
+        t=ldesc
+        t=t &"||Sensor range: "&v1 &"|Speed: "&v4
+        return t
+    case 56
+        t=ldesc &"||HP:"&v1 &"|Volume:"&v3
+    case else
+        return ldesc
+    end select
+end function
+
+'
+
 function calc_resrev() as short
-    dim as short i
+
     static v as integer
     static called as byte
+
     if called=0 or called mod 10=0 then
         v=0
+	    dim as short i
         for i=0 to lastitem
             if item(i).ty=15 and item(i).w.s<0 then v=v+item(i).v5
         next
@@ -130,6 +161,7 @@ function findbest(t as short,p as short=0, m as short=0,id as short=0) as short
     dim as single a,b,r,v
     r=-1
     if awayteam.optoxy=1 and t=3 then b=999
+
     for a=1 to lastitem
         if p<>0 then
             if (item(a).w.s=p and item(a).ty=t) then
@@ -174,70 +206,6 @@ function findbest(t as short,p as short=0, m as short=0,id as short=0) as short
 end function
 
 
-
-function _items.describe() as string
-    dim t as string
-    select case ty
-    case 1
-        return ldesc &"||Capacity:"&v2 &" passengers."
-    case 2,4
-        t=ldesc &"|"
-        if v1>0 then t=t & "|Damage: "&v1
-        if v3>0 then t=t & "|Accuracy: "&v3
-        if v2>0 then t=t & "|Range: "&v2
-        return t
-    case 3,103
-        t=ldesc
-        if v4>0 then t=t &"| !This suit is damaged! |"
-        t=t &"||Armor: "&v1 &"|Oxygen: "&v3
-        if v2>0 then t=t &"|Camo rating "&v2
-        return t
-    case 18
-        t=ldesc
-        t=t &"||Sensor range: "&v1 &"|Speed: "&v4
-        return t
-    case 56
-        t=ldesc &"||HP:"&v1 &"|Volume:"&v3
-    case else
-        return ldesc
-    end select
-end function
-
-
-
-
-function make_locallist(slot as short) as short
-    dim as short i,x,y,r
-    dim p as _cords
-    itemindex.del
-    for i=1 to lastitem
-        if item(i).w.m=slot and item(i).w.s=0 and item(i).w.p=0 then
-            if itemindex.add(i,item(i).w)=-1 then
-                item(i).w=movepoint(item(i).w,5)
-                i-=1
-            endif
-        endif
-    next
-    
-    portalindex.del
-    for i=0 to lastportal
-        if portal(i).dest.m=slot  and portal(i).oneway=0 then portalindex.add(i,portal(i).dest)
-        if portal(i).from.m=slot then portalindex.add(i,portal(i).from)
-        if portal(i).oneway=2 and portal(i).from.m=slot or portal(i).dest.m=slot then
-            for x=0 to 60
-                for y=0 to 20
-                    p.x=x
-                    p.y=y
-                    if x=0 or y=0 or x=20 or y=20 then portalindex.add(i,p)
-                next
-            next
-        endif
-    next
-        
-    return 0
-end function
-
-
 function sort_items(list() as _items) as short
     dim as short l,i,flag
     l=ubound(list)
@@ -253,99 +221,6 @@ function sort_items(list() as _items) as short
     next
     loop until flag=0
     return 0
-end function
-
-function make_shipequip(a as short) as _items
-    dim i as _items
-    i.id=a+9000
-    select case a
-    case 1 to 5
-        i.ty=150
-        i.desig="Sensors "&roman(a)
-        i.v1=a
-        if a=1 then
-            i.price=200
-        else
-            i.price=800*(a-1)
-        endif
-    case 6 to 10
-        i.ty=151
-        i.desig="Engine "&roman(a-5)
-        i.v1=a-5
-        i.price=(2^(i.v1-1))*300
-    case 11 to 14
-        i.ty=152
-        i.desig="Shield "&roman(a-10)
-        i.v1=a-10
-        i.price=(2^(i.v1-1))*500
-    case 15
-        i.desig="ship detection system"
-        i.desigp="ship detection systems"
-        i.price=1500
-        i.id=1001
-        i.ty=153
-        i.v1=1
-        i.ldesc="Filters out ship signatures out of longrange sensor noise."
-    case 16
-        i.desig="imp. ship detection sys."
-        i.desigp="imp. ship detection sys."
-        i.price=3000
-        i.id=1002
-        i.ty=153
-        i.v1=2
-        i.ldesc="Filters out ship signatures, and friend-foe signals out of longrange sensor noise."
-    case 21
-        i.desig="navigational computer"
-        i.desigp="navigational computers"
-        i.price=350
-        i.id=1003
-        i.ty=154
-        i.v1=1
-        i.ldesc="A system keeping track of sensor input. Shows you where you are and allows you to see where you have already been." 
-    case 18
-        i.desig="ECM I system"
-        i.desigp="ECM I systems"
-        i.price=3000
-        i.ty=155
-        i.id=1004
-        i.v1=1
-        i.ldesc="Designed to prevent sensor locks, especially effective against missiles"
-    case 19    
-        i.desig="ECM II system"
-        i.desigp="ECM II systems"
-        i.price=9000
-        i.ty=155
-        i.id=1005
-        i.v1=2
-        i.ldesc="Designed to prevent sensor locks, and decrease sensor echo. especially effective against missiles"
-    case 20
-        i.desig="Cargo bay shielding"
-        i.price=500
-        i.ty=156
-        i.id=1006
-        i.v1=30
-        i.ldesc="Special shielding for cargo bays, making it harder to scan them."
-    case 17
-        i.desig="Cargo bay shielding MKII"
-        i.price=1500
-        i.ty=156
-        i.id=1007
-        i.v1=45
-        i.ldesc="Special shielding for cargo bays, making it harder to scan them."
-    case 22
-        i.desig="Fuel System I"
-        i.price=500
-        i.ty=157
-        i.v1=1
-        i.ldesc="Saves fuel by reducing leakage."
-    case 23
-        i.desig="Fuel System II"
-        i.price=750
-        i.ty=157
-        i.v1=2
-        i.ldesc="Saves fuel by reducing leakage and improved engine control."
-    end select
-    return i
 end function
 
 

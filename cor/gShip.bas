@@ -205,7 +205,6 @@ Type _ship
 End Type
 
 Dim Shared foundsomething As Integer
-Dim Shared alliance(7) As Byte
 
 Dim Shared player As _ship
 Dim Shared empty_ship As _ship
@@ -252,9 +251,10 @@ dim shared pUnAugmentRandomCrewmember as tUnAugmentRandomCrewmember
 type tCrewblock as function() as string
 dim shared pCrewblock as tCrewblock
 
+type tLanding as function(mapslot As Short,lx As Short=0,ly As Short=0,Test As Short=0) As Short
+dim shared pLanding as tLanding
 
 #endif'types
-
 
 
 #ifdef head
@@ -265,6 +265,7 @@ declare function shipstatsblock() as string
 declare function getnextfreebay() as short
 
 declare function gethullspecs(t as short,file as string) as _ship
+declare function make_shipequip(a as short) as _items
 
 #endif'head
 #ifdef main
@@ -272,6 +273,33 @@ declare function gethullspecs(t as short,file as string) as _ship
 
 namespace tShip
 function init(iAction as integer) as integer
+    piratenames(ST_PFighter)="pirate fighter"                  
+    piratenames(ST_PCruiser)="pirate cruiser"                  
+    piratenames(ST_PDestroyer)="pirate destroyer" 
+    piratenames(ST_PBattleship)="pirate battleship"
+    piratenames(ST_lighttransport)="light transport"                 
+    piratenames(ST_heavytransport)="heavy transport"                 
+    piratenames(ST_merchantman)="merchantman"                 
+    piratenames(ST_armedmerchant)="armed merchantman"                 
+    piratenames(ST_CFighter)="company fighter"                         
+    piratenames(ST_CEscort)="company escort"                          
+    piratenames(ST_Cbattleship)="company battleship"                         
+    piratenames(ST_AnneBonny)="Anne Bonny"                      
+    piratenames(ST_BlackCorsair)="Black Corsair"                   
+    piratenames(st_hussar)="Hussar"
+    piratenames(st_blackwidow)="Black Widow"
+    piratenames(st_adder)="Adder"
+    piratenames(ST_AlienScoutShip)="ancient alien scoutship"              
+    piratenames(ST_spacespider)="space spider"                  
+    piratenames(ST_livingsphere)="living sphere"                   
+    piratenames(ST_hydrogenworm)="hydrogen worm"   
+    piratenames(ST_livingplasma)="living plasma"
+    piratenames(ST_starjellyfish)="star jellyfish"        
+    piratenames(ST_cloudshark)="cloudshark"         
+    piratenames(ST_Gasbubble)="gas bubble"
+    piratenames(ST_cloud)="symbiotic cloud"
+    piratenames(ST_Floater)="floater"
+    piratenames(st_spacestation)="space station"
 	return 0
 end function
 end namespace'tShip
@@ -459,7 +487,101 @@ function getnextfreebay() as short
 end function
 
 
-#define cut2bottom
+
+function make_shipequip(a as short) as _items
+    dim i as _items
+    i.id=a+9000
+    select case a
+    case 1 to 5
+        i.ty=150
+        i.desig="Sensors "&roman(a)
+        i.v1=a
+        if a=1 then
+            i.price=200
+        else
+            i.price=800*(a-1)
+        endif
+    case 6 to 10
+        i.ty=151
+        i.desig="Engine "&roman(a-5)
+        i.v1=a-5
+        i.price=(2^(i.v1-1))*300
+    case 11 to 14
+        i.ty=152
+        i.desig="Shield "&roman(a-10)
+        i.v1=a-10
+        i.price=(2^(i.v1-1))*500
+    case 15
+        i.desig="ship detection system"
+        i.desigp="ship detection systems"
+        i.price=1500
+        i.id=1001
+        i.ty=153
+        i.v1=1
+        i.ldesc="Filters out ship signatures out of longrange sensor noise."
+    case 16
+        i.desig="imp. ship detection sys."
+        i.desigp="imp. ship detection sys."
+        i.price=3000
+        i.id=1002
+        i.ty=153
+        i.v1=2
+        i.ldesc="Filters out ship signatures, and friend-foe signals out of longrange sensor noise."
+    case 21
+        i.desig="navigational computer"
+        i.desigp="navigational computers"
+        i.price=350
+        i.id=1003
+        i.ty=154
+        i.v1=1
+        i.ldesc="A system keeping track of sensor input. Shows you where you are and allows you to see where you have already been." 
+    case 18
+        i.desig="ECM I system"
+        i.desigp="ECM I systems"
+        i.price=3000
+        i.ty=155
+        i.id=1004
+        i.v1=1
+        i.ldesc="Designed to prevent sensor locks, especially effective against missiles"
+    case 19    
+        i.desig="ECM II system"
+        i.desigp="ECM II systems"
+        i.price=9000
+        i.ty=155
+        i.id=1005
+        i.v1=2
+        i.ldesc="Designed to prevent sensor locks, and decrease sensor echo. especially effective against missiles"
+    case 20
+        i.desig="Cargo bay shielding"
+        i.price=500
+        i.ty=156
+        i.id=1006
+        i.v1=30
+        i.ldesc="Special shielding for cargo bays, making it harder to scan them."
+    case 17
+        i.desig="Cargo bay shielding MKII"
+        i.price=1500
+        i.ty=156
+        i.id=1007
+        i.v1=45
+        i.ldesc="Special shielding for cargo bays, making it harder to scan them."
+    case 22
+        i.desig="Fuel System I"
+        i.price=500
+        i.ty=157
+        i.v1=1
+        i.ldesc="Saves fuel by reducing leakage."
+    case 23
+        i.desig="Fuel System II"
+        i.price=750
+        i.ty=157
+        i.v1=2
+        i.ldesc="Saves fuel by reducing leakage and improved engine control."
+    end select
+    return i
+end function
+
+
 #endif'main
 
 #if (defined(main) or defined(test))

@@ -41,6 +41,7 @@ declare function first_uc(t as string) as string
 declare function roman(i as integer) as string
 
 declare function html_color(c as string, indent as short=0, wid as short=0) as string
+declare function ansi2ascii (byval convertstring as string) as string
 
 'declare function Texttofile(text as string) as string
 'declare function lev_minimum( a As Integer, b As Integer, c As Integer ) As Integer
@@ -305,6 +306,29 @@ function html_color(c as string, indent as short=0, wid as short=0) as string
     return t
 end function
 
+'
+
+static shared as ubyte ascansdat(128)={ _
+	 63,  63,  39, 159,  34,  46, 197, 206,  94,  37,  83,  60,  79,  63,  63,  63,_
+	 90,  39,  39,  34,  34,   7,  45,  45, 126,  84, 115,  62, 111,  63, 122,  89,_
+	255, 173, 189, 156, 207, 190, 221, 145, 149, 184, 166, 174, 170, 240, 169, 238,_
+	248, 241, 253, 252, 239, 230, 244, 250, 247, 251, 167, 175, 172, 171, 243, 168,_
+	183, 181, 182, 199, 142, 143, 146, 128, 212, 144, 210, 211, 222, 214, 215, 216,_
+	209, 165, 227, 224, 226, 229, 153, 158, 157, 235, 233, 234, 154, 237, 232, 160,_
+	225, 133, 131, 198, 132, 134, 145, 135, 138, 130, 136, 137, 141, 161, 140, 139,_
+	208, 164, 149, 162, 147, 228, 148, 246, 155, 151, 163, 150, 129, 236, 231, 152}
+
+function ansi2ascii (byval convertstring as string) as string
+	'from http://www.freebasic-portal.de/tutorials/umlaute-richtig-darstellen-25-s2.html
+	dim as string outstring=convertstring
+	dim as integer i
+    for i as integer=0 to len(outstring)-1
+    	if outstring[i]>127 then outstring[i]=ascansdat(outstring[i]-128)
+    next i
+	return outstring
+end function
+
+'
 
 #endif'main
 

@@ -150,7 +150,6 @@ Dim Shared As String*3 key_pickup=","
 Dim Shared As String*3 key_drop="D"
 Dim Shared As String*3 key_oxy="O"
 Dim Shared As String*3 key_close="C"
-Dim Shared As Byte _autopickup
 Dim Shared As String*3 key_ac="a"
 Dim Shared As String*3 key_ru="R"
 
@@ -171,6 +170,9 @@ Dim Shared As String*3 key_filter="f"
 Dim Shared As String*3 key_extended="#"
 Dim Shared As String*3 key_accounting="\Ca"
 dim shared as string*3 key_optequip="e"
+
+Dim Shared As Byte _autoinspect=1
+Dim Shared As Byte _autopickup=1
 
 #endif'types
 #ifdef head

@@ -23,17 +23,40 @@
 #endif'test
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+
+Enum fleettype
+    ft_player				'a 0- player
+    ft_merchant				'a 1- merchants
+    ft_pirate				'a 2- pirates
+    ft_patrol				'a 3- patrols
+    ft_pirate2				'a 4- pirate2
+    ft_ancientaliens		'a 5- ancient aliens
+    ft_civ1					'a 6- civ 1
+    ft_civ2					'a 7- civ 2
+    ft_monster				'  8- monsters
+End Enum
+
+const nFactions= ft_monster'8
+
+Dim Shared battleslost(nFactions,nFactions) As Integer
+
 Type _faction
-    war(8) As Short
+    war(nFactions) As Short
     alli As Short
 End Type
 
-Dim Shared faction(8) As _faction
+Dim Shared faction(nFactions) As _faction
+Dim Shared as string facname(nFactions)
+Dim Shared as string scale(6)				'relation between factions
+Dim Shared alliance(7) As Byte				'player with alliance() rating 
+
+
 #endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tFaction -=-=-=-=-=-=-=-
 
 declare function factionadd(a as short,b as short, add as short) as short
+declare function show_standing() as short
 
 
 #endif'head
@@ -42,9 +65,25 @@ declare function factionadd(a as short,b as short, add as short) as short
 
 namespace tFaction
 function init(iAction as integer) as integer
+    facname(ft_merchant)="Merchants"
+    facname(ft_pirate)="Pirates"
+    facname(ft_patrol)="Company patrols"
+    facname(ft_pirate2)="Famous pirates"
+    facname(ft_ancientaliens)="ASCS"
+    facname(ft_civ1)=civ(0).n
+    facname(ft_civ2)=civ(1).n
+    facname(ft_monster)="Monster"
+
+    scale(0)=" {10}Excellent{11}"
+    scale(1)=" {10}Friendly{11}"
+    scale(2)=" {14}Neutral{11}"
+    scale(3)=" {12}Hostile{11}"
+    scale(4)=" {12}Very hostile{11}"
+    scale(5)=" {12}War{11}"
 	return 0
 end function
 end namespace'tFaction
+
 
 function factionadd(a as short,b as short, add as short) as short
     dim as short c
@@ -76,7 +115,40 @@ function factionadd(a as short,b as short, add as short) as short
 end function        
 
 
-#define cut2bottom
+function show_standing() as short
+    DimDebugL(0)'1
+    dim as short a,l
+    dim as string stscore(7)
+
+    for a=1 to 7
+        stscore(a)=scale(faction(0).war(a)/20)
+        if alliance(a)>0 then stscore(a)=stscore(a) &" (Alliance member)"
+#if __FB_DEBUG__
+        if debug=1 then stscore(a)=stscore(a) '& faction(0).war(a)/20 &"-"&faction(0).war(a)
+#endif
+    next
+    l=len(stscore(1))+len("Companies:")
+    scale(6)="{15}Faction standing:{11} | Companies:"&space(35-l)&stscore(1)
+    l=len(stscore(2))+len("Pirates:")
+    scale(6)=scale(6) &" | Pirates:"&space(35-l)&stscore(2)
+    l=len(civ(0).n)+len( stscore(6))
+    if civ(0).contact>0 then scale(6)=scale(6) &" | "&civ(0).n &space(35-l)&stscore(6)
+    l=len(civ(1).n)+len( stscore(7))
+    if civ(1).contact>0 then scale(6)=scale(6) &" | "&civ(1).n &space(35-l)&stscore(7)
+    scale(6)=scale(6)&"||{15}Battles:|{11}"
+    for a=1 to 8
+        if battleslost(a,0)>0 then
+            l=len(facname(a)& battleslost(a,0))
+            scale(6)=scale(6)&" "&facname(a) & ":"&space(26-l)& battleslost(a,0)&"|"
+        endif
+    next
+    textbox(scale(6),2,2,32,1,1)
+    
+    no_key= uConsole.keyinput()
+    return 0
+end function
+
+
 #endif'main
 
 #if (defined(main) or defined(test))

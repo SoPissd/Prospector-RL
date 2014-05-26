@@ -623,7 +623,8 @@ end function
 
 
 function post_mortemII(text as string) as short
-    dim as short page,full,half,third,i,x,offset,crewn
+    dim as Integer offset
+    dim as short page,full,half,third,i,x,crewn
     dim as string key,header(4),crewtext,income
     dim as byte unflags(lastspecial)
     make_unflags(unflags())

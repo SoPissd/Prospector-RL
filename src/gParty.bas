@@ -159,13 +159,13 @@ function display_ship(show as byte=0) as short
     set__color( 15,0)
 
     wl=display_ship_weapons()
-    if wl+4>_lines then
-        _lines=wl+4
-        save_config(configflag(con_tiles))
-        tScreen.y=_lines*_fh1
+    'if wl+4>_lines then   fail
+    '    _lines=wl+4
+    '    save_config(configflag(con_tiles))
+    '    tScreen.y=_lines*_fh1
 
-        'screenres tScreen.x,tScreen.y,8,2,GFX_WINDOWED
-    endif
+    '    'screenres tScreen.x,tScreen.y,8,2,GFX_WINDOWED
+    'endif
     draw string(sidebar,(wl+4)*_fh2), "Fuel(" &player.fuelmax+player.fuelpod &"):",,Font2,custom,@_col
     set__color( 11,0)
     if player.fuel<(player.fuelmax+player.fuelpod)*0.5 then set__color(c_yel,0)

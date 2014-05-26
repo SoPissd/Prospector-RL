@@ -24,9 +24,9 @@
 Const lastgood=9
 
 Type _goods
-    'n as string*16
     p As Single
     v As Single
+    'n as string*16
     'test as single
     'test2 as single
 End Type
@@ -36,23 +36,30 @@ Type _basis
     discovered As Short
     inv(lastgood) As _goods
     'different companys for each station
-    repname As String*32
     company As Byte
+    repname As String*32
     spy As Byte
+    '
     shop(8) As Byte
     pricelevel As Single=1
+    '
     mapmod As Single
     biomod As Single
     resmod As Single
     pirmod As Single
+    '
     lastsighting As Short
     lastsightingdis As Short
     lastsightingturn As Short
     lastfight As Short
+    '
     docked As Short
 End Type
 
 Dim Shared basis(12) As _basis
+
+Dim Shared As String shopname(4)
+
 
 #endif'types
 #ifdef head
@@ -66,13 +73,44 @@ declare function rarest_good() as short
 
 namespace tBasis
 function init(iAction as integer) as integer
-	return 0
+    Dim d_basis As _basis
+
+    basis(0)=d_basis
+    basis(0).c.x=50
+    basis(0).c.y=20
+    basis(0).discovered=1
+    basis(0)=makecorp(0)
+
+    basis(1)=d_basis
+    basis(1).c.x=10
+    basis(1).c.y=25
+    basis(1).discovered=1
+    basis(1)=makecorp(0)
+
+    basis(2)=d_basis
+    basis(2).c.x=75
+    basis(2).c.y=10
+    basis(2).discovered=1
+    basis(2)=makecorp(0)
+
+    basis(3)=d_basis
+    basis(3).c.x=-1
+    basis(3).c.y=-1
+    basis(3).discovered=0
+
+    shopname(1) ="Explorers Gear"
+    shopname(2) ="Cheap Chunks"
+    shopname(3) ="Space'n'Stuff"
+    shopname(4) ="YeOlde Weapons Locker"
+   	return 0
 end function
 end namespace'tBasis
 
 
 function makecorp(a as short) as _basis
-    dim basis as _basis
+	'1..4 - make base
+	'0 choose corp 1..4 at random
+	'-1..-4 - make base for not that company
     dim as short b
     if a=0 then a=rnd_range(1,4)
     if a<0 then
@@ -81,6 +119,8 @@ function makecorp(a as short) as _basis
             a=rnd_range(1,4)
         loop until a<>-b
     endif
+    '
+    dim basis as _basis
     basis.company=a
     if a=1 then
         basis.repname="Eridiani Explorations"

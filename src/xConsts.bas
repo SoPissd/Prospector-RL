@@ -62,7 +62,6 @@ Const com_log=0
 Const _spawnoff=0
 Const show_moral=0
 Const makemoodlog=0
-Const lastflag=20
 Const _clearmap=0
 Const _testspacecombat=0
 

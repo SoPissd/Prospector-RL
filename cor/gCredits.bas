@@ -43,7 +43,6 @@ end function
 end namespace'tCredits
 
 
-#define cut2top
 
 'declare function shares_value() as short
 
@@ -58,13 +57,15 @@ function mission_type() as string
     per(2)=income(mt_pirates)
     per(3)=income(mt_piracy)+income(mt_gambling)+income(mt_blackmail)
     per(4)=income(mt_quest)+income(mt_quest2)+income(mt_escorting)
-    text= "{15}Mission type: {11}"
+    
     for i=0 to 4
         if per(i)>highest then
             highest=per(i)
             h=i
         endif
     next
+
+    text= "{15}Mission type: {11}"
     if h=0 then text &="Explorer|"
     if h=1 then text &="Merchant|"
     if h=2 then text &="Pirate hunter|"

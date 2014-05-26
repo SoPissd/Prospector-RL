@@ -34,15 +34,6 @@ end function
 end namespace'tTypes
 
 
-Type _comment
-    c As _cords
-    t As String*32
-    l As Short
-End Type
-
-Dim Shared coms(255) As _comment
-
-
 
 'type MODE
 '  As Integer mode_num      '/* Current mode number */

@@ -395,25 +395,7 @@ function civfleetdescription(f as _fleet) as string
     else
         t=t &" ships "
     endif
-    if civ(slot).contact=1 then
-        if nos=1 then
-            t=t &" It's configuration is "&civ(slot).n &"."
-        else
-            t=t &" They are "&civ(slot).n &"."
-        endif
-    else
-        if nos=1 then
-            t=t &"It's configuration is alien, but it seems to be "
-            if civ(slot).inte=1 then t=t &"an explorer."
-            if civ(slot).inte=2 then t=t &"a trader."
-            if civ(slot).inte=3 then t=t &"a warship."
-        else
-            t=t &"their configuration is alien but they seem to be "
-            if civ(slot).inte=1 then t=t &"explorers."
-            if civ(slot).inte=2 then t=t &"traders."
-            if civ(slot).inte=3 then t=t &"warships."
-        endif
-    endif
+    t += civ(slot).fleetdescription(nos)
     if show_NPCs then t=t &slot
     return t
 end function

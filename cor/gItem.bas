@@ -53,8 +53,8 @@
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tItem -=-=-=-=-=-=-=-
 
+declare function uid_pos(uid as uinteger) as integer
 declare function check_item_filter(t as short,f as short) as short
-'declare function uid_pos(uid as uinteger) as integer
 declare function caged_monster_text() as string
 
 #endif'head

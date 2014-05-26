@@ -200,15 +200,7 @@ function foreignpolicy(c as short, i as byte) as short
     else
         o=0
     endif
-    if i=0 then
-        if civ(c).phil=1 then ad=5
-        if civ(c).phil=2 then ad=3
-        if civ(c).phil=3 then ad=1
-    else
-        if civ(c).phil=1 then ad=1
-        if civ(c).phil=2 then ad=3
-        if civ(c).phil=3 then ad=5
-    endif
+	ad= civ(c).philforeignpolicy(i)
     if civ(o).contact=1 then 
         t=t &"/" & civ(o).n    
         l=4
@@ -220,6 +212,7 @@ function foreignpolicy(c as short, i as byte) as short
         ad=ad+6/civ(c).phil
     endif
     t=t & "/Exit"
+	
     a=textmenu(t)
     if a<l then
         b=textmenu("What/Status/Declare war/Initiate peace talks/Exit")

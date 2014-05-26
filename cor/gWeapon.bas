@@ -63,6 +63,11 @@ declare function make_weap_helptext(w as _weap) as string
 
 namespace tWeapon
 function init(iAction as integer) as integer
+    ammotypename(0)="Kinetic projectile"
+    ammotypename(1)="Explosive shell"
+    ammotypename(2)="Fission Warhead"
+    ammotypename(3)="Fusion Warhead"
+    ammotypename(4)="Quantum Warhead"
 	return 0
 end function
 end namespace'tWeapon

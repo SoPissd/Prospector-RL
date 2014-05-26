@@ -23,7 +23,6 @@
 #endif'test
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tProbes -=-=-=-=-=-=-=-
-
 declare function launch_probe() As Short
 declare function move_probes() As Short
 

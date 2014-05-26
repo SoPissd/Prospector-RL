@@ -361,7 +361,7 @@ end function
 function settactics() as short
     dim as short a
     dim text as string
-    screenshot(1)
+    'screenshot(1)
     text="Tactics:/"
     for a=1 to 6
         if a=player.tactic+3 then
@@ -376,7 +376,7 @@ function settactics() as short
     if a<7 then
         player.tactic=a-3
     endif
-    screenshot(2)
+    'screenshot(2)
     return 0
 end function
 

@@ -9,6 +9,14 @@ inc("cPoker.bas",				"")
 #endif
 
 
+
+inc("gBones.bas",				"universe and player ... via compression")
+inc("gSavegame.bas",			"universe and player ... via compression")
+inc("gGameinit.bas",			"universe and player ... via compression")
+
+
+#if false
+
 inc("xConsts.bas",				"")
 inc("xTypes.bas",				"")
 inc("xEnums.bas",				"")
@@ -47,10 +55,10 @@ inc("gColony.bas",				"")
 inc("gPlanetmenu.bas",			"")
 inc("gPlaneteffect.bas",		"")
 inc("gWorldgen.bas",			"")
-inc("gSavegame.bas",			"universe and player ... via compression")
 inc("gGameinit.bas",			"final initialization coordination")
 inc("gGamekeys.bas",			"'legacy' action-wiring")
 
+#endif
 'inc("vMenu.bas",				"menu with graphics as before, for reference. should wind up with an override maybe")
 
 

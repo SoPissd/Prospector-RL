@@ -49,6 +49,23 @@ declare function get_highestrisk_questguy(st as short) as short
 
 namespace tPeople
 function init(iAction as integer) as integer
+    questguyjob(1)="Station Commander"
+    questguyjob(2)="Freelancer"
+    questguyjob(3)="Security"
+    questguyjob(4)="Science Officer"
+    questguyjob(5)="Gunner"
+    questguyjob(6)="Doctor"
+    questguyjob(7)="Merchant"
+    questguyjob(8)="Colonist"
+    questguyjob(9)="Tourist"
+    questguyjob(10)="Megacorp rep for EE"
+    questguyjob(11)="Megacorp rep for SHI"
+    questguyjob(12)="Megacorp rep for TT"
+    questguyjob(13)="Megacorp rep for OBE"
+    questguyjob(14)="Entertainer"
+    questguyjob(15)="Xenobiologist"
+    questguyjob(16)="Astrophysicist"
+    questguyjob(17)="Engineer"
 	return 0
 end function
 end namespace'tPeople

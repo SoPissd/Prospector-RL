@@ -1,6 +1,7 @@
 'tCoords.
 #include once "uDefines.bi"
 DeclareDependencies()
+#include "uDebug.bas"
 #include "uRng.bas"
 #define test 
 #endif'DeclareDependencies()
@@ -8,6 +9,12 @@ DeclareDependencies()
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 
 'compiles for different types of coordinates
+
+Type tPoint
+	x as UInteger
+	y as UInteger	
+End Type
+
 
 Type _cords
     s As Short '
@@ -213,21 +220,33 @@ end function
 #endif'main
 
 #if (defined(main) or defined(test))
-'      -=-=-=-=-=-=-=- INIT: tCoords -=-=-=-=-=-=-=-
 	tModule.register("tCoords",@tCoords.init()) ',@tCoords.load(),@tCoords.save())
 #endif'main
 #if (defined(test) or defined(registerTests))
-#print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
+#print -=-=-=-=-=-=-=- TEST: tCoords -=-=-=-=-=-=-=-
 
 	namespace tCoords
 
-	sub Coordstest()
-	End Sub
+	function pt(p as tPoint=(0,0)) as Integer			
+		return 0
+	End Function
 
+	sub Coordstest()
+		dim p as tPoint=(150,90)
+		'p=(150,90)
+		pt(p)'(150,90))
+		p.x=150
+		p.y=90
+	    Screen 13,8,2,0 ' Sets the graphic mode
+	    Do
+		    Circle (p.x,p.y), 10, 15
+'		    Circle (150, 90), 10, 15
+	    Loop Until Inkey$ <>""
+	End Sub
 	end namespace'tCoords
 	
 	#ifdef test
-		tCoords.test()
+		tCoords.Coordstest()
 		'? "sleep": sleep
 	#else
 		tModule.registertest("uCoords",@tCoords.Coordstest())

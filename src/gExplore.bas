@@ -24,6 +24,7 @@
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tExplore -=-=-=-=-=-=-=-
 
+declare function make_locallist(slot as short) as short
 declare function update_world(location as short) as short
 declare function teleport(from As _cords,map As Short) As _cords
 declare function explore_planet(from As _cords, orbit As Short) As _cords
@@ -41,7 +42,25 @@ end function
 end namespace'tExplore
 
 
-
+function make_locallist(slot as short) as short
+    dim as short i,x,y,r
+    dim p as _cords
+    
+    itemindex.del
+    for i=1 to lastitem
+        if item(i).w.m=slot and item(i).w.s=0 and item(i).w.p=0 then
+            if itemindex.add(i,item(i).w)=-1 then
+                item(i).w=movepoint(item(i).w,5)
+                i-=1
+            endif
+        endif
+    next
+    
+    make_localportallist(slot)
+    
+    return 0
+end function
+    
 
 function trouble_with_tribbles() as short
     dim as short i
@@ -965,12 +984,14 @@ EndIf
                 If walking<0 Then
                     tmap(awayteam.c.x,awayteam.c.y).hp-=1
                     awayteam.add_move_cost
-                    For a=1 To _lines
-                        If displaytext(a)="" Then 
-                            displaytext(a-1)&="."
-                            Exit For
-                        EndIf
-                    Next
+
+                    'For a=1 To _lines   fail
+                    '    If displaytext(a)="" Then 
+                    '        displaytext(a-1)&="."
+                    '        Exit For
+                    '    EndIf
+                    'Next
+
                     If tmap(awayteam.c.x,awayteam.c.y).hp=1 Then
                         walking=0
                         rlprint "Complete."

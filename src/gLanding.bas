@@ -33,12 +33,10 @@ declare function landing(mapslot As Short,lx As Short=0,ly As Short=0,Test As Sh
 
 namespace tLanding
 function init(iAction as integer) as integer
+	pLanding= @landing 'set pointer in gShip
 	return 0
 end function
 end namespace'tLanding
-
-
-#define cut2top
 
 
 function landing(mapslot As Short,lx As Short=0,ly As Short=0,Test As Short=0) As Short

@@ -37,29 +37,15 @@ end namespace'tVars
 
 
 Dim Shared pixelsize As Integer
-
-
-Dim Shared farthestexpedition As Integer
-
-
 Dim Shared As Byte someonemoved
-
-
 Dim Shared As Byte _showspacemap=1
-
 Dim Shared As Byte _hpdisplay=1
-
-
-Dim Shared As Byte _autoinspect=1
-
 Dim Shared As Byte _resolution=2
 Dim Shared As Byte _narrowscreen=0
 
 dim shared as byte optoxy
 
-Dim Shared As Short ranoutoffuel
 
-Dim Shared As String shopname(4)
 
 Dim Shared bg_parent As Byte
 
@@ -75,7 +61,6 @@ Dim Shared apdiff As Short
 Dim Shared x As Short
 Dim Shared y As Short
 
-Dim Shared flag(20) As Short
 Dim Shared zeit As Integer
 Dim Shared stationroll As Short
 
@@ -85,17 +70,11 @@ Dim Shared scr As Any Ptr
 Dim Shared rlprintline As Byte
 
 
-Dim Shared awayteamcomp(4) As Byte
 
-Dim Shared lastcom As Short
 Dim Shared As Byte pf_stp=1
 
 Dim Shared liplanet As Short 'last input planet
-Dim Shared whtravelled As Short
 Dim Shared vacuum(60,20) As Byte
-
-
-Dim Shared lastprobe As Short
 
 
 #define cut2bottom

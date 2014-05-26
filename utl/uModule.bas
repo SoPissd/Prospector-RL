@@ -24,7 +24,8 @@ namespace tModule
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 
-Dim shared as tActionmethod	 		RunMethod		'this runs as 'the main program' 
+Dim shared as tActionmethod	 		RunMethod		'this runs as 'the main program'
+Dim shared as tActionmethod	 		TestMethod		'override for debug-shell 
 Dim shared as tErrormethod 			ErrorMethod		'error handler (passed in)
 
 Dim shared as tTextIntegermethod 	LogoutMethod	'logfilewriter methods
@@ -118,7 +119,7 @@ function Registertest(aName as string,fTest as tSub =null,aComment as string="")
 	atest.aComment =aComment	
 	tests(lasttest)=atest
 	lasttest+=1
-DbgPrint(aName + "  " + aComment)
+'DbgPrint(aName + "  " + aComment)
 	return true
 End Function
 
@@ -143,6 +144,14 @@ public function Status() as string
 End Function
 
 function Run(iAction as integer) as Integer
+#if (defined(registerTests))
+	if TestMethod<>null then
+		dim t as tActionmethod
+		t= TestMethod			'can only be run once. 
+		TestMethod= null 		'it can now call uModule.run to test the app.
+		return t(iAction)
+	endif
+#endif
 	if RunMethod<>null then
 		return RunMethod(iAction)
 	elseif ErrorMethod<>null then

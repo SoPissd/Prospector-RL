@@ -7,6 +7,9 @@ DeclareDependencies()
 #endif'DeclareDependencies()
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+'Const Pi As Double = 3.141592653589793
+'Const Eu As Double = 2.718281828459045
+
 Type vector
         x As Integer
         y As Integer

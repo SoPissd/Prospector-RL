@@ -74,6 +74,7 @@ Dim Shared lastportal As Short
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tPortal -=-=-=-=-=-=-=-
 
+declare function make_localportallist(slot as short) as short
 declare function display_portal(b as short,slot as short,osx as short) as short
 declare function display_portals(slot as short,osx as short) as short
 
@@ -88,6 +89,26 @@ function init(iAction as integer) as integer
 end function
 end namespace'tPortal
 
+
+function make_localportallist(slot as short) as short
+	dim as integer i,x,y
+    dim p as _cords
+    portalindex.del
+    for i=0 to lastportal
+        if portal(i).dest.m=slot  and portal(i).oneway=0 then portalindex.add(i,portal(i).dest)
+        if portal(i).from.m=slot then portalindex.add(i,portal(i).from)
+        if portal(i).oneway=2 and portal(i).from.m=slot or portal(i).dest.m=slot then
+            for x=0 to 60
+                for y=0 to 20
+                    p.x=x
+                    p.y=y
+                    if x=0 or y=0 or x=20 or y=20 then portalindex.add(i,p)
+                next
+            next
+        endif
+    next        
+    return 0
+end function
 
 function display_portal(b as short,slot as short,osx as short) as short
     dim as short x

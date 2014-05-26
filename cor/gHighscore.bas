@@ -172,6 +172,7 @@ function high_score(text as string) as short
         put #f,,hScore(a)        
       next
     close f
+    
     cls
     return 0
 end function

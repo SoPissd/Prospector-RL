@@ -29,7 +29,6 @@
 Dim Shared apwaypoints(1024) As _cords
 Dim Shared usedship(8) As _cords
 Dim Shared targetlist(4068) As _cords
-Dim Shared probe(100) As _cords 'm=Item,
 
 Dim Shared pwa(1024) As _cords 'Points working array
 

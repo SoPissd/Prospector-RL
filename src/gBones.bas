@@ -53,12 +53,13 @@ function getbonesfile() as string
         d=dir()
         chance=chance+1
     loop until d=""
-    if _debug_bones=2 then 
-		DbgPrint("chance for bones file:"&chance)
-    EndIf
+    'if _debug_bones=2 then 
+	'	DbgPrint("chance for bones file:"&chance)
+    'EndIf
     d=dir$("bones/*.bon")
     do
-        if (rnd_range(1,100)<chance or _debug_bones=1) and s="" then s=d
+        if (rnd_range(1,100)<chance) and s="" then s=d
+        'if (rnd_range(1,100)<chance or _debug_bones=1) and s="" then s=d
         d=dir()
     loop until d=""
     return s
@@ -70,6 +71,7 @@ function load_bones() as short
     dim as short d,c,m,f,sys
     dim as _cords p
     dim as _planet pl
+	dim as integer x,y
     s=getbonesfile
     if s<>"" then
         f=freefile
@@ -84,7 +86,7 @@ function load_bones() as short
             for x=0 to 60
                 for y=0 to 20
                     get #f,,planetmap(x,y,m)
-                    if _debug_bones=1 then planetmap(x,y,m)=-planetmap(x,y,m)
+                    'if _debug_bones=1 then planetmap(x,y,m)=-planetmap(x,y,m)
                 next
             next
             map(sys).discovered=4
@@ -94,7 +96,7 @@ function load_bones() as short
             for x=0 to 60
                 for y=0 to 20
                     get #f,,planetmap(x,y,m)
-                    if _debug_bones=1 then planetmap(x,y,m)=-planetmap(x,y,m)
+                    'if _debug_bones=1 then planetmap(x,y,m)=-planetmap(x,y,m)
                 next
             next
             p=rnd_point(m,0)
@@ -118,7 +120,7 @@ function load_bones() as short
         lastitem=lastitem+1+d
         close #f
         planets(m)=pl
-        planets(m).visited=_debug_bones
+        'planets(m).visited=_debug_bones
         planets_flavortext(m)="You get a wierd sense of deja vu from this place."
         kill "bones/"&s
     endif

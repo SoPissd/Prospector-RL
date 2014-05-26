@@ -25,6 +25,29 @@
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tSavegame -=-=-=-=-=-=-=-
 
+
+Type _comment
+    c As _cords
+    t As String*32
+    l As Short
+End Type
+
+'spaceexplore and combat use comments.
+Dim Shared lastcom As Short
+Dim Shared coms(255) As _comment
+'explorespace/summary uses
+Dim Shared whtravelled As Short
+Dim Shared As Short ranoutoffuel
+Dim Shared farthestexpedition As Integer
+
+'gProbes..
+Dim Shared probe(100) As _cords 'm=Item,
+Dim Shared lastprobe As Short
+
+'
+Dim Shared flag(20) As Short
+
+
 'declare function count_savegames() as short
 'declare function getfilename(iBg as short) as string
 'declare function load_game(filename as string) as short
@@ -319,6 +342,7 @@ function savegame() as short
         put #f,,cagedmonster(a)
     next
 
+	dim as integer x,y
     for x=0 to sm_x
         for y=0 to sm_y
             put #f,,spacemap(x,y)
@@ -497,6 +521,7 @@ function loadgame(filename as string="empty.sav") as short
     dim as Integer src_len, dest_len, header_len
     dim as string compressed_data
 
+	dim as integer x,y
     for a=0 to max_maps
         for x=0 to 60
             for y=0 to 20
@@ -809,7 +834,7 @@ function loadsavegame(iBg as integer) As integer
             civ_adapt_tiles(0)
             civ_adapt_tiles(1)
             If savefrom(0).map>0 Then
-                landing(0)
+                if pLanding<> null then pLanding(0)
             EndIf
 		    Return 2' iAction==from_savegame
         endif

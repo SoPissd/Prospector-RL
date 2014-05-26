@@ -63,10 +63,10 @@ function Fpsupdate(iAction as Integer) as integer
 	if Fpsshow then		
 		aTime=LeadingZero(3,uConsole.Fps)
 		if tScreen.isGraphic then
-		    tScreen.xy(tScreen.gtw-3,1,aTime)
+		    tScreen.xy(tScreen.gtw-3,tScreen.gth,aTime)
 		else
 			tScreen.pushpos()
-		    tScreen.xy(uconsole.ttw-3,1,aTime)
+		    tScreen.xy(uconsole.ttw-3,uconsole.tth,aTime)
 			tScreen.poppos()
 		endif
 		endif
@@ -123,5 +123,5 @@ end function
 
 
 uConsole.IdleMethod= @Fpsupdate	'just because
-tModule.RunMethod= @testmenu 	'here is where the magic happens as main runs module runs game.run(0)
-tModule.run(0)
+tModule.TestMethod= @testmenu	'testmethod supercedes run-method ;) 	
+tModule.run(0)					'here is where the magic happens as main runs module runs game.run(0)

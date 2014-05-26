@@ -208,6 +208,23 @@ function init(iAction as integer) as integer
 	pEnjoyConcert= @EnjoyConcert
 	pGetitem= @get_item
 
+    crew_desig(1)="Captain"
+    crew_desig(2)="Pilot"
+    crew_desig(3)="Gunner"
+    crew_desig(4)="Science"
+    crew_desig(5)="Doctor"
+    crew_desig(6)="Green"
+    crew_desig(7)="Veteran"
+    crew_desig(8)="Elite"
+    crew_desig(9)="Insect Warrior"
+    crew_desig(10)="Cephalopod"
+    crew_desig(11)="Neodog"
+    crew_desig(12)="Neoape"
+    crew_desig(13)="Robot"
+    crew_desig(14)="Squad Leader"
+    crew_desig(15)="Sniper"
+    crew_desig(16)="Paramedic"
+
     itemcat(0)="None"
     itemcat(1)="Transport"
     itemcat(2)="Ranged Weapons"
