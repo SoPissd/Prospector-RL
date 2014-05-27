@@ -579,7 +579,11 @@ function exploration_text_html() as string
 end function
 
 function acomp_table() as string
-    return "<center>"&get_death & "<br>" & text_to_html(mission_type) &"</center><br><table width=" &chr(34) &"80%"&chr(34)& " align=" &chr(34) &"center"&chr(34)& "><tbody><tr><td valign=" &chr(34)& "top" &chr(34)& "><tbody><tr width=50%><td>"&exploration_text_html  & text_to_html(money_text) &"</td><td>" & income_expenses_html &"</td></tr></tbody></table>"
+    return "<center>"&get_death & "<br>" & text_to_html(mission_type) &"</center><br>"_
+    	 &"<table width=" &chr(34) &"80%"&chr(34)& " align=" &chr(34) &"center" &chr(34) &">"_
+    	 &"<tbody><tr><td valign=" &chr(34)& "top" &chr(34)& ">"_
+    	 &"<tbody><tr width=50%><td>" &exploration_text_html & text_to_html(money_text) &"</td>"_
+    	 &"<td>" & income_expenses_html &"</td></tr></tbody></table>"
 end function
 
 
@@ -731,6 +735,8 @@ function post_mortemII(text as string) as short
     
     return 0
 end function
+
+
 
 
 #endif'main
