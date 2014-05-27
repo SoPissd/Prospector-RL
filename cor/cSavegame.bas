@@ -63,7 +63,7 @@ declare function savegame() as short
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tSavegame -=-=-=-=-=-=-=-
 declare function loadgame(filename as string="empty.sav") as short
-declare function loadsavegame(iBg as integer) As integer
+declare function loadsavegame(iAction as integer) As integer
 
 namespace tSavegame
 function init(iAction as integer) as integer
@@ -73,7 +73,115 @@ end function
 end namespace'tSavegame
 
 
-#define cut2top
+function compressfile(fname as string) as short
+	#ifdef makezlib
+	    dim as Integer f
+	    'Needed for compression
+	    dim as Integer header_len
+	    dim as short emptyshort
+
+        dim as Integer src_len
+	    dim as string filedata_string
+        if tFile.Openbinary(fname,f)=0 then
+	        filedata_string = space(LOF(f))
+	        get #f,, filedata_string
+	        tFile.Closefile(f)
+	        src_len = len(filedata_string) + 1
+        EndIf
+
+	    dim names as string*36
+	    dim desig as string*36
+	    dim datestring as string*12
+	    dim unflags(lastspecial) as byte
+
+	    make_unflags(unflags())
+	    names=player.desig
+    	desig="("&player.h_sdesc &", "&credits(player.money) &" Cr, T:" &display_time(tVersion.gameturn,2) &")"
+    	datestring=date_string
+
+	    dim as Integer dest_len
+	    dim as Ubyte Ptr dest
+        dest_len = compressBound(src_len)
+        dest = Allocate(dest_len)
+	    if compress(dest , @dest_len, StrPtr(filedata_string), src_len) = Z_OK then
+	        kill(fname)
+	        if tFile.Openbinary(fname,f)=0 then        	    
+		        put #f,,names           '36 bytes
+		        put #f,,desig           '36 bytes
+		        put #f,,datestring      '12 bytes + 1 overhead
+		        put #f,,unflags()       'lastspecial + 1 overhead
+		        put #f,,artflag()       'lastartifact + 1 overhead
+		        put #f,, src_len 'we can use this to know the amount of memory needed when we load - should be 4 bytes long
+	   		    'Putting in the short info the the load game menu
+	        	header_len =  36 + 36 + 12 + lastspecial + lastartifact*2 + 4 + 4 + 3 ' bytelengths of names, desig, datestring,
+		        'unflags, artflag, src_len, header_len, and 3 bytes of over head for the 3 arrays datestring, unflags, artflag
+		        put #f,, header_len
+		        put #f,, *dest, dest_len
+		        tFile.Closefile(f)
+	        EndIf
+	    EndIf
+        Deallocate(dest)
+        
+'     	if <0 then
+'			text= "Failed to save the crashed game."
+'			tError.log_error(text)
+'      	Print text
+'     	EndIf
+	#endif
+	return 0    
+End Function
+'
+function uncompressfile(fname as string,ByRef compressed_data as string) as short
+	#ifdef makezlib
+	    'needed to handle the compressed data
+	    dim as uByte ptr src, dest
+	    dim as Integer src_len, dest_len, header_len
+
+	    dim dat as string*36
+	    dim names as string*36
+	    dim datestring as string*12
+	    dim unflags(lastspecial) as byte
+	
+		dim f as integer
+		if (tFile.OpenBinary(fname,f)<=0) then return false
+
+		'Starting the uncompress
+		get #f,,names           '36 bytes
+        get #f,,dat             '36 bytes
+        get #f,,datestring      '12 bytes + 1 overhead
+        get #f,,unflags()       'lastspecial + 1 overhead
+        get #f,,artflag()       'lastartifact + 1 overhead
+
+        get #f,,dest_len
+        dest = Allocate(dest_len)
+
+        get #f,,header_len
+        src_len = LOF(f)-header_len
+        src = Allocate(src_len)
+        
+        get #f,,*src, src_len
+        tFile.Closefile(f)
+        
+        if uncompress(dest, @dest_len, src, src_len) = Z_OK then
+			'make a copy of the compressed data
+			if (tFile.OpenBinary(fname,f)>0) then
+	            compressed_data = space(LOF(f))
+	            get #f,, compressed_data
+	            tFile.Closefile(f)
+	            '
+	            kill(fname)	
+	            'and write out as uncompressed
+				if (tFile.OpenBinary(fname,f)>0) then
+		            put #f,, *dest, dest_len
+		            tFile.Closefile(f)
+				endif
+			endif
+        else
+        	'not compressed
+        endif	
+	#endif
+	return 0    
+End Function
 
 
 function count_savegames() as short
@@ -91,7 +199,7 @@ function count_savegames() as short
 end function
 
 
-function getfilename(iBg as short) as string
+function getfilename() as string
     dim filename as string
     dim a as string
     dim b as string*36
@@ -192,6 +300,7 @@ function savegame_crashfilename(fname as String, ext as String) as String
     return fname & j & ext		
 End function
 
+
 function savegame() as short
     dim back as short
     dim a as short
@@ -206,14 +315,7 @@ function savegame() as short
     dim unflags(lastspecial) as byte
     dim artifactstr as string*512
     
-	dim crash as short= tError.ErrorNr
-
-    'Needed for compression
-    dim as Integer dest_len, header_len
-    dim as Ubyte Ptr dest
-    dim filedata_string as string
-    dim as short emptyshort
-    
+	dim crash as short= tError.ErrorNr    
     '
     make_unflags(unflags())
     cl=player.h_sdesc
@@ -447,53 +549,19 @@ function savegame() as short
     tFile.Closefile(f)
     ?
 
-#ifdef makezlib
-    'Overwrites large save file with compressed save file. but skills if file is empty
-    if fname<>"savegames/empty.sav" then
-        if tFile.Openbinary(fname,f)=0 then
-	        filedata_string = space(LOF(f))
-	        get #f,, filedata_string
-	        tFile.Closefile(f)
-        EndIf
-
-        dim as Integer src_len = len(filedata_string) + 1
-        dest_len = compressBound(src_len)
-        dest = Allocate(dest_len)
-	    if compress(dest , @dest_len, StrPtr(filedata_string), src_len) = Z_OK then
-	        kill(fname)
-	        if tFile.Openbinary(fname,f)=0 then        	    
-		        put #f,,names           '36 bytes
-		        put #f,,desig           '36 bytes
-		        put #f,,datestring      '12 bytes + 1 overhead
-		        put #f,,unflags()       'lastspecial + 1 overhead
-		        put #f,,artflag()       'lastartifact + 1 overhead
-		        put #f,, src_len 'we can use this to know the amount of memory needed when we load - should be 4 bytes long
-	   		    'Putting in the short info the the load game menu
-	        	header_len =  36 + 36 + 12 + lastspecial + lastartifact*2 + 4 + 4 + 3 ' bytelengths of names, desig, datestring,
-		        'unflags, artflag, src_len, header_len, and 3 bytes of over head for the 3 arrays datestring, unflags, artflag
-		        put #f,, header_len
-		        put #f,, *dest, dest_len
-		        tFile.Closefile(f)
-	        EndIf
-	    EndIf
-        Deallocate(dest)
-        
-'     	if <0 then
-'			text= "Failed to save the crashed game."
-'			tError.log_error(text)
-'      	Print text
-'     	EndIf
-        
-    endif
-    'Done with compressed file stuff
-#endif    
+	#ifdef makezlib
+	    'Overwrites large save file with compressed save file. but skills if file is empty
+	    if fname<>"savegames/empty.sav" then
+	    	compressfile(fname)        
+	    endif
+	    'Done with compressed file stuff
+	#endif    
 
     'set__color( 14,0)
     'cls
     return back
 end function
 
-'
 '
 '
 
@@ -507,19 +575,17 @@ function loadgame(filename as string="empty.sav") as short
     dim c as short
     dim fname as string
     dim f as integer
-    dim dat as string*36
-    dim names as string*36
-    dim datestring as string*12
-    dim unflags(lastspecial) as byte
     dim as short emptyshort
     dim text as string
     dim p as _planet
     dim debug as byte
 
-    'needed to handle the compressed data
-    dim as uByte ptr src, dest
-    dim as Integer src_len, dest_len, header_len
     dim as string compressed_data
+
+    dim dat as string*36
+    dim names as string*36
+    dim datestring as string*12
+    dim unflags(lastspecial) as byte
 
 	dim as integer x,y
     for a=0 to max_maps
@@ -537,50 +603,15 @@ function loadgame(filename as string="empty.sav") as short
     if filename<>"" then
         fname="savegames/"&filename
         print "loading"&fname;
-
-#ifdef makezlib
-        if (filename <> "savegames/empty.sav") _	'makes sure we dont load the uncompressed empty
-        and (tFile.OpenBinary(fname,f)>0) then		'Starting the uncompress
-
-            get #f,,names           '36 bytes
-            get #f,,dat             '36 bytes
-            get #f,,datestring      '12 bytes + 1 overhead
-            get #f,,unflags()       'lastspecial + 1 overhead
-            get #f,,artflag()       'lastartifact + 1 overhead
-
-            get #f,,dest_len
-            dest = Allocate(dest_len)
-
-            get #f,,header_len
-            src_len = LOF(f)-header_len
-            src = Allocate(src_len)
-            
-            get #f,,*src, src_len
-            tFile.Closefile(f)
-            
-            if uncompress(dest, @dest_len, src, src_len) = Z_OK then
-				'make a copy of the compressed data
-				if (tFile.OpenBinary(fname,f)>0) then
-		            compressed_data = space(LOF(f))
-		            get #f,, compressed_data
-		            tFile.Closefile(f)
-				endif
-	
-	            'and write out as uncompressed
-	            kill(fname)	
-				if (tFile.OpenBinary(fname,f)>0) then
-		            put #f,, *dest, dest_len
-		            tFile.Closefile(f)
-				endif
-            else
-            	'not compressed
-            endif
+        if (filename <> "savegames/empty.sav") then 'makes sure we dont load the uncompressed empty
+			uncompressfile(fname,compressed_data)
+			assert(len(compressed_data)>100)
+		endif
     endif
         'Ending uncompress
-#endif    
 
-		if (tFile.OpenBinary(fname,f)>0) then
-		endif
+	if (tFile.OpenBinary(fname,f)>0) then
+	'	endif
 			
         get #f,,names
         get #f,,dat
@@ -816,7 +847,7 @@ function loadgame(filename as string="empty.sav") as short
 end function
 
 
-function loadsavegame(iBg as integer) As integer
+function loadsavegame(iAction as integer) As integer
     Dim As Short c
 	dim no_key as string
     c=count_savegames
@@ -827,7 +858,7 @@ function loadsavegame(iBg as integer) As integer
         no_key=uConsole.keyinput() 
 '        no_key=keyin 
     Else
-        loadgame(getfilename(iBg))
+        loadgame(getfilename())
         If player.desig="" Then 
         else
             player.dead=0
