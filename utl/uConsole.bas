@@ -37,6 +37,7 @@ DeclareDependencies()
 'http://www.freebasic.net/wiki/wikka.php?wakka=KeyPgInkey
 'http://www.freebasic.net/wiki/wikka.php?wakka=GfxScancodes
 
+Const key__break=		Chr(3)	'
 Const key__bell=		Chr(7)	'\a
 Const key__backspace=	Chr(8)	'\b
 Const key__tab=			Chr(9)	'\t
@@ -179,19 +180,18 @@ End function
 '
 
 sub Fpsupdate()
-	'?"updatefps"
-	dim dtime as double 
-	dTime=Fpstime 
-	Fpstime=uConsole.dTimer() 
-	dTime=Fpstime-dTime
-	Fps=1000/(dTime*1000)
-	if Fps>=1000 then Fps=999
+	dim dtime as double			'counts in seconds with fractional seconds. 
+	dTime=Fpstime				'access global 
+	Fpstime=uConsole.dTimer()	'rewrite it as-of now  
+	dTime=Fpstime-dTime			'get delta-time
+	Fps=1000/(dTime*1000) 		'rounds into an integer
+	if Fps>=1000 then Fps=999	'limit. its bogus anyways
 end sub
 
 function Idle(iAction as integer=0) as integer
-	Fpsupdate()
+	Fpsupdate()					'keep fps count up to date
 	if IdleMethod<>null then
-		iAction= IdleMethod(bIdling)
+		iAction= IdleMethod(bIdling)	'could return an iKey to interact.
 		if bIdling=0 then
 			bIdling= 1
 		endif
@@ -204,6 +204,17 @@ End Function
 '
 ' check to see if something is pending at all.
 '   screenevent needs to get used by inkey if we want to track get/loose focus in the app
+
+'''' uConsole does not have a forward buffer into which to read incoming but
+'unprocessed keys so we don't know if we're supposedly closing the window right 
+'after the key that's being sensed here. ClearEvents() will not loose that info
+' but its run _after (if at all) we've gone through EventPending.
+
+'EventPending _should get the keys, test them, then poke them into some ring buffer 
+'(maybe just add to a string) that iInkey reads from before looking at inkey proper.
+
+'we could also serialize mouse-events into the key-stream right here. support for
+'moveto, click@, release@, wheeldelta+- could hang of chr(251/252/253/254) as in xkey       
 
 function EventPending() as short		'0 if nothing pending, -1 has buffered
 	'clears status on read!
@@ -253,7 +264,7 @@ function iKey2a(iKey as Integer) as String
     elseif iKey<256 then
 		aKey=chr(iKey)		
     else
-		aKey=chr(255) + chr(iKey shr 8)		
+		aKey=chr(255, iKey shr 8)		
     endif
 	return aKey	
 End Function
@@ -315,7 +326,7 @@ function iGetKey(iMilliSeconds as integer=0) as integer
 		iUpTo=iMilliSeconds/1000+uConsole.dTimer()
 	EndIf
 	bIdling= 0
-	do while (not Closing) and ((iMilliSeconds=0) or (uConsole.dTimer()<iUpTo))
+	do while (not Closing) andalso ((iMilliSeconds=0) orelse (uConsole.dTimer()<iUpTo))
 		'print #tKbinput.fErrOut,iUpTo-uConsole.dTimer()
 		aKey=aInKey()
 		if aKey<>"" then
@@ -390,8 +401,8 @@ function keyaccept(ByRef aKey as string,allow as string="",deny as string="") as
 	validateaccept(allow)'validates against a comma delimited list of keys
 	LastKey= aKey
     return (aKey<>"") _
-    	and (allow="" or allow="," or (instr(","+allow,","+aKey)>0)) _ 
-    	and (deny="" or deny="," or (instr(","+deny,","+aKey)=0)) 
+    	andalso (allow="" orelse allow="," orelse (instr(","+allow,","+aKey)>0)) _ 
+    	andalso (deny="" orelse deny="," orelse (instr(","+deny,","+aKey)=0)) 
 end function
 
 function keyaccept (iKey as integer,allow as string="",deny as string="") as short
@@ -404,7 +415,7 @@ function keyinput(allow as string="",deny as string="") as string
 	ClearKeys
     do        
 		aKey=aGetKey()
-    loop until Closing or keyaccept(aKey,allow,deny) 
+    loop until Closing orelse keyaccept(aKey,allow,deny) 
     return aKey
 end function
 
@@ -539,12 +550,12 @@ End Namespace
 		?
 		? "000:";
 		for i= 0 to 255
-			if i=7 or i=8 or i=9 or i=10 or i=13 then 	
+			if (i<=13) andalso (i=7 orelse i=8 orelse i=9 orelse i=10 orelse i=13) then 	
 				? "   "; 
 			else
 				? "  ";chr(i);
 			EndIf
-			if i<255 and (i+1) mod 16 = 0 then 
+			if i<255 andalso ((i+1) mod 16 = 0) then 
 				?
 				? mid(""&1001+i,2,3);":";
 			EndIf
@@ -575,7 +586,7 @@ End Namespace
 	End Sub
 	
 	#ifdef test
-		.test()
+		Show_keycodes()
 		'? "sleep": sleep
 	#else
 		tModule.registertest("uConsole",@ascii_table(),"Ascii Table")
