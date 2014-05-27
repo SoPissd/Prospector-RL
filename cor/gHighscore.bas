@@ -177,7 +177,11 @@ function high_score(text as string) as short
     return 0
 end function
 
-#define cut2bottom
+'
+'
+'
+
+
 #endif'main
 
 #if (defined(main) or defined(test))
