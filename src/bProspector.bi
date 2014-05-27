@@ -1,7 +1,5 @@
-
 #ifdef justpoker
-inc("gUtils.bas",				"game utils")
-inc("gInput.bas",				"gettext & getnumber")
+
 inc("cCasino.bas",				"")
 inc("cSlotmachine.bas",			"")
 inc("cCards.bas",				"Playing card rendering")
@@ -10,12 +8,6 @@ inc("cPoker.bas",				"")
 
 
 
-inc("gBones.bas",				"universe and player ... via compression")
-inc("gSavegame.bas",			"universe and player ... via compression")
-inc("gGameinit.bas",			"universe and player ... via compression")
-
-
-#if false
 
 inc("xConsts.bas",				"")
 inc("xTypes.bas",				"")
@@ -55,11 +47,12 @@ inc("gColony.bas",				"")
 inc("gPlanetmenu.bas",			"")
 inc("gPlaneteffect.bas",		"")
 inc("gWorldgen.bas",			"")
-inc("gGameinit.bas",			"final initialization coordination")
+'inc("gGameinit.bas",			"final initialization coordination")
 inc("gGamekeys.bas",			"'legacy' action-wiring")
-
-#endif
 'inc("vMenu.bas",				"menu with graphics as before, for reference. should wind up with an override maybe")
+
+#if false
+#endif
 
 
 

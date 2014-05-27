@@ -22,7 +22,7 @@ DeclareDependencies()
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 
-Type tMenuCore Extends Object
+Type tMenuCore Extends tArrayScroller'Object
 'Type tMenuCore Extends tArrayScroller
 	declare constructor()
 	declare virtual destructor() 

@@ -187,7 +187,9 @@ End Function
 		
 		'ShellExecute(HWND_DESKTOP,"open","cmd.exe","","",SW_SHOW)
 		#if __FB_Debug__
-		? "this console will close when you click ok the MessageBox.."
+		? "find the MessageBox"
+		? "and click ok"
+		? "to close this console" 
 		#endif
 		
 		MessageBox(HWND_DESKTOP,"Test","Hello",MB_OK)

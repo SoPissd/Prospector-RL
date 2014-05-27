@@ -15,8 +15,8 @@ inc("cSettings.bas",			"")
 inc("cInput.bas",				"")
 
 inc("gRetirement.bas",			"")
-inc("gHighscore.bas",			"")
 inc("gDeath.bas",				"")
+inc("gHighscore.bas",			"")
 inc("cGame.bas",				"game menu")
 
 inc("gCredits.bas",				"")
@@ -32,6 +32,7 @@ inc("gPortal.bas",				"")
 inc("gItems.bas",				"")
 inc("gItem.bas",				"")
 inc("gShip.bas",				"")
+inc("gDisease.bas",				"")
 inc("gPlayer.bas",				"player functions.")
 
 
@@ -65,5 +66,9 @@ inc("gTrading.bas",				"")
 inc("gPirates.bas",				"")
 inc("gQuests.bas",				"")
 inc("gCrew.bas",				"")
+
+inc("cBones.bas",				"")
+inc("cSavegame.bas",			"universe and player ... via compression")
+inc("cGameinit.bas",			"")
 
 #endif
