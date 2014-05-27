@@ -44,8 +44,8 @@ declare function cords(c As _cords) As String
 declare function distance(first as _cords, last as _cords,rollover as byte=0) as single
 declare function sort_by_distance(c as _cords,p() as _cords,l() as short,last as short) as short
 
-declare function nearest(byval c as _cords, byval b as _cords,rollover as byte=0) as single
-declare function farthest(c as _cords, b as _cords) as single
+declare function nearest(byref c as _cords, byref b as _cords,rollover as byte=0) as integer
+declare function farthest(byref c as _cords, byref b as _cords) as integer
 declare function furthest(list() as _cords,last as short, a as _cords,b as _cords) as short
 
 declare function rndwallpoint(r as _rect, w as byte) as _cords
@@ -133,40 +133,29 @@ end function
 
 '
 
-function nearest(byval c as _cords, byval b as _cords,rollover as byte=0) as single
+function nearest(byref c as _cords, byref b as _cords,rollover as byte=0) as integer
     ' Moves B towards C, or C away from B
-    dim direction as short
-    if rollover=1 then
-        if abs(c.x-b.x)>30 then swap c,b
-    endif
-    if c.x>b.x and c.y>b.y then direction=3
-    if c.x>b.x and c.y=b.y then direction=6
-    if c.x>b.x and c.y<b.y then direction=9
-    
-    if c.x=b.x and c.y>b.y then direction=2
-    if c.x=b.x and c.y<b.y then direction=8
-    
-    if c.x<b.x and c.y=b.y then direction=4
-    if c.x<b.x and c.y<b.y then direction=7
-    if c.x<b.x and c.y>b.y then direction=1
-            
-    return direction
+    if (rollover=1) andalso (abs(c.x-b.x)>30) then 
+		swap c,b 'nearest. else farthest
+    EndIf    
+    return farthest(c,b)
 end function
 
 
-function farthest(c as _cords, b as _cords) as single
-    dim direction as short
-    if c.x>b.x and c.y>b.y then direction=3
-    if c.x>b.x and c.y=b.y then direction=6
-    if c.x>b.x and c.y<b.y then direction=9
-    
-    if c.x=b.x and c.y>b.y then direction=8
-    if c.x=b.x and c.y<b.y then direction=2
-    
-    if c.x<b.x and c.y=b.y then direction=4
-    if c.x<b.x and c.y<b.y then direction=7
-    if c.x<b.x and c.y>b.y then direction=1
-    return direction
+function farthest(byref c as _cords, byref b as _cords) as integer
+    if c.x>b.x then
+		if c.y>b.y then return 3
+	    if c.y<b.y then	return 9
+		return 6 'if c.y=b.y then
+    elseif c.x<b.x then
+		if c.y>b.y then return 1
+		if c.y<b.y then	return 7
+		return 4 'if c.y=b.y then
+    else 'if c.x=b.x then
+		if c.y>b.y then return 2
+		if c.y<b.y then return 8
+		return 5 'if c.y=b.y then		'same spot might signal an error
+    EndIf
 end function
 
 '
