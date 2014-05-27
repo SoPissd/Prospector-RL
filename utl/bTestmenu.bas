@@ -1,6 +1,7 @@
 'bTestmenu.bas
 'print "bTestmenu.bas"
 '
+#define makesound					'are we even going to bind in any sound-library code 
 
 'bFoundation.
 
@@ -53,7 +54,9 @@
 	#undef main
 	#undef registerTests
 	
-	sleep
+	'sleep
+	
+	
 dim shared Fpsshow as short =1
 
 function Fpsupdate(iAction as Integer) as integer
@@ -107,13 +110,14 @@ function testmenu(iAction as Integer) as Integer
 		'clear the menu and get a new choice
 		aMenu.e=0		
 		m=aMenu.menu()
-		if (m<1) or (m=aMenu.iLines) then exit while
+		if uConsole.Closing orelse (m<1) orelse (m=aMenu.iLines) then exit while
 		'aMenu.loca=m
 		
 		'get the test and run it
 		s= tModule.Tests(m-1).fTest
 		cls
 		s()
+		uConsole.Closing=false
 		tScreen.xy(60,24)
 		uConsole.Pressanykey(0)		
 	Wend

@@ -89,7 +89,7 @@ function load() as short
 		if ok=true then
 			set(0)
 			For i= 1 To nSounds
-			   	fbs_Load_WAVFile("data/" &sounds(i) &".wav",@sound(1))
+			   	? fbs_Load_WAVFile("data/" &sounds(i) &".wav",@sound(1))
 				print ".";
 			Next
 			Print
@@ -106,6 +106,7 @@ end function
    
    
 function play(iSound As Short,iRepeats As Short=1,iDelay As Short=0) as short
+?"play",iSound
 	#IfNDef _sound
 		return 0
 	#else
@@ -187,6 +188,11 @@ end namespace'uSound
 		EndIf
 	Next
 	
+	aMenu.Addchoice("Volume 4","")
+	aMenu.Addchoice("Volume 3","")
+	aMenu.Addchoice("Volume 2","")
+	aMenu.Addchoice("Volume 1","")
+	aMenu.Addchoice("Volume 0","")
 	aMenu.Addchoice("Load Sounds","Load Sounds")
 	aMenu.Addchoice("Exit","Exit the menu")
 
@@ -201,12 +207,23 @@ end namespace'uSound
 		'clear the menu and get a new choice
 		aMenu.e=0		
 		m=aMenu.menu()
+		cls
+		?m
 		if (m<1) or (m=aMenu.iLines) then exit while
 		if m=aMenu.iLines-1 then
-			uSound.Load()
+			? "Loading... "
+			? uSound.Load()
+		elseif m=aMenu.iLines-2 then	?uSound.set(0)
+		elseif m=aMenu.iLines-3 then	?uSound.set(1)
+		elseif m=aMenu.iLines-4 then	?uSound.set(2)
+		elseif m=aMenu.iLines-5 then	?uSound.set(3)
+		elseif m=aMenu.iLines-6 then	?uSound.set(4)
 		else
-			uSound.Play(m)
+			? "Playing... "
+			? uSound.Play(m)
 		EndIf
+					sleep
+
 	Wend
 	End Sub
 
