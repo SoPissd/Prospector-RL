@@ -196,7 +196,7 @@ function Idle(iAction as integer=0) as integer
 			bIdling= 1
 		endif
 	endif
-	sleep(1)		'lets the operating system have all the time it needs/wants to show 0% cpu use.
+	sleep(1,1)		'lets the operating system have all the time it needs/wants to show 0% cpu use.
 	return iAction	'interpreted as a key
 End Function
 
