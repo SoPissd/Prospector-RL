@@ -41,15 +41,9 @@ inc("gSpacecombatfunctions.bas","")
 inc("gColony.bas",				"")
 inc("gPlanetmenu.bas",			"")
 inc("gPlaneteffect.bas",		"")
-
-'inc("xConsts.bas",				"")
-'inc("xEnums.bas",				"")
-'inc("xVars.bas",				"")
-
 '
 inc("gGamekeys.bas",			"'legacy' action-wiring")
 'inc("vMenu.bas",				"menu with graphics as before, for reference. should wind up with an override maybe")
-'inc("xTypes.bas",				"")
 
 #if false
 
