@@ -73,17 +73,16 @@ function ep_needs_spacesuit(slot As Short,c As _cords,ByRef reason As String="")
 End function
 
 
-
 function ep_atship() As Short
-    Dim As Short slot,a
-    slot=player.map
-'DbgLogExplorePlanet("ep_atship")
-    If awayteam.c.y=player.landed.y And awayteam.c.x=player.landed.x And slot=player.landed.m Then
+    Dim As Short slot= player.map
+    Dim As Short a
+    If (slot=player.landed.m) AndAlso (awayteam.c.y=player.landed.y) AndAlso (awayteam.c.x=player.landed.x) Then
+		'DbgLogExplorePlanet("ep_atship")
+        rlprint "You are at the ship. Press " &key_la &" to launch."
         location=lc_onship
-        rlprint "You are at the ship. Press "&key_la &" to launch."
-        If awayteam.oxygen<awayteam.oxymax Then rlprint "Refilling oxygen.",10
+        If (awayteam.oxygen<awayteam.oxymax) Then rlprint "Refilling oxygen.",10
         awayteam.oxygen=awayteam.oxymax
-        If (awayteam.movetype=2 Or awayteam.movetype=3) And awayteam.jpfuel<awayteam.jpfuelmax Then
+        If ((awayteam.movetype=2) Or (awayteam.movetype=3)) And (awayteam.jpfuel<awayteam.jpfuelmax) then
             rlprint "Refilling Jetpacks",10
             awayteam.jpfuel=awayteam.jpfuelmax
         EndIf
@@ -115,6 +114,7 @@ function ep_atship() As Short
         Return 0
     EndIf
 End function
+
 
 function ep_planetroute(route() As _cords,move As Short,start As _cords, target As _cords,rollover As Short) As Short
     Dim As Short x,y,astarmap(60,20)

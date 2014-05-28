@@ -212,8 +212,8 @@ function sort_items(list() as _items) as short
     do
     flag=0
     for i=1 to l-1
-        if list(i).ty>0 and list(i).ty=list(i+1).ty then
-            if list(i).v1>list(i+1).v1 then 
+        if (list(i).ty>0) AndAlso (list(i).ty=list(i+1).ty) then
+            if (list(i).v1>list(i+1).v1) then 
                 swap list(i),list(i+1) 
                 flag=1
             endif

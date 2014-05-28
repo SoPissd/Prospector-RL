@@ -165,7 +165,7 @@ function count_and_make_weapons(st as short) as short
         endif
     next
     
-    do
+    do	'sort_weapons
         flag=0
         for a=1 to b-1
             if (wsinv(a).made>wsinv(a+1).made) or (wsinv(a).made=wsinv(a+1).made and wsinv(a).dam>wsinv(a+1).dam) then

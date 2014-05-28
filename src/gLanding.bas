@@ -172,151 +172,150 @@ function landing(mapslot As Short,lx As Short=0,ly As Short=0,Test As Short=0) A
                 EndIf
             EndIf
         EndIf
+
         If isgardenworld(nextmap.m) Then changemoral(3,0)
         awayteam.oxygen=awayteam.oxymax
         awayteam.jpfuel=awayteam.jpfuelmax
 
-        Else
-            awayteam=savefrom(0).awayteam
-            nextmap=savefrom(0).ship
-            nextmap.m=savefrom(0).map
-        EndIf
+    Else
+        awayteam=savefrom(0).awayteam
+        nextmap=savefrom(0).ship
+        nextmap.m=savefrom(0).map
+    EndIf
+    
+    If mapslot>0 Then play_sound(11)
+    
+    If player.dead=0 And awayteam.hp>0 Then
         
-        If mapslot>0 Then play_sound(11)
-        
-        If player.dead=0 And awayteam.hp>0 Then
-            
-            Do
-'                if _debug=2704 then print #freefile,"outerloop1"
-                savegame
-'                if _debug=2704 then print #freefile,"outerloop2"
-                equip_awayteam(slot)
-'                if _debug=2704 then print #freefile,"outerloop3"
-                nextmap=explore_planet(nextmap,slot)
-'                if _debug=2704 then print #freefile,"outerloop4"
-                set__color(11,0)
-                removeequip
-'                if _debug=2704 then print #freefile,"outerloop5"
-                c=1
-                For b=2 To 255
-                    If crew(b).hp<=0 Then
-                        crew(b)=crew(0)
-                    Else
-                        c+=1
-                    EndIf
-                Next
-                If c>127 Then c=127
-
-                For b=2 To c-1
-                    If crew(b).hpmax=0 Then
-                        Swap crew(b),crew(b+1)
-                    EndIf
-                Next
-                
-'                if _debug=2704 then print #freefile,"outerloop6:"&nextmap.m
-            Loop Until nextmap.m=-1 Or player.dead<>0
-
-            For c=0 To 127
-                For b=6 To 127
-                    If crew(b).hp<=0 Then Swap crew(b),crew(b+1)
-                Next
-            Next
-            For b=0 To 127
-                If crew(b).onship=4 Then
-                    crew(b).onship=crew(b).oldonship
-                EndIf
-            Next
-            removeequip
-            'artifacts?
-            If reward(5)>0 Then
-                If reward(5)=1 Then
-                    player.fuelmax=200
-                EndIf
-                If reward(5)=2 Then
-                    player.stuff(1)=3
-                EndIf
-                If reward(5)=3 Then
-                    slot=get_random_system()
-                    If slot<0 Then slot=rnd_range(0,laststar)
-                    map(slot).discovered=1
-                    For b=1 To 9
-                        If map(slot).planets(b)>0 Then
-                        If planetmap(0,0,map(slot).planets(b))=0 Then makeplanetmap(map(slot).planets(b),b,map(sys).spec)
-                        reward(0)=reward(0)+1200
-                        reward(7)=reward(7)+600
-                        For xx=0 To 60
-                            For yy=0 To 20
-                                If planetmap(xx,yy,map(slot).planets(b))<0 Then planetmap(xx,yy,map(slot).planets(b))=planetmap(xx,yy,map(slot).planets(b))*-1
-                            Next
-                        Next
-                        EndIf
-                    Next
-                    rlprint "the data from the computer describes a system with the coordinates "& map(slot).c.x &":" & map(slot).c.y
-                EndIf
-                If reward(5)=4 Then
-                    player.stuff(2)=3
-                EndIf
-                If reward(5)=5 Then
-                    player.stuff(0)=3
-                EndIf
-                reward(5)=0
-
-            EndIf
-        EndIf
-        c=6
-        dis=0
-        If crew(1).hp<=0 And player.dead=0 Then
-            crew(1).hp=crew(1).hpmax
-            b=rnd_range(1,3)
-            If b=1 Then rlprint "Captain "&crew(1).n &" was just unconcious.",10
-            If b=2 Then rlprint "Captain "&crew(1).n &" got better.",10
-            If b=3 Then rlprint "Captain "&crew(1).n &" miracoulously recovered.",10
-        EndIf
-        For b=1 To 128
-            If crew(b).hp<crew(b).hpmax And crew(b).hp>0 And crew(b).disease=0 Then crew(b).hp=crew(b).hpmax
-        Next
-        For b=6 To 128
-            If crew(b).hp<=0 Then
-                crew(b)=crew(0)
-            Else
-                If crew(b).disease>dis Then dis=crew(b).disease
-                c+=1
-            EndIf
-        Next
-        awayteam.disease=dis
-        d=0
         Do
-            d+=1
-            a=0
-            For b=6 To c-1
-                If crew(b).hpmax=0 And crew(b+1).hpmax>0 Then
-                    Swap crew(b),crew(b+1)
-                    a=1
+            savegame
+            equip_awayteam(slot)
+            nextmap=explore_planet(nextmap,slot)
+            set__color(11,0)
+            removeequip
+
+            c=1
+            For b=2 To 255
+                If crew(b).hp<=0 Then
+                    crew(b)=crew(0)
+                Else
+                    c+=1
                 EndIf
             Next
-        Loop Until a=0 Or d>=1000
-        For b=0 To lastitem
-            If item(b).w.s<0 Then
-                item(b).w.s=-1
-                item(b).w.m=0
-                item(b).w.p=0
+            If c>127 Then c=127
+
+            For b=2 To c-1
+                If crew(b).hpmax=0 Then
+                    Swap crew(b),crew(b+1)
+                EndIf
+            Next
+            
+'                if _debug=2704 then print #freefile,"outerloop6:"&nextmap.m
+        Loop Until nextmap.m=-1 Or player.dead<>0
+
+		'sort_undead_crew
+        For c=0 To 127
+            For b=6 To 127
+                If crew(b).hp<=0 Then Swap crew(b),crew(b+1)
+            Next
+        Next
+		
+        For b=0 To 127
+            If crew(b).onship=4 Then
+                crew(b).onship=crew(b).oldonship
             EndIf
         Next
-        player.landed.m=0
-        display_stars(1)
-        display_ship
-        If awayteam.stuff(8)=1 And player.dead=0 And Test=0 And planets(slot).depth=0 Then
-            If skill_test(player.pilot(0)+player.tractor,st_easy,"Pilot:") Then
-                rlprint "You rendevouz with your satellite and take it back in",10
-            Else
-                rlprint "When trying to rendevouz with your satellite your pilot rams and destroys it.",12
-                item(findbest(10,-1))=item(lastitem)
-                lastitem=lastitem-1
-                no_key=keyin
+        removeequip
+        'artifacts?
+        If reward(5)>0 Then
+            If reward(5)=1 Then
+                player.fuelmax=200
             EndIf
-        Else
-            rlprint ""
+            If reward(5)=2 Then
+                player.stuff(1)=3
+            EndIf
+            If reward(5)=3 Then
+                slot=get_random_system()
+                If slot<0 Then slot=rnd_range(0,laststar)
+                map(slot).discovered=1
+                For b=1 To 9
+                    If map(slot).planets(b)>0 Then
+                    If planetmap(0,0,map(slot).planets(b))=0 Then makeplanetmap(map(slot).planets(b),b,map(sys).spec)
+                    reward(0)=reward(0)+1200
+                    reward(7)=reward(7)+600
+                    For xx=0 To 60
+                        For yy=0 To 20
+                            If planetmap(xx,yy,map(slot).planets(b))<0 Then planetmap(xx,yy,map(slot).planets(b))=planetmap(xx,yy,map(slot).planets(b))*-1
+                        Next
+                    Next
+                    EndIf
+                Next
+                rlprint "the data from the computer describes a system with the coordinates "& map(slot).c.x &":" & map(slot).c.y
+            EndIf
+            If reward(5)=4 Then
+                player.stuff(2)=3
+            EndIf
+            If reward(5)=5 Then
+                player.stuff(0)=3
+            EndIf
+            reward(5)=0
+
         EndIf
+    EndIf
+    c=6
+    dis=0
+    If crew(1).hp<=0 And player.dead=0 Then
+        crew(1).hp=crew(1).hpmax
+        b=rnd_range(1,3)
+        If b=1 Then rlprint "Captain "&crew(1).n &" was just unconcious.",10
+        If b=2 Then rlprint "Captain "&crew(1).n &" got better.",10
+        If b=3 Then rlprint "Captain "&crew(1).n &" miracoulously recovered.",10
+    EndIf
+    For b=1 To 128
+        If crew(b).hp<crew(b).hpmax And crew(b).hp>0 And crew(b).disease=0 Then crew(b).hp=crew(b).hpmax
+    Next
+    For b=6 To 128
+        If crew(b).hp<=0 Then
+            crew(b)=crew(0)
+        Else
+            If crew(b).disease>dis Then dis=crew(b).disease
+            c+=1
+        EndIf
+    Next
+    awayteam.disease=dis
+    d=0
+    Do
+        d+=1
+        a=0
+        For b=6 To c-1
+            If crew(b).hpmax=0 And crew(b+1).hpmax>0 Then
+                Swap crew(b),crew(b+1)
+                a=1
+            EndIf
+        Next
+    Loop Until a=0 Or d>=1000
+    For b=0 To lastitem
+        If item(b).w.s<0 Then
+            item(b).w.s=-1
+            item(b).w.m=0
+            item(b).w.p=0
+        EndIf
+    Next
+    player.landed.m=0
+    display_stars(1)
+    display_ship
+    If awayteam.stuff(8)=1 And player.dead=0 And Test=0 And planets(slot).depth=0 Then
+        If skill_test(player.pilot(0)+player.tractor,st_easy,"Pilot:") Then
+            rlprint "You rendevouz with your satellite and take it back in",10
+        Else
+            rlprint "When trying to rendevouz with your satellite your pilot rams and destroys it.",12
+            item(findbest(10,-1))=item(lastitem)
+            lastitem=lastitem-1
+            no_key=keyin
+        EndIf
+    Else
+        rlprint ""
+    EndIf
     Return 0
 End function
 

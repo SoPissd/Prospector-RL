@@ -69,7 +69,9 @@ function lb_listmake(lobk() as string, lobn() as short, lobc() as short,lobp()as
         endif
     next
     last=i
-    do
+	
+	
+    do 'sort_logbook_list
     f=0
         for j=1 to last-1
             if map(lobn(j)).c.x>map(lobn(j+1)).c.x then
@@ -81,6 +83,8 @@ function lb_listmake(lobk() as string, lobn() as short, lobc() as short,lobp()as
             endif
         next
     loop until f=0
+	
+	
     for a=laststar+1 to laststar+wormhole
         if map(a).discovered>0 then
             i+=1
@@ -111,7 +115,8 @@ function lb_filter(lobk() as string, lobn() as short, lobc() as short,lobp() as 
     last2=last
     c=textmenu(bg_logbook,"Filter & Sort/Distance from base/Distance from ship/Spectral type/Systems with unexplored planets/Systems with gas giants/Systems with asteroid belts/Exit")
     if c=1 then
-        do
+	
+        do ' sort_logbook_distance_base
             f=0
             cc+=1
             for i=1 to last-1
@@ -124,9 +129,11 @@ function lb_filter(lobk() as string, lobn() as short, lobc() as short,lobp() as 
                 endif
             next
         loop until f=0 or cc>1000
+		
     endif
     if c=2 then
-        do
+	
+        do ' sort_logbook_distance_ship
             f=0
             cc+=1
             for i=1 to last-1
@@ -139,6 +146,7 @@ function lb_filter(lobk() as string, lobn() as short, lobc() as short,lobp() as 
                 endif
             next
         loop until f=0 or cc>1000
+		
     endif
     if c=3 then 
         c2=textmenu(bg_logbook,"Spectral type:/"&spectralname(1) &"/"&spectralname(2) &"/"&spectralname(3) &"/"&spectralname(4) &"/"&spectralname(5) &"/"&spectralname(6) &"/"&spectralname(7) &"/"& spectralname(8) & "/Exit",,20,2)
