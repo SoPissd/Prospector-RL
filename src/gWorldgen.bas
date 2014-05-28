@@ -23,8 +23,14 @@
 #endif'test
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tWorldgen -=-=-=-=-=-=-=-
+Const show_eventp=0 		'Show eventplanets
+Const _debug_bones=0
+Const Show_all_specials=0	'38 'special planets already discovered
+Const show_dangerous=0
+Const _clearmap=0
+Const show_space=0
 
-declare function make_spacemap(iBg as short=0) as short
+declare function make_spacemap() as short
 
 'declare function findcompany(c as short) as short
 'declare function create_spacemap() as short
@@ -316,13 +322,13 @@ function create_spacemap(iBg as short=0) as short
     sleep 1250
 #if __FB_DEBUG__
     dim key as string
-    key=keyin
+    key=uConsole.keyinput()
 #endif
     return 0
 end function
 
 
-function make_spacemap(iBg as short=0) as short
+function make_spacemap() as short
     dim as short a,f,b,c,d,e,astcou,gascou,x,y,i
     dim as byte makelog=0
     dim as _cords p1,p2,p3
@@ -333,8 +339,6 @@ function make_spacemap(iBg as short=0) as short
         open "creation.log" for output as #f
     endif
     tScreen.set(1)
-	if iBg<0 then iBg=-iBg else iBg=0
-	if iBg=0 then tGraphics.Randombackground() 
     
     set__color 1,1
     for a=0 to 3
@@ -585,7 +589,7 @@ function make_spacemap(iBg as short=0) as short
     sleep 1250
 #if __FB_DEBUG__
     dim key as string
-    key=keyin
+    key=uConsole.keyinput()
 #endif
     return 0
 end function

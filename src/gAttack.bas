@@ -23,6 +23,7 @@
 #endif'test
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tAttack -=-=-=-=-=-=-=-
+Dim Shared vacuum(60,20) As Byte
 
 
 'declare function hitmonster(defender As _monster,attacker As _monster,mapmask() As Byte, first As Short=-1, last As Short=-1) As _monster

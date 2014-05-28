@@ -23,12 +23,15 @@
 #endif'test
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+Dim Shared As Byte pf_stp=1
+
 Type _pfcords
     x As Short
     y As Short
     c As UInteger
     i As Byte
 End Type
+
 #endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tWaypoints -=-=-=-=-=-=-=-

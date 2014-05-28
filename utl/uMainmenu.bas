@@ -43,8 +43,8 @@ Type tMenuCore Extends tArrayScroller'Object
 	dim e as short			=0
 	dim te as string		=""
 	dim th as string		="" 
-	dim x as short			=2 
-	dim y as short			=2 
+	'dim x as short			=2 
+	'dim y as short			=2 
 	dim blocked as short	=0 
 	dim markesc as short	=0
 	dim st as short			=-1

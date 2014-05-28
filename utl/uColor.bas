@@ -239,7 +239,7 @@ end function
 		return 0
 	End Function
 	
-	function Colortest() as integer
+	sub Colortest()
 		? "test()"
 		prt()
 		
@@ -247,7 +247,7 @@ end function
 		? "tScreen.res()"
 		prt(72)
 		
-		return 0
+		return 
 		
 		tScreen.set(1)
 		? "tScreen.set(1)"
@@ -261,8 +261,8 @@ end function
 		? "tScreen.set(1)"
 		prt()
 		
-		return 0
-	End Function
+		return
+	End sub
 	
 	#ifdef test
 		? Colortest()

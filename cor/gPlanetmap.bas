@@ -51,8 +51,9 @@ declare function floodfill3(x as short,y as short,map() as short) as short
 declare function checkdoor(x as short,y as short, map() as short) as short
 declare function togglingfilter(slot as short, high as short=1, low as short=2) as short     
 
+declare function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for windows less than 60 tiles wide
+declare function planet_cursor(p as _cords,mapslot as short,byref osx as short,shteam as byte) as string
 
-'declare function planet_cursor(p as _cords,mapslot as short,byref osx as short,shteam as byte) as string
 'declare function get_planet_cords(byref p as _cords,mapslot as short,shteam as byte=0) as string
 'declare function isbuilding(x as short,y as short,map as short) as short 
 'declare function get_colony_building(map as short) as _cords
@@ -418,6 +419,17 @@ function fixstarmap() as short
 end function
 
 '
+
+function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for windows less than 60 tiles wide
+    dim osx as short
+    osx=x-_mwx/2
+    if wrap>0 then
+        if osx<0 then osx=0
+        if osx>60-_mwx then osx=60-_mwx
+    endif
+    if _mwx=60 then osx=0
+    return osx
+end function
 
 function planet_cursor(p as _cords,mapslot as short,byref osx as short,shteam as byte) as string
     dim key as string

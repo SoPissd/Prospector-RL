@@ -77,6 +77,8 @@ function ep_gives(awayteam As _monster, ByRef nextmap As _cords, shipfire() As _
     Dim towed As _ship
     Dim As String text
     Dim As _cords p,p1,p2
+    dim as integer x,y
+    
 	DbgLogExplorePlanet("in ep_gives: " &tmap(awayteam.c.x,awayteam.c.y).gives)
     awayteam.e.add_action(10)
     slot=player.map

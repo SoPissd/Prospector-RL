@@ -25,6 +25,10 @@
 #endif'test
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tExplorespace -=-=-=-=-=-=-=-
+Const show_mapnr=0
+Const _testspacecombat=0
+Dim Shared liplanet As Short 'last input planet
+Dim Shared stationroll As Short
 
 declare function scanning() As Short
 declare function spacestation(st As Short) As _ship
@@ -46,11 +50,12 @@ declare function getplanet(sys as short,forcebar as byte=0) as short
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tExplorespace -=-=-=-=-=-=-=-
 
-namespace tExplorespace
+namespace nsExplorespace
 function init(iAction as integer) as integer
+	pExplorespace = @explore_space
 	return 0
 end function
-end namespace'tExplorespace
+end namespace'nsExplorespace
 
 
 #define cut2top
@@ -82,7 +87,7 @@ function wormhole_navigation() As Short
 
         set__color( 0,11)
 
-        If player.c.x-player.osx>=0 And player.c.x-player.osx<=_mwx And player.c.y-player.osy>=0 And .y-player.osy<=20 Then
+        If (player.c.x-player.osx>=0) Andalso (player.c.x-player.osx<=_mwx) Andalso (player.c.y-player.osy>=0) Andalso (player.c.y-player.osy<=20) Then
             If configflag(con_tiles)=0 Then
                 Put ((player.c.x-player.osx)*_fw1,( player.c.y-player.osy)*_fh1),stiles(player.di,player.ti_no),trans
             Else
@@ -914,7 +919,7 @@ function spacestation(st As Short) As _ship
         mtext=mtext &"/ Retirement"
         mtext=mtext &"/Leave station"
         display_ship()
-        bg_parent=bg_shiptxt
+        'bg_parent=bg_shiptxt
         a=textMenu(bg_shiptxt,mtext,,,,,1)
         If a=1 Then
             If quarantine<8 Then
@@ -1427,17 +1432,19 @@ function explore_space() As Short
 #endif
     tScreen.set(0)
     Cls
-    bg_parent=bg_shipstarstxt
+    'bg_parent=bg_shipstarstxt
     location=lc_onship
     display_stars(1)
     display_ship
     tScreen.update()
-    tScreen.set(0)
+    
+    tScreen.set(0)    
     Cls
-    bg_parent=bg_shipstarstxt
+    'bg_parent=bg_shipstarstxt
     display_stars(1)
     display_ship
     tScreen.update()
+    
     tScreen.set(0)
 #if __FB_DEBUG__
     If debug=10 Then
@@ -1536,7 +1543,7 @@ function explore_space() As Short
             
             tScreen.set(0)
             Cls
-            bg_parent=bg_shipstarstxt
+            'bg_parent=bg_shipstarstxt
             location=lc_onship
             display_stars(1)
             display_ship(1)
@@ -1939,7 +1946,7 @@ End function
 
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: tExplorespace -=-=-=-=-=-=-=-
-	tModule.register("tExplorespace",@tExplorespace.init()) ',@tExplorespace.load(),@tExplorespace.save())
+	tModule.register("gExplorespace",@nsExplorespace.init()) ',@tExplorespace.load(),@tExplorespace.save())
 #endif'main
 
 #ifdef test

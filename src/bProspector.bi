@@ -7,12 +7,9 @@ inc("cPoker.bas",				"")
 #endif
 
 
-
-
-inc("xConsts.bas",				"")
-inc("xTypes.bas",				"")
-inc("xEnums.bas",				"")
-inc("xVars.bas",				"")
+inc("gSpace.bas",				"")
+inc("gWorldgen.bas",			"")
+inc("gStartnewgame.bas",		"")
 
 inc("cCards.bas",				"Playing card rendering")
 inc("cCasino.bas",				"")
@@ -39,19 +36,23 @@ inc("gWaypoints.bas",			"")
 inc("gAutopilot.bas",			"")
 inc("gExplorespace.bas",		"")
 inc("gProbes.bas",				"")
-inc("gSpace.bas",				"")
 inc("gSpacecombat.bas",			"")
 inc("gSpacecombatfunctions.bas","")
-inc("gBones.bas",				"")
 inc("gColony.bas",				"")
 inc("gPlanetmenu.bas",			"")
 inc("gPlaneteffect.bas",		"")
-inc("gWorldgen.bas",			"")
-'inc("gGameinit.bas",			"final initialization coordination")
+
+'inc("xConsts.bas",				"")
+'inc("xEnums.bas",				"")
+'inc("xVars.bas",				"")
+
+'
 inc("gGamekeys.bas",			"'legacy' action-wiring")
 'inc("vMenu.bas",				"menu with graphics as before, for reference. should wind up with an override maybe")
+'inc("xTypes.bas",				"")
 
 #if false
+
 #endif
 
 

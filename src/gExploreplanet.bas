@@ -28,6 +28,9 @@
 #endif'test
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+Const show_eq=0 			'Show earthquakes
+Const _spawnoff=0
+
 'Flag 28=techgoods delivered to star creatures
 Type _ae
     c As _cords
@@ -692,8 +695,10 @@ End function
 
 
 function alienbomb(c As Short,slot As Short) As Short
-    Dim As Short a,b,d,e,f,osx,x2
-    Dim As _cords p,p1
+    dim As Short a,b,d,e,f,osx,x2
+    dim as integer x,y
+    dim As _cords p,p1
+    
     p1.x=item(c).w.x
     p1.y=item(c).w.y
     osx=calcosx(awayteam.c.x,planets(slot).depth)

@@ -10,27 +10,28 @@ DeclareDependencies()
 'Const Pi As Double = 3.141592653589793
 'Const Eu As Double = 2.718281828459045
 
-Type vector
-        x As Integer
-        y As Integer
-        Declare Constructor(x As Integer, y As Integer)
-End Type
+'Type vector
+'        x As Integer
+'        y As Integer
+'        Declare Constructor(x As Integer, y As Integer)
+'End Type
+'
+'Type _sym_matrix
+'        xm As Integer
+'        vmax As Integer
+'        vmin As Integer
+'        item As Integer Ptr
+'
+'        Declare function get_ind(x As Integer,y As Integer) As Integer
+'        Declare function set_val(x As Integer,y As Integer, v As Integer) As Integer
+'        Declare function get_val(x As Integer,y As Integer) As Integer
+'        Declare Property Val(xy As vector) As Integer
+'        Declare Property Val(xy As vector,v As Integer)
+'
+'        Declare Constructor (ByVal size As Integer)
+'        Declare Destructor ()
+'End Type
 
-Type _sym_matrix
-        xm As Integer
-        vmax As Integer
-        vmin As Integer
-        item As Integer Ptr
-
-        Declare function get_ind(x As Integer,y As Integer) As Integer
-        Declare function set_val(x As Integer,y As Integer, v As Integer) As Integer
-        Declare function get_val(x As Integer,y As Integer) As Integer
-        Declare Property Val(xy As vector) As Integer
-        Declare Property Val(xy As vector,v As Integer)
-
-        Declare Constructor (ByVal size As Integer)
-        Declare Destructor ()
-End Type
 #endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tMath -=-=-=-=-=-=-=-
@@ -39,10 +40,11 @@ declare function urn(sMin as short, sMax as short,mult as short,bonus as short) 
 declare function round_nr(i as single,c as short) as single
 declare function round_str(i As Double,c As Short) As String
 declare function find_low(list() as short,last as short,start as short=1) as short
+
 declare function content(r as _rect,tile as short,map()as short) as integer
+
 declare function maximum(a as double,b as double) as double
 declare function minimum(a as double,b as double) as double
-declare function fill_rect(r as _rect,wall as short, flor as short,map() as short) as short
 
 'declare function C_to_F(c as single) as single
 'declare function find_high(list() as short,last as short, start as short=1) as short
@@ -51,7 +53,6 @@ declare function fill_rect(r as _rect,wall as short, flor as short,map() as shor
 'declare function getany(possible() as short) as short
 'declare function nextpoint(byval start as _cords, byval target as _cords) as _cords
 'declare function line_in_points(b as _cords,c as _cords,p() as _cords) as short
-'declare function rndrectwall(r as _rect,d as short=5) as _cords
 
 #endif'head
 #ifdef main
@@ -63,61 +64,61 @@ function init(iAction as integer) as integer
 end function
 end namespace'tMath
 
+''
 '
-
-Constructor vector (x As Integer, y As Integer)
-        this.x = x
-        this.y = y
-End Constructor
-
+'Constructor vector (x As Integer, y As Integer)
+'        this.x = x
+'        this.y = y
+'End Constructor
 '
-
-Constructor _sym_matrix (ByVal size As Integer)
-        xm = size
-        item = New Integer[size * size]
-End Constructor
-
-Destructor _sym_matrix
-        Delete[] item
-End Destructor
-
-function _sym_matrix.get_ind(x As Integer, y As Integer) As Integer
-        Dim i As Integer
-        With This
-                x+=1
-                y+=1
-                If x>xm Then x=xm
-                If y>xm Then y=xm
-                If x<1 Then x=1
-                If y<1 Then y=1
-                If x>y Then Swap x,y
-                i=x+y*(y-1)/2
-        End With
-        Return i
-End function
-
-function _sym_matrix.set_val(x As Integer,y As Integer,v As Integer) As Integer
-        Dim i As Integer
-        i=this.get_ind(x,y)
-        If v>this.vmax And this.vmax<>0 Then v=this.vmax
-        If v<this.vmin Then v=this.vmin
-        this.item[i]=v
-        Return 0
-End function
-
-function _sym_matrix.get_val(x As Integer,y As Integer) As Integer
-        Dim i As Integer
-        i=this.get_ind(x,y)
-        Return this.item[i]
-End function
-
-Property _sym_matrix.Val(xy As vector) As Integer
-        Return this.get_val(xy.x,xy.y)
-End Property
-
-Property _sym_matrix.Val(xy As vector,v As Integer)
-        this.set_val(xy.x,xy.y,v)
-End Property
+''
+'
+'Constructor _sym_matrix (ByVal size As Integer)
+'        xm = size
+'        item = New Integer[size * size]
+'End Constructor
+'
+'Destructor _sym_matrix
+'        Delete[] item
+'End Destructor
+'
+'function _sym_matrix.get_ind(x As Integer, y As Integer) As Integer
+'        Dim i As Integer
+'        With This
+'                x+=1
+'                y+=1
+'                If x>xm Then x=xm
+'                If y>xm Then y=xm
+'                If x<1 Then x=1
+'                If y<1 Then y=1
+'                If x>y Then Swap x,y
+'                i=x+y*(y-1)/2
+'        End With
+'        Return i
+'End function
+'
+'function _sym_matrix.set_val(x As Integer,y As Integer,v As Integer) As Integer
+'        Dim i As Integer
+'        i=this.get_ind(x,y)
+'        If v>this.vmax And this.vmax<>0 Then v=this.vmax
+'        If v<this.vmin Then v=this.vmin
+'        this.item[i]=v
+'        Return 0
+'End function
+'
+'function _sym_matrix.get_val(x As Integer,y As Integer) As Integer
+'        Dim i As Integer
+'        i=this.get_ind(x,y)
+'        Return this.item[i]
+'End function
+'
+'Property _sym_matrix.Val(xy As vector) As Integer
+'        Return this.get_val(xy.x,xy.y)
+'End Property
+'
+'Property _sym_matrix.Val(xy As vector,v As Integer)
+'        this.set_val(xy.x,xy.y,v)
+'End Property
 
 
 function urn(sMin as short, sMax as short,mult as short,bonus as short) as short 
@@ -199,48 +200,6 @@ function sub0(a as single,b as single) as single
     c=a-b
     if c<0 then c=0
     return c
-end function
-
-function content(r as _rect,tile as short,map()as short) as integer
-    dim as short con,x,y
-    for x=r.x to r.x+r.w
-      for y=r.y to r.y+r.h
-          if map(x,y)<>tile then con=con+1
-      next
-    next
-    return con
-end function
-
-function findrect(tile as short,map() as short,er as short=10,fi as short=60) as _rect
-    dim as _rect best,current
-    dim as short x,y,x2,y2,com,dx,dy,u,besta
-    
-    ' er = fehlerrate, up to er sqares may be something else
-    ' fi = stop looking if one is larger than fi
-    
-    besta=15
-    for x=0 to 60
-        for y=0 to 20
-            for x2=x+3 to 60
-                for y2=y+3 to 20
-                    current.x=x
-                    current.y=y
-                    current.w=x2-x
-                    current.h=y2-y
-                    if current.w*current.h>besta then
-                        if map(current.x,current.y)=tile and  map(current.x+current.w,current.y)=tile and  map(current.x,current.y+current.h)=tile and  map(current.x+current.w,current.y+current.h)=tile then
-                            if content(current,tile,map())<=er then 
-                                best=current
-                                besta=best.h*best.w
-                                if besta>fi then exit for,for,for,for
-                            endif
-                        endif
-                    endif
-                next
-            next
-        next
-    next
-    return best
 end function
 
 function maximum(a as double,b as double) as double
@@ -375,76 +334,11 @@ end function
 
 
 
-
-function fill_rect(r as _rect,wall as short, flor as short,map() as short) as short
-    dim as short x,y 
-    for x=r.x to r.x+r.w
-        for y=r.y to r.y+r.h
-            
-            if x=r.x or y=r.y or x=r.x+r.w or y=r.y+r.h then
-                map(x,y)=wall
-            else 
-                map(x,y)=flor
-            endif
-        next
-    next
-    return 0
-end function
-
-function rndrectwall(r as _rect,d as short=5) as _cords
-    dim p as _cords
-    if d=5 then 
-        do
-            d=rnd_range(1,8)
-            if d=4 then d=d+1
-        loop until frac(d/2)=0
-    endif
-    if d=1 then
-        p.x=r.x
-        p.y=r.y+r.h
-    endif
-    if d=2 then 
-        p.y=r.y+r.h
-        p.x=rnd_range(r.x+1,r.x+r.w-2)
-    endif 
-    if d=3 then
-        p.x=r.x+r.h
-        p.y=r.y+r.h
-    endif
-    if d=4 then
-        p.x=r.x
-        p.y=rnd_range(r.y+1,r.y+r.h-2)
-    endif
-    if d=6 then
-        p.x=r.x+r.w
-        p.y=rnd_range(r.y+1,r.y+r.h-2)
-    endif
-    if d=7 then
-        p.x=r.x
-        p.y=r.y
-    endif
-    if d=8 then
-        p.x=rnd_range(r.x+1,r.x+r.w-2)
-        p.y=r.y
-    endif
-    if d=9 then
-        p.x=r.x+r.w
-        p.y=r.y+r.h
-    endif
-    return p
-end function
-
-
-#define cut2bottom
 #endif'main
-
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: tMath -=-=-=-=-=-=-=-
 	tModule.register("tMath",@tMath.init()) ',@tMath.load(),@tMath.save())
 #endif'main
-
-
-
 #if (defined(test) or defined(registerTests))
 #print -=-=-=-=-=-=-=- TEST:  -=-=-=-=-=-=-=-
 

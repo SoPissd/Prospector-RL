@@ -75,3 +75,6 @@ Dim Shared As Integer _process_priority_class_, _thread_priority_
 #EndMacro
 
 ''=============================================================================
+
+'COUNTER_BEGIN()
+'COUNTER_END()

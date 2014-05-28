@@ -25,13 +25,14 @@ Dim Shared As Byte _consoleindent=0
 #endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tPrint -=-=-=-=-=-=-=-
-
-declare function rlprint(t as string, col as short=11) as short
-declare function askyn(q as string,col as short=11,sure as short=0) as short
-declare function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for windows less than 60 tiles wide
-
 'declare function scrollup(b as short) as short
 'declare function locEOL() as _cords
+
+declare function rlprint(t as string, col as short=11) as integer
+declare function rlmessages() as integer
+
+declare function askyn(q as string,col as short=11,bSure as integer=false) as integer
+
 
 #endif'head
 #ifdef main
@@ -48,7 +49,7 @@ function init(iAction as integer) as integer
 end function
 end namespace'tPrint
 
-function scrollup(b as short) as short
+function scrollup(b as short) as integer
     dim as short a,c
     for c=0 to b
         displaytext(255)=""
@@ -89,7 +90,7 @@ function locEOL() as _cords
 end function
 
 
-function rlprint(t as string, col as short=11) as short
+function rlprint(t as string, col as short=11) as integer
 
 	dim as Integer no_key
     dim as short a,b,c,delay
@@ -239,39 +240,49 @@ _consoleindent=1
 end function
 
 
-function calcosx(x as short,wrap as byte) as short 'Caculates Ofset X for windows less than 60 tiles wide
-    dim osx as short
-    osx=x-_mwx/2
-    if wrap>0 then
-        if osx<0 then osx=0
-        if osx>60-_mwx then osx=60-_mwx
-    endif
-    if _mwx=60 then osx=0
-    return osx
+function rlmessages() as integer
+    dim aKey as string
+    dim as short a,ll
+    'screenshot(1)
+    ll=tScreen.gth  '_lines*_fh1/_fh2
+    set__color( 15,0)
+    cls
+    tScreen.drawfx(0,_fh2)
+    for a=1 to ll
+        locate a,1
+        set__color( dtextcol(a),0)
+        tScreen.draw2c(0,a,displaytext(a))
+    next
+    tScreen.drawfx(0,_fh2)
+    aKey=uConsole.keyinput()
+'    no_key=keyin(,1)
+    'cls
+    'screenshot(2)
+    return 0
 end function
 
 
-function askyn(q as string,col as short=11,sure as short=0) as short
+function askyn(q as string,col as short=11,bSure as integer=false) as integer
+    dim aKey as string
     rlprint(q+"? (y/n) ",col)
-    dim key as string '*1
     do
-        key=uConsole.keyinput()
+        aKey=uConsole.keyinput()
         'displaytext(_lines-1) &= key
-        if key <>"" then 
-			rlprint ""
+        if aKey<>"" then 
+			rlprint("")
 			'if configflag(con_anykeyno)=0 and not isKeyYes(key) then key="N"
         endif
-    loop until (uConsole.Closing<>0) or (uConsole.isKeyNo(key)) or uConsole.isKeyYes(key)  
+    loop until uConsole.Closing orelse uConsole.isKeyNo(aKey) orelse uConsole.isKeyYes(aKey)  
     
-    if uConsole.isKeyYes(key) then 
-	    if (sure=1) then 
+    if uConsole.isKeyYes(aKey) then 
+	    if bSure then 
 			return askyn("Are you sure? Let me ask that again:" & q,0)    	
-	    EndIf
+	    endif
         rlprint "Yes.",15
-        return -1
+        return true
     else
         rlprint "No.",15
-        return 0
+        return false
     endif
 end function
 

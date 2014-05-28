@@ -23,6 +23,9 @@
 #endif'test
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tExplore -=-=-=-=-=-=-=-
+Const alien_scanner=0
+Const rev_map=0
+Const no_enemys=0
 
 declare function make_locallist(slot as short) as short
 declare function update_world(location as short) as short
@@ -37,6 +40,7 @@ declare function explore_planet(from As _cords, orbit As Short) As _cords
 
 namespace tExplore
 function init(iAction as integer) as integer
+	pUpdateworld= @update_world
 	return 0
 end function
 end namespace'tExplore
@@ -215,7 +219,6 @@ function teleport(from As _cords,map As Short) As _cords
 End function
 
 
-
 function explore_planet(from As _cords, orbit As Short) As _cords
     DimDebug(0)
     Dim As Single a,b,c,d,e,f,g,x,y,sf,sf2,vismod
@@ -236,8 +239,7 @@ function explore_planet(from As _cords, orbit As Short) As _cords
     Dim ti As Short
     
 '    DbgLogExplorePlanet("Starting ep loop")
-    
-    bg_parent=bg_awayteamtxt
+'    bg_parent=bg_awayteamtxt
     
     Dim diesize As Short
     Dim localturn As Short
@@ -634,7 +636,7 @@ EndIf
 
             specialflag(2)=1
             rlprint "As you enter the lower atmosphere a powerful energy beam strikes your ship from the surface below! A planetery defense system has detected you!"
-            a=textmenu(bg_parent,"Flee into:/Space/Below horizon")
+            a=textmenu("Flee into:/Space/Below horizon")
             If a=1 Then
                 If skill_test(player.pilot(location),st_veryhard,"Pilot") Then
                     If skill_test(player.pilot(location),st_veryhard,"Pilot") Then

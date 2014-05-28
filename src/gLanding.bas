@@ -31,12 +31,12 @@ declare function landing(mapslot As Short,lx As Short=0,ly As Short=0,Test As Sh
 #ifdef main
 '     -=-=-=-=-=-=-=- MAIN: tLanding -=-=-=-=-=-=-=-
 
-namespace tLanding
+namespace nsLanding
 function init(iAction as integer) as integer
 	pLanding= @landing 'set pointer in gShip
 	return 0
 end function
-end namespace'tLanding
+end namespace'nsLanding
 
 
 function landing(mapslot As Short,lx As Short=0,ly As Short=0,Test As Short=0) As Short
@@ -48,6 +48,7 @@ function landing(mapslot As Short,lx As Short=0,ly As Short=0,Test As Short=0) A
     Dim nextmap As _cords
     Dim As _monster delaway
     Dim As String reason
+    dim as integer x,y
 
     delaway.optoxy=awayteam.optoxy
     awayteam=delaway
@@ -325,7 +326,7 @@ End function
 
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: tLanding -=-=-=-=-=-=-=-
-	tModule.register("tLanding",@tLanding.init()) ',@tLanding.load(),@tLanding.save())
+	tModule.register("gLanding",@nsLanding.init()) ',@tLanding.load(),@tLanding.save())
 #endif'main
 
 #ifdef test

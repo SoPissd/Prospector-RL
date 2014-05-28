@@ -31,7 +31,7 @@ Dim Shared endstory As String
 '     -=-=-=-=-=-=-=- HEAD: dDeath -=-=-=-=-=-=-=-
 
 declare function messages() as short
-declare function death_message(iBg as short,iShowMS as integer=0) as short
+declare function death_message(iShowMS as integer=0) as short
 
 'declare function get_death() as string
 'declare function death_text() as string
@@ -83,7 +83,6 @@ function get_death() as string
                 player.killedby=player.killedby & " on "
             endif
         endif
-        
         if player.dead=25 then
             for a=1 to lastdrifting
                 if player.landed.s=drifting(a).m then st=drifting(a).s
@@ -139,6 +138,7 @@ end function
 function death_text() as string
     dim text as string
     if player.dead<>99 and player.fuel<=0 then player.dead=1
+    
     if player.dead=1 then text="You ran out of fuel. Slowly your life support fails while you wait for your end beneath the eternal stars"
     if player.dead=2 then text="The station impounds your ship for outstanding depts. You start a new career as cook at the stations bistro"
     if player.dead=3 then text="Your awayteam was obliterated. your Bones are being picked clean by alien scavengers under a strange sun"
@@ -184,7 +184,7 @@ function death_text() as string
 end function
 
 
-function death_message(iBg as short,iShowMS as integer=0) as short
+function death_message(iShowMS as integer=0) as short
     dim as string text,text2
     dim as short b,a,wx,tx
     text=""
@@ -236,7 +236,7 @@ function death_message(iBg as short,iShowMS as integer=0) as short
 	no_key=uConsole.aGetKey(iShowMS)
 
     if player.dead<99 then 
-        if askyn("Do you want to see the last messages again?(y/n)") then messages()
+        if askyn("Do you want to see the last messages again?(y/n)") then rlmessages()
         high_score(text2)
     endif
 

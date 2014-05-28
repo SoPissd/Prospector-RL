@@ -32,6 +32,9 @@
 #endif'test
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tSpacecombatmap -=-=-=-=-=-=-=-
+Const show_civs=0
+Dim Shared currapwp As Short
+Dim Shared apdiff As Short
 
 declare function display_star(a as short,fbg as byte=0) as short
 declare function display_stars(bg as short=0) as short

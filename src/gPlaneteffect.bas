@@ -23,6 +23,7 @@
 #endif'test
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tPlaneteffect -=-=-=-=-=-=-=-
+Const more_mets=0
 
 declare function ep_planeteffect(shipfire() As _shipfire, ByRef sf As Single,lavapoint() As _cords,localturn As Short,cloudmap() As Byte) As Short
 

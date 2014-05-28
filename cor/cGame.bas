@@ -339,7 +339,7 @@ DbgPrint("tGamemenu.DoProcess "& iAction)
 		keybindings
 	elseif iAction=7 Then		
     	player.dead=99
-		death_message(0,2600)
+		death_message(2600)
 		player.dead=0
 		if not tScreen.isGraphic then cls
 		return true

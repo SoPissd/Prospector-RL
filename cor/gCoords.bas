@@ -1,9 +1,5 @@
 'tCoords.
 '
-'defines:
-'cords=33, distance=225, sort_by_distance=3, furthest=0, rndwallpoint=0,
-', rndwall=0
-'
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -58,11 +54,39 @@ end function
 end namespace'tCoords
 
 
+sub shiftpoint(byref c as _cords, iDir as integer)
+	with c
+		select case iDir
+			case 1 
+	        .x-=1
+	        .y+=1
+			case 2
+	        .y+=1
+			case 3
+	        .x+=1
+	        .y+=1
+			case 4
+	        .x-=1
+			case 6
+	        .x+=1
+			case 7
+	        .x-=1
+	        .y-=1
+			case 8
+	        .y-=1
+			case 9
+	        .x+=1
+	        .y-=1
+		end select
+	end with
+end sub
+
 function movepoint(byval c as _cords, a as short, eo as short=0, border as short=0) as _cords
     dim p as _cords
     dim as short x,y
     dim f as integer
-    if border=0 then
+
+    if border=0 then				'figure which limit to use
         x=60
         y=20
     else
@@ -70,71 +94,34 @@ function movepoint(byval c as _cords, a as short, eo as short=0, border as short
         y=sm_y
     endif
         
-    if a=5 then
+    if a=5 then						'shift into a random direction
         a=rnd_range(1,8)
         if a=5 then a=9
     endif
-    p=c
-    if a=1 then
-        c.x=c.x-1
-        c.y=c.y+1
-    endif
-    if a=2 then
-        c.x=c.x
-        c.y=c.y+1
-    endif
-    if a=3 then
-        c.x=c.x+1
-        c.y=c.y+1
-    endif
-    if a=4 then
-        c.x=c.x-1
-        c.y=c.y
-    endif
-    if a=6 then
-        c.x=c.x+1
-        c.y=c.y
-    endif
-    if a=7 then
-        c.x=c.x-1
-        c.y=c.y-1
-    endif
-    if a=8 then
-        c.x=c.x
-        c.y=c.y-1
-    endif
-    if a=9 then
-        c.x=c.x+1
-        c.y=c.y-1
-    endif
-    if eo=0 then
-        if c.x<0 then c.x=0
-        if c.x>x then c.x=x
-        if c.y<0 then c.y=0
-        if c.y>y then c.y=y
-    endif
-    if eo=1 then
-        if c.x<0 then c.x=x
-        if c.x>x then c.x=0
-        if c.y<0 then c.y=y
-        if c.y>y then c.y=0
-    endif
-    if eo=2 then
-        if c.x<0 or c.x>x then c=p
-        if c.y<0 or c.y>y then c=p
-    endif
-    if eo=3 then
-        if c.y<0 then c.y=0
-        if c.y>y then c.y=y
-        if c.x<0 then c.x=x
-        if c.x>x then c.x=0
-    endif
-    if eo=4 then
-        if c.y<0 then c.y=0
-        if c.y>20 then c.y=20
-        if c.x<0 then c.x=x
-        if c.x>x then c.x=0
-    endif
+	
+    p=c								'keep original
+	shiftpoint(c,a)
+	
+	with c
+	    select case eo
+	    	case 0 							'limit to 0..x, 0..y
+	        if .x<0 then .x=0 else if .x>x then .x=x
+	        if .y<0 then .y=0 else if .y>y then .y=y
+	    	case 1							'wrap within limit 0..x, 0..y
+	        if .x<0 then .x=x else if .x>x then .x=0
+	        if .y<0 then .y=y else if .y>y then .y=0
+	    	case 2							'don't accept anything that would violate boundary
+	        if .x<0 orelse .x>x orelse .y<0 orelse .y>y then 
+			  return p
+	        endif
+	    	case 3							'x-wrap and keep y within limit
+	        if .x<0 then .x=x else if .x>x then .x=0
+	        if .y<0 then .y=0 else if .y>y then .y=y
+	    	case 4							'x-wrap and keep y within hard limit 0..20
+	        if .x<0 then .x=x else if .x>x then .x=0
+	        if .y<0 then .y=0 else if .y>20 then .y=20
+	    end select
+	end with
     return c
 end function
 
@@ -149,7 +136,7 @@ function explored_percentage_string() as string
     if ex<(sm_x*sm_y) then
         return "Explored {15}"&ex &"{11} parsec ({15}"& int(ex/(sm_x*sm_y)*100) &" %{11} of the sector)"
     else
-        return "Explored the complete sector."
+        return "Explored the complete sector of {15}"&ex &"{11} parsecs."
     endif
 end function
 

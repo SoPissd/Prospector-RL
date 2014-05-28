@@ -28,6 +28,7 @@
 #endif'test
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tSpace -=-=-=-=-=-=-=-
+Const show_wormholes=0
 
 declare function add_stations() as short
 declare function add_stars() as short

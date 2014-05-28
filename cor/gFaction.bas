@@ -25,15 +25,15 @@
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
 
 Enum fleettype
-    ft_player				'a 0- player
+    ft_player				'a 0- player			'self
     ft_merchant				'a 1- merchants
     ft_pirate				'a 2- pirates
     ft_patrol				'a 3- patrols
     ft_pirate2				'a 4- pirate2
     ft_ancientaliens		'a 5- ancient aliens
-    ft_civ1					'a 6- civ 1
-    ft_civ2					'a 7- civ 2
-    ft_monster				'  8- monsters
+    ft_civ1					'a 6- civ 1				'no war
+    ft_civ2					'a 7- civ 2				'no war
+    ft_monster				'  8- monsters			'no war
 End Enum
 
 const nFactions= ft_monster'8
@@ -57,7 +57,7 @@ Dim Shared alliance(7) As Byte				'player with alliance() rating
 
 declare function factionadd(a as short,b as short, add as short) as short
 declare function show_standing() as short
-
+declare function initialize_faction_standing(bPirate as integer) as integer
 
 #endif'head
 #ifdef main
@@ -145,6 +145,39 @@ function show_standing() as short
     textbox(scale(6),2,2,32,1,1)
     
     no_key= uConsole.keyinput()
+    return 0
+end function
+
+
+function initialize_faction_standing(bPirate as integer) as integer
+	'
+	with faction(ft_player)
+		if bPirate then
+	        .war(ft_merchant)=100
+	        .war(ft_pirate)=0
+	        .war(ft_patrol)=100
+	        .war(ft_pirate2)=0
+		else
+	        .war(ft_merchant)=0
+	        .war(ft_pirate)=100
+	        .war(ft_patrol)=0
+	        .war(ft_pirate2)=100
+		endif
+        .war(ft_ancientaliens)=100
+	end with
+    '
+    faction(ft_merchant).war(ft_pirate)=100
+    faction(ft_merchant).war(ft_pirate2)=100
+    '
+    faction(ft_pirate).war(ft_merchant)=100
+    faction(ft_pirate).war(ft_patrol)=100
+    '
+    faction(ft_patrol).war(ft_pirate)=100
+    faction(ft_patrol).war(ft_pirate2)=100
+    '
+    faction(ft_pirate2).war(ft_merchant)=100
+    faction(ft_pirate2).war(ft_patrol)=100
+    '
     return 0
 end function
 

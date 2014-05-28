@@ -1,6 +1,7 @@
 'tCoords.
 #include once "uDefines.bi"
 DeclareDependencies()
+#include "uConsole.bas"
 #include "uDebug.bas"
 #include "uRng.bas"
 #define test 
@@ -11,8 +12,8 @@ DeclareDependencies()
 'compiles for different types of coordinates
 
 Type tPoint
-	x as UInteger
-	y as UInteger	
+	x as Short
+	y as Short	
 End Type
 
 
@@ -50,6 +51,8 @@ declare function furthest(list() as _cords,last as short, a as _cords,b as _cord
 
 declare function rndwallpoint(r as _rect, w as byte) as _cords
 declare function rndwall(r as _rect) as short
+declare function fill_rect(r as _rect,wall as short, flor as short,map() as short) as short
+declare function rndrectwall(r as _rect,d as short=5) as _cords
 
 #endif'head
 #ifdef main
@@ -80,7 +83,7 @@ End function
 
 
 function distance(first as _cords, last as _cords,rollover as byte=0) as single
-    dim as single dis,dx,dy,dx2
+    dim as single dx,dy,dx2
     dx=first.x-last.x
     dy=first.y-last.y
     if rollover<>0 then
@@ -91,25 +94,25 @@ function distance(first as _cords, last as _cords,rollover as byte=0) as single
         endif
         if abs(dx)>abs(dx2) then dx=dx2
     endif
-    dis=sqr(dx*dx+dy*dy)
-    return dis
+    return sqr(dx*dx+dy*dy)
 end function
 
 
 function sort_by_distance(c as _cords,p() as _cords,l() as short,last as short) as short
     dim as short sort,i
-
+dim as double started= uConsole.dTimer()
     do
         sort=0
         for i=1 to last-1
-            if distance(c,p(i))>distance(c,P(i+1)) then
+            if distance(c,p(i))>distance(c,p(i+1)) then
                 sort=1
                 swap p(i),p(i+1)
                 swap l(i),l(i+1)
             endif
         next
     loop until sort=0
-    
+
+DbgPrint("sort_by_distance("& last &"): " &cint((uConsole.dTimer()-started)*1000) &"ms.")
 #if __FB_DEBUG__
     'for i=1 to last
     '    DbgPrint(i &":"&int(distance(c,p(i))))
@@ -161,48 +164,98 @@ end function
 '
 
 function rndwallpoint(r as _rect, w as byte) as _cords
-    dim p as _cords
-    if w=1 then 'north wall
+    dim p as _cords    
+    if w=1 then 						'north wall
         p.y=r.y-1
         p.x=rnd_range(r.x+1,r.x+r.w-2)
-    endif
-    
-    if w=2 then 'East wall
+    elseif w=2 then 					'East wall
         p.x=r.x+r.w+1
         p.y=rnd_range(r.y+1,r.y+r.h-2)
-    endif
-    
-    if w=3 then 'South wall
+    elseif w=3 then 					'South wall
         p.y=r.y+r.h+1
         p.x=rnd_range(r.x+1,r.x+r.w-2)
-    endif
-    
-    if w=4 then 'west woll
+    elseif w=4 then 					'west woll
         p.x=r.x-1
         p.y=rnd_range(r.y+1,r.y+r.h-2)
     endif
-    return p
-    
+    return p    
 end function
 
 
 function rndwall(r as _rect) as short
-    dim as short a,b,c
+    dim as short a,b
     dim po(4) as byte
-    for a=1 to 4
+    for a=1 to 4				'inspect first 4 of 16 wd's
         if r.wd(a)=0 then
             b=b+1
-            po(b)=a
+            po(b)=a				'track where wd(a) was zero
         endif
     next
-    if b>0 then
-        c=po(rnd_range(1,b))
-    else
-        c=-1
+    if b>0 then						'had any?
+        return po(rnd_range(1,b))	'return one of them by random
     endif
-    return c
+    return -1						'had none
 end function
 
+
+function fill_rect(r as _rect,wall as short, flor as short,map() as short) as short
+    dim as short x,y 
+    for x=r.x to r.x+r.w
+        for y=r.y to r.y+r.h
+            
+            if x=r.x or y=r.y or x=r.x+r.w or y=r.y+r.h then
+                map(x,y)=wall
+            else 
+                map(x,y)=flor
+            endif
+        next
+    next
+    return 0
+end function
+
+
+function rndrectwall(r as _rect,d as short=5) as _cords
+    dim p as _cords
+    if d=5 then 
+        do
+            d=rnd_range(1,8)
+            if d=4 then d=d+1
+        loop until frac(d/2)=0
+    endif
+    if d=1 then
+        p.x=r.x
+        p.y=r.y+r.h
+    endif
+    if d=2 then 
+        p.y=r.y+r.h
+        p.x=rnd_range(r.x+1,r.x+r.w-2)
+    endif 
+    if d=3 then
+        p.x=r.x+r.h
+        p.y=r.y+r.h
+    endif
+    if d=4 then
+        p.x=r.x
+        p.y=rnd_range(r.y+1,r.y+r.h-2)
+    endif
+    if d=6 then
+        p.x=r.x+r.w
+        p.y=rnd_range(r.y+1,r.y+r.h-2)
+    endif
+    if d=7 then
+        p.x=r.x
+        p.y=r.y
+    endif
+    if d=8 then
+        p.x=rnd_range(r.x+1,r.x+r.w-2)
+        p.y=r.y
+    endif
+    if d=9 then
+        p.x=r.x+r.w
+        p.y=r.y+r.h
+    endif
+    return p
+end function
 
 
 

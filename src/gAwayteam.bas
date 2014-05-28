@@ -27,6 +27,12 @@
 #endif'test
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tAwayteam -=-=-=-=-=-=-=-
+Const show_mnr=0
+Dim Shared As Byte _hpdisplay=1
+Dim Shared adislastenemy As Short
+Dim Shared adisdeadcounter As Short
+Dim Shared adisloctime As Short
+Dim Shared adisloctemp As Single
 
 declare function display_awayteam(showshipandteam as byte=1,osx as short=555) as short
 declare function gainxp(typ as short,v as short=1) as string

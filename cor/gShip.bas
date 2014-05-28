@@ -245,6 +245,9 @@ dim shared pPlayerfightfleet as tPlayerfightfleet
 type tDisplaystars as function(bg as short=0) as short
 dim Shared pDisplaystars as tDisplaystars
 
+type tExplorespace as function() As Short
+dim Shared pExplorespace as tExplorespace
+
 type tUnAugmentRandomCrewmember as function() as string
 dim shared pUnAugmentRandomCrewmember as tUnAugmentRandomCrewmember
 
@@ -254,9 +257,11 @@ dim shared pCrewblock as tCrewblock
 type tLanding as function(mapslot As Short,lx As Short=0,ly As Short=0,Test As Short=0) As Short
 dim shared pLanding as tLanding
 
+type tUpdateworld as function(location as short) as short
+dim shared pUpdateworld as tUpdateworld
+
+
 #endif'types
-
-
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tShip -=-=-=-=-=-=-=-
 declare function makehullbox(t as short,file as string) as string

@@ -23,9 +23,9 @@
 #endif'test
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tGamekeys -=-=-=-=-=-=-=-
+Const dbshow_factionstatus=0
 
 declare function keyin(byref allowed as string="" , blocked as short=0)as string
-
 
 #endif'head
 #ifdef main
@@ -54,7 +54,6 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
 
     if walking<>0 then sleep 50
     tScreen.update()
-    if _test_disease=1 and allowed<>"" then allowed="#"&allowed
     if tVersion.gamerunning and allowed<>"" then allowed=allowed &" " ' gamerunning == player.dead>0
     do 
         control=""
@@ -143,7 +142,8 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
             if debug>0 and key="\Ci" then
             	DbgItemDump
             endif
-            
+
+			dim as integer x,y            
             if debug=-1 and key="�" then
                 for x=0 to 60
                     for y=0 to 20
@@ -178,7 +178,7 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
             endif
             
             if key=key_manual then
-                a=textmenu(bg_parent,"Help/Manual/Keybindings/Configuration/Exit","",2,2)
+                a=textmenu("Help/Manual/Keybindings/Configuration/Exit","",2,2)
                 if a=1 then viewfile("readme.txt",256)
                 if a=2 then keybindings
                 if a=3 then configuration()
@@ -186,7 +186,7 @@ function keyin(byref allowed as string="" , blocked as short=0)as string
             endif
             
             if key=key_messages then 
-                messages
+                rlmessages()
                 return ""
             endif
             
