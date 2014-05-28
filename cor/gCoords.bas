@@ -104,22 +104,23 @@ function movepoint(byval c as _cords, a as short, eo as short=0, border as short
 	
 	with c
 	    select case eo
-	    	case 0 							'limit to 0..x, 0..y
-	        if .x<0 then .x=0 else if .x>x then .x=x
-	        if .y<0 then .y=0 else if .y>y then .y=y
+			case 0 							'limit to 0..x, 0..y
+	        	if .x<0 then .x=0 else if .x>x then .x=x
+		        if .y<0 then .y=0 else if .y>y then .y=y
 	    	case 1							'wrap within limit 0..x, 0..y
-	        if .x<0 then .x=x else if .x>x then .x=0
-	        if .y<0 then .y=y else if .y>y then .y=0
+		        if .x<0 then .x=x else if .x>x then .x=0
+	    	    if .y<0 then .y=y else if .y>y then .y=0
 	    	case 2							'don't accept anything that would violate boundary
-	        if .x<0 orelse .x>x orelse .y<0 orelse .y>y then 
-			  return p
-	        endif
+	        	if (.x<0) orelse (.x>x)_
+	        	orelse (.y<0) orelse (.y>y) then 
+				  return p
+		        endif
 	    	case 3							'x-wrap and keep y within limit
-	        if .x<0 then .x=x else if .x>x then .x=0
-	        if .y<0 then .y=0 else if .y>y then .y=y
+	    	    if .x<0 then .x=x else if .x>x then .x=0
+	        	if .y<0 then .y=0 else if .y>y then .y=y
 	    	case 4							'x-wrap and keep y within hard limit 0..20
-	        if .x<0 then .x=x else if .x>x then .x=0
-	        if .y<0 then .y=0 else if .y>20 then .y=20
+		        if .x<0 then .x=x else if .x>x then .x=0
+		        if .y<0 then .y=0 else if .y>20 then .y=20
 	    end select
 	end with
     return c

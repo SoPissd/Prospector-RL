@@ -1,7 +1,13 @@
 'tAstar.
 #include once "uDefines.bi"
 DeclareDependencies()
-#include "uRNG.bas"
+#include "fbGfx.bi"
+#include "uUtils.bas"
+#include "uDebug.bas"
+#include "uRng.bas"
+#include "uScreen.bas"
+#include "uColor.bas"
+#include "uConsole.bas"
 #include "uCoords.bas"
 #define test 
 #endif'DeclareDependencies()
@@ -11,16 +17,11 @@ DeclareDependencies()
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tAstar -=-=-=-=-=-=-=-
 
+'declare function manhattan(a as _cords,b as _cords) as single
+'declare function addneighbours(node() as _node, curr as _cords,mx as short,my as short,rollover as byte=0) as short
+'declare function findlowerneighbour(node() as _node, curr as _cords,mx as short,my as short,rollover as byte=0) as short
+
 declare function a_star(path() as _cords, start as _cords,goal as _cords,map() as short,mx as short,my as short,echo as short=0,rollover as byte=0) as short
-
-'declare function a_star(path() as _cords, start as _cords,goal as _cords,map() as short,mx as short,my as short,echo as short=0,rollover as byte=0) as short
-'declare function manhattan(a as _cords,b as _cords) as single
-'declare function addneighbours(node() as _node, curr as _cords,mx as short,my as short,rollover as byte=0) as short
-'declare function findlowerneighbour(node() as _node, curr as _cords,mx as short,my as short,rollover as byte=0) as short
-
-'declare function findlowerneighbour(node() as _node, curr as _cords,mx as short,my as short,rollover as byte=0) as short
-'declare function addneighbours(node() as _node, curr as _cords,mx as short,my as short,rollover as byte=0) as short
-'declare function manhattan(a as _cords,b as _cords) as single
 
 #endif'head
 #ifdef main
@@ -32,35 +33,6 @@ function init(iAction as integer) as integer
 end function
 end namespace'tAstar
 
-
-#define cut2top
-
-'    x as short
-'    y as short
-'end type
-'
-'declare function rnd_range (first As short, last As short) As short
-'declare function distance(first as _cords, last as _cords,rollover as byte=0) as single
-'
-'function distance(first as _cords, last as _cords,rollover as byte=0) as single
-'    dim as single dis,dx,dy,dx2
-'    dx=first.x-last.x
-'    dy=first.y-last.y
-'    if rollover<>0 then
-'        if first.x<last.x then
-'            dx2=60-last.x+first.x
-'        else
-'            dx2=60-first.x+last.x
-'        endif
-'        if abs(dx)>abs(dx2) then dx=dx2
-'    endif
-'    dis=sqr(dx*dx+dy*dy)
-'    return dis
-'end function
-'
-'function rnd_range (first As short, last As short) As short
-'        return cint(Rnd * (last - first) + first)
-'End function
 
 type _node
     opclo as byte
@@ -82,8 +54,9 @@ function addneighbours(node() as _node, curr as _cords,mx as short,my as short,r
     dim p as _cords
     for x=curr.x-1 to curr.x+1
         for y=curr.y-1 to curr.y+1
-            if (y>=0 and y<=my) then
-                if (rollover=0 and x>=0 and y>=0 and x<=mx and y<=my) or rollover=1 then
+            if (y>=0 andalso y<=my) then
+
+                if (rollover=1) orelse ((x>=0) andalso (y>=0) andalso (x<=mx) andalso (y<=my)) then
                     p.x=x
                     p.y=y
                         
@@ -114,8 +87,8 @@ function findlowerneighbour(node() as _node, curr as _cords,mx as short,my as sh
     for x=curr.x-1 to curr.x+1
         for y=curr.y-1 to curr.y+1
             if rollover=0 then
-                if x>=0 and y>=0 and x<=mx and y<=my then
-                    if node(x,y).opclo=1 and node(x,y).g<value then
+                if (x>=0) andalso (y>=0) andalso (x<=mx) andalso (y<=my) then
+                    if (node(x,y).opclo=1) andalso (node(x,y).g<value) then
                         
                         p.x=x
                         p.y=y
@@ -131,7 +104,7 @@ function findlowerneighbour(node() as _node, curr as _cords,mx as short,my as sh
                 if xr<0 then xr=mx
                 if xr>mx then xr=0
                 if yr>=0 and yr<=20 then 
-                    if node(xr,yr).opclo=1 and node(xr,yr).g<value then
+                    if node(xr,yr).opclo=1 andalso node(xr,yr).g<value then
                         
                         p.x=xr
                         p.y=yr
@@ -154,7 +127,8 @@ function a_star(path() as _cords, start as _cords,goal as _cords,map() as short,
     dim as integer lastopen,lastclosed,lastnode,x,y,i,j
     dim as integer ccc
     dim as _cords curr,p,best
-    dim as single d
+    dim as single d,d1,d2
+    
 #if __FB_DEBUG__
     dim as byte debug
     debug=0
@@ -164,6 +138,7 @@ function a_star(path() as _cords, start as _cords,goal as _cords,map() as short,
         print start.x;":";start.y;"-";goal.x;":";goal.y
     endif
 #endif
+
     curr=start
     for x=0 to mx
         for y=0 to my
@@ -173,7 +148,8 @@ function a_star(path() as _cords, start as _cords,goal as _cords,map() as short,
     
     do
         ccc+=1
-        if ccc mod 10=0 and echo=1 then print ".";
+        if (echo=1) andalso (ccc mod 10=0) then print ".";
+        
         node(curr.x,curr.y).opclo=1 'Node on Open list
         addneighbours(node(),curr,mx,my,rollover)
         node(curr.x,curr.y).opclo=2 'Add node to closed List
@@ -182,23 +158,31 @@ function a_star(path() as _cords, start as _cords,goal as _cords,map() as short,
         d=9999999
         best.x=-1
         best.y=-1
-        if curr.x<>goal.x or curr.y<>goal.y then
+        if (curr.x<>goal.x) orelse (curr.y<>goal.y) then
             for x=0 to mx
-                for y=0 to my
-                    
+                for y=0 to my                    
                     p.x=x
                     p.y=y
-                    if curr.x<>goal.x or curr.y<>goal.y then
+                    
+                    if (curr.x<>goal.x) orelse (curr.y<>goal.y) then
                         if node(x,y).opclo=1 then
-                            node(x,y).h=distance(p,goal,rollover)
-                            if node(x,y).h+node(x,y).g<d or manhattan(p,goal)=0 then
+                        	
+                            d1= distance(p,goal,rollover)                            
+                                node(x,y).h = d1 
+                            d2= node(x,y).h + node(x,y).g
+                            
+                            if (d2<d) orelse (manhattan(p,goal)=0) then
+                            	'clear candidate list and add this one
                                 best.x=x
                                 best.y=y
-                                if distance(p,goal,rollover)>0 then 
-                                    d=node(x,y).h+node(x,y).g
+                                
+                                if d1>0 then 
+                                    d=d2
                                 else
                                     d=0
                                 endif
+                            elseif (d2=d) then
+                            	'same distance? add to candidates.
                             endif
                         endif
                     endif
@@ -208,12 +192,16 @@ function a_star(path() as _cords, start as _cords,goal as _cords,map() as short,
 #if __FB_DEBUG__
             if debug=1 then sleep 100
 #endif
-            if best.x>=0 and best.y>=0 and not (curr.x=goal.x and curr.y=goal.y) then
+			'
+			' pick a best from the candidate list.
+			'
+            if (best.x>=0) andalso (best.y>=0) andalso (not ((curr.x=goal.x) andalso (curr.y=goal.y))) then
                 node(best.x,best.y).opclo=2
                 curr=best
             endif
         endif
-    loop until (curr.x=goal.x and curr.y=goal.y) or ccc<0
+    loop until ((curr.x=goal.x) andalso (curr.y=goal.y)) orelse (ccc<0)
+    
 #if __FB_DEBUG__
     if debug=5 then
         for x=0 to mx
@@ -227,6 +215,8 @@ function a_star(path() as _cords, start as _cords,goal as _cords,map() as short,
     end if
 #endif
     
+	if echo=1 then print
+	
     if ccc>0 then
         i=0
         do
@@ -235,12 +225,12 @@ function a_star(path() as _cords, start as _cords,goal as _cords,map() as short,
             curr=node(curr.x,curr.y).parent
             i+=1
            
-        loop until (curr.x=start.x and curr.y=start.y) or i=ubound(path)
+        loop until (i=ubound(path)) orelse ((curr.x=start.x) andalso (curr.y=start.y))  
         path(i).x=curr.x
         path(i).y=curr.y
          
         'i-=1
-        if echo=1 then print "found with "&i &" Waypoints."
+        if echo=1 then print "Found path with "&i &" Waypoints."
         return i
     else
         if echo=1 then print "No path found"

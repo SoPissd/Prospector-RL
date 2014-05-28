@@ -1,7 +1,13 @@
 'tMath.
 #include once "uDefines.bi"
 DeclareDependencies()
+#include "fbGfx.bi"
+#include "uUtils.bas"
+#include "uDebug.bas"
 #include "uRng.bas"
+#include "uScreen.bas"
+#include "uColor.bas"
+#include "uConsole.bas"
 #include "uCoords.bas"
 #define test 
 #endif'DeclareDependencies()
@@ -39,20 +45,21 @@ DeclareDependencies()
 declare function urn(sMin as short, sMax as short,mult as short,bonus as short) as short  
 declare function round_nr(i as single,c as short) as single
 declare function round_str(i As Double,c As Short) As String
-declare function find_low(list() as short,last as short,start as short=1) as short
 
-declare function content(r as _rect,tile as short,map()as short) as integer
+declare function find_high(list() as short,last as short, start as short=1) as short
+declare function find_low(list() as short,last as short,start as short=1) as short
 
 declare function maximum(a as double,b as double) as double
 declare function minimum(a as double,b as double) as double
 
-'declare function C_to_F(c as single) as single
-'declare function find_high(list() as short,last as short, start as short=1) as short
-'declare function sub0(a as single,b as single) as single
-'declare function findrect(tile as short,map() as short,er as short=10,fi as short=60) as _rect
+declare function C_to_F(c as single) as single
+
+declare function sub0(a as single,b as single) as single
+
 'declare function getany(possible() as short) as short
 'declare function nextpoint(byval start as _cords, byval target as _cords) as _cords
-'declare function line_in_points(b as _cords,c as _cords,p() as _cords) as short
+
+declare function line_in_points(b as _cords,c as _cords,p() as _cords) as short
 
 #endif'head
 #ifdef main
@@ -121,24 +128,28 @@ end namespace'tMath
 'End Property
 
 
-function urn(sMin as short, sMax as short,mult as short,bonus as short) as short 
-    dim as short values(1024),v,st,i,j,e,f,r
-    if sMin>sMax then 
-        st=-1
-    else
-        st=1
-    endif
-    for i=sMin to sMax step st
-        e+=1
-        for j=1 to e
-            f+=1
+function urn(sMin as short, sMax as short, mult as short, bonus as short) as short 
+	'returns a weighted random value. sMin is rare, sMax is abs(sMax-sMin) times more common!
+    dim as short st,i,j,e,f,r
+    r= abs(sMax-sMin)+1 				'get the range, e.g -10,-1 ==10
+    r= (r+1) *r \2						'precompute number of elements
+    dim as short values(r)				'and make room for them
+
+    if sMin>sMax then st=-1 else st=1	'pick a direction    
+    for i=sMin to sMax step st			'1 entry for sMin
+        e+=1							'2 entries for the next
+        for j=1 to e					'3 entries .. .. 
+            f+=1						' .. the most entries for sMax. at the end of the array.
             values(f)=i
         next
     next
-    r=rnd_range(1,f)+bonus
-    if r>f then r=f
-    if r<1 then r=1
-    return values(r)
+
+ 	'for i = 1 to f:	? i,values(i): Next
+    
+    i=rnd_range(1,f)+bonus				'shift a random of that range towards sMax/the end value.
+    if i>f then i=f						'keep it bounded 
+    if i<1 then i=1
+    return values(i)					'and return the chosen value
 end function
 
 '
@@ -170,11 +181,13 @@ End function
 
 '
 
-
-
 function find_high(list() as short,last as short, start as short=1) as short
     dim as short i,m,r
-    for i=1 to last
+    assert(start>=lbound(list))
+    assert(last<=ubound(list))
+    r=start
+    m=list(r) 
+    for i=start+1 to last
         if list(i)>m then
             r=i
             m=list(i)
@@ -185,8 +198,11 @@ end function
 
 function find_low(list() as short,last as short,start as short=1) as short
     dim as short i,m,r
-    m=32767
-    for i=start to last
+    assert(start>=lbound(list))
+    assert(last<=ubound(list))
+    r=start
+    m=list(r) 
+    for i=start+1 to last
         if list(i)<m then
             r=i
             m=list(i)
@@ -196,72 +212,63 @@ function find_low(list() as short,last as short,start as short=1) as short
 end function
 
 function sub0(a as single,b as single) as single
-    dim c as single
-    c=a-b
-    if c<0 then c=0
-    return c
+    dim c as single= a-b
+    if c<0 then return 0 else return c
 end function
 
 function maximum(a as double,b as double) as double
-    if a>b then return a
-    if b>a then return b
-    if a=b then return a
+    if a>=b then return a else return b
 end function
 
 function minimum(a as double,b as double) as double
-    if a<b then return a
-    if b<a then return b
-    if a=b then return a
+    if a<=b then return a else return b
 end function
 
 
-function getany(possible() as short) as short
-    dim r as short
-    dim mat1(3,3) as short
-    dim sam(9) as short
-    dim a as short
-    dim x as short
-    dim y as short
-    mat1(1,1)=7
-    mat1(1,2)=8
-    mat1(1,3)=9
-    
-    mat1(2,1)=4
-    mat1(2,2)=0
-    mat1(2,3)=6
-    
-    mat1(3,1)=1
-    mat1(3,2)=2
-    mat1(3,3)=3
-    for x=1 to 3
-        for y=1 to 3
-            if possible(x,y)=0 then
-                a=a+1
-                sam(a)=mat1(x,y)
-            endif
-        next
-    next
-    if a>0 then
-        r=sam(rnd_range(1,a))
-    else
-        r=0
-    endif
-    return r
-end function
+'function getany(possible() as short) as short
+'    dim r as short
+'    dim mat1(3,3) as short
+'    dim sam(9) as short
+'    dim a as short
+'    dim x as short
+'    dim y as short
+'
+'    mat1(1,1)=7
+'    mat1(1,2)=8
+'    mat1(1,3)=9
+'    
+'    mat1(2,1)=4
+'    mat1(2,2)=0
+'    mat1(2,3)=6
+'    
+'    mat1(3,1)=1
+'    mat1(3,2)=2
+'    mat1(3,3)=3
+'
+'    for x=1 to 3
+'        for y=1 to 3
+'            if possible(x,y)=0 then
+'                a=a+1
+'                sam(a)=mat1(x,y)
+'            endif
+'        next
+'    next
+'
+'    if a>0 then return sam(rnd_range(1,a))
+'    return 0
+'end function
 
 
-
-
-function nextpoint(byval start as _cords, byval target as _cords) as _cords
-    dim as short dx,dy,d,x1,x2,y1,y2 
-    x1=start.x
-    y1=start.y
-    d=abs(x1-x2)
-    if abs(y1-y2)>d then d=abs(y1-y2)
-    start.x=x1+(x2-x1)/d
-    start.y=y1+(y2-y1)/d
-    return start
-end function
+'function nextpoint(byval start as _cords, byval target as _cords) as _cords
+'    dim as short dx,dy,d,x1,x2,y1,y2 
+'    x1=start.x
+'    y1=start.y
+'    d=abs(x1-x2)
+'    if abs(y1-y2)>d then d=abs(y1-y2)
+'    start.x=x1+(x2-x1)/d
+'    start.y=y1+(y2-y1)/d
+'    return start
+'end function
 
 
 function line_in_points(b as _cords,c as _cords,p() as _cords) as short
@@ -333,7 +340,6 @@ function line_in_points(b as _cords,c as _cords,p() as _cords) as short
 end function
 
 
-
 #endif'main
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: tMath -=-=-=-=-=-=-=-
@@ -345,6 +351,10 @@ end function
 	namespace tMath
 
 	sub Mathtest()
+		? "urn(sMin as short, sMax as short, mult as short, bonus as short) as short"
+		? "urn(sMinFewest as short, sMaxMost as short, , malus as short) as short"
+'		? "urn(1,10,0,0) = "& urn(1,10,0,0)
+		? "urn(10,1,0,0) = "& urn(1,-2,0,0)
 	End Sub
 
 	end namespace'tMath

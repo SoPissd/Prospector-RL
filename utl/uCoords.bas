@@ -100,7 +100,8 @@ end function
 
 function sort_by_distance(c as _cords,p() as _cords,l() as short,last as short) as short
     dim as short sort,i
-dim as double started= uConsole.dTimer()
+	dim as double started
+	started= uConsole.dTimer()
     do
         sort=0
         for i=1 to last-1
