@@ -158,7 +158,6 @@ function tMenuCore.before() as integer
 end function
 
 function tMenuCore.after() as integer
-	'LogOut("uMenu.after()")
 	dim as integer i
 	dim as integer iDir
 	if tScreen.isGraphic then
@@ -201,19 +200,20 @@ function tMenuCore.after() as integer
     if loca<1 then loca=c
     if loca>c then loca=1
 
+	'DbgPrint("tMenuCore.after(e,loca) "& e &" "& loca)
     if key=key__enter then e=loca
     if key=key__esc then e= -uConsole.aKey2i(key__esc)
+	'DbgPrint("tMenuCore.after(e,loca) "& e &" "& loca)
 
-'   if player.dead<>0 then e=c
-'   if key=key__esc or player.dead<>0 then e=c
+	'if player.dead<>0 then e=c
+	'if key=key__esc or player.dead<>0 then e=c
 	return e
 end function
 
 
 
 function tMenuCore.init() as integer
-	'DbgPrint(a)
-	'LogOut("uMenu.init()")
+	'DbgPrint("uMenu.init()"& e)
 	dim as integer a
 
     cls
@@ -222,8 +222,7 @@ function tMenuCore.init() as integer
 	'    if bg=bg_title then
 	'    	backpic= 0
 	'        logo= bmp_load("graphics/prospector.bmp")
-	'    endif
-    
+	'    endif    
 	else
 	EndIf
 
@@ -311,17 +310,15 @@ End Function
 
 
 function tMenuCore.finish() as integer
-	'DbgPrint(e)
-	'LogOut("uMenu.finish()")
+	'DbgPrint("tMenuCore.finish()"& e)
 	dim as integer a
     if key=key__esc and markesc=1 then e=-uConsole.aKey2i(key__esc)
-    
+
 	if tScreen.isGraphic then
 	    set__color( 0,0)
 	    tScreen.drawfx(_fw2,_fh2)    
 	    tScreen.drawfx()    
 	    for a=0 to c
-	        'locate y+a,x
 	        tScreen.draw2c(x,y+a,space(longest))
 	    next
 '	    set__color( 11,0)

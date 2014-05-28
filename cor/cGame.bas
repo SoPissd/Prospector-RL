@@ -88,13 +88,10 @@ end function
 '
 
 function run(iAction as Integer) as Integer
-'?"debugbreak": debugbreak
-tScreen.res
-DbgPrint("function run(iAction as Integer) as Integer")
+	'this instantiates the main loop and runs it. it takes care of the rest.
+	'DbgPrint("function run("& iAction &")")
 	dim aLoop as tGameloop
-	aLoop.run(1)
-DbgPrint("aLoop.run(1) done.")
-	return 0
+	return aLoop.run(1)
 end function
 
 
@@ -177,6 +174,7 @@ end sub
 
 function tGameloop.DoInitProc() as integer
 	'DbgPrint(iCmd)
+tScreen.res
 	
 	load_config()
 	tColor.load_palette()
@@ -184,8 +182,8 @@ function tGameloop.DoInitProc() as integer
 	load_keyset()
 	uSound.load()
 
-'	load_fonts()
-'	load_tiles()
+	'load_fonts()
+	'load_tiles()
 	'
 	DbgScreeninfo
 	register()
@@ -235,32 +233,10 @@ end constructor
 destructor tGamemenu()
 end destructor		
 
-'function tGamemenu.init() as integer
-'	dim cmd as integer
-'	cmd=Base.init()
-'	? tModule.Status()
-'	return cmd 
-'end function
-'
-'function tGamemenu.before() as integer
-'	dim cmd as integer
-'	cmd=Base.before()
-''	? tModule.Status()
-'	return cmd 
-'end function
-'
-'function tGamemenu.after() as integer
-'	return Base.after()
-'end function
-'
-'function tGamemenu.finish() as integer
-'	return Base.finish()
-'end function
-
 function tGamemenu.DoProcess() as integer
 	dim iAction as short
 	iAction= this.e
-DbgPrint("tGamemenu.DoProcess "& iAction)
+DbgPrint("tGamemenu.DoProcess e="& iAction)
     If iAction=0 Then 
     	ClearChoices()
 		AddChoice(__VERSION__)
@@ -342,11 +318,11 @@ DbgPrint("tGamemenu.DoProcess "& iAction)
 		death_message(2600)
 		player.dead=0
 		if not tScreen.isGraphic then cls
-		return true
+		return -1
 	elseif iAction=-27 Then loca=7    ' esc becomes last choice
 	EndIf
 	
-    return false 'stay
+    return 0 'stay
     
 	'DbgPrint("return 0")	
 '		if key="8" then
@@ -412,9 +388,7 @@ function tGamemenu.mainmenu(a as integer=0) as integer
     markesc= 1
     loca= a
 	a= menu()
-DbgPrint("mainmenu:"& a )	
-sleep
-    return a
+    return -1 'a
 End function
 
 #endif'main
@@ -435,7 +409,7 @@ tScreen.loc( 15,15, "1515")
 locate  20,5
 ?"205"
 ?"test"
-sleep
+'sleep
 uConsole.Pressanykey
 return 0
 

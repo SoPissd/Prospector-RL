@@ -224,6 +224,7 @@ function FilesizeInMb(filename as string) as string
 	return asize
 End Function
 
+
 public function Countlines(filename as string,nonblank as integer=1) as integer
 	'counts non-blank lines by default
 	Dim as Integer f, n
