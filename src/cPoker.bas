@@ -1,10 +1,5 @@
 'tPoker.
 '
-'defines:
-'poker_eval=0, better_hand=0, ace_highlo_eval=0, draw_poker_table=0,
-', poker_next=0, sort_cards=0, card_shuffle=0, player_eval=0,
-', highest_pot=0, poker_winner=0, play_poker=1, swap_card=0
-'
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -60,8 +55,8 @@ Type _pokerrules
     closed As Byte
     Swap As Byte
 End Type
-#endif'types
 
+#endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tPoker -=-=-=-=-=-=-=-
 

@@ -36,11 +36,11 @@ inc("gDisease.bas",				"")
 inc("gPlayer.bas",				"player functions.")
 
 
-#if (build_mini <> 1)
-
 inc("gMakeship.bas",			"")
-inc("gFaction.bas",				"")
 inc("gCivilisation.bas",		"")
+inc("gFaction.bas",				"")
+
+#if (build_mini <> 1)
 inc("gPlanet.bas",				"")
 inc("gCommandstring.bas",		"")
 inc("gCargo.bas",				"")
@@ -71,5 +71,9 @@ inc("gCrew.bas",				"")
 inc("cBones.bas",				"")
 inc("cSavegame.bas",			"universe and player ... via compression")
 inc("cGameinit.bas",			"")
+
+inc("gSpace.bas",				"")
+inc("gWorldgen.bas",			"")
+inc("gStartnewgame.bas",		"")
 
 #endif

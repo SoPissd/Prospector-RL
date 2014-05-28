@@ -1,8 +1,5 @@
 'tSlotmachine.
 '
-'defines:
-'play_slot_machine=1
-'
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -38,9 +35,6 @@ end function
 end namespace'tSlotmachine
 
 
-#define cut2top
-
-
 function play_slot_machine() as short
     DimDebugL(0)
     dim as short bet,win,a,b,c,d
@@ -60,13 +54,12 @@ function play_slot_machine() as short
                 if rnd_range(1,100)>33 then a+=1
                 if rnd_range(1,100)>33 then b+=1
                 if rnd_range(1,100)>33 then c+=1
-                
+
                 if a>9 then a=1
                 if b>9 then b=1
                 if c>9 then c=1
                 if configflag(con_tiles)=0 then
                     line (45*_fw2+1*_tix,10*_tiy)-(45*_fw2+3*_tix,11*_tiy),rgba(0,0,0,255),bf
-                    
                     put (45*_fw2+1*_tix,10*_tiy),gtiles(a+68),trans
                     put (45*_fw2+2*_tix,10*_tiy),gtiles(b+68),trans
                     put (45*_fw2+3*_tix,10*_tiy),gtiles(c+68),trans
@@ -110,8 +103,7 @@ function play_slot_machine() as short
             
             if win=0 then
                 rlprint "You lose "& bet &" Cr."
-            else
-                
+            else                
                 addmoney(bet*win,mt_gambling)
                 rlprint "You win "& bet*win &" Cr."
             endif
@@ -122,14 +114,12 @@ function play_slot_machine() as short
     return 0
 end function
 
-#define cut2bottom
-#endif'main
 
+#endif'main
 #if (defined(main) or defined(test))
 '      -=-=-=-=-=-=-=- INIT: tSlotmachine -=-=-=-=-=-=-=-
 	tModule.register("tSlotmachine",@tSlotmachine.init()) ',@tSlotmachine.load(),@tSlotmachine.save())
 #endif'main
-
 #ifdef test
 #print -=-=-=-=-=-=-=- TEST: tSlotmachine -=-=-=-=-=-=-=-
 #endif'test
