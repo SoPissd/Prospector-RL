@@ -94,9 +94,6 @@ Dim Shared As Short sidebar
 '''
 Dim Shared As Byte _volume=2
 
-Dim Shared As Byte _tix=24
-Dim Shared As Byte _tiy=24
-
 Dim Shared As Byte gt_mwx=40
 
 Dim Shared As Byte _teamcolor=15

@@ -1,15 +1,5 @@
 'tCompany.
 '
-'namespace: tCompany
-
-'
-'
-'defines:
-'init=16, private pay_bonuses=0, company=50, private unload_s=0,
-', private unload_f=0, merctrade=3, com_remove=4, shares_value=1,
-', sellshares=0, getshares=0, buyshares=0, getsharetype=0, portfolio=0,
-', dividend=0, cropstock=0, display_stock=0, stockmarket=0, trading=13
-'
 
 'needs [head|main|both] defined,
 ' builds in test mode otherwise:
@@ -31,7 +21,6 @@
 
 
 namespace tCompany
-
 
 
 #ifdef types

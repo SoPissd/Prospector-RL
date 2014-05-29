@@ -207,6 +207,7 @@ function init(iAction as integer) as integer
 	pCaptainName= @CaptainName
 	pEnjoyConcert= @EnjoyConcert
 	pGetitem= @get_item
+	pSetCaptainsprite= @SetCaptainsprite
 
     crew_desig(1)="Captain"
     crew_desig(2)="Pilot"

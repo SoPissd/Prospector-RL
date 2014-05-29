@@ -52,8 +52,6 @@ function init(iAction as integer) as integer
 end function
 end namespace'tSpacecombatmap
 
-'declare function com_remove(attacker() as _ship, t as short,flag as short=0) as short
-
 
 function display_station(a as short) as short
     dim as short x,y,t

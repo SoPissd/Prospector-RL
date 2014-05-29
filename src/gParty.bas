@@ -159,7 +159,7 @@ function display_ship(show as byte=0) as short
     set__color( 15,0)
 
     wl=display_ship_weapons()
-    'if wl+4>_lines then   fail
+    'if wl+4>_lines then 		fail.. removed _lines .. now adjust!
     '    _lines=wl+4
     '    save_config(configflag(con_tiles))
     '    tScreen.y=_lines*_fh1

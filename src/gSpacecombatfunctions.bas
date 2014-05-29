@@ -1489,7 +1489,7 @@ function com_detonatemine(d as short,mines_p() as _cords, mines_v() as short, by
                 reward(3)=reward(3)+attacker(a).money
                 piratekills(attacker(a).st)+=1
                 piratekills(0)+=attacker(a).money
-'fail                com_remove(attacker(),a)
+                tCompany.com_remove(attacker(),a)
                 t=0
             endif
         endif

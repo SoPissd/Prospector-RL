@@ -73,8 +73,8 @@ End Destructor
 'on setting the seed we have to exclude 
 'a couple of values that would break the cycling
 Property tRandom.isInvalidSeed as Short
-  return (_seed.w=0) or (_seed.w=&h464fffffu) _
-      or (_seed.z=0) or (_seed.z=&h9068ffffu)
+  return (_seed.w=0) orelse (_seed.w=&h464fffffu) _
+  orelse (_seed.z=0) orelse (_seed.z=&h9068ffffu)
 End Property
 
 Property tRandom.Seed As tRngSeed

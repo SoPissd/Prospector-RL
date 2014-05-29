@@ -987,7 +987,7 @@ EndIf
                     tmap(awayteam.c.x,awayteam.c.y).hp-=1
                     awayteam.add_move_cost
 
-                    'For a=1 To _lines   fail
+                    'For a=1 To _lines   fail .. removed _lines. now adjust!
                     '    If displaytext(a)="" Then 
                     '        displaytext(a-1)&="."
                     '        Exit For

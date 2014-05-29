@@ -260,7 +260,6 @@ dim shared pLanding as tLanding
 type tUpdateworld as function(location as short) as short
 dim shared pUpdateworld as tUpdateworld
 
-
 #endif'types
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tShip -=-=-=-=-=-=-=-

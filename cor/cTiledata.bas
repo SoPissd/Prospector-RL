@@ -30,6 +30,9 @@
 
 #ifdef types
 '     -=-=-=-=-=-=-=- TYPES:  -=-=-=-=-=-=-=-
+Dim Shared As Byte _tix=24
+Dim Shared As Byte _tiy=24
+
 const numTiles = 411
 const dimTiles = 512 'hmmm
 

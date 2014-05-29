@@ -26,6 +26,9 @@
 #endif'test
 #ifdef head
 '     -=-=-=-=-=-=-=- HEAD: tConfig -=-=-=-=-=-=-=-
+type tSetCaptainsprite as function(nr as Byte) as short
+dim shared pSetCaptainsprite as tSetCaptainsprite
+
 
 declare function save_config(oldtiles as short) as short
 declare function load_config() as short
@@ -291,8 +294,11 @@ function configuration() as short
             end select
         end select
 
-    loop until (uConsole.Closing) or c=con_end or c=-1 or c=-27
-'fail    if tVersion.gamerunning=1 then SetCaptainsprite(configflag(con_captainsprite))
+    loop until (uConsole.Closing) orelse (c=con_end) orelse (c=-1) orelse (c=-27)
+    
+    if (tVersion.gamerunning=1) andalso (pSetCaptainsprite<>null) then
+		 pSetCaptainsprite(configflag(con_captainsprite))
+    EndIf
 '    screenshot(2)
     return save_config(oldtiles)
 end function

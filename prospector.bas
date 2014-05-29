@@ -15,9 +15,9 @@
 'set build mode
 'set build mode
 '#define build_justfoundation
-#define build_justgamecore
-#define build_mini 1
-'#define build_prospector		'<< that's the one to build_everything. turn the build_others off
+'#define build_justgamecore
+#define build_mini 0
+#define build_prospector		'<< that's the one to build_everything. turn the build_others off
 '
 'annoying experiment(s)
 '#define build_justpoker
@@ -129,7 +129,11 @@
 	'
 	#if __FB_Debug__
 	#ifdef __FB_WIN32__
-		ReplaceConsole()
+		'ReplaceConsole()
+		dim Seed As tRngSeed
+		Seed.w=1
+		Seed.z=1
+		tRng.rng.seed=Seed
 	#endif
 	#endif	
 

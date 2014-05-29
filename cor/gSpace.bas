@@ -744,6 +744,7 @@ function questguy_newloc(i as short) as short
     
     for j=1 to lastquestguy
         if questguy(j).location>=0 then' Is on a big station
+DbgPrint("questguy(j).location"& questguy(j).location):sleep
             noperstation(questguy(j).location)+=1
         endif
     next
@@ -786,6 +787,9 @@ function questguy_newloc(i as short) as short
             endif
         endif
     next
+for j=1 to lastquestguy
+DbgPrint("questguy(j).location"& questguy(j).location)
+next: sleep
     return 0
 end function
 

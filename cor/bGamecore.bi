@@ -40,7 +40,7 @@ inc("gMakeship.bas",			"")
 inc("gCivilisation.bas",		"")
 inc("gFaction.bas",				"")
 
-#if (build_mini <> 1)
+'#if (build_mini <> 1)
 inc("gPlanet.bas",				"")
 inc("gCommandstring.bas",		"")
 inc("gCargo.bas",				"")
@@ -76,4 +76,4 @@ inc("gSpace.bas",				"")
 inc("gWorldgen.bas",			"")
 inc("gStartnewgame.bas",		"")
 
-#endif
+'#endif
