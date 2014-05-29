@@ -91,9 +91,15 @@ DeclareDependencies()
 	#else
 		#define DbgEnd
 	#endif
-	'	
+	'
+	#define DbgThis(Text) DbgPrint("@"& hex(cint(@this)) & Text )	
+	'
 	#macro DbgAssert(x,msg)
 	if not (x) then DbgPrint("DbgAssert failed @ " +ucase(Namebase(__FILE__))+":"+__FUNCTION__+"." &__LINE__ &"> " +msg)
+	#EndMacro
+	'
+	#macro DbgAssertThis(x,msg)
+	if not (x) then DbgThis("DbgAssert failed @ " +ucase(Namebase(__FILE__))+":"+__FUNCTION__+"." &__LINE__ &"> " +msg)
 	#EndMacro
 	'
 #else
@@ -109,9 +115,12 @@ DeclareDependencies()
 	#define _DbgPrintCSVs 0
 	'									'NOTICE!! these must be on their own line.  no IF x THEN DbgPrint()! 
 	#define _DbgPrintMode -1
-	#define DbgPrint(text)
-	#define DbgAssert(x)
-	#define DbgEnd
+
+	#define DbgPrint(text)				' outputs text
+	#define DbgThis(text)				' identifies object and outputs test				
+	#define DbgAssert(x,msg)			' asserts x or gives a message
+	#define DbgAssertThis(x,msg)		' asserts x or identifies object and gives a message
+	#define DbgEnd						' just for completeness, add before program end
 #endif
 
 ' always

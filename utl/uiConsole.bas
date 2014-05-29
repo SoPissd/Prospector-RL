@@ -134,7 +134,7 @@ declare function aKey2i(aKey as String) as Integer
 declare function Pressanykey(aRow as Integer=2,aCol as Integer=0,aFg as Integer=0,aBg as Integer=0) as Integer
 declare function ClearKeys() as integer
 
-declare function keyaccept overload (ByRef aKey as string,allow as string="",deny as string="") as short
+declare function keyaccept overload (aKey as string,allow as string="",deny as string="") as short
 declare function keyaccept overload (iKey as integer,allow as string="",deny as string="") as short
 declare function keyinput(allow as string="",deny as string="") as string
 
@@ -397,7 +397,7 @@ DbgPrint("Adjusted keylist ["+allowed+"]")
     return 0 
 end function
 
-function keyaccept(ByRef aKey as string,allow as string="",deny as string="") as short
+function keyaccept(aKey as string,allow as string="",deny as string="") as short
 	validateaccept(allow)'validates against a comma delimited list of keys
 	LastKey= aKey
     return (aKey<>"") _

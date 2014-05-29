@@ -43,6 +43,13 @@ declare function roman(i as integer) as string
 declare function html_color(c as string, indent as short=0, wid as short=0) as string
 declare function ansi2ascii (byval convertstring as string) as string
 
+declare sub loadarray(_
+				r() as string,_
+				byref ilines as integer, _
+				byref maxlen as integer, _  'sets r(), maxlen and ilines
+				atext as string="",_		'from text
+				cDiv as string="")			'using cDiv or \n to mark lines
+
 'declare function Texttofile(text as string) as string
 'declare function lev_minimum( a As Integer, b As Integer, c As Integer ) As Integer
 'declare function fuzzymatch( s As String, t As String ) As single
@@ -327,6 +334,35 @@ function ansi2ascii (byval convertstring as string) as string
     next i
 	return outstring
 end function
+
+'
+
+sub loadarray(	r() as string,_
+				byref ilines as integer, _
+				byref maxlen as integer, _  'sets r(), maxlen and ilines
+				atext as string="",_		'from text
+				cDiv as string="")			'using cDiv or \n to mark lines
+				
+	ilines=0
+	dim as string text= aText
+	dim as Integer i,j
+	
+	while text<>""
+		i=instr(text,chr(10))				'find lf
+		j=instr(text,cDiv)					'or the custom divider
+		if (i=0) orelse ((j>0) andalso (j<i)) then i=j	'pick the earlier one
+		if i>0 then
+			r(ilines)=trim(left(text,i-1),chr(10)+chr(13))
+			ilines +=1
+			text=mid(text,i+1)
+		else
+			r(ilines)=trim(text,chr(10)+chr(13))
+			ilines +=1
+			text=""
+		EndIf
+		'DbgPrint(nlines &"  "& len(text) &" line:"& lines(nlines-1))
+	Wend
+End Sub
 
 '
 

@@ -44,6 +44,7 @@ type tScroller extends Object
 	bIdx as integer = false						
 	'
 	declare property index as Integer
+	declare property index(ByVal iIndex as Integer)
 	'
 	declare function Getkey(accept as string="",deny as string="") as String
 	declare function Init(iLines as integer, bScrollbar as integer=true) as integer
@@ -82,7 +83,6 @@ type tWordScroller extends tAreaScroller
 	'mhy as integer							'set text, wid and mhy, then scrollbox!
 	'
     'ancestor longestline as integer 		'computed with bCount
-    lcount as integer						'computed with bCount
 	declare function setwords(atext as string="") as Integer
 	declare function Textbox(bCount as integer=false) as integer	
 	'
@@ -101,7 +101,6 @@ type tArrayScroller extends tAreaScroller
 	'mhy as integer							'set text, wid and mhy, then scrollbox!
 	'
     'ancestor longestline as integer 		'computed with bCount
-    lcount as integer						'computed with bCount
 	declare function setlines(atext as string="",cDiv as string="") as Integer '"|"
 	declare function Textbox() as integer	
 	'
@@ -150,32 +149,64 @@ function tScroller.Init(iLines as integer, bScrollbar as integer=true) as intege
 	return true
 end function
 
+'
 
 Property tScroller.index as Integer
 	return offset + idx
 End Property
 
-function tScroller.Getkey(accept as string="",deny as string="") as String		'
-	dim key as String
-	dim i as Integer
-	dim di as Integer
-	'DbgPrint("offset:" & offset & " nlines:" & nlines & " height:" & height)		
-	
-	while true
-        key=uConsole.keyinput(accept,deny) '("12346789 ")'  key=keyin("12346789 ",1)
-		di=uConsole.getdirection(key)
+property tScroller.index(ByVal iIndex as Integer)
+	if (iIndex<0) or (iIndex>=nLines) then return
+	'
+	if (iIndex-offset)>Height then
+		idx= (height-1)
+		offset= iIndex - idx 
+	elseif (iIndex<offset) then
+		idx= 0
+		offset= iIndex - idx
+	else 
+		idx= iIndex - offset
+	EndIf
+	'DbgPrint("tScroller.index(" &iIndex &") offset="& offset &" idx="& idx)
+End Property
 
-		i=0
+'
+
+function tScroller.Getkey(accept as string="",deny as string="") as String		'
+	'getkey manages scrolling for you and stays here unless an accept key comes or you scroll 
+	dim key as String	'aKey
+	dim di as Integer	' and its direction
+	'
+	dim as integer iOfsx,iOfsy,iIdx 'values on entry. used to determine if we scrolled
+	dim bChanged as Integer				
+	
+	'DbgPrint("offset:" & offset & " nlines:" & nlines & " height:" & height)
+			
+	if accept="" then								'nothing specified
+		accept= keyl_onwards						'use the standard 'accept' list
+	elseif not uConsole.keyaccept(key__enter,accept) then	''Enter' not explicit
+		accept += ","+keyl_onwards					'add the standard list of keys
+	EndIf 	'you can now pick from the menu and respond to extra keys 
+	
+	iIdx=	idx
+	iOfsy=	offset
+	iOfsx=	offsetx
+		
+	while true
+        key=uConsole.keyinput("","")	'accept/deny keys below
+		di=uConsole.getdirection(key)	' lets play scroller with any key up here
+
+		bChanged=0
         if di=7 then			'home
         	if bIdx then idx=0
         	if bVertical then offset=0
         	if bHorizontal then offsetx=0
-        	i=1
+        	bChanged=1
         elseif di=1 then			'end
         	if bIdx then idx=(height-1)
         	if bVertical then offset=nlines-(height-1)
         	if bHorizontal then offsetx=0
-        	i=1
+        	bChanged=1
         EndIf
 		'
 		if bVertical then
@@ -190,7 +221,7 @@ function tScroller.Getkey(accept as string="",deny as string="") as String		'
 	        	else
 		        	offset=offset-(height)'-1)
 	        	EndIf
-	        	i=1
+	        	bChanged=1
 	        'elseif di=3 then			'pgdn
 	        elseif uConsole.keyaccept(key,keyl_mendn) then 
 	        	if bIdx then
@@ -204,7 +235,7 @@ function tScroller.Getkey(accept as string="",deny as string="") as String		'
 	        	else
 	    	    	offset=offset+(height)'-1)
 	        	EndIf
-	        	i=1
+	        	bChanged=1
 	        elseif di=2 then			
 	        	if bIdx then
 	        		if (idx<(height-1)) and (index+1<nlines) then
@@ -215,7 +246,7 @@ function tScroller.Getkey(accept as string="",deny as string="") as String		'
 	        	else
 		        	offset=offset+1
 	        	EndIf
-	        	i=1
+	        	bChanged=1
 	        elseif di=8 then
 	        	if bIdx then
 	        		if idx>0 then
@@ -226,38 +257,45 @@ function tScroller.Getkey(accept as string="",deny as string="") as String		'
 	        	else
 		        	offset=offset-1
 	        	EndIf
-	        	i=1
+	        	bChanged=1
 	        endif
 	        '
-	        if idx>(height-1) then idx=(height-1)
-	        if idx<0 then idx=0
-	        '
-	        if offset>(nlines-height) then offset=nlines-height
-	        if offset<0 then offset=0
+	        if bChanged then
+		        if idx>(height-1) then idx=(height-1)
+		        if idx<0 then idx=0
+		        '
+		        if offset>(nlines-height) then offset=nlines-height
+		        if offset<0 then offset=0
+	        EndIf
+	        
 			'DbgPrint("nlines "& nlines  &" height "& height  &" offset "& offset)				
 		EndIf
         '
         if bHorizontal then
 	        if key=key__Ins then 
 	        	offsetx=offsetx-(xwidth\2)
-	        	i=1
+	        	bChanged=1
 	        elseif key=key__Del then 
 	        	offsetx=offsetx+(xwidth\2)
-	        	i=1
+	        	bChanged=1
 	        elseif di=4 then
 	        	offsetx=offsetx-1
-	        	i=1
+	        	bChanged=1
 	        elseif di=6 then
 	        	offsetx=offsetx+1
-	        	i=1
+	        	bChanged=1
 	        endif
-	        '	        
-	        if offsetx>longestline-xwidth then offsetx=longestline-xwidth
-	        if (offsetx<0) or (xwidth>=longestline) then offsetx=0
+	        '	   
+	        if bChanged then
+	        	if offsetx>longestline-xwidth then offsetx=longestline-xwidth
+		        if (offsetx<0) or (xwidth>=longestline) then offsetx=0
+	        EndIf     
         EndIf
 		'
-		''DbgPrint("offsets x,y:" & offsetx &","& offset)		
-		if (i>0) or uConsole.Closing<>0 or uConsole.keyonwards(key) then exit while
+		'now figure ouf if something actually changed if we made changes
+		bChanged= bChanged andalso ((iIdx<>idx) orelse (iOfsy<>offset) orelse (iOfsx<>offsetx))
+		'exit to redraw or process key				
+		if (uConsole.Closing) orelse (bChanged) orelse uConsole.keyaccept(key,accept,deny) then exit while
 	wend	
     return key
 End Function
@@ -378,44 +416,27 @@ End Constructor
 Destructor tArrayScroller()
 End Destructor
 
+
 function tArrayScroller.setlines(atext as string="",cDiv as string="") as Integer '"|"
-	nlines=0
-	dim as string text= aText
-	dim as Integer i,j
-	while text<>""
-		i=instr(text,chr(10))				'find lf
-		j=instr(text,cDiv)					'or the custom divider
-		if (i=0) orelse ((j>0) andalso (j<i)) then i=j	'pick the earlier one
-		if i>0 then
-			lines(nlines)=trim(left(text,i-1),chr(10)+chr(13))
-			nlines +=1
-			text=mid(text,i+1)
-		else
-			lines(nlines)=trim(text,chr(10)+chr(13))
-			nlines +=1
-			text=""
-		EndIf
-		'DbgPrint(nlines &"  "& len(text) &" line:"& lines(nlines-1))
-	Wend
-	lcount=nlines
+	loadarray(lines(),nlines,longestline,aText,cDiv)
 	return nlines
 End Function
 
 
 function tArrayScroller.textbox() as Integer
     set__color(fg,bg)
-    'line count needs to be in lcount
+    'line count needs to be in nlines
 
     'restrain offset
-    if offset>0 and lcount-offset<height-1 then offset=lcount-height-1
+    if offset>0 and nlines-offset<height-1 then offset=nlines-height-1
     if offset<0 then offset=0
 
-	'DbgPrint("lcount "& lcount  &" height "& height  &" offset "& offset &" idx "& idx)				
+	'DbgPrint("nlines "& nlines  &" height "& height  &" offset "& offset &" idx "& idx)				
 
     dim as integer i,j
     dim as string w
 
-DbgPrint("lcount "& lcount  &" height "& height  &" offset "& offset &" idx "& idx &" i "& i)				
+	'DbgPrint("@"& hex(cint(@this)) &": nlines "& nlines  &" height "& height  &" offset "& offset &" idx "& idx &" i "& i)				
     set__color(fg,bg)
     for i=0 to height-1
     	if offset+i>ubound(lines) then exit for
@@ -423,11 +444,11 @@ DbgPrint("lcount "& lcount  &" height "& height  &" offset "& offset &" idx "& i
         if bIdx andalso i=idx then set__color(bg,fg)
 		tScreen.draw2c(x,y+i,w)				
         if bIdx andalso i=idx then set__color(fg,bg)
-		'DbgPrint(lcount &" "& j &" "& longestline &" "& xw &" " & len(w) &" "& ":"+w+":")
+		'DbgPrint(nlines &" "& j &" "& longestline &" "& xw &" " & len(w) &" "& ":"+w+":")
     next
 
     set__color(11,0)
-    return lcount
+    return nlines
 end function
 
 
@@ -441,7 +462,7 @@ function tArrayScroller.Scrollbox() as integer'byref atext as string,iWid as int
 
 	if bFit then
 	    longestline=0 
-	    for i=0 to lcount
+	    for i=0 to nlines
 	    	if i>=ubound(lines) then exit for
 			l= trim(lines(i))
 			if len(l)>longestline then 
@@ -457,7 +478,7 @@ function tArrayScroller.Scrollbox() as integer'byref atext as string,iWid as int
 		yoffset=y:	y +=1
 		wid +=2
 		mwx= wid	' sets mwx. do/es not touch mhy
-		'mhy= lcount+2	
+		'mhy= nlines+2	
 		'mhy= 10
 		h=Drawborder() 'accept and draw a border. returns actual height used.
 		mwx -=2
@@ -466,11 +487,11 @@ function tArrayScroller.Scrollbox() as integer'byref atext as string,iWid as int
 	else
 		h=mhy
 	EndIf
-		'DbgPrint("wid:"& wid &" longestline:"& longestline &" lcount:"& lcount &" visible:"& h)		
+	'DbgPrint("wid:"& wid &" longestline:"& longestline &" nlines:"& nlines &" visible:"& h)		
 	
 	h= mhy
 
-	init(lcount,true)
+	init(nlines,true)
 	xwidth=		mwx
 	height=		h
 	pheight=	height+3
@@ -554,75 +575,74 @@ function tWordScroller.textbox(bCount as integer=false) as Integer
     'Count lines
     dim as string w
     dim as integer i,xw,xwn 
-    lcount=0    
+    nlines=0    
     longestline=0 
     for i=0 to wcount
 		w= trim(words(i))
 		if len(w)>wid then continue for 'already accounted for the long word
         if w="|" then 'New line
-            lcount +=1
+            nlines +=1
             if xw>longestline then longestline=xw
             xw=0
         elseif Left(w,1)<>"{" and Right(w,1)<>"}" then 'Printable word
         	xwn=len(trim(words(i+1)))
         	if xwn>wid then
-                lcount += 2 'finish first + long word on a line by itself
+                nlines += 2 'finish first + long word on a line by itself
 	            if xwn>longestline then longestline=xwn
                 xw=0
         	else
         		if xw>0 then xw +=1
 	            xw=xw+len(w)
 	            if xw>wid then
-	                lcount += 1
+	                nlines += 1
 		            if xw>longestline then longestline=xw
 	                xw=0
 	            endif
         	EndIf
         endif
-	'DbgPrint(lcount &" "& longestline  &" "& xw &" " + w)				
+	'DbgPrint(nlines &" "& longestline  &" "& xw &" " + w)				
     next
     if xw>0 then
-		lcount+=1
+		nlines+=1
     	xw=0
     EndIf
 
     if bCount then
         'longestline
-        return lcount
+        return nlines
     endif
     
     
     'restrain offset
-    if (offset>0) and ((lcount-height+1)>offset) then offset=(lcount-height+1)
-'    if (offset>0) and (lcount-offset<height-1) then offset=lcount-height-1
+    if (offset>0) and ((nlines-height+1)>offset) then offset=(nlines-height+1)
+'    if (offset>0) and (nlines-offset<height-1) then offset=nlines-height-1
     if (offset<0) then offset=0
 
-	'DbgPrint("lcount "& lcount  &" height "& height  &" offset "& offset)				
+	'DbgPrint("nlines "& nlines  &" height "& height  &" offset "& offset)				
     
     dim as integer j
     dim as integer isCol=0
-    
-    
+        
     set__color(fg,bg)
     
-'tScreen.draw2c(2,2,""& lcount)
-'	if lcount+y >= tScreen.gth then
-'		lcount= tScreen.gth -1 -y
+'tScreen.draw2c(2,2,""& nlines)
+'	if nlines+y >= tScreen.gth then
+'		nlines= tScreen.gth -1 -y
 '	EndIf    
-'tScreen.draw2c(3,4,""& lcount &" wid:"& wid)
+'tScreen.draw2c(3,4,""& nlines &" wid:"& wid)
 '
 '    set__color(1,15)
 '
-'    for i=0 to lcount
+'    for i=0 to nlines
 '    	tScreen.draw2c(x,y+i,pad(wid,"X")) 'space(wid))
 '    next
 '    set__color(fg,bg)
     
 
-    lcount=0
+    nlines=0
     for i=0 to wcount
 		w= trim(words(i))
-       	j= lcount-offset
+       	j= nlines-offset
 
         isCol= Left(w,1)="{" and Right(w,1)="}" 					'Color spec'd 
         if isCol then
@@ -630,14 +650,14 @@ function tWordScroller.textbox(bCount as integer=false) as Integer
         elseif w="|" then 											'New line
             if y+j>=y+height then exit for
 			'if j>=0 then tScreen.draw2c(x+xw,y+j,space(wid-xw))
-            lcount += 1
+            nlines += 1
             xw=0
         else			 											'Print word
             if (len(trim(words(i+1)))>wid) or (xw+len(w)>wid) then	'Newline before long word or line to long
                 if y+j>=y+height then exit for
 				'if j>=0 then tScreen.draw2c(x+xw,y+j,space(wid-xw))
-                lcount += 1
-		       	j= lcount-offset
+                nlines += 1
+		       	j= nlines-offset
                 xw=0
             EndIf
 			if y+j>=y+height then exit for
@@ -649,18 +669,18 @@ function tWordScroller.textbox(bCount as integer=false) as Integer
         EndIf
             xw=xw+len(w)
         endif
-		'DbgPrint(lcount &" "& j &" "& longestline &" "& xw &" " & len(w) &" "& ":"+w+":")
+		'DbgPrint(nlines &" "& j &" "& longestline &" "& xw &" " & len(w) &" "& ":"+w+":")
     next
     set__color(fg,bg)
     
 	'tScreen.rbgcolor(255,255,255)
 	'for i=0 to wid-1
-	'	tScreen.draw2c(x+i,y+lcount+1,right(""&i,1))    	
+	'	tScreen.draw2c(x+i,y+nlines+1,right(""&i,1))    	
 	'Next
 	'DbgPrint(x &" "& y &" "& longestline &" "& maxlines)				
-	'DbgPrint(""&y &" "& lcount &" "& maxlines)
+	'DbgPrint(""&y &" "& nlines &" "& maxlines)
     
-    'if y+lcount>=maxlines then									' a full-screen textbox... for the finale
+    'if y+nlines>=maxlines then									' a full-screen textbox... for the finale
 
     '    if offset>0 then
     '        set__color(14,0)
@@ -672,7 +692,7 @@ function tWordScroller.textbox(bCount as integer=false) as Integer
     '    tScreen.draw2c(x+wid,y            ,chr(24))
     '    tScreen.draw2c(x+wid,y+1          ,"-")
     '    
-    '    if offset+maxlines<lcount-1 then
+    '    if offset+maxlines<nlines-1 then
     '        set__color(14,0)
     '    else
     '        set__color(14,0,0)
@@ -681,11 +701,11 @@ function tWordScroller.textbox(bCount as integer=false) as Integer
     '    tScreen.draw2c(x+wid,maxlines-1	,chr(25))
 	'	wid +=1        
 
-    '    scroll_bar(offset, lcount, maxlines-y, maxlines-y -1 -4,x+wid,y+2,14)
+    '    scroll_bar(offset, nlines, maxlines-y, maxlines-y -1 -4,x+wid,y+2,14)
 	'endif
     
     set__color(11,0)
-    return lcount
+    return nlines
 end function
 
 
@@ -700,7 +720,7 @@ function tWordScroller.Scrollbox() as integer'byref atext as string,iWid as inte
 
 	if bFit then
 		Textbox(true)	'guess width/height based on wid
-		wid=longestline	'>>result, longest line & lcount
+		wid=longestline	'>>result, longest line & nlines
 		Textbox(true)	'better guess width/height
 	EndIf
 
@@ -709,7 +729,7 @@ function tWordScroller.Scrollbox() as integer'byref atext as string,iWid as inte
 		yoffset=y:	y +=1
 		wid +=2
 		mwx= wid	' sets mwx. do/es not touch mhy
-		'mhy= lcount+2	
+		'mhy= nlines+2	
 		'mhy= 10
 		h=Drawborder() 'accept and draw a border. returns actual height used.
 		mwx -=2
@@ -718,11 +738,11 @@ function tWordScroller.Scrollbox() as integer'byref atext as string,iWid as inte
 	else
 		h=mhy
 	EndIf
-		'DbgPrint("wid:"& wid &" longestline:"& longestline &" lcount:"& lcount &" visible:"& h)		
-	
+	'DbgPrint("wid:"& wid &" longestline:"& longestline &" nlines:"& nlines &" visible:"& h)		
+
 	h= mhy
 
-	init(lcount,true)
+	init(nlines,true)
 	xwidth=		Wid	
 	height=		h
 	pheight=	height+3
@@ -817,15 +837,17 @@ end function
 				draw_border(3,3,42,30)
 				draw_border(5,5,42,30)
 			
-				'a.text= aText
 				a.wid= w
 				a.mhy= h
-				'a.bDrawborder= not a.bDrawborder
 				tScreen.draw2c(5,5,"a.offset + a.idx = "& a.offset + a.idx )
-				a.Scrollbox() 'aText,20)
+				a.Scrollbox()
 			    ScreenSync
 				ScreenCopy
-				aKey= a.GetKey()
+
+				aKey= a.GetKey() '"i")
+				'DbgPrint("GotKey("""+aKey+""")")				
+				'if aKey="i" then a.index=100
+				
 				if uConsole.keyaccept(aKey,keyl_onwards) then exit while
 			wend
 			if aKey<>key__enter then exit while 			
@@ -910,7 +932,7 @@ end function
 				if uConsole.keyaccept(aKey,keyl_onwards) then exit while
 			wend
 			'
-'DbgPrint("key:" +aKey)
+			'DbgPrint("key:" +aKey)
 			if aKey<>key__enter then exit while 			
 			if a.index=0 then
 				a.bDrawborder= not a.bDrawborder
