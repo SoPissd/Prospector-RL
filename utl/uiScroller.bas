@@ -102,7 +102,7 @@ type tArrayScroller extends tAreaScroller
 	'
     'ancestor longestline as integer 		'computed with bCount
     lcount as integer						'computed with bCount
-	declare function setlines(atext as string="",cSep as string="") as Integer '"|"
+	declare function setlines(atext as string="",cDiv as string="") as Integer '"|"
 	declare function Textbox() as integer	
 	'
 	bFit as integer= true
@@ -232,7 +232,7 @@ function tScroller.Getkey(accept as string="",deny as string="") as String		'
 	        if idx>(height-1) then idx=(height-1)
 	        if idx<0 then idx=0
 	        '
-	        if offset>nlines-(height-1) then offset=nlines-(height-1)
+	        if offset>(nlines-height) then offset=nlines-height
 	        if offset<0 then offset=0
 			'DbgPrint("nlines "& nlines  &" height "& height  &" offset "& offset)				
 		EndIf
@@ -378,13 +378,13 @@ End Constructor
 Destructor tArrayScroller()
 End Destructor
 
-function tArrayScroller.setlines(atext as string="",cSep as string="") as Integer '"|"
+function tArrayScroller.setlines(atext as string="",cDiv as string="") as Integer '"|"
 	nlines=0
 	dim as string text= aText
 	dim as Integer i,j
 	while text<>""
 		i=instr(text,chr(10))				'find lf
-		j=instr(text,cSep)					'or the custom divider
+		j=instr(text,cDiv)					'or the custom divider
 		if (i=0) orelse ((j>0) andalso (j<i)) then i=j	'pick the earlier one
 		if i>0 then
 			lines(nlines)=trim(left(text,i-1),chr(10)+chr(13))
@@ -405,21 +405,21 @@ End Function
 function tArrayScroller.textbox() as Integer
     set__color(fg,bg)
     'line count needs to be in lcount
-    
+
     'restrain offset
     if offset>0 and lcount-offset<height-1 then offset=lcount-height-1
     if offset<0 then offset=0
 
-'	DbgPrint("lcount "& lcount  &" height "& height  &" offset "& offset &" idx "& idx)				
-    
+	'DbgPrint("lcount "& lcount  &" height "& height  &" offset "& offset &" idx "& idx)				
+
     dim as integer i,j
     dim as string w
 
+DbgPrint("lcount "& lcount  &" height "& height  &" offset "& offset &" idx "& idx &" i "& i)				
     set__color(fg,bg)
     for i=0 to height-1
     	if offset+i>ubound(lines) then exit for
 		w= trim(lines(offset+i))
-	DbgPrint("lcount "& lcount  &" height "& height  &" offset "& offset &" idx "& idx &" i "& i)				
         if bIdx andalso i=idx then set__color(bg,fg)
 		tScreen.draw2c(x,y+i,w)				
         if bIdx andalso i=idx then set__color(fg,bg)
@@ -593,8 +593,9 @@ function tWordScroller.textbox(bCount as integer=false) as Integer
     
     
     'restrain offset
-    if offset>0 and lcount-offset<height-1 then offset=lcount-height-1
-    if offset<0 then offset=0
+    if (offset>0) and ((lcount-height+1)>offset) then offset=(lcount-height+1)
+'    if (offset>0) and (lcount-offset<height-1) then offset=lcount-height-1
+    if (offset<0) then offset=0
 
 	'DbgPrint("lcount "& lcount  &" height "& height  &" offset "& offset)				
     
@@ -725,7 +726,7 @@ function tWordScroller.Scrollbox() as integer'byref atext as string,iWid as inte
 	xwidth=		Wid	
 	height=		h
 	pheight=	height+3
-	
+
 	Textbox(false)' text ,x,y,xwidth,fg,bg,0,0,offset)	'now place the text
 
 	if bDrawborder then
@@ -737,7 +738,7 @@ function tWordScroller.Scrollbox() as integer'byref atext as string,iWid as inte
 
 	'DbgPrint("a.offset, a.nlines, a.pheight, a.height, x+a.xwidth")
 	'DbgPrint(offset & " " & nlines & " " & pheight & " " & height & " " & x+xwidth+1)
-	
+
 	if bScrollbar then
 		if not bDrawborder then
 	'		x +=1
@@ -939,7 +940,7 @@ end function
 		ReplaceConsole()
 				    
 		testArrayScrollbox()
-		testWordScrollbox()
+		'testWordScrollbox()
 		'? "sleep": sleep
 	#else
 		tModule.registertest("uScroller",@testArrayScrollbox(),"test ArrayScrollbox()")

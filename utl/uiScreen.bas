@@ -265,6 +265,8 @@ End Sub
 
 sub draws(ds_x as integer,ds_y as integer,ds_text as string,ds_font as string="",aProc as DrawStringCustom=null)
 	'Draw String ( ds_x , ds_y ), ds_text
+	ds_x -=1
+	ds_y -=1
 	DbgAssert(ds_x>=0,"x")
 	DbgAssert(ds_y>=0,"y")
 	if ds_font="" then
@@ -291,6 +293,8 @@ sub draw2c(ds_x as integer,ds_y as integer,ds_text as string)
 	ds_y -=1
 	DbgAssert(ds_x>=0,"x")
 	DbgAssert(ds_y>=0,"y")
+if ds_x<0 then debugbreak	
+if ds_y<0 then debugbreak	
 	if FONT2=null then
 		Draw String (erw+ds_x*dsx,erh+ds_y*dsy),	ds_text
 	else

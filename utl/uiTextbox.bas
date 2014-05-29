@@ -45,7 +45,7 @@ function textbox(text as string, x as short, y as short, wid as short,_
     fg as short=11, bg as short=0,pixel as byte=0,byref op as Integer=0,byref offset as Integer=0) as short
     'op=1 only count lines, don't print
 
-	assert(pixel=0)
+	DbgAssert(pixel=0,"pixel")
 
     set__color(fg,bg)
 	dim a as tArrayScroller

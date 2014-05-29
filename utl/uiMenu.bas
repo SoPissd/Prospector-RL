@@ -30,8 +30,6 @@ Type tMenuCore Extends tArrayScroller'Object
 	declare virtual function init() as integer
 	declare virtual function before() as integer
 	declare abstract function DoProcess() as integer
-	declare virtual function after() as integer
-	declare virtual function finish() as integer
 	'
 	declare function menu() as integer
 	declare function go(te as string, he as string="", x as short=2, y as short=2, blocked as short=0, markesc as short=0,st as short=-1,loca as short=0) as integer
@@ -39,25 +37,24 @@ Type tMenuCore Extends tArrayScroller'Object
 	declare function ClearChoices() as integer
 	declare function AddChoice(aTe as string, aTh as string="") as integer  
 	'
+	declare sub ShowHelp(i as integer)
+	'
 	dim a as short			=0
-	dim e as short			=0
-	dim te as string		=""
-	dim th as string		="" 
+'	dim e as short			=0
+'	dim th as string		="" 
+	dim as string help
 	'dim x as short			=2 
 	'dim y as short			=2 
 	dim blocked as short	=0 
 	dim markesc as short	=0
 	dim st as short			=-1
 	dim loca as short		=1
-	dim iLines as short
 	dim as integer lTe=0
 	dim as integer lTh=0
 Private:
 	' 0= headline 1=first entry
 	dim as short blen
-	dim as string text,help
 	'dim as string bgname
-	dim lines(256) as string
 	dim helps(256) as string
 	dim shrt(256) as string
 	dim as string key,delhelp
@@ -68,14 +65,12 @@ Private:
 	dim l as short
 	dim hfl as short
 	dim hw as short
-	dim lastspace as short
 	dim tlen as short
 	dim longest as short
 	dim as integer ofx= 1
 	dim as integer l2
 	dim as integer longestbox
 	dim as integer longesthelp
-	dim as integer backpic
 	dim as integer offset
 	'
 End Type
@@ -101,7 +96,7 @@ end namespace'nuMenu
 
 
 function  tMainmenu.DoProcess() as integer
-	return e
+	return 0
 End Function
 
 
@@ -112,18 +107,27 @@ End Constructor
 Destructor tMenuCore()
 End Destructor
 
+sub tMenuCore.ShowHelp(i as integer)
+	if (helps(i)<>"") then 
+'declare function textbox(text as string, x as short, y as short, wid as short,_
+'    fg as short=11, bg as short=0,pixel as byte=0,byref op as Integer=0,byref offset as Integer=0) as short
+
+		blen= 1+textbox(helps(i),ofx,2,hw,15,1,,,offset)
+	EndIf
+End sub
+
 function tMenuCore.before() as integer
 	'LogOut("uMenu.before()")
 	dim as integer i
 	dim as string a1
 	if tScreen.isGraphic then
 	    set__color( 15,0)
-	    tScreen.drawfx(_fw1,_fh1)    
+'	    tScreen.drawfx(_fw1,_fh1)    
 '	    tScreen.drawfx(_fw2,_fh2)    
 	    tScreen.draw2c(x,y,lines(0)&space(3))    
 	    for i=1 to c
 	        if loca=i then 
-	            if hfl=1 and loca<=c and helps(i)<>"" then blen=1+textbox(helps(i),ofx,2,hw,15,1,,,offset)
+	            ShowHelp(i)
 	            set__color( 15,5)
 	            a1="*"
 	        else
@@ -132,13 +136,14 @@ function tMenuCore.before() as integer
 	        endif
 	        tScreen.draw2c(x,y+i, a1+shrt(i) &") "& lines(i))
 	    next
-	    tScreen.drawfx()    
+'	    tScreen.drawfx()    
 	else
 		tScreen.pushpos()
 	    tScreen.xy(x,y,lines(0)&space(3))    
+'debugbreak
 	    for i=1 to c
 	        if loca=i then 
-	            if hfl=1 and loca<=c and helps(i)<>"" then blen=1+textbox(helps(i),ofx,2,hw,15,1,,,offset)
+	            ShowHelp(i)
 	            tScreen.rbgcolor(255,255,255)
 	            a1="*"
 	        else
@@ -157,92 +162,21 @@ function tMenuCore.before() as integer
 	return 0
 end function
 
-function tMenuCore.after() as integer
-	dim as integer i
-	dim as integer iDir
-	if tScreen.isGraphic then
-	    tScreen.drawfx(_fw2,_fh2)    
-	    if hfl=1 then 
-	        for i=1 to blen
-	            set__color( 0,0)
-	            tScreen.draw2c(ofx,y+i-1,space(hw))
-	        next
-	    endif
-	    tScreen.drawfx()    
-	else
-	    if hfl=1 then 
-			tScreen.pushpos()
-	        for i=1 to blen
-			    tScreen.xy(ofx,y+i-1,space(hw))
-	        next
-			tScreen.poppos()
-	    endif
-	EndIf
-	'
-    iDir=uConsole.getdirection(key)
-    if iDir =8 then
-		loca=loca-1 
-    elseif iDir =2 then 
-    	loca=loca+1
-    elseif help<>"" then
-        if uConsole.keyaccept(key,keyl_menup) then offset +=1
-        if uConsole.keyaccept(key,keyl_mendn) then offset -=1
-    endif
-
-    for i=0 to c
-        if lcase(key)=lcase(shrt(i)) then			'select with lower case
-			loca=i
-			if (c<26) and (key=ucase(key)) then key=key__enter	'select and go with upper case up to 26 choices
-			exit for
-        EndIf
-    next
-
-    if loca<1 then loca=c
-    if loca>c then loca=1
-
-	'DbgPrint("tMenuCore.after(e,loca) "& e &" "& loca)
-    if key=key__enter then e=loca
-    if key=key__esc then e= -uConsole.aKey2i(key__esc)
-	'DbgPrint("tMenuCore.after(e,loca) "& e &" "& loca)
-
-	'if player.dead<>0 then e=c
-	'if key=key__esc or player.dead<>0 then e=c
-	return e
-end function
 
 
 
 function tMenuCore.init() as integer
-	'DbgPrint("uMenu.init()"& e)
-	dim as integer a
+	dim as integer a,e
 
     cls
 	if tScreen.isGraphic then
 		tGraphics.Background(0)		    	    
-	'    if bg=bg_title then
-	'    	backpic= 0
-	'        logo= bmp_load("graphics/prospector.bmp")
-	'    endif    
 	else
 	EndIf
 
-	text=te
-    help=th
-    b=len(text)
-    text=text &"/"
-    c=0
-    do
-        tlen=instr(text,"/")
-        lines(c)=left(text,tlen-1)
-'? lines(c)
-        text=mid(text,tlen+1)
-        c=c+1
-    loop until len(text)<=0
-    c=c-1
-    
+    'help=th    
     if help<>"" then
         if right(help,len(help)-1)<>"/" then help=help &"/"
-        hfl=1
         e=0
         b=len(help)
         do
@@ -304,42 +238,13 @@ function tMenuCore.init() as integer
 	    ofx=x+4+longest
 	EndIf
     
-    e=0
-    return e
-End Function
-
-
-function tMenuCore.finish() as integer
-	'DbgPrint("tMenuCore.finish()"& e)
-	dim as integer a
-    if key=key__esc and markesc=1 then e=-uConsole.aKey2i(key__esc)
-
-	if tScreen.isGraphic then
-	    set__color( 0,0)
-	    tScreen.drawfx(_fw2,_fh2)    
-	    tScreen.drawfx()    
-	    for a=0 to c
-	        tScreen.draw2c(x,y+a,space(longest))
-	    next
-'	    set__color( 11,0)
-'	    cls
-'		tScreen.set(1)
-'	    if logo <> 0 then
-'			ImageDestroy(Logo)
-'	    EndIf
-	else
-		tScreen.pushpos()
-	    for a=0 to c
-		    tScreen.xy(x,y+a,space(longest))
-	    next
-		tScreen.poppos()
-	EndIf
-	return e
+    return 0
 End Function
 
 
 function tMenuCore.menu() as integer
 	dim bGraphic as Short
+	dim e as integer
 	bGraphic=not tScreen.isGraphic
     while (not uConsole.Closing) and (e=0)	
     	'changed modes?
@@ -350,30 +255,33 @@ function tMenuCore.menu() as integer
 		'DbgPrint("e=init() a=" &a):uConsole.Pressanykey			
 	   	if (e=0) then e=before()    		
 	   	if (e=0) then key=uConsole.keyinput() 'key=keyin(,96+c)
-	   	if (e=0) then e=after()
 	   	if (e<>0) and (key<>"") then e=DoProcess()
     wend
-    return finish()
+    return 0
 End Function
 
 '
 
 Function tMenuCore.ClearChoices() as integer
-	te=""
-	th=""
-	iLines=0
+	for i as integer = 0 to nlines
+		lines(i)=""
+	Next
+	nLines=0
+	lCount=0
+	help=""
 	lTe=0
 	lTh=0
 	return 0	
 End Function
 
 function tMenuCore.AddChoice(aTe as string, aTh as string="") as integer
-	te= te + iif(len(te)>0,"/","") + aTe
-	th=	th + iif(len(th)>0,"/","") + aTh
-	iLines +=1
+	lines(nlines)=aTe
+	help=	help + iif(len(help)>0,"/","") + aTh
+	nLines +=1
 	if len(aTe)>lTe then lTe=len(aTe)
 	if len(aTh)>lTh then lTh=len(aTh)	
 	'DbgPrint("AddChoice(aTe,aTh) "& aTe &" , " & aTh )
+	lCount= nLines
 	return 0	
 End Function
 
@@ -384,8 +292,8 @@ function tMenuCore.go(ate as string, ahe as string="", sx as short=2, sy as shor
 	'	cls
 	'	LogOut("tScreen.isConsole")
 	'endif
-    te= ate
-    th= ahe
+	setlines(aTe,"/")
+    help= ahe
     x= sx
     y= sy
     blocked= sblocked
@@ -413,11 +321,26 @@ end function
 		chdir exepath
 		chdir ".."
 		
+		cls
+		tscreen.res
+		tGraphics.LoadLogo("graphics/prospector.bmp")
+		tGraphics.Randombackground()		    	    
 		
 		dim Mainmenu as tMainmenu
 		with Mainmenu
-			.x = tScreen.gtw *4 \3
-			.x = tScreen.gth *4 \3
+			if tScreen.isGraphic then
+				.x = tScreen.gtw *3 \4
+				.y = tScreen.gth *3 \4
+			else
+				.x = uConsole.ttw *3 \4
+				.y = uConsole.tth *3 \4
+			endif
+			.bIdx=true
+			.bScrollbar=true
+			.wid= 8
+			.mhy= 8
+
+			'
 			.ClearChoices()
 			.AddChoice("testing",	"this could be a title")  
 			.AddChoice("one",		"test the menu")  
@@ -433,23 +356,32 @@ end function
 		
 		  
 		dim aKey as String
+		dim e as integer
 		
-		cls
-		tscreen.res
-		tGraphics.LoadLogo("graphics/prospector.bmp")
-		tGraphics.Randombackground()		    	    
 		while not uConsole.Closing
-			tscreen.res
+			cls
 			tGraphics.background(0)
 			if not tGraphics.putlogo(39,69) then
-			   	draw string(26,26),"MAINMENU"',,titlefont,custom,@_col
+			   	tScreen.draw2c(26,26,"MAINMENU")',,titlefont,custom,@_col
 			endif
+
+'			Mainmenu.e=0
+'			e=Mainmenu.init()
+'		   	if (e=0) then e=Mainmenu.before()
+'		   	if (e<>0) then exit while
+			Mainmenu.Scrollbox() 'aText,20)
+
+'debugbreak
 			aKey=Mainmenu.Getkey()
 			
-			tScreen.draw2c(10,22, "you chose: "& aKey &":" &Mainmenu.e)
-			tScreen.draw2c(10,24,"")
-			if uConsole.keyaccept(uConsole.pressanykey(0),keyl_onwards) then exit while
-			tScreen.draw2c(10,22, pad(15,""))
+			if uConsole.keyaccept(aKey,keyl_onwards) then
+				tScreen.draw2c(10,22, "you chose: "& Mainmenu.index _
+					&" "& Mainmenu.lines(Mainmenu.index))
+				tScreen.draw2c(10,24,"")
+				uConsole.Pressanykey()
+				exit while
+			EndIf
+'			tScreen.draw2c(10,22, pad(15,""))
 		wend
 	End Sub
 
