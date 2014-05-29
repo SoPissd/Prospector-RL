@@ -2,8 +2,8 @@
 #include once "uDefines.bi"
 DeclareDependencies()
 #include "uUtils.bas"
-#include "uScreen.bas"
-#include "uColor.bas"
+#include "uiScreen.bas"
+#include "uiColor.bas"
 #define test 
 #endif'DeclareDependencies()
 #ifdef types
@@ -69,18 +69,22 @@ function date_string() as string
             w(j)=w(j)&mid(t,i,1)
         endif
     next
-    if val(w(0))=1 then w(0)="JAN"
-    if val(w(0))=2 then w(0)="FEB"
-    if val(w(0))=3 then w(0)="MAR"
-    if val(w(0))=4 then w(0)="APR"
-    if val(w(0))=5 then w(0)="MAY"
-    if val(w(0))=6 then w(0)="JUN"
-    if val(w(0))=7 then w(0)="JUL"
-    if val(w(0))=8 then w(0)="AUG"
-    if val(w(0))=9 then w(0)="SEP"
-    if val(w(0))=10 then w(0)="OKT"
-    if val(w(0))=11 then w(0)="NOV"
-    if val(w(0))=12 then w(0)="DEZ"
+    i=val(w(0))
+    select case as const i
+    	case 01: w(0)="JAN"
+    	case 02: w(0)="FEB"
+    	case 03: w(0)="MAR"
+    	case 04: w(0)="APR"
+    	case 05: w(0)="MAY"
+    	case 06: w(0)="JUN"
+    	case 07: w(0)="JUL"
+    	case 08: w(0)="AUG"
+    	case 09: w(0)="SEP"
+    	case 10: w(0)="OCT"
+    	case 11: w(0)="NOV"
+    	case 12: w(0)="DEZ"
+    	case else: w(0)="WTF"
+    End Select
     return w(1)&"-"&w(0)&"-"&w(2)
 end function
 #define cut2bottom

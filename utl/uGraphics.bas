@@ -2,14 +2,14 @@
 #include once "uDefines.bi"
 DeclareDependencies()
 #include "fbGfx.bi"
-#include "uScreen.bas"
+#include "uiScreen.bas"
 #include "file.bi"
 #include "uFile.bas"
-#include "uColor.bas"
-#include "uConsole.bas"
+#include "uiColor.bas"
+#include "uiConsole.bas"
 #include "uRNG.bas"
-'#include "uCoords.bas"
-'#include "uPrint.bas"
+'#include "adtCoords.bas"
+'#include "uiPrint.bas"
 #include "uUtils.bas"
 #define test 
 #endif'DeclareDependencies()

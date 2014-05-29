@@ -4,17 +4,17 @@ DeclareDependencies()
 #include "fbGfx.bi"
 #include "uDebug.bas"
 #include "uUtils.bas"
-#include "uScreen.bas"
+#include "uiScreen.bas"
 #include "file.bi"
 #include "uFile.bas"
-#include "uColor.bas"
-#include "uConsole.bas"
+#include "uiColor.bas"
+#include "uiConsole.bas"
 #include "uRNG.bas"
-#include "uCoords.bas"
-#include "uBorder.bas"
-#include "uPrint.bas"
-#include "uScroller.bas"
-#include "uTextbox.bas"
+#include "adtCoords.bas"
+#include "uiBorder.bas"
+#include "uiPrint.bas"
+#include "uiScroller.bas"
+#include "uiTextbox.bas"
 #include "uGraphics.bas"
 #include "uWindows.bas" 'auto-close
 #define test 
@@ -415,13 +415,24 @@ end function
 		
 		
 		dim Mainmenu as tMainmenu
-		  Mainmenu.ClearChoices()
-		  Mainmenu.AddChoice("testing",	"this could be a title")  
-		  Mainmenu.AddChoice("one",		"test the menu")  
-		  Mainmenu.AddChoice("two",		"more help")  
-		  Mainmenu.AddChoice("three",	"and thrirdly..")
+		with Mainmenu
+			.x = tScreen.gtw *4 \3
+			.x = tScreen.gth *4 \3
+			.ClearChoices()
+			.AddChoice("testing",	"this could be a title")  
+			.AddChoice("one",		"test the menu")  
+			.AddChoice("two",		"more help")  
+			.AddChoice("three",		"and thrirdly..")
+			.AddChoice("four",		"there's four")
+			.AddChoice("five",		"and five")
+			.AddChoice("six",		"and six")
+			.AddChoice("seven",		"and seven")
+			.AddChoice("eight",		"and eight too")
+			.AddChoice("nine",		"and also nine or else")
+		End With
 		
 		  
+		dim aKey as String
 		
 		cls
 		tscreen.res
@@ -431,10 +442,11 @@ end function
 			tscreen.res
 			tGraphics.background(0)
 			if not tGraphics.putlogo(39,69) then
-			   	draw string(26,26),"PROSPECTOR"',,titlefont,custom,@_col
+			   	draw string(26,26),"MAINMENU"',,titlefont,custom,@_col
 			endif
-			Mainmenu.menu()
-			tScreen.draw2c(10,22, "you chose: "&Mainmenu.e)
+			aKey=Mainmenu.Getkey()
+			
+			tScreen.draw2c(10,22, "you chose: "& aKey &":" &Mainmenu.e)
 			tScreen.draw2c(10,24,"")
 			if uConsole.keyaccept(uConsole.pressanykey(0),keyl_onwards) then exit while
 			tScreen.draw2c(10,22, pad(15,""))

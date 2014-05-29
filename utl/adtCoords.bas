@@ -1,7 +1,7 @@
 'tCoords.
 #include once "uDefines.bi"
 DeclareDependencies()
-#include "uConsole.bas"
+#include "uiConsole.bas"
 #include "uDebug.bas"
 #include "uRng.bas"
 #define test 

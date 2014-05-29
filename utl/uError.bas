@@ -3,10 +3,10 @@
 DeclareDependencies()
 #include "file.bi"
 #include "uFile.bas"
-#include "uScreen.bas"
-#include "uColor.bas"
+#include "uiScreen.bas"
+#include "uiColor.bas"
 #include "uUtils.bas"
-#include "uConsole.bas"
+#include "uiConsole.bas"
 #include "uVersion.bas"
 #define test 
 #endif'DeclareDependencies()
@@ -128,8 +128,8 @@ End Namespace
 #undef test
 '#include "uWindows.bas"
 '#include "uDebug.bas"
-#include "uTextbox.bas"
-#include "uViewfile.bas"
+#include "uiTextbox.bas"
+#include "uiViewfile.bas"
 
 Letsgo:
 	tScreen.res

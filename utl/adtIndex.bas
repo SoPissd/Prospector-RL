@@ -3,7 +3,7 @@
 DeclareDependencies()
 #include "uDebug.bas"
 #include "uRng.bas"
-#include "uCoords.bas"
+#include "adtCoords.bas"
 #define test 
 #endif'DeclareDependencies()
 #ifdef types

@@ -323,8 +323,8 @@ end namespace
 #undef test
 #include "file.bi"
 #include "uFile.bas"
-#include "uColor.bas"
-#include "uConsole.bas"
+#include "uiColor.bas"
+#include "uiConsole.bas"
 #include "uWindows.bas" 'auto-close
 '#include "uDebug.bas"
 #define test

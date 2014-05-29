@@ -5,7 +5,7 @@ DeclareDependencies()
 declare function Namebase(aFile as string) as string 'name nothing else
 
 #include "uDebug.bas"
-#include "uScreen.bas"
+#include "uiScreen.bas"
 #include "file.bi"
 
 #define test 

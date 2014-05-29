@@ -1,7 +1,7 @@
 'version.
 #include once "uDefines.bi"
 DeclareDependencies()
-#include "uScreen.bas"
+#include "uiScreen.bas"
 #define test 
 #endif'DeclareDependencies()
 

@@ -253,10 +253,10 @@ End Namespace
 #print -=-=-=-=-=-=-=- TEST: tFile -=-=-=-=-=-=-=-
 #undef test
 #print "tFile testing"
-'#include "uScreen.bas"
-'#include "uColor.bas"
+'#include "uiScreen.bas"
+'#include "uiColor.bas"
 '#include "uUtils.bas"
-'#include "uConsole.bas"
+'#include "uiConsole.bas"
 '#include "uVersion.bas"
 #define test
 #endif'test

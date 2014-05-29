@@ -5,7 +5,7 @@ DeclareDependencies()
 #include "file.bi"
 #include "uUtils.bas"
 #include "uDebug.bas"
-#include "uScreen.bas"
+#include "uiScreen.bas"
 #include "uWindows.bas"
 #define test 
 #endif'DeclareDependencies()
@@ -59,7 +59,7 @@ declare function text_to_html(text as string) as string
 #Define RGBA_G( c ) ( CUInt( c ) Shr  8 And 255 )
 #Define RGBA_B( c ) ( CUInt( c )        And 255 )
 
-#include "uColor.bi"
+#include "uiColor.bi"
 
 namespace tColor
 

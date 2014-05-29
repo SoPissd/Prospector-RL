@@ -3,16 +3,16 @@
 DeclareDependencies()
 #include "uUtils.bas"
 #include "uDebug.bas"
-#include "uScreen.bas"
+#include "uiScreen.bas"
 #include "file.bi"
 #include "uFile.bas"
-#include "uColor.bas"
-#include "uConsole.bas"
+#include "uiColor.bas"
+#include "uiConsole.bas"
 #include "uVersion.bas"
 #include "uError.bas"
 #include "uRng.bas"
-#include "uCoords.bas"
-#include "uBorder.bas"
+#include "adtCoords.bas"
+#include "uiBorder.bas"
 #define test 
 #endif'DeclareDependencies()
 #ifdef types

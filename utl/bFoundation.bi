@@ -18,9 +18,9 @@
 	#endif
 
 	inc("uUtils.bas",				"string helpers mostly. needs tests to be written")
-	inc("uScreen.bas",				"wrap screen,screenset,locate,width,color so console code works too")	
-	inc("uColor.bas",				"maps color codes to screen via palette")
-	inc("uConsole.bas",				"all the key and keyboard wrappers, idle and application close support")
+	inc("uiScreen.bas",				"wrap screen,screenset,locate,width,color so console code works too")	
+	inc("uiColor.bas",				"maps color codes to screen via palette")
+	inc("uiConsole.bas",				"all the key and keyboard wrappers, idle and application close support")
 	inc("uVersion.bas",				"provides ErrorlogFilename and Errorscreen. same vars too")  '*need test*'
 '
 		'#undef test
@@ -34,17 +34,17 @@
 	inc("uError.bas",				"Errorhandler messages for graphics and console. logging too")
 	inc("uGraphics.bas",			"background and bmp loading.")	'*need test*'
 
-	inc("uCoords.bas",				"compiles for different types of coordinates/variable coordinate records")
-	inc("uAstar.bas",				"A* for the defined coordinates")	'*need test*'
+	inc("adtCoords.bas",				"compiles for different types of coordinates/variable coordinate records")
+	inc("adtAstar.bas",				"A* for the defined coordinates")	'*need test*'
 	inc("uMath.bas",				"_sym_matrix, some rounding, high/low")	'*need test*'
-	inc("uIndex.bas",				"some 2d/3d fixed-size-array manipulation code from prospector. might be generic enough for here") '*need test*'
+	inc("adtIndex.bas",				"some 2d/3d fixed-size-array manipulation code from prospector. might be generic enough for here") '*need test*'
 
 	inc("uTime.bas",				"display_time, date_string")	'*need test*'	
 	inc("uSound.bas",				"define 'makesound' and the sound methods will start to use the dll code. else they do nothing.")	'*need test*'
-	inc("uBorder.bas",				"Draws boxes")
-	inc("uPrint.bas",				"rlprints to graphics console, screen-info, some input")
-	inc("uScroller.bas",			"Scrolls any-thing, any-area, any-array")
-	inc("uTextbox.bas",				"Wrappers for uScroller")
-	inc("uViewfile.bas",			"File and List Viewers rendering in text mode")
+	inc("uiBorder.bas",				"Draws boxes")
+	inc("uiPrint.bas",				"rlprints to graphics console, screen-info, some input")
+	inc("uiScroller.bas",			"Scrolls any-thing, any-area, any-array")
+	inc("uiTextbox.bas",				"Wrappers for uScroller")
+	inc("uiViewfile.bas",			"File and List Viewers rendering in text mode")
 	inc("uMainLoop.bas",			"Generic Eventloop")
-	inc("uMainMenu.bas",			"Generic Mainmenu")
+	inc("uiMenu.bas",			"Generic Mainmenu")

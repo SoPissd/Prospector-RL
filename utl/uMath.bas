@@ -5,10 +5,10 @@ DeclareDependencies()
 #include "uUtils.bas"
 #include "uDebug.bas"
 #include "uRng.bas"
-#include "uScreen.bas"
-#include "uColor.bas"
-#include "uConsole.bas"
-#include "uCoords.bas"
+#include "uiScreen.bas"
+#include "uiColor.bas"
+#include "uiConsole.bas"
+#include "adtCoords.bas"
 #define test 
 #endif'DeclareDependencies()
 #ifdef types
