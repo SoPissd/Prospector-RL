@@ -296,13 +296,6 @@ end function
 		
 		dim Mainmenu as tMainmenu
 		with Mainmenu
-			if tScreen.isGraphic then
-				.x = tScreen.gtw *3 \4
-				.y = tScreen.gth *3 \4
-			else
-				.x = uConsole.ttw *3 \4
-				.y = uConsole.tth *3 \4
-			endif
 			.bIdx=true
 			.bScrollbar=true
 			.bDrawborder=false
@@ -322,20 +315,30 @@ end function
 			.AddChoice("seven",		"and seven")
 			.AddChoice("eight",		"and eight too")
 			.AddChoice("nine",		"and also nine or else")
+			.AddChoice("Textmode",	"what it says")
+			.AddChoice("Graphical",	"what it says")
 			.AddChoice("Exit",		"what it says")
-		End With
-		
+		End With		
 		  
-		dim aKey as String
+		
 
 		while not uConsole.Closing
 			cls
-			tGraphics.background(0)
-			if not tGraphics.putlogo(39,69) then
-			   	tScreen.draw2c(26,26,"MAINMENU")',,titlefont,custom,@_col
+			if tScreen.isGraphic then
+				tGraphics.background(0)
+				if not tGraphics.putlogo(39,69) then
+				   	tScreen.draw2c(26,26,"MAINMENU")',,titlefont,custom,@_col
+				endif
+				Mainmenu.x = tScreen.gtw *3 \4
+				Mainmenu.y = tScreen.gth *3 \4
+			else
+			   	tScreen.xy(5,5,"MAINMENU")',,titlefont,custom,@_col
+				Mainmenu.x = uConsole.ttw *3 \4
+				Mainmenu.y = uConsole.tth *3 \4  -4
 			endif
 
-			aKey=Mainmenu.Menu("i,I")
+			dim aKey as String=Mainmenu.Menu("i,I")
+			
 			'DbgPrint("aKey :"& akey &": height="& Mainmenu.height)			
 			if uConsole.Closing then exit while
 
@@ -356,7 +359,7 @@ end function
 				tScreen.draw2c(10,22, "you chose: "& Mainmenu.index _
 					&" "& Mainmenu.lines(Mainmenu.index))
 
-				select case as const Mainmenu.index
+				select case Mainmenu.index
 					case 0 to 3
 						dim x as tMainmenu
 						dim as integer i,ix,iy
@@ -373,7 +376,11 @@ end function
 						if i>=0 then
 							tScreen.draw2c(10,24,""& i &": "& x.lines(i))
 							uConsole.Pressanykey()
-						EndIf 
+						EndIf
+					case Mainmenu.nLines-3
+						tScreen.mode
+					case Mainmenu.nLines-2
+						tScreen.res
 					case else
 						if (Mainmenu.index <> Mainmenu.nLines-1) then
 							tScreen.draw2c(10,24,"")

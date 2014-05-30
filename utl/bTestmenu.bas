@@ -78,29 +78,32 @@ end function
 
 '
 
-function testmenu(iAction as Integer) as Integer
-	dim s as tSub
-	dim m as Integer
-
-	dim aMenu as tMainmenu
-	aMenu.Clearchoices()
-	aMenu.Addchoice("Choose test")
-	dim i as Integer
+function testmenu(iAction as Integer) as Integer	
 	dim t as tModule._Test
-	for i=0 to tModule.lasttest-1
-		t=tModule.Tests(i)
-		aMenu.Addchoice(t.aName+" - "+t.aComment,t.aComment)
-	Next
-	
-	aMenu.Addchoice("Exit","Exit the menu")
+	dim aMenu as tMainmenu
 
-	if tScreen.isGraphic then
-		amenu.x= (tscreen.gtw - amenu.lTe -2) \2
-		amenu.y= (tscreen.gth - tModule.lasttest - 10)
-	else
-		amenu.x= (uconsole.ttw - amenu.lTe -2) \2
-		amenu.y= (uconsole.tth - tModule.lasttest -2) \2
-	endif
+	tScreen.mode
+
+	with aMenu
+		.Clearchoices()
+		.title="Choose test"
+		for i as Integer= 0 to tModule.lasttest-1
+			t=tModule.Tests(i)
+			.Addchoice(t.aName+" - "+t.aComment,t.aComment)
+		Next
+		.Addchoice("Exit","Exit the menu")
+
+		.bIdx=true
+	    .index= 0
+		.bScrollbar=false
+		.bDrawborder=false
+
+		.x= (uconsole.ttw - .lTe -2) \3
+		.y= 5
+		.Height= 16
+		.mhy= .Height
+	End With
+
 	while not uConsole.Closing
 		'prepare next graphic mode
 		tScreen.x=800
@@ -108,18 +111,26 @@ function testmenu(iAction as Integer) as Integer
 		'switch (back?) to text console
 		tScreen.mode
 		'clear the menu and get a new choice
-		aMenu.e=0		
-		m=aMenu.menu()
-		if uConsole.Closing orelse (m<1) orelse (m=aMenu.iLines) then exit while
-		'aMenu.loca=m
-		
-		'get the test and run it
-		s= tModule.Tests(m-1).fTest
 		cls
-		s()
-		uConsole.Closing=false
+		tScreen.res
+
+		with aMenu
+? .x,.y,.lTe,.lTh,.Height,.mhy
+			dim aKey as string= .menu()
+			dim m as Integer= .index
+			if uConsole.Closing orelse (m<1) orelse (m=.nLines-1) then exit while
+		End With
+
+		'get the test and run it
+		dim pSub as tSub= tModule.Tests(m-1).fTest
+		cls
+? m, aMenu.lines(m)
+uConsole.Pressanykey()
+		pSub()						'run the test
+		uConsole.Closing=false		'stay even if we pressed Alt-F4
 		tScreen.xy(60,24)
-		uConsole.Pressanykey(0)		
+		uConsole.Pressanykey(0)
+
 	Wend
 	return 0
 end function
